@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: jgoodies-forms-1.8.0.jar jgoodies-common-1.8.0.jar
+Main-Class: gov.nist.microanalysis.EPQTools.RelocationApp
+SplashScreen-Image: RelocationUtilitySplash.png
+

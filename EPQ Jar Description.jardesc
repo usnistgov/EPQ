@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="DTSA2/Installer/DTSA-II Build/epq.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/EPQ/EPQ Jar Description.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/EPQ/MANIFEST.txt" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="false" exportJavaFiles="false" exportOutputFolder="true">
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.Henke93"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.SalvatXion"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.Detector"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools.ClipArt"/>
+        <file path="/EPQ/epq.ico"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;flanagan.math"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQDatabase"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTests.TestData"/>
+        <file path="/EPQ/src/RelocationUtilitySplash.png"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.NISTMonte.Gen3"/>
+        <file path="/EPQ/EPQ.html"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;flanagan.interpolation"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTests"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.NistXSec"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQImage"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.NISTMonte"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTests.TestData.STEM"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.CzyzewskiXSec"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.BergerSeltzerBrem"/>
+        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.CitMAC"/>
+    </selectedElements>
+</jardesc>

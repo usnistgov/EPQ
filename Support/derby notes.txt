@@ -1,0 +1,16 @@
+Notes on using ij to view DERBY database
+
+> connect 'jdbc:derby:C:\Documents and Settings\nritchie\My Documents\DTSA2 Reports\Database v2';
+
+DELETING DETECTOR ID=4
+
+> delete from spectrum where DETECTOR=4;
+> delete from calibration where DETECTOR=4;
+> delete from detector where ID=4;
+
+
+LISTING THE DETECTORS
+
+> select ID, CREATED, RETIRED, NAME, INSTRUMENT_KEY from DETECTOR;
+
+> select ID, DISPLAY_NAME from SPECTRUM where DETECTOR=4;

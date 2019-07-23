@@ -1,0 +1,22 @@
+Measurement optimization
+
+	1. Specify:
+		1.1. The estimated composition 
+ 		1.2. The instrument (min & max beam energies)
+		1.3. The detector (TOA, efficiencies etc.)
+	2. Specify the standard blocks that are available
+	3. For each element:
+		3.1. Search the standard blocks for candidate materials
+		3.2. Identify the available x-ray lines
+	4. Determine the minimum usable and maximum reasonable beam energy
+		4.1. For a range of energies from the minimum up to the maximum in steps of 5 keV
+			4.1.1 Calculate the uncertainties for each standard and energies
+		4.2. Select the standard and beam energy with the best minimum total uncertainty / the best uncertainty for a specific element
+	5. 
+			
+			3.2.1. Determine a reasonable beam energy (~2.0 times the edge energy)
+			3.2.2. Calculate the uncertainty associated with the choice of standard, line and beam energy 
+	4. Determine a beam energy which 
+		3c. Determine the min and max reasonable beam energies
+	4. Determine the min beam energy to measure all elements
+    4. Rank	

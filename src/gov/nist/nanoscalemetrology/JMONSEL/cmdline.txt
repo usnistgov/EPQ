@@ -1,0 +1,1 @@
+getdp_sparskit sample -pre EleSta_v -cal 1>out.txt 2>errOut.txt

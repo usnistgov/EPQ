@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="protected" author="true" classpath="../3rd Party Libraries/ArtTk.jar;../3rd Party Libraries/batik-awt-util.jar;../3rd Party Libraries/derbyclient.jar;../3rd Party Libraries/commons-math-2.1.jar;../3rd Party Libraries/batik-svggen.jar;../3rd Party Libraries/batik-ext.jar;../3rd Party Libraries/junit.jar;../3rd Party Libraries/derby.jar;../3rd Party Libraries/jgoodies-forms-1.7.1.jar;../3rd Party Libraries/derbynet.jar;../3rd Party Libraries/batik-xml.jar;classes;../3rd Party Libraries/batik-dom.jar;../3rd Party Libraries/xstream-1.4.3.jar;../3rd Party Libraries/xml-apis.jar;../3rd Party Libraries/xpp3-1.1.4c.jar;../3rd Party Libraries/jai_imageio.jar;../3rd Party Libraries/jna.jar;../3rd Party Libraries/jcalendar-1.3.2.jar;../3rd Party Libraries/batik-util.jar;../3rd Party Libraries/Jama-1.0.3.jar;../3rd Party Libraries/jython.jar;../3rd Party Libraries/jgoodies-common-1.6.0.jar;../FastQuant/bin" destdir="JavaDoc" doctitle="EPQ library for Electron Probe X-ray Microanalysis" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="C:\Users\nritchie.NIST\workspace\EPQ\EPQ.html" packagenames="gov.nist.microanalysis.Utility,gov.nist.nanoscalemetrology.JMONSEL,gov.nist.microanalysis.EPQLibrary.Detector,gov.nist.microanalysis.dtsa2,flanagan.math,gov.nist.microanalysis.EPQDatabase,gov.nist.microanalysis.NISTMonte.Gen3,flanagan.interpolation,gov.nist.microanalysis.EPQTests,gov.nist.microanalysis.EPQLibrary,gov.nist.microanalysis.EPQTools,gov.nist.microanalysis.NISTMonte,gov.nist.nanoscalemetrology.MONSELtests,gov.nist.nanoscalemetrology.JMONSELutils,apple.dts.samplecode.osxadapter" source="1.8" sourcepath="src;../DTSA2/src" splitindex="false" use="true" version="true">
+            <link href="file:/C:/Users/nritchie.NIST/Workspace/EPQ/JavaDoc/"/>
+            <link href="https://docs.oracle.com/javase/8/docs/api/"/>
+            <link href="http://docs.oracle.com/javase/8/javafx/api/"/>
+        </javadoc>
+    </target>
+</project>

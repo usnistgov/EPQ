@@ -1,0 +1,220 @@
+--- Derby SQL database for microanalytical spectra
+--- Use ij to view
+--- > connect 'jdbc:derby:/home/nicholas/DTSA-II Reports/Database v2'
+
+--- A table for storing composition-type data.
+CREATE TABLE ELEMENT_DATA ( 
+	ID INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	COMP_TYPE INT,                        --- type of composition (std, micro, signature, uncertainty...)
+	PRESENT CHAR(13) FOR BIT DATA,        --- mask identifying which elements are present
+	ENTERED_BY INT DEFAULT 0,             --- identity of the person who added this datum
+	UNCERTAINTY_KEY INT DEFAULT 0,        --- a ELEMENT_DATA datum containing uncertainty on these values
+	ELM0 SMALLINT DEFAULT 0,              --- most prevelent element (as Z)
+	ELM1 SMALLINT DEFAULT 0,              --- second most prevelent element (as Z)
+	ELM2 SMALLINT DEFAULT 0,              --- ...
+	ELM3 SMALLINT DEFAULT 0,              --- ...
+	ELM4 SMALLINT DEFAULT 0,              --- ...
+	ELM5 SMALLINT DEFAULT 0,              --- sixth most prevelent element (as Z)
+	ELM_H REAL DEFAULT 0.0,               --- quantity of H
+ 	ELM_HE REAL DEFAULT 0.0,              --- quantity of He
+ 	ELM_LI REAL DEFAULT 0.0,              --- ...
+	ELM_BE REAL DEFAULT 0.0,
+	ELM_B REAL DEFAULT 0.0,
+	ELM_C REAL DEFAULT 0.0,
+	ELM_N REAL DEFAULT 0.0,
+	ELM_O REAL DEFAULT 0.0,
+	ELM_F REAL DEFAULT 0.0,
+	ELM_NE REAL DEFAULT 0.0,
+	ELM_NA REAL DEFAULT 0.0,
+	ELM_MG REAL DEFAULT 0.0,
+	ELM_AL REAL DEFAULT 0.0,
+	ELM_SI REAL DEFAULT 0.0,
+	ELM_P REAL DEFAULT 0.0,
+	ELM_S REAL DEFAULT 0.0,
+	ELM_CL REAL DEFAULT 0.0,
+	ELM_AR REAL DEFAULT 0.0,
+	ELM_K REAL DEFAULT 0.0,
+	ELM_CA REAL DEFAULT 0.0,
+	ELM_SC REAL DEFAULT 0.0,
+	ELM_TI REAL DEFAULT 0.0,
+	ELM_V REAL DEFAULT 0.0,
+	ELM_CR REAL DEFAULT 0.0,
+	ELM_MN REAL DEFAULT 0.0,
+	ELM_FE REAL DEFAULT 0.0,
+	ELM_CO REAL DEFAULT 0.0,
+	ELM_NI REAL DEFAULT 0.0,
+	ELM_CU REAL DEFAULT 0.0,
+	ELM_ZN REAL DEFAULT 0.0,
+	ELM_GA REAL DEFAULT 0.0,
+	ELM_GE REAL DEFAULT 0.0,
+	ELM_AS REAL DEFAULT 0.0,
+	ELM_SE REAL DEFAULT 0.0,
+	ELM_BR REAL DEFAULT 0.0,
+	ELM_KR REAL DEFAULT 0.0,
+	ELM_RB REAL DEFAULT 0.0,
+	ELM_SR REAL DEFAULT 0.0,
+	ELM_Y REAL DEFAULT 0.0,
+	ELM_ZR REAL DEFAULT 0.0,
+	ELM_NB REAL DEFAULT 0.0,
+	ELM_MO REAL DEFAULT 0.0,
+	ELM_TC REAL DEFAULT 0.0,
+	ELM_RU REAL DEFAULT 0.0,
+	ELM_RH REAL DEFAULT 0.0,
+	ELM_PD REAL DEFAULT 0.0,
+	ELM_AG REAL DEFAULT 0.0,
+	ELM_CD REAL DEFAULT 0.0,
+	ELM_IN REAL DEFAULT 0.0,
+	ELM_SN REAL DEFAULT 0.0,
+	ELM_SB REAL DEFAULT 0.0,
+	ELM_TE REAL DEFAULT 0.0,
+	ELM_I REAL DEFAULT 0.0,
+	ELM_XE REAL DEFAULT 0.0,
+	ELM_CS REAL DEFAULT 0.0,
+	ELM_BA REAL DEFAULT 0.0,
+	ELM_LA REAL DEFAULT 0.0,
+	ELM_CE REAL DEFAULT 0.0,
+	ELM_PR REAL DEFAULT 0.0,
+	ELM_ND REAL DEFAULT 0.0,
+	ELM_PM REAL DEFAULT 0.0,
+	ELM_SM REAL DEFAULT 0.0,
+	ELM_EU REAL DEFAULT 0.0,
+	ELM_GD REAL DEFAULT 0.0,
+	ELM_TB REAL DEFAULT 0.0,
+	ELM_DY REAL DEFAULT 0.0,
+	ELM_HO REAL DEFAULT 0.0,
+	ELM_ER REAL DEFAULT 0.0,
+	ELM_TM REAL DEFAULT 0.0,
+	ELM_YB REAL DEFAULT 0.0,
+	ELM_LU REAL DEFAULT 0.0,
+	ELM_HF REAL DEFAULT 0.0,
+	ELM_TA REAL DEFAULT 0.0,
+	ELM_W REAL DEFAULT 0.0,
+	ELM_RE REAL DEFAULT 0.0,
+	ELM_OS REAL DEFAULT 0.0,
+	ELM_IR REAL DEFAULT 0.0,
+	ELM_PT REAL DEFAULT 0.0,
+	ELM_AU REAL DEFAULT 0.0,
+	ELM_HG REAL DEFAULT 0.0,
+	ELM_TL REAL DEFAULT 0.0,
+	ELM_PB REAL DEFAULT 0.0,
+	ELM_BI REAL DEFAULT 0.0,
+	ELM_PO REAL DEFAULT 0.0,
+	ELM_AT REAL DEFAULT 0.0,
+	ELM_RN REAL DEFAULT 0.0,
+	ELM_FR REAL DEFAULT 0.0,
+	ELM_RA REAL DEFAULT 0.0,
+	ELM_AC REAL DEFAULT 0.0,
+	ELM_TH REAL DEFAULT 0.0,
+	ELM_PA REAL DEFAULT 0.0,
+	ELM_U REAL DEFAULT 0.0,
+	ELM_NP REAL DEFAULT 0.0,
+	ELM_PU REAL DEFAULT 0.0,
+	ELM_AM REAL DEFAULT 0.0,
+	ELM_CM REAL DEFAULT 0.0,
+	ELM_BK REAL DEFAULT 0.0,
+	ELM_CF REAL DEFAULT 0.0 );
+
+--- Facilitate searches based on which elements are present
+CREATE INDEX PRESENT_IDX ON ELEMENT_DATA ( PRESENT );
+--- Facilitate searches based on most prevelent elements
+CREATE INDEX ELM0_IDX ON ELEMENT_DATA ( ELM0 );	
+CREATE INDEX ELM1_IDX ON ELEMENT_DATA ( ELM1 );	
+CREATE INDEX ELM2_IDX ON ELEMENT_DATA ( ELM2 );	
+CREATE INDEX ELM3_IDX ON ELEMENT_DATA ( ELM3 );	
+CREATE INDEX ELM4_IDX ON ELEMENT_DATA ( ELM4 );	
+CREATE INDEX ELM5_IDX ON ELEMENT_DATA ( ELM5 );
+
+CREATE INDEX ELM_C_IDX ON ELEMENT_DATA ( ELM_C );
+CREATE INDEX ELM_O_IDX ON ELEMENT_DATA ( ELM_O );
+CREATE INDEX ELM_AL_IDX ON ELEMENT_DATA ( ELM_AL );
+CREATE INDEX ELM_SI_IDX ON ELEMENT_DATA ( ELM_SI );
+CREATE INDEX ELM_CA_IDX ON ELEMENT_DATA ( ELM_CA );
+CREATE INDEX ELM_TI_IDX ON ELEMENT_DATA ( ELM_TI );
+CREATE INDEX ELM_FE_IDX ON ELEMENT_DATA ( ELM_FE );
+CREATE INDEX ELM_NI_IDX ON ELEMENT_DATA ( ELM_NI );
+CREATE INDEX ELM_CU_IDX ON ELEMENT_DATA ( ELM_CU );
+CREATE INDEX ELM_AG_IDX ON ELEMENT_DATA ( ELM_AG );
+CREATE INDEX ELM_AU_IDX ON ELEMENT_DATA ( ELM_AU );
+CREATE INDEX ELM_U_IDX ON ELEMENT_DATA ( ELM_U );
+
+--- A table to identify people/organizations within the database
+CREATE TABLE PERSON (
+	ID INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	NAME CHAR(128),
+	COMMENT VARCHAR(2048)
+);
+
+CREATE TABLE PROJECT (
+	ID INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	NAME CHAR (40),
+	CLIENT INT NOT NULL REFERENCES PERSON(ID),                 --- Name of the client for whom this project was performed
+	COMMENT VARCHAR(1024)
+);
+
+--- A table to identify instruments
+CREATE TABLE ELECTRONPROBE (
+	ID INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	CREATED TIMESTAMP DEFAULT CURRENT_TIMESTAMP, --- When was this instrument created?
+	RETIRED TIMESTAMP DEFAULT NULL, --- When was this instrument retired? (NULL is still active)
+	NAME VARCHAR(128),              --- The name of this instrument
+	XML_OBJ CLOB(1 M)               --- The electron probe definition as XML
+);
+
+--- A table to identify detectors.  A historical record of detectors is
+--- maintained to facilitate tracking detector performance and to retain
+--- information about the performance of the instrument.
+CREATE TABLE DETECTOR (
+	ID INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	CREATED TIMESTAMP,				--- When was this detector defined
+	RETIRED TIMESTAMP DEFAULT NULL, --- When was it retired? (NULL is still active)
+	NAME VARCHAR (40),              --- The name of the detector
+	INSTRUMENT_KEY INT NOT NULL REFERENCES ELECTRONPROBE(ID),				--- The instrument on which the detector is located
+	XML_OBJ CLOB(1 M)               --- The detector definition as XML
+);
+
+--- A table for recording detector calibration
+--- The latest calibration for each detector is applied to the detector to determine
+--- the current state of the detector.
+CREATE TABLE CALIBRATION (
+	ID INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	DETECTOR INT NOT NULL REFERENCES DETECTOR(ID), --- Index of the detector with which this calibration is associated
+	START_DATE TIMESTAMP NOT NULL,	--- Date on which the calibration took effect (may be before CREATED)
+	XML_OBJ CLOB(1 M) NOT NULL			--- The detector calibration as an XML object
+);
+
+CREATE INDEX CALIBRATION_IDX ON CALIBRATION(DETECTOR ASC,START_DATE DESC);
+
+CREATE TABLE SPECTRUM (
+	ID INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	DIGEST CHAR(20) FOR BIT DATA,   --- 20-byte SHA message digest
+	STD_COMP INT DEFAULT -1,        --- standard composition
+	MICRO_COMP INT DEFAULT -1,      --- microanalytical measured composition
+	SIGNATURE INT DEFAULT -1,       --- particle signature composition
+	BEAM_ENERGY REAL,               --- the beam energy at which the spectrum was collected (keV)
+	OPERATOR INT DEFAULT -1,        --- who collected the spectrum
+	DETECTOR INT NOT NULL REFERENCES DETECTOR(ID),    --- the instrument/detector on which the spectrum was collected
+	CALIBRATION INT NOT NULL REFERENCES CALIBRATION(ID),	--- the calibration associated with the spectrum
+	PROJECT INT NOT NULL REFERENCES PROJECT(ID),     --- project related data
+	ACQUIRED TIMESTAMP,             --- when the spectrum was collected
+	FILENAME VARCHAR(1024),         --- original file name
+	DISPLAY_NAME VARCHAR(1024),     --- a display friendly name for the spectrum
+	EXTRA_PROPERTIES CLOB DEFAULT NULL, --- other properties assigned to the spectrum
+	SPECTRUM BLOB                   --- the spectrum in highest available fidelity form
+);	
+
+--- TODO: Move the SPECTRUM BLOB & DIGEST out of the SPECTRUM table into a SPECTRUM_FILE table
+	
+CREATE INDEX DIGEST_COMP_IDX ON SPECTRUM(DIGEST);	
+CREATE INDEX STD_COMP_IDX ON SPECTRUM(STD_COMP);	
+CREATE INDEX MICRO_COMP_IDX ON SPECTRUM(MICRO_COMP);	
+CREATE INDEX SIGNATURE_IDX ON SPECTRUM(SIGNATURE);	
+CREATE INDEX ACQUIRED_IDX ON SPECTRUM(ACQUIRED);
+
+CREATE TABLE STANDARD ( 
+	NAME VARCHAR(1024) NOT NULL PRIMARY KEY,
+	ELM_DATA INT NOT NULL REFERENCES ELEMENT_DATA(ID),
+	DENSITY DOUBLE
+);
+
+INSERT INTO PERSON (NAME, COMMENT) VALUES ( 'Unspecified', '');
+INSERT INTO PROJECT (NAME, CLIENT, COMMENT) VALUES ( 'None', 1, 'Unspecified project' );

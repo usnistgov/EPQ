@@ -1,0 +1,554 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.0'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     19940,        441]*)
+(*NotebookOutlinePosition[     20651,        465]*)
+(*  CellTagsIndexPosition[     20607,        461]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+First consider the simple problem of the closest point on a line to a \
+point.\
+\>", "Subtitle"],
+
+Cell["\<\
+Distance from a point {x,y,z} to a line l[a]
+d0=mEnd10-mEnd00,   d1=mEnd11-mEnd01,   d2=mEnd12-mEnd02\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(d[a_] = \((x - \((mEnd00 + a\ d0)\))\)^2 + \((y - \((mEnd01 + 
+                  a\ d1)\))\)^2 + \((z - \((mEnd02 + a\ d2)\))\)^2\)], "Input"],
+
+Cell[BoxData[
+    \(\((\(-a\)\ d0 - mEnd00 + x)\)\^2 + \((\(-a\)\ d1 - mEnd01 + y)\)\^2 + \
+\((\(-a\)\ d2 - mEnd02 + z)\)\^2\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Collect[d[a], a]\)], "Input"],
+
+Cell[BoxData[
+    \(a\^2\ \((d0\^2 + d1\^2 + d2\^2)\) + mEnd00\^2 + mEnd01\^2 + mEnd02\^2 - 
+      2\ mEnd00\ x + x\^2 - 2\ mEnd01\ y + y\^2 - 2\ mEnd02\ z + z\^2 + 
+      a\ \((2\ d0\ mEnd00 + 2\ d1\ mEnd01 + 2\ d2\ mEnd02 - 2\ d0\ x - 
+            2\ d1\ y - 2\ d2\ z)\)\)], "Output"]
+}, Open  ]],
+
+Cell["Define Aa, Ba and Ca", "Text"],
+
+Cell[BoxData[{
+    \(\(Aa = \((d0\^2 + d1\^2 + d2\^2)\);\)\), "\[IndentingNewLine]", 
+    \(\(Ba = \((2\ mEnd00\ d0 + 2\ mEnd01\ d1 + 2\ mEnd02\ d2 - 2\ d0\ x - 
+            2\ d1\ y - 2\ d2\ z)\);\)\), "\[IndentingNewLine]", 
+    \(\(Ca = 
+        mEnd00\^2 + mEnd01\^2 + mEnd02\^2 - 2\ mEnd00\ x + x\^2 - 
+          2\ mEnd01\ y + y\^2 - 2\ mEnd02\ z + z\^2;\)\)}], "Input"],
+
+Cell["Is this equivalent?", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Simplify[d[a] \[Equal] Aa\ a^2 + Ba\ a\  + Ca]\)], "Input"],
+
+Cell[BoxData[
+    \(True\)], "Output"]
+}, Open  ]],
+
+Cell["Find the a such that d[a] is minimized.   Solve dd[a]/da=0.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(aMin = \(-Ba\)/\((2\ Aa)\)\)], "Input"],
+
+Cell[BoxData[
+    \(\(\(-2\)\ d0\ mEnd00 - 2\ d1\ mEnd01 - 2\ d2\ mEnd02 + 2\ d0\ x + 2\ d1\
+\ y + 2\ d2\ z\)\/\(2\ \((d0\^2 + d1\^2 + d2\^2)\)\)\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(d[aMin]\)], "Input"],
+
+Cell[BoxData[
+    \(\((\(-mEnd00\) + x - \(d0\ \((\(-2\)\ d0\ mEnd00 - 2\ d1\ mEnd01 - 2\ \
+d2\ mEnd02 + 2\ d0\ x + 2\ d1\ y + 2\ d2\ z)\)\)\/\(2\ \((d0\^2 + d1\^2 + \
+d2\^2)\)\))\)\^2 + \((\(-mEnd01\) + y - \(d1\ \((\(-2\)\ d0\ mEnd00 - 2\ d1\ \
+mEnd01 - 2\ d2\ mEnd02 + 2\ d0\ x + 2\ d1\ y + 2\ d2\ z)\)\)\/\(2\ \((d0\^2 + \
+d1\^2 + d2\^2)\)\))\)\^2 + \((\(-mEnd02\) + z - \(d2\ \((\(-2\)\ d0\ mEnd00 - \
+2\ d1\ mEnd01 - 2\ d2\ mEnd02 + 2\ d0\ x + 2\ d1\ y + 2\ d2\ z)\)\)\/\(2\ \
+\((d0\^2 + d1\^2 + d2\^2)\)\))\)\^2\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[""], "Input"],
+
+Cell["\<\
+Parameterize the line l[t] = { parm00+t(parm10-parm00), \
+parm01+t(parm11-parm01), parm02+t(parm12-parm02) }\
+\>", "Text"],
+
+Cell["\<\
+Define e0=parm10-parm00,  e1=parm11-parm01,  e2= parm12-parm02
+Now consider f[t] = d[aMin] with the parameterization above for l[t]\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(f[t_] = 
+      Collect[Ca - \((\((Ba*Ba)\)/\((4*Aa)\))\) /. {x \[Rule] parm00 + t\ e0, 
+            y \[Rule] parm01 + t\ e1, z \[Rule] parm02 + t\ e2}, 
+        t]\)], "Input"],
+
+Cell[BoxData[
+    \(mEnd00\^2 - \(d0\^2\ mEnd00\^2\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d0\ \
+d1\ mEnd00\ mEnd01\)\/\(d0\^2 + d1\^2 + d2\^2\) + 
+      mEnd01\^2 - \(d1\^2\ mEnd01\^2\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d0\ \
+d2\ mEnd00\ mEnd02\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d1\ d2\ mEnd01\ mEnd02\
+\)\/\(d0\^2 + d1\^2 + d2\^2\) + 
+      mEnd02\^2 - \(d2\^2\ mEnd02\^2\)\/\(d0\^2 + d1\^2 + d2\^2\) - 
+      2\ mEnd00\ parm00 + \(2\ d0\^2\ mEnd00\ parm00\)\/\(d0\^2 + d1\^2 + \
+d2\^2\) + \(2\ d0\ d1\ mEnd01\ parm00\)\/\(d0\^2 + d1\^2 + d2\^2\) + \(2\ d0\ \
+d2\ mEnd02\ parm00\)\/\(d0\^2 + d1\^2 + d2\^2\) + 
+      parm00\^2 - \(d0\^2\ parm00\^2\)\/\(d0\^2 + d1\^2 + d2\^2\) + \(2\ d0\ \
+d1\ mEnd00\ parm01\)\/\(d0\^2 + d1\^2 + d2\^2\) - 
+      2\ mEnd01\ parm01 + \(2\ d1\^2\ mEnd01\ parm01\)\/\(d0\^2 + d1\^2 + \
+d2\^2\) + \(2\ d1\ d2\ mEnd02\ parm01\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d0\ \
+d1\ parm00\ parm01\)\/\(d0\^2 + d1\^2 + d2\^2\) + 
+      parm01\^2 - \(d1\^2\ parm01\^2\)\/\(d0\^2 + d1\^2 + d2\^2\) + \(2\ d0\ \
+d2\ mEnd00\ parm02\)\/\(d0\^2 + d1\^2 + d2\^2\) + \(2\ d1\ d2\ mEnd01\ parm02\
+\)\/\(d0\^2 + d1\^2 + d2\^2\) - 
+      2\ mEnd02\ parm02 + \(2\ d2\^2\ mEnd02\ parm02\)\/\(d0\^2 + d1\^2 + \
+d2\^2\) - \(2\ d0\ d2\ parm00\ parm02\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d1\ \
+d2\ parm01\ parm02\)\/\(d0\^2 + d1\^2 + d2\^2\) + 
+      parm02\^2 - \(d2\^2\ parm02\^2\)\/\(d0\^2 + d1\^2 + d2\^2\) + \((\(-2\)\
+\ e0\ mEnd00 + \(2\ d0\^2\ e0\ mEnd00\)\/\(d0\^2 + d1\^2 + d2\^2\) + \(2\ d0\ \
+d1\ e1\ mEnd00\)\/\(d0\^2 + d1\^2 + d2\^2\) + \(2\ d0\ d2\ e2\ mEnd00\)\/\(d0\
+\^2 + d1\^2 + d2\^2\) + \(2\ d0\ d1\ e0\ mEnd01\)\/\(d0\^2 + d1\^2 + d2\^2\) \
+- 2\ e1\ mEnd01 + \(2\ d1\^2\ e1\ mEnd01\)\/\(d0\^2 + d1\^2 + d2\^2\) + \(2\ \
+d1\ d2\ e2\ mEnd01\)\/\(d0\^2 + d1\^2 + d2\^2\) + \(2\ d0\ d2\ e0\ mEnd02\)\/\
+\(d0\^2 + d1\^2 + d2\^2\) + \(2\ d1\ d2\ e1\ mEnd02\)\/\(d0\^2 + d1\^2 + \
+d2\^2\) - 
+            2\ e2\ mEnd02 + \(2\ d2\^2\ e2\ mEnd02\)\/\(d0\^2 + d1\^2 + d2\^2\
+\) + 2\ e0\ parm00 - \(2\ d0\^2\ e0\ parm00\)\/\(d0\^2 + d1\^2 + d2\^2\) - \
+\(2\ d0\ d1\ e1\ parm00\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d0\ d2\ e2\ \
+parm00\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d0\ d1\ e0\ parm01\)\/\(d0\^2 + d1\
+\^2 + d2\^2\) + 
+            2\ e1\ parm01 - \(2\ d1\^2\ e1\ parm01\)\/\(d0\^2 + d1\^2 + d2\^2\
+\) - \(2\ d1\ d2\ e2\ parm01\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d0\ d2\ e0\ \
+parm02\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d1\ d2\ e1\ parm02\)\/\(d0\^2 + d1\
+\^2 + d2\^2\) + 
+            2\ e2\ parm02 - \(2\ d2\^2\ e2\ parm02\)\/\(d0\^2 + d1\^2 + d2\^2\
+\))\)\ t + \((e0\^2 - \(d0\^2\ e0\^2\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d0\ \
+d1\ e0\ e1\)\/\(d0\^2 + d1\^2 + d2\^2\) + 
+            e1\^2 - \(d1\^2\ e1\^2\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d0\ d2\
+\ e0\ e2\)\/\(d0\^2 + d1\^2 + d2\^2\) - \(2\ d1\ d2\ e1\ e2\)\/\(d0\^2 + \
+d1\^2 + d2\^2\) + 
+            e2\^2 - \(d2\^2\ e2\^2\)\/\(d0\^2 + d1\^2 + d2\^2\))\)\ t\^2\)], \
+"Output"]
+}, Open  ]],
+
+Cell["Get rid of the (d0^2+d1^2+d2^2) term.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Collect[Simplify[Expand[f[t]*\((d0^2 + d1^2 + d2^2)\)]], t]\)], "Input"],
+
+Cell[BoxData[
+    \(d1\^2\ mEnd00\^2 + d2\^2\ mEnd00\^2 - 2\ d0\ d1\ mEnd00\ mEnd01 + 
+      d0\^2\ mEnd01\^2 + d2\^2\ mEnd01\^2 - 2\ d0\ d2\ mEnd00\ mEnd02 - 
+      2\ d1\ d2\ mEnd01\ mEnd02 + d0\^2\ mEnd02\^2 + d1\^2\ mEnd02\^2 - 
+      2\ d1\^2\ mEnd00\ parm00 - 2\ d2\^2\ mEnd00\ parm00 + 
+      2\ d0\ d1\ mEnd01\ parm00 + 2\ d0\ d2\ mEnd02\ parm00 + 
+      d1\^2\ parm00\^2 + d2\^2\ parm00\^2 + 2\ d0\ d1\ mEnd00\ parm01 - 
+      2\ d0\^2\ mEnd01\ parm01 - 2\ d2\^2\ mEnd01\ parm01 + 
+      2\ d1\ d2\ mEnd02\ parm01 - 2\ d0\ d1\ parm00\ parm01 + 
+      d0\^2\ parm01\^2 + d2\^2\ parm01\^2 + 2\ d0\ d2\ mEnd00\ parm02 + 
+      2\ d1\ d2\ mEnd01\ parm02 - 2\ d0\^2\ mEnd02\ parm02 - 
+      2\ d1\^2\ mEnd02\ parm02 - 2\ d0\ d2\ parm00\ parm02 - 
+      2\ d1\ d2\ parm01\ parm02 + d0\^2\ parm02\^2 + 
+      d1\^2\ parm02\^2 + \((\(-2\)\ d1\^2\ e0\ mEnd00 - 
+            2\ d2\^2\ e0\ mEnd00 + 2\ d0\ d1\ e1\ mEnd00 + 
+            2\ d0\ d2\ e2\ mEnd00 + 2\ d0\ d1\ e0\ mEnd01 - 
+            2\ d0\^2\ e1\ mEnd01 - 2\ d2\^2\ e1\ mEnd01 + 
+            2\ d1\ d2\ e2\ mEnd01 + 2\ d0\ d2\ e0\ mEnd02 + 
+            2\ d1\ d2\ e1\ mEnd02 - 2\ d0\^2\ e2\ mEnd02 - 
+            2\ d1\^2\ e2\ mEnd02 + 2\ d1\^2\ e0\ parm00 + 
+            2\ d2\^2\ e0\ parm00 - 2\ d0\ d1\ e1\ parm00 - 
+            2\ d0\ d2\ e2\ parm00 - 2\ d0\ d1\ e0\ parm01 + 
+            2\ d0\^2\ e1\ parm01 + 2\ d2\^2\ e1\ parm01 - 
+            2\ d1\ d2\ e2\ parm01 - 2\ d0\ d2\ e0\ parm02 - 
+            2\ d1\ d2\ e1\ parm02 + 2\ d0\^2\ e2\ parm02 + 
+            2\ d1\^2\ e2\ parm02)\)\ t + \((d1\^2\ e0\^2 + d2\^2\ e0\^2 - 
+            2\ d0\ d1\ e0\ e1 + d0\^2\ e1\^2 + d2\^2\ e1\^2 - 
+            2\ d0\ d2\ e0\ e2 - 2\ d1\ d2\ e1\ e2 + d0\^2\ e2\^2 + 
+            d1\^2\ e2\^2)\)\ t\^2\)], "Output"]
+}, Open  ]],
+
+Cell["Define Ab, Bb and Cb", "Text"],
+
+Cell[BoxData[{
+    \(\(Ab = 
+        d1\^2\ e0\^2 + d2\^2\ e0\^2 - 2\ d0\ d1\ e0\ e1 + d0\^2\ e1\^2 + 
+          d2\^2\ e1\^2 - 2\ d0\ d2\ e0\ e2 - 2\ d1\ d2\ e1\ e2 + 
+          d0\^2\ e2\^2 + d1\^2\ e2\^2;\)\), "\[IndentingNewLine]", 
+    \(\(Bb = \(-2\)\ d1\^2\ e0\ mEnd00 - 2\ d2\^2\ e0\ mEnd00 + 
+          2\ d0\ d1\ e1\ mEnd00 + 2\ d0\ d2\ e2\ mEnd00 + 
+          2\ d0\ d1\ e0\ mEnd01 - 2\ d0\^2\ e1\ mEnd01 - 
+          2\ d2\^2\ e1\ mEnd01 + 2\ d1\ d2\ e2\ mEnd01 + 
+          2\ d0\ d2\ e0\ mEnd02 + 2\ d1\ d2\ e1\ mEnd02 - 
+          2\ d0\^2\ e2\ mEnd02 - 2\ d1\^2\ e2\ mEnd02 + 
+          2\ d1\^2\ e0\ parm00 + 2\ d2\^2\ e0\ parm00 - 
+          2\ d0\ d1\ e1\ parm00 - 2\ d0\ d2\ e2\ parm00 - 
+          2\ d0\ d1\ e0\ parm01 + 2\ d0\^2\ e1\ parm01 + 
+          2\ d2\^2\ e1\ parm01 - 2\ d1\ d2\ e2\ parm01 - 
+          2\ d0\ d2\ e0\ parm02 - 2\ d1\ d2\ e1\ parm02 + 
+          2\ d0\^2\ e2\ parm02 + 
+          2\ d1\^2\ e2\ parm02;\)\), "\[IndentingNewLine]", 
+    \(\(Cb = 
+        d1\^2\ mEnd00\^2 + d2\^2\ mEnd00\^2 - 2\ d0\ d1\ mEnd00\ mEnd01 + 
+          d0\^2\ mEnd01\^2 + d2\^2\ mEnd01\^2 - 2\ d0\ d2\ mEnd00\ mEnd02 - 
+          2\ d1\ d2\ mEnd01\ mEnd02 + d0\^2\ mEnd02\^2 + d1\^2\ mEnd02\^2 - 
+          2\ d1\^2\ mEnd00\ parm00 - 2\ d2\^2\ mEnd00\ parm00 + 
+          2\ d0\ d1\ mEnd01\ parm00 + 2\ d0\ d2\ mEnd02\ parm00 + 
+          d1\^2\ parm00\^2 + d2\^2\ parm00\^2 + 2\ d0\ d1\ mEnd00\ parm01 - 
+          2\ d0\^2\ mEnd01\ parm01 - 2\ d2\^2\ mEnd01\ parm01 + 
+          2\ d1\ d2\ mEnd02\ parm01 - 2\ d0\ d1\ parm00\ parm01 + 
+          d0\^2\ parm01\^2 + d2\^2\ parm01\^2 + 2\ d0\ d2\ mEnd00\ parm02 + 
+          2\ d1\ d2\ mEnd01\ parm02 - 2\ d0\^2\ mEnd02\ parm02 - 
+          2\ d1\^2\ mEnd02\ parm02 - 2\ d0\ d2\ parm00\ parm02 - 
+          2\ d1\ d2\ parm01\ parm02 + d0\^2\ parm02\^2 + 
+          d1\^2\ parm02\^2;\)\)}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Simplify[
+      f[t] \((d0^2 + d1^2 + d2^2)\) == Ab\ t^2 + Bb\ t + Cb]\)], "Input"],
+
+Cell[BoxData[
+    \(True\)], "Output"]
+}, Open  ]],
+
+Cell["Rewrite Ab, Bb and Cb for better computability.", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Simplify[
+      Ab == \((\((d1\ e0 - d0\ e1)\)^2 + \((d2\ e1 - 
+                  d1\ e2)\)^2 + \((d2\ e0 - d0\ e2)\)^2)\)]\)], "Input"],
+
+Cell[BoxData[
+    \(True\)], "Output"]
+}, Open  ]],
+
+Cell[BoxData[{
+    \(\(f0 = parm00 - mEnd00;\)\), "\[IndentingNewLine]", 
+    \(\(f1 = parm01 - mEnd01;\)\), "\[IndentingNewLine]", 
+    \(\(f2 = parm02 - mEnd02;\)\)}], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Simplify[
+      Bb == 2.0*\((d0^2*\((e1*f1 + e2*f2)\) + d1^2*\((e2*f2 + e0*f0)\) + 
+              d2^2*\((e0*f0 + e1*f1)\) - \((d0*d1*\((f1*e0 + f0*e1)\) + 
+                  d1*d2*\((f2*e1 + f1*e2)\) + 
+                  d2*d0*\((f0*e2 + f2*e0)\))\))\)]\)], "Input"],
+
+Cell[BoxData[
+    \(True\)], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Simplify[
+      Cb \[Equal] 
+        d0^2*\((f1^2 + f2^2)\) + d1^2*\((f0^2 + f2^2)\) + 
+          d2^2*\((f0^2 + f1^2)\) + \(-2.0\)*\((d0*d1*f1*f0 + d0*d2*f0*f2 + 
+                d1*d2*f2*f1)\)]\)], "Input"],
+
+Cell[BoxData[
+    \(True\)], "Output"]
+}, Open  ]],
+
+Cell["\<\
+Solve f[t] = r^2.   Find t such that f[t] is the distance to the cylinder \
+wall.  Note this expansion is really unnecessary.  Just use the pythogorean \
+theorem to solve for t in terms of Ab, Bb and Cb.\
+\>", "Text"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+    \(Solve[\((Ab\ t^2 + Bb\ t + Cb)\) \[Equal] r2*\((d0^2 + d1^2 + d2^2)\), 
+      t]\)], "Input"],
+
+Cell[BoxData[
+    \({{t \[Rule] \((2\ d1\^2\ e0\ mEnd00 + 2\ d2\^2\ e0\ mEnd00 - 
+                2\ d0\ d1\ e1\ mEnd00 - 2\ d0\ d2\ e2\ mEnd00 - 
+                2\ d0\ d1\ e0\ mEnd01 + 2\ d0\^2\ e1\ mEnd01 + 
+                2\ d2\^2\ e1\ mEnd01 - 2\ d1\ d2\ e2\ mEnd01 - 
+                2\ d0\ d2\ e0\ mEnd02 - 2\ d1\ d2\ e1\ mEnd02 + 
+                2\ d0\^2\ e2\ mEnd02 + 2\ d1\^2\ e2\ mEnd02 - 
+                2\ d1\^2\ e0\ parm00 - 2\ d2\^2\ e0\ parm00 + 
+                2\ d0\ d1\ e1\ parm00 + 2\ d0\ d2\ e2\ parm00 + 
+                2\ d0\ d1\ e0\ parm01 - 2\ d0\^2\ e1\ parm01 - 
+                2\ d2\^2\ e1\ parm01 + 2\ d1\ d2\ e2\ parm01 + 
+                2\ d0\ d2\ e0\ parm02 + 2\ d1\ d2\ e1\ parm02 - 
+                2\ d0\^2\ e2\ parm02 - 
+                2\ d1\^2\ e2\ parm02 - \[Sqrt]\((\((\(-2\)\ d1\^2\ e0\ mEnd00 \
+- 2\ d2\^2\ e0\ mEnd00 + 2\ d0\ d1\ e1\ mEnd00 + 2\ d0\ d2\ e2\ mEnd00 + 2\ \
+d0\ d1\ e0\ mEnd01 - 2\ d0\^2\ e1\ mEnd01 - 2\ d2\^2\ e1\ mEnd01 + 2\ d1\ d2\ \
+e2\ mEnd01 + 2\ d0\ d2\ e0\ mEnd02 + 2\ d1\ d2\ e1\ mEnd02 - 2\ d0\^2\ e2\ \
+mEnd02 - 2\ d1\^2\ e2\ mEnd02 + 2\ d1\^2\ e0\ parm00 + 2\ d2\^2\ e0\ parm00 - \
+2\ d0\ d1\ e1\ parm00 - 2\ d0\ d2\ e2\ parm00 - 2\ d0\ d1\ e0\ parm01 + 2\ d0\
+\^2\ e1\ parm01 + 2\ d2\^2\ e1\ parm01 - 2\ d1\ d2\ e2\ parm01 - 2\ d0\ d2\ \
+e0\ parm02 - 2\ d1\ d2\ e1\ parm02 + 2\ d0\^2\ e2\ parm02 + 2\ d1\^2\ e2\ \
+parm02)\)\^2 - 4\ \((d1\^2\ e0\^2 + d2\^2\ e0\^2 - 2\ d0\ d1\ e0\ e1 + 
+                            d0\^2\ e1\^2 + d2\^2\ e1\^2 - 2\ d0\ d2\ e0\ e2 - 
+                            2\ d1\ d2\ e1\ e2 + d0\^2\ e2\^2 + 
+                            d1\^2\ e2\^2)\)\ \((d1\^2\ mEnd00\^2 + 
+                            d2\^2\ mEnd00\^2 - 2\ d0\ d1\ mEnd00\ mEnd01 + 
+                            d0\^2\ mEnd01\^2 + d2\^2\ mEnd01\^2 - 
+                            2\ d0\ d2\ mEnd00\ mEnd02 - 
+                            2\ d1\ d2\ mEnd01\ mEnd02 + d0\^2\ mEnd02\^2 + 
+                            d1\^2\ mEnd02\^2 - 2\ d1\^2\ mEnd00\ parm00 - 
+                            2\ d2\^2\ mEnd00\ parm00 + 
+                            2\ d0\ d1\ mEnd01\ parm00 + 
+                            2\ d0\ d2\ mEnd02\ parm00 + d1\^2\ parm00\^2 + 
+                            d2\^2\ parm00\^2 + 2\ d0\ d1\ mEnd00\ parm01 - 
+                            2\ d0\^2\ mEnd01\ parm01 - 
+                            2\ d2\^2\ mEnd01\ parm01 + 
+                            2\ d1\ d2\ mEnd02\ parm01 - 
+                            2\ d0\ d1\ parm00\ parm01 + d0\^2\ parm01\^2 + 
+                            d2\^2\ parm01\^2 + 2\ d0\ d2\ mEnd00\ parm02 + 
+                            2\ d1\ d2\ mEnd01\ parm02 - 
+                            2\ d0\^2\ mEnd02\ parm02 - 
+                            2\ d1\^2\ mEnd02\ parm02 - 
+                            2\ d0\ d2\ parm00\ parm02 - 
+                            2\ d1\ d2\ parm01\ parm02 + d0\^2\ parm02\^2 + 
+                            d1\^2\ parm02\^2 - d0\^2\ r2 - d1\^2\ r2 - 
+                            d2\^2\ r2)\))\))\)/\((2\ \((d1\^2\ e0\^2 + 
+                    d2\^2\ e0\^2 - 2\ d0\ d1\ e0\ e1 + d0\^2\ e1\^2 + 
+                    d2\^2\ e1\^2 - 2\ d0\ d2\ e0\ e2 - 2\ d1\ d2\ e1\ e2 + 
+                    d0\^2\ e2\^2 + 
+                    d1\^2\ e2\^2)\))\)}, {t \[Rule] \((2\ d1\^2\ e0\ mEnd00 + 
+                2\ d2\^2\ e0\ mEnd00 - 2\ d0\ d1\ e1\ mEnd00 - 
+                2\ d0\ d2\ e2\ mEnd00 - 2\ d0\ d1\ e0\ mEnd01 + 
+                2\ d0\^2\ e1\ mEnd01 + 2\ d2\^2\ e1\ mEnd01 - 
+                2\ d1\ d2\ e2\ mEnd01 - 2\ d0\ d2\ e0\ mEnd02 - 
+                2\ d1\ d2\ e1\ mEnd02 + 2\ d0\^2\ e2\ mEnd02 + 
+                2\ d1\^2\ e2\ mEnd02 - 2\ d1\^2\ e0\ parm00 - 
+                2\ d2\^2\ e0\ parm00 + 2\ d0\ d1\ e1\ parm00 + 
+                2\ d0\ d2\ e2\ parm00 + 2\ d0\ d1\ e0\ parm01 - 
+                2\ d0\^2\ e1\ parm01 - 2\ d2\^2\ e1\ parm01 + 
+                2\ d1\ d2\ e2\ parm01 + 2\ d0\ d2\ e0\ parm02 + 
+                2\ d1\ d2\ e1\ parm02 - 2\ d0\^2\ e2\ parm02 - 
+                2\ d1\^2\ e2\ parm02 + \[Sqrt]\((\((\(-2\)\ d1\^2\ e0\ mEnd00 \
+- 2\ d2\^2\ e0\ mEnd00 + 2\ d0\ d1\ e1\ mEnd00 + 2\ d0\ d2\ e2\ mEnd00 + 2\ \
+d0\ d1\ e0\ mEnd01 - 2\ d0\^2\ e1\ mEnd01 - 2\ d2\^2\ e1\ mEnd01 + 2\ d1\ d2\ \
+e2\ mEnd01 + 2\ d0\ d2\ e0\ mEnd02 + 2\ d1\ d2\ e1\ mEnd02 - 2\ d0\^2\ e2\ \
+mEnd02 - 2\ d1\^2\ e2\ mEnd02 + 2\ d1\^2\ e0\ parm00 + 2\ d2\^2\ e0\ parm00 - \
+2\ d0\ d1\ e1\ parm00 - 2\ d0\ d2\ e2\ parm00 - 2\ d0\ d1\ e0\ parm01 + 2\ d0\
+\^2\ e1\ parm01 + 2\ d2\^2\ e1\ parm01 - 2\ d1\ d2\ e2\ parm01 - 2\ d0\ d2\ \
+e0\ parm02 - 2\ d1\ d2\ e1\ parm02 + 2\ d0\^2\ e2\ parm02 + 2\ d1\^2\ e2\ \
+parm02)\)\^2 - 4\ \((d1\^2\ e0\^2 + d2\^2\ e0\^2 - 2\ d0\ d1\ e0\ e1 + 
+                            d0\^2\ e1\^2 + d2\^2\ e1\^2 - 2\ d0\ d2\ e0\ e2 - 
+                            2\ d1\ d2\ e1\ e2 + d0\^2\ e2\^2 + 
+                            d1\^2\ e2\^2)\)\ \((d1\^2\ mEnd00\^2 + 
+                            d2\^2\ mEnd00\^2 - 2\ d0\ d1\ mEnd00\ mEnd01 + 
+                            d0\^2\ mEnd01\^2 + d2\^2\ mEnd01\^2 - 
+                            2\ d0\ d2\ mEnd00\ mEnd02 - 
+                            2\ d1\ d2\ mEnd01\ mEnd02 + d0\^2\ mEnd02\^2 + 
+                            d1\^2\ mEnd02\^2 - 2\ d1\^2\ mEnd00\ parm00 - 
+                            2\ d2\^2\ mEnd00\ parm00 + 
+                            2\ d0\ d1\ mEnd01\ parm00 + 
+                            2\ d0\ d2\ mEnd02\ parm00 + d1\^2\ parm00\^2 + 
+                            d2\^2\ parm00\^2 + 2\ d0\ d1\ mEnd00\ parm01 - 
+                            2\ d0\^2\ mEnd01\ parm01 - 
+                            2\ d2\^2\ mEnd01\ parm01 + 
+                            2\ d1\ d2\ mEnd02\ parm01 - 
+                            2\ d0\ d1\ parm00\ parm01 + d0\^2\ parm01\^2 + 
+                            d2\^2\ parm01\^2 + 2\ d0\ d2\ mEnd00\ parm02 + 
+                            2\ d1\ d2\ mEnd01\ parm02 - 
+                            2\ d0\^2\ mEnd02\ parm02 - 
+                            2\ d1\^2\ mEnd02\ parm02 - 
+                            2\ d0\ d2\ parm00\ parm02 - 
+                            2\ d1\ d2\ parm01\ parm02 + d0\^2\ parm02\^2 + 
+                            d1\^2\ parm02\^2 - d0\^2\ r2 - d1\^2\ r2 - 
+                            d2\^2\ r2)\))\))\)/\((2\ \((d1\^2\ e0\^2 + 
+                    d2\^2\ e0\^2 - 2\ d0\ d1\ e0\ e1 + d0\^2\ e1\^2 + 
+                    d2\^2\ e1\^2 - 2\ d0\ d2\ e0\ e2 - 2\ d1\ d2\ e1\ e2 + 
+                    d0\^2\ e2\^2 + d1\^2\ e2\^2)\))\)}}\)], "Output"]
+}, Open  ]]
+}, Open  ]]
+},
+FrontEndVersion->"5.0 for Microsoft Windows",
+ScreenRectangle->{{0, 1600}, {0, 1122}},
+WindowSize->{1204, 740},
+WindowMargins->{{153, Automatic}, {136, Automatic}},
+PrintingCopies->1,
+PrintingPageRange->{Automatic, Automatic}
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 106, 3, 51, "Subtitle"],
+Cell[1885, 58, 125, 3, 52, "Text"],
+
+Cell[CellGroupData[{
+Cell[2035, 65, 162, 2, 30, "Input"],
+Cell[2200, 69, 138, 2, 29, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[2375, 76, 49, 1, 30, "Input"],
+Cell[2427, 79, 286, 4, 29, "Output"]
+}, Open  ]],
+Cell[2728, 86, 36, 0, 33, "Text"],
+Cell[2767, 88, 376, 6, 71, "Input"],
+Cell[3146, 96, 35, 0, 33, "Text"],
+
+Cell[CellGroupData[{
+Cell[3206, 100, 79, 1, 30, "Input"],
+Cell[3288, 103, 38, 1, 29, "Output"]
+}, Open  ]],
+Cell[3341, 107, 75, 0, 33, "Text"],
+
+Cell[CellGroupData[{
+Cell[3441, 111, 59, 1, 30, "Input"],
+Cell[3503, 114, 159, 2, 44, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[3699, 121, 40, 1, 30, "Input"],
+Cell[3742, 124, 532, 7, 83, "Output"]
+}, Open  ]],
+Cell[4289, 134, 26, 0, 30, "Input"],
+Cell[4318, 136, 132, 3, 33, "Text"],
+Cell[4453, 141, 155, 3, 52, "Text"],
+
+Cell[CellGroupData[{
+Cell[4633, 148, 197, 4, 30, "Input"],
+Cell[4833, 154, 2949, 45, 306, "Output"]
+}, Open  ]],
+Cell[7797, 202, 53, 0, 33, "Text"],
+
+Cell[CellGroupData[{
+Cell[7875, 206, 92, 1, 30, "Input"],
+Cell[7970, 209, 1776, 28, 162, "Output"]
+}, Open  ]],
+Cell[9761, 240, 36, 0, 33, "Text"],
+Cell[9800, 242, 1873, 31, 170, "Input"],
+
+Cell[CellGroupData[{
+Cell[11698, 277, 103, 2, 30, "Input"],
+Cell[11804, 281, 38, 1, 29, "Output"]
+}, Open  ]],
+Cell[11857, 285, 63, 0, 33, "Text"],
+
+Cell[CellGroupData[{
+Cell[11945, 289, 156, 3, 30, "Input"],
+Cell[12104, 294, 38, 1, 29, "Output"]
+}, Open  ]],
+Cell[12157, 298, 178, 3, 70, "Input"],
+
+Cell[CellGroupData[{
+Cell[12360, 305, 287, 5, 50, "Input"],
+Cell[12650, 312, 38, 1, 29, "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+Cell[12725, 318, 228, 5, 30, "Input"],
+Cell[12956, 325, 38, 1, 29, "Output"]
+}, Open  ]],
+Cell[13009, 329, 227, 4, 33, "Text"],
+
+Cell[CellGroupData[{
+Cell[13261, 337, 113, 2, 30, "Input"],
+Cell[13377, 341, 6535, 96, 501, "Output"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

@@ -21,11 +21,9 @@ import java.util.HashMap;
  */
 
 public class MACCache {
-   private static final double RESOLUTION = ToSI.eV(1.0);
 
    private final MassAbsorptionCoefficient mMac;
    private HashMap<Material, double[]> mMACs = new HashMap<Material, double[]>(); // Maps
-   private final double mMaxEnergy;
    /**
     * The value returned by getMAC(...) when the Material/energy combination is
     * not currently stored in the cache. Note: NOT_IN_CACHE = Double.MAX_VALUE
@@ -39,7 +37,6 @@ public class MACCache {
    public MACCache(double maxE, MassAbsorptionCoefficient mac) {
       mMac = mac;
       mMACs = new HashMap<Material, double[]>();
-      mMaxEnergy = maxE;
    }
 
    public void clear() {
@@ -56,26 +53,6 @@ public class MACCache {
     *         the MAC is not in the cache.
     */
    public double getMAC(Material mat, double energy) {
-      if(false) {
-         double[] vals = mMACs.get(mat);
-         if(vals == null) {
-            initialize(mat);
-            vals = mMACs.get(mat);
-         }
-         assert vals != null;
-         final int index = (int) Math.round(energy / RESOLUTION);
-         assert index < vals.length;
-         return index < vals.length ? vals[index] : NOT_IN_CACHE;
-      } else
-         return mMac.compute(mat, energy);
-   }
-
-   private void initialize(Material mat) {
-      assert mMACs.get(mat) == null;
-      final int len = (int) Math.ceil(mMaxEnergy / RESOLUTION);
-      final double[] vals = new double[len];
-      for(int i = 0; i < len; ++i)
-         vals[i] = mMac.compute(mat, i * RESOLUTION);
-      mMACs.put(mat, vals);
+	   return mMac.compute(mat, energy);
    }
 }

@@ -6,7 +6,6 @@ import gov.nist.microanalysis.EPQLibrary.BackscatterFactor;
 import gov.nist.microanalysis.EPQLibrary.Composition;
 import gov.nist.microanalysis.EPQLibrary.EPQException;
 import gov.nist.microanalysis.EPQLibrary.Element;
-import gov.nist.microanalysis.EPQLibrary.FromSI;
 import gov.nist.microanalysis.EPQLibrary.MaterialFactory;
 import gov.nist.microanalysis.EPQLibrary.ToSI;
 
@@ -62,20 +61,6 @@ public class BackscatterFactorTest
             for(final AtomicShell shell : shells) {
                final double def = BackscatterFactor.Default.compute(comp, shell, e0);
                final double cur = bs.compute(comp, shell, e0);
-               if(false) {
-                  System.out.print(alg);
-                  System.out.print("\t");
-                  System.out.print(comp);
-                  System.out.print("\t");
-                  System.out.print(shell);
-                  System.out.print("\t");
-                  System.out.print(FromSI.keV(e0));
-                  System.out.print(" keV\t");
-                  System.out.print(def);
-                  System.out.print("\t");
-                  System.out.print(cur);
-                  System.out.println();
-               }
                assertEquals(def, cur, 0.1);
             }
          }

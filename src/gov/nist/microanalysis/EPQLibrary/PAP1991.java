@@ -216,26 +216,13 @@ public class PAP1991
          throws EPQException {
       final double chi = MassAbsorptionCoefficient.toCmSqrPerGram(chi(xrt));
       final double chi2 = chi * chi;
-      if(true) {
-         // PAP1991's expressions (corrected!!)
-         final double f1 = (mA1 / chi)
-               * ((((((mRc - mRm) * (mRx - mRc - (2.0 / chi))) - (2.0 / chi2)) * Math.exp(-chi * mRc)) - ((mRc - mRm) * mRx))
-                     + (mRm * (mRc - (2.0 / chi))) + (2.0 / chi2));
-         final double f2 = (mA2 / chi) * (((((mRx - mRc) * (mRx - mRc - (2.0 / chi))) + (2.0 / chi2)) * Math.exp(-chi * mRc))
-               - ((2.0 / chi2) * Math.exp(-chi * mRx)));
-         return toSI(f1 + f2);
-      } else {
-         // Direct integration using Mathematica (they agree!)
-         final double f1 = (mA1 * (((-2.0 + (2.0 * mRm * chi)) - (mRc * mRc * chi2) - (mRm * mRx * chi2))
-               + (mRc * chi * (-2.0 + (mRm * chi) + (mRx * chi)))
-               + (Math.exp(mRc * chi) * ((2.0 - (mRc * mRx * chi2)) + (mRm * chi * (-2.0 + (mRc * chi) + (mRx * chi)))))))
-               / (Math.exp(mRc * chi) * chi2 * chi);
-         final double f2 = (mA2
-               * (((2.0 - (2.0 * Math.exp((mRc - mRx) * chi)) - (2.0 * mRx * chi)) + (mRc * mRc * chi2) + (mRx * mRx * chi2))
-                     - (2.0 * mRc * chi * (-1.0 + (mRx * chi)))))
-               / (Math.exp(mRc * chi) * chi2 * chi);
-         return toSI(f1 + f2);
-      }
+     // PAP1991's expressions (corrected!!)
+     final double f1 = (mA1 / chi)
+           * ((((((mRc - mRm) * (mRx - mRc - (2.0 / chi))) - (2.0 / chi2)) * Math.exp(-chi * mRc)) - ((mRc - mRm) * mRx))
+                 + (mRm * (mRc - (2.0 / chi))) + (2.0 / chi2));
+     final double f2 = (mA2 / chi) * (((((mRx - mRc) * (mRx - mRc - (2.0 / chi))) + (2.0 / chi2)) * Math.exp(-chi * mRc))
+           - ((2.0 / chi2) * Math.exp(-chi * mRx)));
+     return toSI(f1 + f2);
    }
 
    /**

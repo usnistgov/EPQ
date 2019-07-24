@@ -1,7 +1,5 @@
 package gov.nist.microanalysis.EPQTests;
 
-import java.io.File;
-import java.io.PrintWriter;
 import java.util.Random;
 
 import gov.nist.microanalysis.EPQLibrary.Composition;
@@ -14,7 +12,6 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS;
 import gov.nist.microanalysis.NISTMonte.MultiPlaneShape;
 import gov.nist.microanalysis.NISTMonte.Sphere;
 import gov.nist.microanalysis.NISTMonte.SumShape;
-import gov.nist.microanalysis.NISTMonte.TrajectoryVRML;
 import gov.nist.microanalysis.Utility.Math2;
 
 import junit.framework.TestCase;
@@ -183,35 +180,13 @@ public class SumShapeTest
             assertTrue(t > 1.0);
          }
          {
-            TrajectoryVRML vrml = null;
-            PrintWriter wr = null;
-            if(false)
-               try {
-                  wr = new PrintWriter(new File("C:\\Documents and Settings\\Nicholas\\Desktop\\dump.wrl"));
-                  vrml = new TrajectoryVRML(mMonte, wr);
-                  vrml.renderSample();
-                  wr.println("# full line");
-                  vrml.drawLine(inside1, outside);
-               }
-               catch(final Exception e) {
-                  e.printStackTrace();
-               }
             assertTrue(mPillOuter.contains(inside1));
             assertFalse(mPillOuter.contains(outside));
             final double t = mPillOuter.getFirstIntersection(inside1, outside);
-            if(vrml != null) {
-               if(wr != null)
-                  wr.println("# inside to outside");
-               vrml.drawLine(inside1, Math2.pointBetween(inside1, outside, t));
-            }
+
             assertTrue(mPillOuter.contains(Math2.pointBetween(inside1, outside, 0.99 * t)));
             assertFalse(mPillOuter.contains(Math2.pointBetween(inside1, outside, 1.01 * t)));
             final double tp = mPillOuter.getFirstIntersection(outside, inside1);
-            if(vrml != null) {
-               wr.println("# outside to inside");
-               vrml.drawLine(outside, Math2.pointBetween(outside, inside1, tp));
-               wr.flush();
-            }
             assertFalse(mPillOuter.contains(Math2.pointBetween(outside, inside1, 0.99 * tp)));
             assertTrue(mPillOuter.contains(Math2.pointBetween(outside, inside1, 1.01 * tp)));
             assertTrue(t < 1.0);

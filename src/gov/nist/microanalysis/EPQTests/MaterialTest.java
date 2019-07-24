@@ -181,12 +181,6 @@ public class MaterialTest
          for(final String mat : mats) {
             final Composition comp = MaterialFactory.createMaterial(mat);
             final String ms = EPQXStream.getInstance().toXML(comp);
-            if(false) {
-               System.out.print(comp);
-               System.out.print("\t");
-               System.out.print(ms);
-               System.out.println();
-            }
             assertTrue(EPQXStream.getInstance().fromXML(ms).equals(comp));
          }
       }

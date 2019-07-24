@@ -587,21 +587,6 @@ public class SpecDisplay extends JComponent {
 		private final double mTolerance;
 		private double mWgtAvgCenter;
 
-		public List<KLMLine> addLines(Collection<KLMLine> lines) {
-			final ArrayList<KLMLine> res = new ArrayList<KLMLine>();
-			int cx;
-			do {
-				cx = 0;
-				for (final KLMLine line : lines)
-					if(add(line)) {
-						++cx;
-						res.add(line);
-					}
-				lines.removeAll(res);
-			} while (cx > 0);
-			return res;
-		}
-
 		private EffectiveLine(KLMLine klm, double tolerance) {
 			mLines = new ArrayList<KLMLine>();
 			mAmplitude = 0.0;

@@ -3,20 +3,15 @@ package gov.nist.microanalysis.EPQLibrary.Detector;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import gov.nist.microanalysis.EPQLibrary.AlgorithmUser;
 import gov.nist.microanalysis.EPQLibrary.AtomicShell;
-import gov.nist.microanalysis.EPQLibrary.Composition;
 import gov.nist.microanalysis.EPQLibrary.EPQException;
 import gov.nist.microanalysis.EPQLibrary.Element;
 import gov.nist.microanalysis.EPQLibrary.MassAbsorptionCoefficient;
 import gov.nist.microanalysis.EPQLibrary.Material;
 import gov.nist.microanalysis.EPQLibrary.MaterialFactory;
 import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
-import gov.nist.microanalysis.EPQLibrary.SpectrumSimulator;
 import gov.nist.microanalysis.EPQLibrary.ToSI;
 import gov.nist.microanalysis.EPQLibrary.XRayTransition;
 import gov.nist.microanalysis.Utility.HalfUpFormat;
@@ -186,40 +181,6 @@ public class SiLiCalibration
     */
    @Override
    public boolean isVisible(XRayTransition xrt, double eBeam) {
-      if(false) {
-         // Based on spectrum simulation
-         final double THRESHOLD = 0.01;
-         final SpectrumProperties props = new SpectrumProperties(getProperties());
-         props.setNumericProperty(SpectrumProperties.BeamEnergy, eBeam);
-         props.setNumericProperty(SpectrumProperties.WorkingDistance, props.getNumericWithDefault(SpectrumProperties.DetectorOptWD, 0.0));
-         final Set<AtomicShell> sas = new TreeSet<AtomicShell>();
-         sas.add(xrt.getDestination());
-         if(AtomicShell.exists(xrt.getElement(), AtomicShell.K)
-               && (AtomicShell.getEdgeEnergy(xrt.getElement(), AtomicShell.K) < eBeam))
-            sas.add(new AtomicShell(xrt.getElement(), AtomicShell.K));
-         if(AtomicShell.exists(xrt.getElement(), AtomicShell.LIII)
-               && (AtomicShell.getEdgeEnergy(xrt.getElement(), AtomicShell.LIII) < eBeam))
-            sas.add(new AtomicShell(xrt.getElement(), AtomicShell.LIII));
-         if(AtomicShell.exists(xrt.getElement(), AtomicShell.MV)
-               && (AtomicShell.getEdgeEnergy(xrt.getElement(), AtomicShell.MV) < eBeam))
-            sas.add(new AtomicShell(xrt.getElement(), AtomicShell.MV));
-         final Composition comp = new Composition(new Element[] {
-            xrt.getElement()
-         }, new double[] {
-            1.0
-         });
-         try {
-            final TreeMap<XRayTransition, Double> ci = SpectrumSimulator.Basic.computeIntensities(comp, props, sas);
-            double max = 0.0;
-            for(final Double d : ci.values())
-               max = Math.max(max, d.doubleValue());
-            final Double v = ci.get(xrt);
-            return (v != null) && ((v.doubleValue() / max) > THRESHOLD);
-         }
-         catch(final EPQException ex) {
-            ex.printStackTrace();
-         }
-      }
       switch(xrt.getFamily()) {
          case AtomicShell.KFamily:
             return (xrt.getElement().getAtomicNumber() >= mFirstKElement) && (xrt.getEdgeEnergy() < (eBeam / MIN_OVERVOLTAGE));

@@ -66,16 +66,6 @@ public class ElectronRangeTest
             final double e0 = e0s[j];
             final double val = FromSI.MICROMETER * impl.computeMeters(mat, e0);
             final double def = FromSI.MICROMETER * ElectronRange.Default.computeMeters(mat, e0);
-            if(false) {
-               System.out.print(mat);
-               System.out.print("\t");
-               System.out.print(FromSI.keV(e0));
-               System.out.print(" keV \t");
-               System.out.print(val);
-               System.out.print("\t");
-               System.out.print(def);
-               System.out.println();
-            }
             assertEquals(val, def, def * errs[j]);
          }
       }

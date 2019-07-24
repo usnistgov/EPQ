@@ -53,19 +53,6 @@ public class IonizationCrossSectionTest
                8.0 * e0
             };
             for(final double e02 : e0s) {
-               if(false) {
-                  System.out.print("P\t");
-                  System.out.print(alg);
-                  System.out.print("\t");
-                  System.out.print(shell);
-                  System.out.print("\t");
-                  System.out.print(e02 / e0);
-                  System.out.print("\t");
-                  System.out.print(alg.computeShell(shell, e02));
-                  System.out.print("\t");
-                  System.out.print(ProportionalIonizationCrossSection.Pouchou86.computeShell(shell, e02));
-                  System.out.println();
-               }
                assertEquals(alg.computeShell(shell, e02), ProportionalIonizationCrossSection.Pouchou86.computeShell(shell, e02), 0.1
                      * ProportionalIonizationCrossSection.Pouchou86.computeShell(shell, e02));
             }

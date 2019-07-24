@@ -1030,14 +1030,6 @@ public class XRayTransitionSet
          return false;
       if(obj instanceof XRayTransitionSet) {
          final XRayTransitionSet xrts = (XRayTransitionSet) obj;
-         if(false) {
-            final Iterator<XRayTransition> iA = mSet.iterator();
-            final Iterator<XRayTransition> iB = xrts.mSet.iterator();
-            while(iA.hasNext() && iB.hasNext())
-               if(!iA.next().equals(iB.next()))
-                  return false;
-            return (iA.hasNext() == false) && (iB.hasNext() == false);
-         }
          return toString().equals(xrts.toString());
       }
       return false;

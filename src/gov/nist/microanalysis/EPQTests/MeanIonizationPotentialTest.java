@@ -37,15 +37,6 @@ public class MeanIonizationPotentialTest
 
    public void testOne() {
       final Composition k3189 = MaterialFactory.createMaterial(MaterialFactory.K3189);
-      if(false)
-         for(final Element el : k3189.getElementSet()) {
-            System.out.print(el);
-            System.out.print("\t");
-            System.out.print(FromSI.eV(MeanIonizationPotential.Berger64.compute(el)));
-            System.out.print("\t");
-            System.out.print(k3189.weightFraction(el, true));
-            System.out.println();
-         }
       // Berger64
       assertEquals(FromSI.keV(MeanIonizationPotential.Berger64.compute(Element.Si)), 0.172, 0.001);
       assertEquals(FromSI.keV(MeanIonizationPotential.Berger64.compute(Element.Al)), 0.163, 0.002);

@@ -1,6 +1,6 @@
 /**
  * <p>
- * Reads AMPET PMCA/MCA spectrum files.
+ * Reads AMPTEK PMCA/MCA spectrum files.
  * </p>
  * <p>
  * Copyright: Pursuant to title 17 Section 105 of the United States Code this

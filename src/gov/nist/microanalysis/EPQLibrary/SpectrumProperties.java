@@ -1904,6 +1904,11 @@ public class SpectrumProperties
    public void setConductiveCoating(ConductiveCoating cc) {
       setObjectProperty(SpectrumProperties.ConductiveCoating, cc);
    }
+   
+   public ConductiveCoating getConductiveCoating() {
+	   return (ConductiveCoating)getObjectWithDefault(SpectrumProperties.ConductiveCoating, null);
+   }
+   
 
    /**
     * Set the position of the detector and associated properties.

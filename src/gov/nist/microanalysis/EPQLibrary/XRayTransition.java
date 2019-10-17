@@ -560,7 +560,7 @@ final public class XRayTransition
       assert (AtomicShell.isValid(src));
       assert (AtomicShell.isValid(dest) && (dest != AtomicShell.Continuum));
       if(dest == src)
-         throw new EPQFatalException("No transition is possible if the source and destination are equal.");
+         throw new EPQFatalException("No transition is possible if the source and destination are equal. "+dest +" == "+src);
       if(dest > src) {
          final int tmp = src;
          src = dest;
@@ -709,6 +709,7 @@ final public class XRayTransition
       final Element el = Element.byName(str.substring(0, p));
       final int dest = AtomicShell.parseIUPACName(str.substring(p + 1, q));
       final int src = AtomicShell.parseIUPACName(str.substring(q + 1));
+      assert (dest!=1001) && (src!=1001) : str.substring(p + 1, q) + " and " + str.substring(q + 1);
       return new XRayTransition(el, src, dest);
    }
 

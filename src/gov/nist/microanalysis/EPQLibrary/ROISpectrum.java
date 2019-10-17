@@ -129,7 +129,7 @@ public class ROISpectrum
     * @param lowChannel int
     * @param highChannel int
     */
-   public ROISpectrum(ISpectrumData sd, int lowChannel, int highChannel) {
+   private ROISpectrum(ISpectrumData sd, int lowChannel, int highChannel) {
       super(sd);
       assert (sd != null);
       getProperties().setBooleanProperty(SpectrumProperties.IsROISpectrum, true);
@@ -156,10 +156,11 @@ public class ROISpectrum
       setROI(el, family, fwhmAtMnKa);
    }
 
-   public ROISpectrum(ISpectrumData sd, RegionOfInterestSet.RegionOfInterest roi) {
+   public ROISpectrum(ISpectrumData sd, RegionOfInterestSet.RegionOfInterest roi, double modelThresh) {
       this(sd, 0, 1);
-      mLowChannel = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, FromSI.eV(roi.lowEnergy())));
+      mLowChannel = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, FromSI.eV(roi.lowEnergy())-1.5*roi.getModel().getFWHMatMnKa()));
       mHighChannel = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, FromSI.eV(roi.highEnergy())));
+      mModelThreshold = modelThresh;
    }
 
    /**

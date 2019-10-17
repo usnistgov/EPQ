@@ -654,7 +654,7 @@ public class Element
     */
    static public int atomicNumberForName(String name) {
       for(int i = 0; i < mElementNames.length; ++i)
-         if((mElementNames[i].compareToIgnoreCase(name) == 0) || (mAbbreviations[i].compareToIgnoreCase(name) == 0))
+         if((mElementNames[i].compareToIgnoreCase(name) == 0) || (mAbbreviations[i].compareTo(name) == 0))
             return i;
       try {
          return Integer.parseInt(name);
@@ -675,6 +675,33 @@ public class Element
       final int z = atomicNumberForName(name);
       return z == 0 ? None : mAllElements[z - 1];
    }
+   
+   
+   /**
+    * atomicNumberForAbbrev - Get the atomic number for the named element. THe
+    * name may be the abbreviation.
+    * 
+    * @param name String
+    * @return int
+    */
+   static public int atomicNumberForAbbrev(String abbrev) {
+      for(int i = 0; i < mElementNames.length; ++i)
+         if(mAbbreviations[i].compareToIgnoreCase(abbrev) == 0)
+            return i;
+      return Element.elmNone;
+   }
+   
+   /**
+    * byAbbrev - Get the Element associated with the specified abbreviation.
+    * 
+    * @param name String
+    * @return Element
+    */
+   static public Element byAbbrev(String name) {
+      final int z = atomicNumberForAbbrev(name);
+      return z == 0 ? None : mAllElements[z - 1];
+   }
+
 
    /**
     * byName - Get the Element associated with the specified atomic number.

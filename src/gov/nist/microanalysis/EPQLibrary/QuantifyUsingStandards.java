@@ -509,16 +509,11 @@ public class QuantifyUsingStandards
       // Compute the k-ratios wrt the standards from the k-ratios wrt
       // references
       final KRatioSet krs = new KRatioSet(), fullKrs = new KRatioSet();
-      final Map<XRayTransitionSet, ConductiveCoating> coatings = new HashMap<>();
       for(final Element elm : measured) {
          assert !isUnmeasuredElementRule(elm);
          assert !isStripped(elm);
          final RegionOfInterest prefRoi = getPreferredROI(elm);
          for(final RegionOfInterestSet.RegionOfInterest roi : getStandardROIS(elm)) {
-            final ISpectrumData stdSpec = mStdSpectra.get(elm);
-            final ConductiveCoating cc = (ConductiveCoating) stdSpec.getProperties().getObjectWithDefault(SpectrumProperties.ConductiveCoating, null);
-            if(cc != null)
-               coatings.put(roi.getAllTransitions(), cc);
             assert roi.getElementSet().first().equals(elm);
             if(refs.containsKey(roi))
                try {
@@ -552,7 +547,7 @@ public class QuantifyUsingStandards
       for(final Map.Entry<Element, ExtraKRatio> me : mExtraKRatios.entrySet())
          withStripped.addKRatio(me.getValue().mXRTS, me.getValue().mKRatio);
       if(!mKRatiosOnly) {
-         final KRatioSet withExtra = new KRatioSet();
+          final KRatioSet withExtra = new KRatioSet();
          for(final Element elm : krs.getElementSet())
             if(mExtraKRatios.containsKey(elm)) {
                final ExtraKRatio xtra = mExtraKRatios.get(elm);

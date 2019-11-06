@@ -596,7 +596,8 @@ public class EDSDetector
           */
          @Override
          public double[] getEfficiency(final DetectorProperties dp) {
-            final double[] res = new double[dp.getChannelCount()];
+        	 assert false :  "Should not be used!!!";
+             final double[] res = new double[dp.getChannelCount()];
             Arrays.fill(res, 1.0);
             return res;
          }
@@ -623,9 +624,11 @@ public class EDSDetector
       class IdealDetectorProperties
          extends
          DetectorProperties {
+         
          IdealDetectorProperties(final int nChannels, final double[] pos) {
-            super(new ElectronProbe("Perfect"), "Ideal Detector", nChannels, pos);
-         }
+             super(new ElectronProbe("Perfect"), "Ideal Detector", nChannels, pos);
+          }
+
 
       }
 
@@ -641,7 +644,13 @@ public class EDSDetector
          @Override
          protected void convolve() {
             final EditableSpectrum es = getSpectrum();
-            System.arraycopy(getAccumulator(), 0, es.getCounts(), 0, es.getChannelCount());
+            SpectrumProperties sp = es.getProperties();
+            double sc=1.0;
+            if(sp.isDefined(SpectrumProperties.DetectorArea)) {
+              	final double area = 1.0e-6 * sp.getNumericWithDefault(SpectrumProperties.DetectorArea, 1.0);  // in m^2
+             	sc = area / (4.0 * Math.PI);
+          	}
+            System.arraycopy(Math2.multiply(sc, getAccumulator()), 0, es.getCounts(), 0, es.getChannelCount());
             mDirty = false;
          }
       }

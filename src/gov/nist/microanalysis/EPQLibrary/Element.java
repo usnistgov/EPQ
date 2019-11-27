@@ -664,6 +664,26 @@ public class Element
       }
    }
 
+   
+   /**
+    * atomicNumberForName - Get the atomic number for the named element. THe
+    * name may be the abbreviation or the full name (case insensitive)
+    * 
+    * @param name String
+    * @return int
+    */
+   static public int atomicNumberForNameUncase(String name) {
+      for(int i = 0; i < mElementNames.length; ++i)
+         if((mElementNames[i].compareToIgnoreCase(name) == 0) || (mAbbreviations[i].compareToIgnoreCase(name) == 0))
+            return i;
+      try {
+         return Integer.parseInt(name);
+      }
+      catch(final NumberFormatException ex) {
+         return Element.elmNone;
+      }
+   }
+   
    /**
     * byName - Get the Element associated with the specified name or
     * abbreviation.

@@ -3,6 +3,7 @@ package gov.nist.microanalysis.EPQLibrary;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -59,7 +60,7 @@ public class MLLSQSignature {
 		res.add(Element.O);
 		return res;
 	}
-
+	
 	/**
 	 * Constructs a MLLSQSignature object to process spectra from the specified
 	 * detector at the specified beam energy.
@@ -73,8 +74,7 @@ public class MLLSQSignature {
 		mOptimal = null;
 		mDetector = detector;
 		mBeamEnergy = e0;
-		mStrip.add(Element.C);
-		mStrip.add(Element.O);
+		mStrip = defaultStrip();
 		mStripUnlikely = true;
 	}
 
@@ -132,6 +132,7 @@ public class MLLSQSignature {
 		// assert mBeamEnergy == ToSI.eV(SpectrumUtils.getBeamEnergy(spec));
 		if (mFilterFit == null) {
 			mFilterFit = new FilterFit(mDetector, mBeamEnergy);
+			mFilterFit.setStripUnlikely(mStripUnlikely);
 			mFilterFit.setResidualModelThreshold(0.0);
 			// Special rules for one element masquerading as another
 			final FilterFit.CompoundCullingStrategy cs = new FilterFit.CompoundCullingStrategy();
@@ -169,6 +170,7 @@ public class MLLSQSignature {
 					// Figure out which lines to use
 					for (final Map.Entry<Element, ISpectrumData> me : mStandards.entrySet()) {
 						final ISpectrumData ref = me.getValue();
+						SpectrumUtils.applyZeroPeakDiscriminator(ref, SpectrumUtils.channelForEnergy(ref, ToSI.eV(100.0)));
 						final Element elm = me.getKey();
 						RegionOfInterestSet.RegionOfInterest bestRoi = null;
 						int best = XRayTransition.None;
@@ -211,6 +213,7 @@ public class MLLSQSignature {
 							final Composition comp = refProps
 									.getCompositionProperty(SpectrumProperties.StandardComposition);
 							final double zaf = mZafCorrectRefs ? ca.relativeZAF(comp, xrt, refProps)[3] : 1.0;
+							System.out.println(comp+"("+xrt+")="+zaf);
 							mOptimal.put(xrts, Double.valueOf(comp.weightFraction(elm, true) * zaf));
 						}
 					}
@@ -251,7 +254,9 @@ public class MLLSQSignature {
 	 */
 	public ParticleSignature signature(KRatioSet krs) {
 		final KRatioSet optimal = optimalKRatioSet(krs);
-		final ParticleSignature res = new ParticleSignature(mStrip);
+		final HashSet<Element> strip = new HashSet<>(mStrip);
+		strip.remove(Element.C);
+		final ParticleSignature res = new ParticleSignature(mStrip.contains(Element.C) ? Collections.singleton(Element.C) : Collections.emptySet(), strip);
 		for (final XRayTransitionSet xrts : optimal.getTransitions())
 			res.add(xrts.getElement(),
 					UncertainValue2.multiply(mOptimal.get(xrts).doubleValue(), optimal.getKRatioU(xrts)));
@@ -281,15 +286,6 @@ public class MLLSQSignature {
 		return new TreeSet<Element>(mStandards.keySet());
 	}
 
-	/**
-	 * Add an element to the list of elements which will be stripped (ie. ignored in
-	 * the signature)
-	 * 
-	 * @param elm
-	 */
-	public void addStripped(Element elm) {
-		mStrip.add(elm);
-	}
 
 	/**
 	 * All all the Element objects in the specified collection.
@@ -299,7 +295,7 @@ public class MLLSQSignature {
 	public void addStripped(Collection<Element> col) {
 		mStrip.addAll(col);
 	}
-
+	
 	/**
 	 * Is an element in the list of elements which will be stripped (ie. ignored in
 	 * the signature)
@@ -318,16 +314,7 @@ public class MLLSQSignature {
 	public void clearStripped() {
 		mStrip.clear();
 	}
-
-	/**
-	 * Remove an element from the list of elements which will be stripped (ie.
-	 * ignored in the signature)
-	 * 
-	 * @param elm
-	 */
-	public void removeStipped(Element elm) {
-		mStrip.remove(elm);
-	}
+	
 
 	/**
 	 * Are the references ZAF corrected in addition to corrected for composition?

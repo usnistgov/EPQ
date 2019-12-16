@@ -1588,7 +1588,7 @@ final public class SpectrumUtils {
 		for (int i = 0; i < lldCh; ++i)
 			if (spec.getCounts(i) != 0.0) {
 				final EditableSpectrum es = new EditableSpectrum(spec);
-				for (int j = 0; j < lldCh; ++j)
+				for (int j = i; j < lldCh; ++j)
 					es.setCounts(j, 0.0);
 				return es;
 			}

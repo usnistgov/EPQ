@@ -5,6 +5,7 @@ package gov.nist.microanalysis.EPQLibrary;
 
 import gov.nist.microanalysis.EPQLibrary.RegionOfInterestSet.RegionOfInterest;
 import gov.nist.microanalysis.Utility.LinearRegression;
+import gov.nist.microanalysis.Utility.Math2;
 
 /**
  * @author nritchie
@@ -63,8 +64,10 @@ public class ROISpectrumNaive extends DerivedSpectrum {
 	private LinearRegression fitBackground(int cCh) {
 		final ISpectrumData src = getBaseSpectrum();
 		LinearRegression lr = new LinearRegression();
-		for (int i = -BACKGROUND_EXTENT; i < BACKGROUND_EXTENT; ++i)
-			lr.addDatum(cCh + i, src.getCounts(cCh + i), Math.sqrt(src.getCounts(cCh + i)));
+		for (int i = -BACKGROUND_EXTENT; i < BACKGROUND_EXTENT; ++i) {
+			final int ch = Math2.bound(cCh+i, 0, src.getChannelCount()-1);
+			lr.addDatum(ch, src.getCounts(ch), Math.sqrt(src.getCounts(ch)));
+		}
 		return lr;
 	}
 

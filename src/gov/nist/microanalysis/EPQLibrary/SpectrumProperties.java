@@ -802,6 +802,7 @@ public class SpectrumProperties
     * in EPQLibrary.
     */
    public static final PropertyId ParticleSignature = new PropertyId("Particle Signature", ParticleSignature.class);
+   public static final PropertyId ParticleSignature2 = new PropertyId("Particle Signature2", TreeMap.class);
 
    /**
     * SampleShape - A SampleShape object containing a description of the

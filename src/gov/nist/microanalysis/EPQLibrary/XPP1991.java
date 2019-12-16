@@ -72,9 +72,7 @@ public class XPP1991
    @Override
    protected void initializeDefaultStrategy() {
       super.initializeDefaultStrategy();
-      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Pouchou1991);
-      // addDefaultAlgorithm(MassAbsorptionCoefficient.class,
-      // MassAbsorptionCoefficient.Chantler2005);
+      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Chantler2005);
       addDefaultAlgorithm(BackscatterFactor.class, BackscatterFactor.Pouchou1991);
       addDefaultAlgorithm(SurfaceIonization.class, SurfaceIonization.Pouchou1991);
       addDefaultAlgorithm(StoppingPower.class, StoppingPower.Pouchou1991);

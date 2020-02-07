@@ -213,7 +213,7 @@ public class MLLSQSignature {
 							final Composition comp = refProps
 									.getCompositionProperty(SpectrumProperties.StandardComposition);
 							final double zaf = mZafCorrectRefs ? ca.relativeZAF(comp, xrt, refProps)[3] : 1.0;
-							System.out.println(comp+"("+xrt+")="+zaf);
+							// System.out.println(comp+"("+xrt+")="+zaf);
 							mOptimal.put(xrts, Double.valueOf(comp.weightFraction(elm, true) * zaf));
 						}
 					}

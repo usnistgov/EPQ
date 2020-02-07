@@ -158,7 +158,7 @@ public class ROISpectrum
 
    public ROISpectrum(ISpectrumData sd, RegionOfInterestSet.RegionOfInterest roi, double modelThresh) {
       this(sd, 0, 1);
-      mLowChannel = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, FromSI.eV(roi.lowEnergy())-1.5*roi.getModel().getFWHMatMnKa()));
+      mLowChannel = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, FromSI.eV(roi.lowEnergy())));
       mHighChannel = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, FromSI.eV(roi.highEnergy())));
       mModelThreshold = modelThresh;
    }

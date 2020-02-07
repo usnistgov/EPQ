@@ -49,7 +49,7 @@ public class ROISpectrumNaive extends DerivedSpectrum {
 		super(sd);
 		assert (sd != null);
 		getProperties().setBooleanProperty(SpectrumProperties.IsROISpectrum, true);
-		int lowChannel = SpectrumUtils.channelForEnergy(sd, FromSI.eV(roi.lowEnergy())-1.5*roi.getModel().getFWHMatMnKa()),
+		int lowChannel = SpectrumUtils.channelForEnergy(sd, FromSI.eV(roi.lowEnergy())),
 				highChannel = SpectrumUtils.channelForEnergy(sd, FromSI.eV(roi.highEnergy()));
 		setROI(SpectrumUtils.bound(sd, lowChannel), SpectrumUtils.bound(sd, highChannel));
 		mROI = roi;
@@ -66,7 +66,7 @@ public class ROISpectrumNaive extends DerivedSpectrum {
 		LinearRegression lr = new LinearRegression();
 		for (int i = -BACKGROUND_EXTENT; i < BACKGROUND_EXTENT; ++i) {
 			final int ch = Math2.bound(cCh+i, 0, src.getChannelCount()-1);
-			lr.addDatum(ch, src.getCounts(ch), Math.sqrt(src.getCounts(ch)));
+			lr.addDatum(ch, src.getCounts(ch), Math.sqrt(Math.max(1.0, src.getCounts(ch))));
 		}
 		return lr;
 	}

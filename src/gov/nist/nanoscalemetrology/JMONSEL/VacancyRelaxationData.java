@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import gov.nist.microanalysis.EPQLibrary.FromSI;
 import gov.nist.microanalysis.EPQLibrary.ToSI;
 import gov.nist.microanalysis.Utility.Math2;
 

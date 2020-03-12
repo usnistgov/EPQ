@@ -259,6 +259,7 @@ public class ThresholdConductionModel2
       return Math2.sum(x) / x.length;
    }
 
+   @SuppressWarnings("unused")
    private double mean(int[] x) {
       return ((double) Math2.sum(x)) / x.length;
    }
@@ -1298,6 +1299,7 @@ public class ThresholdConductionModel2
 
    private class ChargeFlowDebugInfo {
       private final Mesh mesh;
+      @SuppressWarnings("unused")
       private final int maxIterations;
       private final int[] tetCount;
       private final int[] attemptedChargeFlowCount;
@@ -1333,6 +1335,7 @@ public class ThresholdConductionModel2
        *
        * @return Returns the tetCount.
        */
+      @SuppressWarnings("unused")
       public int[] getTetCount() {
          return tetCount;
       }
@@ -1342,6 +1345,7 @@ public class ThresholdConductionModel2
        *
        * @param tetCount The value to which to set tetCount.
        */
+      @SuppressWarnings("unused")
       public void setTetCount(int i, int tetCount) {
          this.tetCount[i] = tetCount;
       }
@@ -1361,6 +1365,7 @@ public class ThresholdConductionModel2
        *
        * @return Returns the attemptedChargeFlowCount.
        */
+      @SuppressWarnings("unused")
       public int[] getAttemptedChargeFlowCount() {
          return attemptedChargeFlowCount;
       }
@@ -1371,6 +1376,7 @@ public class ThresholdConductionModel2
        * @param attemptedChargeFlowCount The value to which to set
        *           attemptedChargeFlowCount.
        */
+      @SuppressWarnings("unused")
       public void setAttemptedChargeFlowCount(int i, int attemptedChargeFlowCount) {
          this.attemptedChargeFlowCount[i] = attemptedChargeFlowCount;
       }
@@ -1391,6 +1397,7 @@ public class ThresholdConductionModel2
        *
        * @return Returns the successfulChargeFLowCount.
        */
+      @SuppressWarnings("unused")
       public int[] getSuccessfulChargeFLowCount() {
          return successfulChargeFlowCount;
       }
@@ -1401,6 +1408,7 @@ public class ThresholdConductionModel2
        * @param successfulChargeFLowCount The value to which to set
        *           successfulChargeFLowCount.
        */
+      @SuppressWarnings("unused")
       public void setSuccessfulChargeFlowCount(int i, int successfulChargeFlowCount) {
          this.successfulChargeFlowCount[i] = successfulChargeFlowCount;
 
@@ -1422,6 +1430,7 @@ public class ThresholdConductionModel2
        *
        * @return Returns the maxCurrent.
        */
+      @SuppressWarnings("unused")
       public double[] getMaxCurrent() {
          return maxCurrent;
       }
@@ -1431,6 +1440,7 @@ public class ThresholdConductionModel2
        *
        * @param maxCurrent The value to which to set maxCurrent.
        */
+      @SuppressWarnings("unused")
       public void setMaxCurrent(int i, double maxCurrent) {
          this.maxCurrent[i] = maxCurrent;
       }
@@ -1448,6 +1458,7 @@ public class ThresholdConductionModel2
       /**
        * Empties the tracked nodes and tracked elements.
        */
+      @SuppressWarnings("unused")
       public void resetTracked() {
          trackedNodes = new HashMap<Integer, ArrayList<Double>>();
          trackedElements = new HashMap<Integer, ArrayList<Integer>>();

@@ -17,7 +17,6 @@ import gov.nist.microanalysis.EPQLibrary.RandomizedScatterFactory;
 import gov.nist.microanalysis.EPQLibrary.ScreenedRutherfordScatteringAngle;
 import gov.nist.microanalysis.EPQLibrary.ToSI;
 import gov.nist.microanalysis.EPQLibrary.FromSI;
-import gov.nist.microanalysis.EPQLibrary.GasScatteringCrossSection;
 import gov.nist.microanalysis.Utility.Math2;
 import gov.nist.nanoscalemetrology.JMONSELutils.ULagrangeInterpolation;
 

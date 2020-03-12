@@ -75,6 +75,20 @@ public class ParticleSignature {
 		mSpecial = new TreeSet<Element>(special);
 	}
 
+	public ParticleSignature(KRatioSet krs, Collection<Element> strip, Collection<Element> special) {
+		super();
+		mNormalization = UncertainValue2.ONE;
+		mFullNorm = UncertainValue2.ONE;
+		mStrip = new TreeSet<Element>(strip);
+		mSpecial = new TreeSet<Element>(special);
+		final Set<Element> elms = krs.getElementSet();
+		final KRatioSet opt = krs.optimalKRatioSet();
+		for (final Element elm : elms) {
+			final XRayTransitionSet xrts = opt.getTransitions(elm).iterator().next();
+			add(xrts.getElement(), opt.getKRatioU(xrts));
+		}
+	}
+
 	public boolean isStripped(Element elm) {
 		return mStrip.contains(elm);
 	}

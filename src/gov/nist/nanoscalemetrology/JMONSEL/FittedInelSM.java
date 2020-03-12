@@ -35,8 +35,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @version 1.0
  */
 public class FittedInelSM
-   extends
-   ScatterMechanism {
+   extends ScatterMechanism {
 
    private final SlowingDownAlg sdAlg;
    private final double energySEgen; // Average energy for SE generation

@@ -39,8 +39,7 @@ public class Histogram {
    private int[] mCounts;
 
    public class BinName
-      implements
-      Comparable<BinName> {
+      implements Comparable<BinName> {
       private final int mBin;
       private final String mFormat;
 
@@ -59,7 +58,7 @@ public class Histogram {
                })) + "-" + (mBin >= binCount() ? "inf"
                      : MessageFormat.format(mFormat, new Object[] {
                         Double.valueOf(maxValue(mBin))
-                     })) + ")";
+         })) + ")";
       }
 
       @Override

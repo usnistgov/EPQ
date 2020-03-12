@@ -30,7 +30,14 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author Nicholas W. M. Ritchie, John Villarrubia
  * @version 1.0
  */
-final public class Electron {
+public class Electron {
+   
+   /* CESC TEST   (ask whether we need "transient" )*/
+   private transient boolean mAuger=false;
+   private transient double mAugerEnergy=0.0;   
+   
+   /* CESC TEST */
+   
    // The x,y & z coordinates of the electron
    private final transient double[] mPosition;
 
@@ -115,6 +122,22 @@ final public class Electron {
       mPrevRegion = mCurrentRegion;
       parentID = parent.getIdent();
    }
+
+   /* CESC TEST */
+   public void setAuger(boolean flagAuger) {
+      mAuger=flagAuger;
+   }
+   public boolean requiresAuger() {
+      return mAuger;
+   }
+   //
+   public void setAugerEnergy(double ene) {
+      mAugerEnergy=ene;
+   }
+   public double getAugerEnergy() {
+      return mAugerEnergy;
+   }
+   /* CESC TEST */
 
    /**
     * Permits changing the current direction of the electron to any direction as
@@ -264,6 +287,7 @@ final public class Electron {
       // to the z-axis, deflecting the z-axis by dTheta down from the z-axis and
       // dPhi around the z-axis, then finally rotating back to the original
       // trajectory.
+
       final double ct = Math.cos(mTheta), st = Math.sin(mTheta);
       final double cp = Math.cos(mPhi), sp = Math.sin(mPhi);
       final double ca = Math.cos(dTheta), sa = Math.sin(dTheta);

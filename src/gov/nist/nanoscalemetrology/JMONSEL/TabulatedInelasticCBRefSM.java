@@ -13,6 +13,74 @@ import gov.nist.microanalysis.Utility.Math2;
 
 /**
  * <p>
+ * This is a temporary version of TabulatedInelasticSM. It contains some
+ * differences that are under test. The reason for this second version is an
+ * ambiguity in the meaning of PE kinetic energy in the DFT model. What is the
+ * right kinetic energy to use? If E0 is the PE's kinetic energy when it is
+ * outside the sample, then is the relevant kinetic energy for scattering = E0,
+ * E0 - UCB, or E0 - USB, where UCB is the potential energy at the bottom of the
+ * conduction band and UVB is the potential energy at the bottom of the
+ * scattering band? The "scattering band" is the band that contains the
+ * electrons from which the PE is scattering. I.e., in a conductor it is the
+ * same as the conduction band. In an insulator it is the filled valence band,
+ * the bottom of which is offset from the bottom of the conduction band by some
+ * finite energy, generally something between 10 eV and 20 eV.
+ * </p>
+ * <p>
+ * The ambiguity arises because the DFT model, which I presently use to compute
+ * the scattering tables, is based ultimately on a dielectric function for a
+ * free electron gas. Such a gas is a Fermi sea of electrons in which the least
+ * energetic (bottom of the band) have 0 kinetic energy, i.e., the same energy
+ * as a stationary primary electron. In reality, our electrons are always bound
+ * within a crystal. I.e., they have a negative potential energy. The way this
+ * is treated for conductors is simple. When the PE enters the crystal it gains
+ * energy -UCB. It's new kinetic energy is referenced to the same 0 as the
+ * electrons in the conduction band. That is, with this slightly higher kinetic
+ * energy, we are back to the situation that was modeled by DFT, and it seems we
+ * can appropriately apply it.
+ * </p>
+ * <p>
+ * However, what if we are dealing with an insulator? In that case the target
+ * electrons are in an even more tightly bound band, with band bottom a distance
+ * Eoffset below the CB bottom. What should we do? Should we add this additional
+ * amount to our estimate of PE kinetic energy (i.e., kinetic energy = E0 -
+ * USB)? Does this restore the situation to that which was modeled by DFT? That
+ * is the model implemented already in TabulatedInelasticSM.
+ * </p>
+ * <p>
+ * Alternatively, should we continue to treat our PE as having kinetic energy E0
+ * - UCB? That will be the model implemented here. A hand-waving argument for
+ * this model is that the wave function of the PE can be written as a
+ * superposition of eigenstates of the lattice (Bloch states) of the appropriate
+ * energy. That energy is, however, high (higher even in most cases than
+ * conduction band states). Low energy states have higher probability density
+ * close to the atomic cores, where the potential energy is very low, but high
+ * energy states, which must be orthogonal to those, are concentrated most
+ * strongly in the regions between atomic cores, where the potential is flat and
+ * close to UCB. Thus, the velocity characteristic of those states should be
+ * approximately sqrt(2*(E0-UCB)/m). Even the bound valence electrons spend
+ * considerable time in these regions. That's why the valence band is an
+ * extended band rather than a localized atomic-core state.
+ * </p>
+ * <p>
+ * On the other hand, here's a hand-waving argument for the former model: We are
+ * interested in scattering events that transfer enough energy to overcome the
+ * bandgap, and we are probably most interested in those that transfer enough to
+ * free the SE entirely from the crystal. These are events that transfer
+ * something on the order of 10 eV to 20 eV. Energy transfers of this size
+ * suggest (in a classical picture) a small impact factor: PE and SE in close
+ * proximity at the time of the energy transfer. Since the target electron has
+ * characteristic potential energy USB, if our PE is very close to the target,
+ * it should also have potential energy USB. Thus, even if on average the
+ * electron is in parts of the sample characterized by potential energy UCB, at
+ * the relevant time its potential energy is lower (and therefore its kinetic
+ * energy higher).
+ * </p>
+ * <p>
+ * I'm not sure which of these is the better model. This is the reason to
+ * implement and try both.
+ * </p>
+ * <p>
  * The TabulatedInelasticSM differs from earlier implementations of
  * ScatterMechanism in that most of the properties of the scattering are not
  * hard coded into the object, but rather are dictated by input tables. So, for
@@ -52,8 +120,8 @@ import gov.nist.microanalysis.Utility.Math2;
  * </p>
  * <p>
  * methodSE = 1: This selection is an implementation of the method described by
- * Ding &amp; Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE
- * is greater than a core level binding energy, the SE final energy is
+ * Ding & Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE is
+ * greater than a core level binding energy, the SE final energy is
  * deltaE-Ebinding. Otherwise, it is deltaE+EFermi, where EFermi is the Fermi
  * energy of the material. The final direction of the SE is determined from
  * conservation of momentum with the assumption that the SE initial momentum was
@@ -61,13 +129,12 @@ import gov.nist.microanalysis.Utility.Math2;
  * </p>
  * <p>
  * methodSE = 2: This selection is an implementation of the method described by
- * Ding, Tang, &amp; Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is
- * greater than a core level binding energy the treatment is the same as
- * methodSE = 1. If not, the SE final energy is deltaE + E'. If E' were the
- * Fermi energy this would be the same as methodSE = 1. However, E' lies in the
- * range max(0,EFermi - deltaE) &lt;= E' &lt;= EFermi. The value of E' is
- * determined probabilistically based upon the free electron densities of
- * occupied and unoccupied states.
+ * Ding, Tang, & Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is greater
+ * than a core level binding energy the treatment is the same as methodSE = 1.
+ * If not, the SE final energy is deltaE + E'. If E' were the Fermi energy this
+ * would be the same as methodSE = 1. However, E' lies in the range max(0,EFermi
+ * - deltaE) <= E' <= EFermi. The value of E' is determined probabilistically
+ * based upon the free electron densities of occupied and unoccupied states.
  * </p>
  * <p>
  * methodSE = 3: This selection is my modified version of the method described
@@ -102,7 +169,8 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author John Villarrubia
  * @version 1.0
  */
-public class TabulatedInelasticSM
+
+public class TabulatedInelasticCBRefSM
    extends
    ScatterMechanism {
 
@@ -167,7 +235,7 @@ public class TabulatedInelasticSM
    private boolean E0fromDispersion = false;
 
    /**
-    * Constructs a TabulatedInelasticSM for the specified material.
+    * Constructs a TabulatedInelasticCBRefSM for the specified material.
     *
     * @param mat - a SEmaterial that is the material within which scattering
     *           occurs.
@@ -183,21 +251,23 @@ public class TabulatedInelasticSM
     *           deltaE/(E0-EFermi), r) and table[3] = the table of SE initial
     *           energy vs. deltaE and r.
     */
-   public TabulatedInelasticSM(SEmaterial mat, int methodSE, String[] tables) {
+   public TabulatedInelasticCBRefSM(SEmaterial mat, int methodSE, String[] tables) {
       this(mat, methodSE, tables, 0.);
    }
 
    /**
-    * <p>
-    * Constructs a TabulatedInelasticSM for the specified material. This form of
-    * the constructor has an additional argument, energyOffset, allowing this
-    * parameter to be set to a value other than its default value of 0.
+    * Constructs a TabulatedInelasticCBRefSM for the specified material. This
+    * form of the constructor has an additional argument, energyOffset, allowing
+    * this parameter to be set to a value other than its default value of 0.
+    * This parameter is still needed in the present model, despite that this
+    * model does not use it to estimate the PE's kinetic energy, because Eoffset
+    * affects the SE kinetic energy after energy transfer.
     * </p>
     * <p>
     * energyOffset = (energy of conduction band bottom) - (the energy defined as
     * the zero for purpose of the tables, generally the scattering band bottom)
     */
-   public TabulatedInelasticSM(SEmaterial mat, int methodSE, String[] tables, double energyOffset) {
+   public TabulatedInelasticCBRefSM(SEmaterial mat, int methodSE, String[] tables, double energyOffset) {
       super();
       if((methodSE != 2) && (methodSE != 3))
          methodSE = 1; // Make sure methodSE is valid
@@ -244,9 +314,8 @@ public class TabulatedInelasticSM
    @Override
    public Electron scatter(Electron pe) {
 
-      final double kE0 = pe.getEnergy(); // PE initial energy rel to CB bottom
-      final double kE = kE0 + energyOffset; // PE initial energy rel to
-      // scattering band bottom
+      final double kE = pe.getEnergy(); // PE initial energy rel to CB bottom
+
       if(kE < tableEiDomain[0])
          /*
           * This might happen if something, e.g., electrostatic potential
@@ -262,7 +331,7 @@ public class TabulatedInelasticSM
       double theta = 0.;
       double phi = 0.; // PE trajectory parameters
       double energySE, thetaSE, phiSE; // SE trajectory parameters
-      // TODO Do I need to check that kE>offsetFermiEnergy?
+
       final double[] randoms = new double[] {
          Math2.rgen.nextDouble(),
          Math2.rgen.nextDouble(),
@@ -299,7 +368,7 @@ public class TabulatedInelasticSM
           * First, the reduced energy. This parameter ranges from 0 to 1 as
           * deltaE ranges from its minimium to maximum value.
           */
-         interpInput[1] = (deltaE - energyGap) / (kE - offsetFermiEnergy - (2. * energyGap));
+         interpInput[1] = (deltaE - energyGap) / (kE - energyGap);
          /*
           * The reduced energy can on rare occasions, as a result of
           * interpolation error, lie slightly outside its physically determined
@@ -320,19 +389,7 @@ public class TabulatedInelasticSM
          pe.updateDirection(theta, phi);
       }
 
-      pe.setEnergy(kE0 - deltaE);
-
-      /*
-       * I originally reset the previous energy to kE0 (next line), but I'm now
-       * commenting it though I keep it here as a place-marker. My thinking is
-       * that pe.getPreviousEnergy() should return the energy at the end of the
-       * last step. In takeStep(), that energy has already been stored as the
-       * previous energy, when takeStep() took account of any CSD energy loss.
-       * Any new energy loss in the current routine should simply reduce the
-       * current energy, so that pe.getEnergy()-pe.getPreviousEnergy() should
-       * reflect the total energy loss this step, CSD + inelastic mechanisms
-       * combined.
-       */
+      pe.setEnergy(kE - deltaE);
 
       // Determine SE final energy and trajectory
       Electron se = null;
@@ -427,11 +484,14 @@ public class TabulatedInelasticSM
                      return null;
                   // Generate SE in PE direction with correct energy
                   se = new Electron(pe, theta0PE, phi0PE, energySE);
+
                   // Determine angles of SE q vector relative to PE original
                   // direction
                   thetaSE = (Math.PI / 2.) - theta;
                   phiSE = phi + Math.PI;
+
                   // Combine with adjustment for additional simESEf deflection
+
                   final double[] newdir = updateDirection(thetaSE, phiSE, energytheta[1], 2. * Math.PI
                         * Math2.rgen.nextDouble());
                   // Update SE direction by this combined amount
@@ -662,7 +722,7 @@ public class TabulatedInelasticSM
     */
    @Override
    public double scatterRate(Electron pe) {
-      kEa[0] = pe.getEnergy() + energyOffset; // The PE kinetic energy
+      kEa[0] = pe.getEnergy(); // The PE kinetic energy
       /*
        * The PE kinetic energy can fall below the minimum in the table for
        * materials with a energyGap. In this case the actual scatter rate is 0.
@@ -773,7 +833,6 @@ public class TabulatedInelasticSM
    }
 
    /**
-    * <p>
     * Branching ratios control how this class associates a core (binding) energy
     * with an excitation. If deltaE is the energy lost by the primary electron
     * in a scattering event, the secondary electron's final energy is equal to
@@ -797,9 +856,8 @@ public class TabulatedInelasticSM
     * The default behavior, if this method is not called or if it is called with
     * no argument, is to assume all entries are 0. That is, the largest eligible
     * binding energy state is assumed to be the one associated with the
-    * excitation channel. This is the method described by Ding &amp; Shimizu in
+    * excitation channel. This is the method described by Ding & Shimizu in
     * SCANNING.
-    * </p>
     */
    public void setBranchingRatios() {
       defaultRatios = true;
@@ -832,7 +890,6 @@ public class TabulatedInelasticSM
    }
 
    /**
-    * <p>
     * This method was added to deal with LiF and similar materials. The
     * distinction between energyGap and bandgap is this: JMONSEL understands the
     * bandgap to be the distance between the top of the valence band and the
@@ -857,6 +914,7 @@ public class TabulatedInelasticSM
     * them.
     *
     * @param energyGap
+    * @return
     */
    public void setEnergyGap(double energyGap) {
       this.energyGap = energyGap;
@@ -888,15 +946,15 @@ public class TabulatedInelasticSM
 
    /**
     * Sets the value assigned to E0fromDispersion. If E0fromDispersion = false
-    * (the default) JMONSEL continutes to use its original method (Ding &amp;
+    * (the default) JMONSEL continutes to use its original method (Ding &
     * Shimizu's SCANNING method) for determining the energy available to ionize
     * an inner shell. This method assumes the shell may be ionized whenever
     * deltaE (the energy transferred to the SE in an inelastic event) is greater
     * than the ionization energy. If E0fromDispersion = true, it uses Ding et
     * al's later method, in which 0-momentum part (E0) of the energy is computed
     * from the plasmon dispersion for an event which transfers deltaE. Inner
-    * shell ionization can only happen if E0 &gt; ionization energy. This is
-    * more restrictive than deltaE &gt; ionization energy.
+    * shell ionization can only happen if E0 > ionization energy. This is more
+    * restrictive than deltaE > ionization energy.
     *
     * @param e0fromDispersion The value to which to set E0fromDispersion.
     */

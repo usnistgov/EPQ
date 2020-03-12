@@ -10,7 +10,6 @@ package gov.nist.nanoscalemetrology.JMONSEL;
 import java.util.Set;
 
 import gov.nist.microanalysis.EPQLibrary.BrowningEmpiricalCrossSection;
-import gov.nist.microanalysis.EPQLibrary.EPQFatalException;
 import gov.nist.microanalysis.EPQLibrary.Element;
 import gov.nist.microanalysis.EPQLibrary.Material;
 import gov.nist.microanalysis.EPQLibrary.PhysicalConstants;
@@ -18,7 +17,6 @@ import gov.nist.microanalysis.NISTMonte.Electron;
 import gov.nist.microanalysis.Utility.Math2;
 
 /**
- * <p>
  * Extends ScatterMechanism to create a Mott Elastic mechanism approximated
  * using Browning's interpolation. This class differs from the
  * BrowningEmpiricalCrossSection class because the latter computes scattering
@@ -46,10 +44,8 @@ import gov.nist.microanalysis.Utility.Math2;
  * @version 1.0
  */
 public class BrowningMottElasticSM
-   extends
-   ScatterMechanism
-   implements
-   Cloneable {
+   extends ScatterMechanism
+   implements Cloneable {
 
    private BrowningEmpiricalCrossSection[] browningElement = null;
 
@@ -65,7 +61,7 @@ public class BrowningMottElasticSM
    private double densityNa; // Avagadro's # * density for this material
 
    private double cached_eK = -1.; // Initialize to impossible value
-   private double rateMultiplier = 1.; // temporary
+   private final double rateMultiplier = 1.; // temporary
 
    /**
     *
@@ -156,28 +152,29 @@ public class BrowningMottElasticSM
       }
    }
 
-   /**
+/*   /**
     * Gets the current value assigned to rateMultiplier
     *
     * @return Returns the rateMultiplier.
     */
-   public double getRateMultiplier() {
+/*   public double getRateMultiplier() {
       return rateMultiplier;
-   }
+   } */
 
-   /**
+/*   /**
     * Sets the value assigned to rateMultiplier. I expect to remove this method.
     * I inserted it on 8/3/2012 to do some tests on the effect of scattering
     * cross-section changes without any change in angular distribution.
     *
     * @param rateMultiplier The value to which to set rateMultiplier.
     */
-   public void setRateMultiplier(double rateMultiplier) {
+/*   public void setRateMultiplier(double rateMultiplier) {
       if(rateMultiplier > 0.)
          this.rateMultiplier = rateMultiplier;
       else
          throw new EPQFatalException("rateMultiplier must be positive.");
    }
+   */
 
    @Override
    public BrowningMottElasticSM clone()

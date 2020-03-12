@@ -3,13 +3,14 @@
  */
 package gov.nist.nanoscalemetrology.JMONSEL;
 
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-
 import gov.nist.microanalysis.EPQLibrary.EPQFatalException;
 import gov.nist.microanalysis.EPQLibrary.Material;
 import gov.nist.microanalysis.NISTMonte.Electron;
 import gov.nist.microanalysis.Utility.Math2;
+import gov.nist.nanoscalemetrology.JMONSEL.VacancyRelaxationData;
+
+import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 /**
  * <p>
@@ -52,8 +53,8 @@ import gov.nist.microanalysis.Utility.Math2;
  * </p>
  * <p>
  * methodSE = 1: This selection is an implementation of the method described by
- * Ding &amp; Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE
- * is greater than a core level binding energy, the SE final energy is
+ * Ding & Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE is
+ * greater than a core level binding energy, the SE final energy is
  * deltaE-Ebinding. Otherwise, it is deltaE+EFermi, where EFermi is the Fermi
  * energy of the material. The final direction of the SE is determined from
  * conservation of momentum with the assumption that the SE initial momentum was
@@ -61,13 +62,12 @@ import gov.nist.microanalysis.Utility.Math2;
  * </p>
  * <p>
  * methodSE = 2: This selection is an implementation of the method described by
- * Ding, Tang, &amp; Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is
- * greater than a core level binding energy the treatment is the same as
- * methodSE = 1. If not, the SE final energy is deltaE + E'. If E' were the
- * Fermi energy this would be the same as methodSE = 1. However, E' lies in the
- * range max(0,EFermi - deltaE) &lt;= E' &lt;= EFermi. The value of E' is
- * determined probabilistically based upon the free electron densities of
- * occupied and unoccupied states.
+ * Ding, Tang, & Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is greater
+ * than a core level binding energy the treatment is the same as methodSE = 1.
+ * If not, the SE final energy is deltaE + E'. If E' were the Fermi energy this
+ * would be the same as methodSE = 1. However, E' lies in the range max(0,EFermi
+ * - deltaE) <= E' <= EFermi. The value of E' is determined probabilistically
+ * based upon the free electron densities of occupied and unoccupied states.
  * </p>
  * <p>
  * methodSE = 3: This selection is my modified version of the method described
@@ -102,10 +102,13 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author John Villarrubia
  * @version 1.0
  */
-public class TabulatedInelasticSM
-   extends
-   ScatterMechanism {
+public class TabulatedInelasticWAugerOrigSM
+   extends ScatterMechanism {
 
+   /* CESC */
+   private VacancyRelaxationData vacancyRelaxationData;
+   /* CESC */
+   
    private final int methodSE;
    private double energyOffset = 0.;
 
@@ -132,7 +135,7 @@ public class TabulatedInelasticSM
    private double energyGap;
    private boolean defaultRatios = true;
    private double[][] cumulativeBranchingProbabilities = null;
-
+   
    /*
     * bEref is the energy (relative to conduction band bottom) to which core
     * level binding energies are referenced. This is generally the Fermi energy
@@ -183,21 +186,19 @@ public class TabulatedInelasticSM
     *           deltaE/(E0-EFermi), r) and table[3] = the table of SE initial
     *           energy vs. deltaE and r.
     */
-   public TabulatedInelasticSM(SEmaterial mat, int methodSE, String[] tables) {
+   public TabulatedInelasticWAugerOrigSM(SEmaterial mat, int methodSE, String[] tables) {
       this(mat, methodSE, tables, 0.);
    }
 
    /**
-    * <p>
     * Constructs a TabulatedInelasticSM for the specified material. This form of
     * the constructor has an additional argument, energyOffset, allowing this
-    * parameter to be set to a value other than its default value of 0.
-    * </p>
+    * parameter to be set to a value other than its default value of 0. </p>
     * <p>
     * energyOffset = (energy of conduction band bottom) - (the energy defined as
     * the zero for purpose of the tables, generally the scattering band bottom)
     */
-   public TabulatedInelasticSM(SEmaterial mat, int methodSE, String[] tables, double energyOffset) {
+   public TabulatedInelasticWAugerOrigSM(SEmaterial mat, int methodSE, String[] tables, double energyOffset) {
       super();
       if((methodSE != 2) && (methodSE != 3))
          methodSE = 1; // Make sure methodSE is valid
@@ -290,9 +291,7 @@ public class TabulatedInelasticSM
        * generated SE will be in the bandgap, so most likely dropped anyway. We
        * return after we deal with the PE energy loss.
        */
-
-      final double theta0PE = pe.getTheta(); // Remember original direction;
-      final double phi0PE = pe.getPhi(); // to use for SE
+ 
       if(deltaE >= bandgap) {
          // Determine theta and phi here
          /*
@@ -321,7 +320,9 @@ public class TabulatedInelasticSM
       }
 
       pe.setEnergy(kE0 - deltaE);
-
+      final double theta0PE = pe.getTheta(); // Remember PE's deflected direction;
+      final double phi0PE = pe.getPhi(); // to use for SE
+      
       /*
        * I originally reset the previous energy to kE0 (next line), but I'm now
        * commenting it though I keep it here as a place-marker. My thinking is
@@ -366,7 +367,7 @@ public class TabulatedInelasticSM
             energySE = (deltaE + bEref) - pickBE(Eq, deltaE);
             if((energySE + energyCBbottom) < minEgenSE)
                return null;
-            thetaSE = (Math.PI / 2.) - theta;
+            thetaSE = (Math.PI / 2.); // Relative to PE's deflected direction
             phiSE = phi + Math.PI;
             // Generate SE, apply energy loss and trajectory change to SE here
             se = new Electron(pe, theta0PE, phi0PE, energySE);
@@ -393,7 +394,8 @@ public class TabulatedInelasticSM
             }
             if((energySE + energyCBbottom) < minEgenSE)
                return null;
-            thetaSE = (Math.PI / 2.) - theta;
+            thetaSE = (Math.PI / 2.); // relative to PE already-deflected
+                                      // direction
             phiSE = phi + Math.PI;
             // Generate SE, apply energy loss and trajectory change to SE here
             se = new Electron(pe, theta0PE, phi0PE, energySE);
@@ -402,6 +404,7 @@ public class TabulatedInelasticSM
          case 3:
             be = pickBE(Eq, deltaE);
             if(be > 0.) { // core level excitation
+
                energySE = (deltaE + bEref) - be;
                if((energySE + energyCBbottom) < minEgenSE)
                   return null;
@@ -413,7 +416,23 @@ public class TabulatedInelasticSM
                phiSE = 2. * Math.PI * Math2.rgen.nextDouble();
                // Generate SE, apply energy loss and trajectory change to SE
                // here
-               se = new Electron(pe, thetaSE, phiSE, energySE);
+               se = new Electron(pe, theta0PE, phi0PE, energySE);
+               se.updateDirection(thetaSE, phiSE);
+               
+               
+               /* CESC TEST */
+               if (vacancyRelaxationData != null) {
+                 double augerEnergy = vacancyRelaxationData.augerEnergy(be, deltaE);
+                 if (augerEnergy>0.0) {
+                    se.setAuger(true);
+                    se.setAugerEnergy(augerEnergy);
+                 }
+               }
+               /*else {
+                  System.out.println("No vacancy-relaxation data defined.");
+               }*/
+               /* CESC TEST */
+               
             } else { // SE generation from extended band
                final double root = 2. * Math.sqrt(offsetFermiEnergy * (offsetFermiEnergy + deltaE));
                final double sum = (2. * offsetFermiEnergy) + deltaE;
@@ -427,17 +446,27 @@ public class TabulatedInelasticSM
                      return null;
                   // Generate SE in PE direction with correct energy
                   se = new Electron(pe, theta0PE, phi0PE, energySE);
-                  // Determine angles of SE q vector relative to PE original
-                  // direction
-                  thetaSE = (Math.PI / 2.) - theta;
-                  phiSE = phi + Math.PI;
-                  // Combine with adjustment for additional simESEf deflection
-                  final double[] newdir = updateDirection(thetaSE, phiSE, energytheta[1], 2. * Math.PI
-                        * Math2.rgen.nextDouble());
-                  // Update SE direction by this combined amount
-                  se.updateDirection(newdir[0], newdir[1]);
-
+                  // Determine angles of q vector and rotate SE to this much
+                  /*
+                   * Angles in the next 2 lines are relative to the PE's
+                   * already-deflected direction
+                   */
+                  thetaSE = Math.PI / 2.;
+                  phiSE = Math.PI;
+                  se.updateDirection(thetaSE, phiSE);
+                  /*
+                   * Now rotate from this direction as required by simESEf (for
+                   * polar angle) and a uniformly distributed azimuthal angle.
+                   */
+                  se.updateDirection(energytheta[1], 2. * Math.PI * Math2.rgen.nextDouble());
                } else { // plasmon scattering
+                  
+                  /* CESC TEST */ 
+                  /*if (Eq>Eqmax) {
+                     System.out.println("Plasmon with q > q+.");
+                  }*/
+                  /* CESC TEST */
+                  
                   interpInput[0] = deltaE;
                   interpInput[1] = randoms[3];
                   double energy0SE = tableSEE0.interpolate(interpInput, 3);
@@ -463,7 +492,8 @@ public class TabulatedInelasticSM
                   phiSE = 2 * Math.PI * Math2.rgen.nextDouble();
                   // Generate SE, apply energy loss and trajectory change to SE
                   // here
-                  se = new Electron(pe, thetaSE, phiSE, energySE);
+                  se = new Electron(pe, theta0PE, phi0PE, energySE);
+                  se.updateDirection(thetaSE, phiSE);
                }
             }
             break;
@@ -474,39 +504,7 @@ public class TabulatedInelasticSM
 
       return se;
    }
-
-   /**
-    * Updates a direction theta, phi by dtheta, dphi. This is the same algorithm
-    * used by the Electron class to deflect an electron, except that it accepts
-    * the initial angles in addition to the deflections and it returns the final
-    * angles.
-    *
-    * @param theta double - The original polar angle
-    * @param phi double - The original azimuthal angle
-    * @param dTheta double - The deflection polar angle (0 = no deflection)
-    * @param dPhi double - The deflection azimuthal angle
-    */
-   private double[] updateDirection(double theta, double phi, double dTheta, double dPhi) {
-
-      final double ct = Math.cos(theta), st = Math.sin(theta);
-      final double cp = Math.cos(phi), sp = Math.sin(phi);
-      final double ca = Math.cos(dTheta), sa = Math.sin(dTheta);
-      final double cb = Math.cos(dPhi);
-
-      final double xx = (cb * ct * sa) + (ca * st);
-      final double yy = sa * Math.sin(dPhi);
-      final double dx = (cp * xx) - (sp * yy);
-      final double dy = (cp * yy) + (sp * xx);
-      final double dz = (ca * ct) - (cb * sa * st);
-
-      theta = Math.atan2(Math.sqrt((dx * dx) + (dy * dy)), dz);
-      phi = Math.atan2(dy, dx);
-      return new double[] {
-         theta,
-         phi
-      };
-   }
-
+    
    /*
     * simESEf is a private utility that computes the final SE energy for single
     * electron collisions. It also returns the polar angle of the final SE
@@ -536,6 +534,10 @@ public class TabulatedInelasticSM
       };
    }
 
+   public void setVacancyRelaxationData(int z0){
+      vacancyRelaxationData = new VacancyRelaxationData(z0);      
+   }
+   
    /*
     * This is a private utility used to determine the binding energy associated
     * with the secondary electron excitation channel. The default method
@@ -571,10 +573,9 @@ public class TabulatedInelasticSM
          return 0.;
       if(defaultRatios)
          /*
-          * The advertised default behavior, as described by Ding & Shimizu
-          * (Scanning).
+          * The advertised default behavior, as described by Ding & Shimizu (Scanning).
           */
-         return coreEnergies[i - 1];
+         return coreEnergies[i-1];
       else {
          final double[] cprob = cumulativeBranchingProbabilities[i - 1];
          final double r = Math2.rgen.nextDouble();
@@ -773,7 +774,6 @@ public class TabulatedInelasticSM
    }
 
    /**
-    * <p>
     * Branching ratios control how this class associates a core (binding) energy
     * with an excitation. If deltaE is the energy lost by the primary electron
     * in a scattering event, the secondary electron's final energy is equal to
@@ -791,15 +791,12 @@ public class TabulatedInelasticSM
     * array of these ratios. The first ratio in the array is associated with the
     * lowest nonzero core energy (i.e., the first non-valence band bound state).
     * The length of the array must be equal to the length of the material's
-    * coreEnergies array.
-    * </p>
+    * coreEnergies array. </p>
     * <p>
     * The default behavior, if this method is not called or if it is called with
     * no argument, is to assume all entries are 0. That is, the largest eligible
-    * binding energy state is assumed to be the one associated with the
-    * excitation channel. This is the method described by Ding &amp; Shimizu in
-    * SCANNING.
-    * </p>
+    * binding energy state is assumed to be the one associated with the excitation
+    * channel. This is the method described by Ding & Shimizu in SCANNING.
     */
    public void setBranchingRatios() {
       defaultRatios = true;
@@ -832,13 +829,11 @@ public class TabulatedInelasticSM
    }
 
    /**
-    * <p>
     * This method was added to deal with LiF and similar materials. The
     * distinction between energyGap and bandgap is this: JMONSEL understands the
     * bandgap to be the distance between the top of the valence band and the
     * bottom of the conduction band. The energyGap is the value of the smallest
-    * allowed deltaE in the scattering tables.
-    * </p>
+    * allowed deltaE in the scattering tables. </p>
     * <p>
     * These two ordinarily are the same, and they are set equal by default.
     * However, they can differ if there are significant bound states within the
@@ -857,6 +852,7 @@ public class TabulatedInelasticSM
     * them.
     *
     * @param energyGap
+    * @return
     */
    public void setEnergyGap(double energyGap) {
       this.energyGap = energyGap;
@@ -888,15 +884,15 @@ public class TabulatedInelasticSM
 
    /**
     * Sets the value assigned to E0fromDispersion. If E0fromDispersion = false
-    * (the default) JMONSEL continutes to use its original method (Ding &amp;
+    * (the default) JMONSEL continutes to use its original method (Ding &
     * Shimizu's SCANNING method) for determining the energy available to ionize
     * an inner shell. This method assumes the shell may be ionized whenever
     * deltaE (the energy transferred to the SE in an inelastic event) is greater
     * than the ionization energy. If E0fromDispersion = true, it uses Ding et
     * al's later method, in which 0-momentum part (E0) of the energy is computed
     * from the plasmon dispersion for an event which transfers deltaE. Inner
-    * shell ionization can only happen if E0 &gt; ionization energy. This is
-    * more restrictive than deltaE &gt; ionization energy.
+    * shell ionization can only happen if E0 > ionization energy. This is more
+    * restrictive than deltaE > ionization energy.
     *
     * @param e0fromDispersion The value to which to set E0fromDispersion.
     */

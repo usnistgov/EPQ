@@ -130,7 +130,7 @@ public class NormalHeightMapShape
     */
    private static final double RETOLERANCE = 1.01e-7;
 
-   private static final double push = 1.0e-16;
+   private static final double push = 1.0e-15; // was 1.e-16
 
    public NormalHeightMapShape(double x0, double y0, double dX, double dY, double data[][]) {
       init(x0, y0, dX, dY, data, true);
@@ -1181,7 +1181,9 @@ public class NormalHeightMapShape
 
          // the intersecting point becomes the current starting point
          for(int i = 0; i < 3; i++) {
-            currIntersect[i] = currIntersect[i] + (result[3] * (pos1[i] - currIntersect[i]));
+            // currIntersect[i] = currIntersect[i] + (result[3] * (pos1[i] -
+            // currIntersect[i]));
+            currIntersect[i] = currIntersect[i] + (result[3] * (pos1[i] - currIntersect[i])) + result[i] * push;
             intersectAtBoundary[i] = currIntersect[i];
          }
          currIndex = getBlockIndex(currIntersect, pos1, true);

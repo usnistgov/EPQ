@@ -529,6 +529,19 @@ public class SEmaterial
       version = (version == Long.MAX_VALUE) ? 0L : version + 1L;
    }
 
+   /**
+    * removeCoreEnergy - Removes the core energy at the specified index from the
+    * existing list. The index corresponds to the core energies in sorted order,
+    * as returned by getCoreEnergyArray().
+    *
+    * @param index int - index of the binding energy entry to remove
+    */
+   public void removeCoreEnergy(int index) {
+      Double energy = getCoreEnergyArray()[index];
+      coreEnergy.remove(energy);
+      version = (version == Long.MAX_VALUE) ? 0L : version + 1L;
+   }
+
    /*
     * Imitate Nicholas's clone procedure
     */

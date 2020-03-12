@@ -219,7 +219,7 @@ public class TrajectoryLoggingListener
    }
 
    /**
-    * Setting suspended == false suspends logging. Setting it to true resumes.
+    * Setting suspended == true suspends logging. Setting it to false resumes.
     * suspended == false by default.
     *
     * @param suspended

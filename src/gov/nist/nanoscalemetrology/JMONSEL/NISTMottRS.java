@@ -16,6 +16,8 @@ import gov.nist.microanalysis.EPQLibrary.RandomizedScatter;
 import gov.nist.microanalysis.EPQLibrary.RandomizedScatterFactory;
 import gov.nist.microanalysis.EPQLibrary.ScreenedRutherfordScatteringAngle;
 import gov.nist.microanalysis.EPQLibrary.ToSI;
+import gov.nist.microanalysis.EPQLibrary.FromSI;
+import gov.nist.microanalysis.EPQLibrary.GasScatteringCrossSection;
 import gov.nist.microanalysis.Utility.Math2;
 import gov.nist.nanoscalemetrology.JMONSELutils.ULagrangeInterpolation;
 
@@ -42,7 +44,7 @@ import gov.nist.nanoscalemetrology.JMONSELutils.ULagrangeInterpolation;
  * Company: National Institute of Standards and Technology
  * </p>
  *
- * @author Nicholas W. M. Ritchie (with addition of E&lt;50 eV behavior by John
+ * @author Nicholas W. M. Ritchie (with addition of E<50 eV behavior by John
  *         Villarrubia)
  * @version 1.0
  */
@@ -57,59 +59,76 @@ public class NISTMottRS
    extends
    RandomizedScatter {
 
-   static private final LitReference.WebSite mReference = new LitReference.WebSite("http://www.nist.gov/srd/nist64.htm", "NIST Electron Elastic-Scattering Cross-Section Database version 3.1", LitReference.createDate(2007, Calendar.AUGUST, 24), new LitReference.Author[] {
-      LitReference.CPowell,
-      LitReference.FSalvat,
-      LitReference.AJablonski
-   });
-
    public static class NISTMottRSFactory
       extends
       RandomizedScatterFactory {
 
-      private int method = 1;
+      private int extrapMethod = 1;
+
+      private double minEforTable = ToSI.eV(50.);
+
+      private final NISTMottRS[] mScatter = new NISTMottRS[Element.elmEndOfElements];
 
       /**
-       * method is an integer = 1, 2, or 3. Since the NISTMott tables are valid
-       * only for energies in the interval [50 eV, 20 keV], cross sections for
-       * energies &lt; 50 eV can't be determined directly by table lookup.
-       * Instead we use one of 3 methods. In all 3 methods the cross section is
-       * 0 at E = 0 and is equal to the NIST Mott table tabulated value at a
-       * cutoff energy in the tabulated range. Between these energies the cross
-       * section is interpolated, either linearly or using the Browning formula.
-       * The methods differ in the choice of cutoff energy and interpolation
-       * method. The methods are: (1) Cutoff energy = 50 eV, interpolation =
-       * Browning, (2) Cutoff energy = 100 eV, interpolation = Browning, (3)
-       * Cutoff energy = 100 eV, interpolation = linear.
-       *
-       * @param method
-       */
-      public NISTMottRSFactory(int method) {
-         super("NIST Mott Inelastic Cross-Section", mReference);
-         if((method >= 1) && (method <= 3))
-            this.method = method;
-      }
-
-      /**
-       * Implements the default NISTMottRSFactory, which uses method 1.
+       * Implements the default NISTMottRSFactory, which uses tabulated values
+       * whenever available and Browning extrapolation below the table minimum.
        */
       public NISTMottRSFactory() {
-         this(1);
+         this(1, ToSI.eV(50.));
       }
 
-      private final RandomizedScatter[] mScatter = new RandomizedScatter[Element.elmEndOfElements];
+      /**
+       * extrapMethod is an integer = 1 or 2. Since the NISTMott tables are
+       * valid only for energies in the interval [50 eV, 20 keV], cross sections
+       * for energies < 50 eV can't be determined directly by table lookup.
+       * Optionally users may specify a higher minimum for use of the tabulated
+       * values. Outside of the permitted and availabe range, we use one of 2
+       * methods: (1) extrapolation with Browning's power law or (2) linear
+       * extrapolation from the final value to 0 at 0 eV.
+       *
+       * @param extrapMethod
+       * @param minEforTable
+       */
+      public NISTMottRSFactory(int extrapMethod, double minEforTable) {
+         super("NIST Mott Inelastic Cross-Section", mReference);
+         setExtrapMethod(extrapMethod);
+         setMinEforTable(minEforTable);
+      }
 
       /**
        * @see gov.nist.microanalysis.EPQLibrary.RandomizedScatterFactory#get(gov.nist.microanalysis.EPQLibrary.Element)
        */
       @Override
-      public RandomizedScatter get(Element elm) {
+      public NISTMottRS get(Element elm) {
          final int z = elm.getAtomicNumber();
-         final NISTMottRS res = new NISTMottRS(elm);
-         res.setMethod(method);
-         mScatter[z] = res;
+         if(mScatter[z] == null || mScatter[z].getExtrapMethod() != extrapMethod
+               || mScatter[z].getMinEforTable() != minEforTable) {
+            mScatter[z] = new NISTMottRS(elm);
+            mScatter[z].setExtrapMethod(extrapMethod);
+            mScatter[z].setMinEforTable(minEforTable);
+         }
+         return mScatter[z];
+      }
 
-         return res;
+      /**
+       * Returns 1 if we will extrapolate below the minimum energy for which
+       * we're using the tablulated values by using Browning's power law or 2 if
+       * we will use linear interpolation.
+       * 
+       * @return extrapMethod
+       */
+      public int getExtrapMethod() {
+         return extrapMethod;
+      }
+
+      /**
+       * Returns the minimum energy (in J) for which we will use tabulated
+       * values.
+       * 
+       * @return
+       */
+      public double getMinEforTable() {
+         return minEforTable;
       }
 
       @Override
@@ -117,23 +136,59 @@ public class NISTMottRS
          // TODO Auto-generated method stub
 
       }
+
+      /**
+       * extrapMethod is an integer = 1 or 2, 1 to use the Browning power law
+       * form for energies between 0 and minEforTable, 2 to use linear
+       * interpolation between the tabulated value at the upper energy and 0 at
+       * 0 energy.
+       * 
+       * @param extrapMethod
+       */
+      public void setExtrapMethod(int extrapMethod) {
+         if((extrapMethod == 1) || (extrapMethod == 2))
+            this.extrapMethod = extrapMethod;
+         else
+            throw new IllegalArgumentException("extrapMethod must be either 1 or 2.");
+      }
+
+      /**
+       * By default, we interpolate the NIST Mott tables for all energy values
+       * that fall within the range of tabulated values, but the lower limit can
+       * be increased from the default value with this setter.
+       * 
+       * @param minEforTable in Joules
+       */
+      public void setMinEforTable(double minEforTable) {
+         if(minEforTable >= MIN_NISTMOTT)
+            this.minEforTable = minEforTable;
+         else
+            throw new IllegalArgumentException("minEforTable must be >= " + Double.toString(MIN_NISTMOTT) + " J ("
+                  + Double.toString(FromSI.eV(MIN_NISTMOTT)) + " eV).");
+      }
    }
 
+   static private final LitReference.WebSite mReference = new LitReference.WebSite("http://www.nist.gov/srd/nist64.htm", "NIST Electron Elastic-Scattering Cross-Section Database version 3.1", LitReference.createDate(2007, Calendar.AUGUST, 24), new LitReference.Author[] {
+      LitReference.CPowell,
+      LitReference.FSalvat,
+      LitReference.AJablonski
+   });
+
    /**
-    * Returns a NISTMottRSFactory that uses method 1, Cutoff energy = 50 eV,
-    * interpolation = Browning.
+    * Returns a NISTMottRSFactory that uses minEforTable = 50 eV and
+    * extrapMethod = 1 (Browning).
     */
    public static final RandomizedScatterFactory Factory = new NISTMottRSFactory();
    /**
-    * Returns a NISTMottRSFactory that uses method 2, Cutoff energy = 100 eV,
-    * interpolation = Browning.
+    * Returns a NISTMottRSFactory that uses minEforTable = 100 eV and
+    * extrapMethod = 1 (Browning).
     */
-   public static final RandomizedScatterFactory Factory100 = new NISTMottRSFactory(2);
+   public static final RandomizedScatterFactory Factory100 = new NISTMottRSFactory(1, ToSI.eV(100.));
    /**
-    * Returns a NISTMottRSFactory that uses method 3, Cutoff energy = 100 eV,
-    * interpolation = linear.
+    * Returns a NISTMottRSFactory that uses minEforTable = 100 eV and
+    * extrapMethod = 2 (linear).
     */
-   public static final RandomizedScatterFactory Factory100Lin = new NISTMottRSFactory(3);
+   public static final RandomizedScatterFactory Factory100Lin = new NISTMottRSFactory(2, ToSI.eV(100.));
 
    /*
     * MIN_ and MAX_ NISTMOTT are the limits of the scattering table that we
@@ -141,6 +196,13 @@ public class NISTMottRS
     */
    public static final double MAX_NISTMOTT = ToSI.keV(20.0);
    public static final double MIN_NISTMOTT = ToSI.keV(0.050);
+   private static final int SPWEM_LEN = 61;
+   private static final int X1_LEN = 201;
+
+   private static final double DL50 = Math.log(MIN_NISTMOTT);
+
+   private static final double PARAM = (Math.log(MAX_NISTMOTT) - DL50) / 60.0;
+
    /*
     * extrapolateBelowEnergy is the energy below which we switch to
     * extrapolation using the Browning formula. By default we use the NISTMott
@@ -148,15 +210,12 @@ public class NISTMottRS
     * For example, Kieft and Bosch don't trust the NISTMott cross sections below
     * 100 eV.
     */
-   private int method;
-   private double extrapolateBelowEnergy = ToSI.eV(50.);
-   private double MottXSatMinEnergy;
+   private int extrapMethod = 1; // 1 for Browning, 2 for linear
+   private double minEforTable = ToSI.eV(50.); // Energy below which to use
+                                               // extrapMethod
 
+   private double MottXSatMinEnergy;
    private final Element mElement;
-   private static final int SPWEM_LEN = 61;
-   private static final int X1_LEN = 201;
-   private static final double DL50 = Math.log(MIN_NISTMOTT);
-   private static final double PARAM = (Math.log(MAX_NISTMOTT) - DL50) / 60.0;
    private final transient double[] mSpwem = new double[SPWEM_LEN];
    private final transient double[][] mX1 = new double[SPWEM_LEN][X1_LEN];
    /*
@@ -174,7 +233,6 @@ public class NISTMottRS
    transient private final double scale = PhysicalConstants.BohrRadius * PhysicalConstants.BohrRadius;
 
    /**
-    * <p>
     * NISTMottRS - Creates an object representing the NIST SRD 64 method for
     * computing random scattering angles using Mott cross sections. The
     * constructor loads a table of numbers which are used to quickly compute
@@ -183,11 +241,10 @@ public class NISTMottRS
     * </p>
     * <p>
     * For energies above the tabulated range, computations use
-    * ScreenedRutherfordScatteringAngle instead. For energies below either 50 eV
-    * or 100 eV the value is interpolated between assuming 0 cross section at 0
-    * eV. Interpolation may be linear or may follow Browning's form. The default
-    * is Browning ineterpolation below 50 eV. Other options may be chosen using
-    * setMethod(int methodnumber) with methodnumber = 1, 2, or 3.
+    * ScreenedRutherfordScatteringAngle instead. For energies below minEforTable
+    * (default 50 eV) the value is determined by one of two methods: (1)
+    * Extrapolation using Browning's power law form (the default) or (2) linear
+    * interpolation between 0 at 0 eV and the tabulated value at minEforTable.
     * </p>
     *
     * @param elm Element
@@ -220,20 +277,7 @@ public class NISTMottRS
       catch(final Exception ex) {
          throw new EPQFatalException("Unable to construct NISTMottRS: " + ex.toString());
       }
-
-      /* Initialize to default method */
-      setMethod(1);
-   }
-
-   /**
-    * toString
-    *
-    * @return String
-    * @see java.lang.Object#toString()
-    */
-   @Override
-   public String toString() {
-      return "CrossSection[NIST-Mott," + mElement.toAbbrev() + "]";
+      MottXSatMinEnergy = this.totalCrossSection(minEforTable);
    }
 
    @Override
@@ -242,39 +286,14 @@ public class NISTMottRS
    }
 
    /**
-    * totalCrossSection - Computes the total cross section for an electron of
-    * the specified energy.
-    *
-    * @param energy double - In Joules
-    * @return double - in square meters
+    * @return
     */
-   @Override
-   final public double totalCrossSection(double energy) {
-      /*
-       * It's important in some simulations to track electrons outside of the
-       * range of energies for which the NIST Mott tables are valid. For the
-       * sake of those, we switch over to a different method of estimation when
-       * the tables become unavailable. At high energy, screened Rutherford
-       * should be accurate. At low energy, it's not clear that any model is
-       * accurate. We use the Browning interpolation here.
-       */
-      if(energy < extrapolateBelowEnergy) {
-         if(method == 3)
-            return (MottXSatMinEnergy * energy) / extrapolateBelowEnergy;
-         else { // Browning interpolation
-            if(mBrowning == null) {
-               mBrowning = new BrowningEmpiricalCrossSection(mElement);
-               sfBrowning = MottXSatMinEnergy / mBrowning.totalCrossSection(extrapolateBelowEnergy);
-            }
-            return sfBrowning * mBrowning.totalCrossSection(energy);
-         }
-      } else if(energy < MAX_NISTMOTT)
-         return scale * ULagrangeInterpolation.d1(mSpwem, DL50, PARAM, sigmaINTERPOLATIONORDER, Math.log(energy))[0];
-      else {
-         if(mRutherford == null)
-            mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
-         return mRutherford.totalCrossSection(energy);
-      }
+   public int getExtrapMethod() {
+      return extrapMethod;
+   }
+
+   public double getMinEforTable() {
+      return minEforTable;
    }
 
    /**
@@ -289,17 +308,15 @@ public class NISTMottRS
    @Override
    final public double randomScatteringAngle(double energy) {
       /*
-       * Even in method 3 (linear interpolation) we use Browning for the angular
-       * distribution.
+       * Even in extrapMethod 2 (linear interpolation) we use Browning for the
+       * angular distribution.
        */
-      if(energy < extrapolateBelowEnergy) {
-         if(mBrowning == null)
-
+      if(energy < minEforTable) {
+         if(mBrowning == null) {
             mBrowning = new BrowningEmpiricalCrossSection(mElement);
-         // sfBrowning = this.totalCrossSection(MIN_NISTMOTT) /
-         // mBrowning.totalCrossSection(MIN_NISTMOTT);
+            sfBrowning = this.totalCrossSection(MIN_NISTMOTT)/mBrowning.totalCrossSection(MIN_NISTMOTT);
+         }
          return mBrowning.randomScatteringAngle(energy);
-
       } else if(energy < MAX_NISTMOTT) {
          final double q = ULagrangeInterpolation.d2(mX1, new double[] {
             DL50,
@@ -321,35 +338,81 @@ public class NISTMottRS
    }
 
    /**
-    * @return
+    * extrapMethod is an integer = 1 or 2, 1 to use the Browning power law form
+    * for energies between 0 and minEforTable, 2 to use linear interpolation
+    * between the tabulated value at the upper energy and 0 at 0 energy.
+    * 
+    * @param method
     */
-   public int getMethod() {
-      return method;
+   public void setExtrapMethod(int method) {
+      if((method == 1) || (method == 2))
+         extrapMethod = method;
+      else
+         throw new IllegalArgumentException("setExtrapMethod must be called with method = 1 or 2.");
    }
 
    /**
-    * method is an integer = 1, 2, or 3. Since the NISTMott tables are valid
-    * only for energies in the interval [50 eV, 20 keV], cross sections for
-    * energies &lt; 50 eV can't be determined directly by table lookup. Instead
-    * we use one of 3 methods. In all 3 methods the cross section is 0 at E = 0
-    * and is equal to the NIST Mott table tabulated value at a cutoff energy in
-    * the tabulated range. Between these energies the cross section is
-    * interpolated, either linearly or using the Browning formula. The methods
-    * differ in the choice of cutoff energy and interpolation method. The
-    * methods are: (1) Cutoff energy = 50 eV, interpolation = Browning, (2)
-    * Cutoff energy = 100 eV, interpolation = Browning, (3) Cutoff energy = 100
-    * eV, interpolation = linear.
-    *
-    * @param method As documented above
+    * By default, we interpolate the table for values within the range of
+    * tabulated energies, namely from 8.01e-18 J to 3.20e-15 J (50 eV to 20
+    * keV). The lower limit can be increased from the default value with this
+    * setter.
+    * 
+    * @param minEforTable in Joules
     */
-   public void setMethod(int method) {
-      if((method >= 1) && (method <= 3))
-         this.method = method;
-      else
-         throw new EPQFatalException("Invalid NISTMottRS method: method must = 1, 2, or 3.");
-      if((method == 2) || (method == 3))
-         extrapolateBelowEnergy = ToSI.eV(100.);
-      MottXSatMinEnergy = this.totalCrossSection(extrapolateBelowEnergy);
+   public void setMinEforTable(double minEforTable) {
+      if(minEforTable >= MIN_NISTMOTT) {
+         this.minEforTable = minEforTable;
+         MottXSatMinEnergy = this.totalCrossSection(minEforTable);
+      } else
+         throw new IllegalArgumentException("minEforTable must be >= " + Double.toString(MIN_NISTMOTT) + " J ("
+               + Double.toString(FromSI.eV(MIN_NISTMOTT)) + " eV).");
+   }
+
+   /**
+    * toString
+    *
+    * @return String
+    * @see java.lang.Object#toString()
+    */
+   @Override
+   public String toString() {
+      return "CrossSection[NIST-Mott," + mElement.toAbbrev() + "]";
+   }
+
+   /**
+    * totalCrossSection - Computes the total cross section for an electron of
+    * the specified energy.
+    *
+    * @param energy double - In Joules
+    * @return double - in square meters
+    */
+   @Override
+   final public double totalCrossSection(double energy) {
+      /*
+       * It's important in some simulations to track electrons outside of the
+       * range of energies for which the NIST Mott tables are valid. For the
+       * sake of those, we switch over to a different method of estimation when
+       * the tables become unavailable. At high energy, screened Rutherford
+       * should be accurate. At low energy, it's not clear that any model is
+       * accurate. We use the Browning interpolation here.
+       */
+      if(energy < minEforTable) {
+         if(extrapMethod == 2)
+            return (MottXSatMinEnergy * energy) / minEforTable;
+         else { // Browning interpolation
+            if(mBrowning == null) {
+               mBrowning = new BrowningEmpiricalCrossSection(mElement);
+               sfBrowning = MottXSatMinEnergy / mBrowning.totalCrossSection(minEforTable);
+            }
+            return sfBrowning * mBrowning.totalCrossSection(energy);
+         }
+      } else if(energy < MAX_NISTMOTT)
+         return scale * ULagrangeInterpolation.d1(mSpwem, DL50, PARAM, sigmaINTERPOLATIONORDER, Math.log(energy))[0];
+      else {
+         if(mRutherford == null)
+            mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
+         return mRutherford.totalCrossSection(energy);
+      }
    }
 
 }

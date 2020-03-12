@@ -1879,7 +1879,7 @@ public class Mesh
 
    /**
     * Gets the number of nodes in this mesh.
-    * 
+    *
     * @return int number of nodes in this mesh
     */
    public int getNumberOfNodes() {

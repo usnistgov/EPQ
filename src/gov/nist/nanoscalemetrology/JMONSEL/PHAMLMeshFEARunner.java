@@ -30,7 +30,7 @@ import gov.nist.microanalysis.NISTMonte.MeshedRegion.NeumannConstraint;
  * therefore be available somewhere in the computer system's path.
  * </p>
  * <p>
- * With adaptivity enabled. Each time an finite element analysis is performed,
+ * With adaptivity enabled, each time a finite element analysis is performed
  * PHAML performs an adapt/solve loop until either the L2 error estimate is
  * below tolerance or the number of elements exceeds maxtet, whichever comes
  * first. Once the existing number of elements is equal to maxtet, it de-refines
@@ -62,16 +62,6 @@ public class PHAMLMeshFEARunner
    IAdaptiveMesh,
    IFEArunner {
 
-   static {
-      try {
-         System.load("C:\\my_executables\\libquadmath-0.dll");
-         System.load("C:\\my_executables\\libgfortran-3.dll");
-      }
-      finally {
-
-      }
-   }
-
    interface PHAML
       extends
       com.sun.jna.Library {
@@ -97,6 +87,8 @@ public class PHAMLMeshFEARunner
       int getElementType(int handle, int elementIndex, IntByReference errcode);
 
       int getElementTypeTable(int handle, int[] elementType, IntByReference errcode);
+      
+      double getErrorEstimate(int handle, IntByReference errcode);
 
       void getFileName(int handle, byte[] chars, IntByReference errcode);
 
@@ -144,9 +136,9 @@ public class PHAMLMeshFEARunner
 
       void meshDestructorAll(IntByReference errcode);
 
-      void runFEA(int handle, boolean verbose, double tolerance, int max_tet, double min_tet_size, IntByReference errcode);
+      void runFEA(int handle, boolean verbose, double tolerance, int max_tet, double min_tet_size, double refinetol, int solver, int errind, IntByReference errcode);
 
-      void saveMesh(int handle, String meshFileName, int namelen, IntByReference errcode);
+      void saveMesh(int handle, String meshFileName, int namelen, int meshType, IntByReference errcode);
 
       void setAdaptivityEnabled(int handle, boolean doAdapt, IntByReference errcode);
 
@@ -163,8 +155,23 @@ public class PHAMLMeshFEARunner
       void setNodeCoordinates(int handle, int nodeIndex, double[] coords, IntByReference errcode);
 
       void setNodePotential(int handle, int nodeIndex, double potential, IntByReference errcode);
+      
+      //TODO: Implement capability to use this
+      void setPointCharges(int handle, int numCharge, double[] xCharge, double[] yCharge, double[] zCharge, IntByReference errcode);
 
       void tetFaceNodeIndices(int handle, int tetIndex, int faceIndex, int[] nodeIndices, IntByReference errcode);
+   }
+
+   static {
+      try {
+         System.load("C:\\my_executables\\libquadmath-0.dll");
+         System.load("C:\\my_executables\\libgfortran-3.dll");
+         //System.load("libquadmath-0.dll");
+         //System.load("libgfortran-3.dll");
+      }
+      finally {
+
+      }
    }
 
    private static String b2s(byte b[]) {
@@ -192,16 +199,27 @@ public class PHAMLMeshFEARunner
    private int[] elementTypes;
 
    /*
-    * The following constants determine how the solver decides when to quit
-    * refining the mesh. Refinement stops when the estimated L2 error (root mean
-    * square error in potential) divided by the potential is less than
-    * TOLERANCE, or when the number of tetrahedra exceeds MAXTET, whichever
-    * comes first. Tets smaller than min_tet_size are not refined unless
-    * necessary for compatibility.
+    * Mesh is saved as GMSH type (1) by default, but may be changed to PHAML (2)
+    * type
+    */
+   private int saveMeshType = 1;
+
+   /*
+    * The following constants determine the solver to use, error estimator used
+    * for refinement, and stopping condition. Refinement stops when the
+    * estimated L2 error (root mean square error in potential) divided by the
+    * potential is less than TOLERANCE, or when the number of tetrahedra exceeds
+    * MAXTET, whichever comes first. Tets smaller than min_tet_size are not
+    * refined unless necessary for compatibility.
     */
    private double tolerance = 0.0001;
+
    private int maxtet = 1000000;
+
    private double min_tet_size = 0.3e-9; // 0.3 nm default minimum tet size
+   private double refinetol = 1.e-15;
+   private int solver = 1;
+   private int errind = 3; // TODO: Change to 6
 
    /**
     * Constructs a PHAMLMeshFEARunner. The supplied meshFileName should conform
@@ -462,8 +480,8 @@ public class PHAMLMeshFEARunner
    }
 
    /**
-    * Returns the number of charges in the indexed mesh element from JMONSEL's
-    * cache.
+    * Returns the total charge in the indexed element in units of e. E.g., the !
+    * electron charge is -1; Only volume elements carry charge. Others return 0.
     *
     * @param index
     * @return
@@ -534,6 +552,38 @@ public class PHAMLMeshFEARunner
             throw new EPQFatalException("Unknown nonzero error code in getElementType");
       }
    }
+   
+   /**
+    * @param index
+    * @return
+    */
+   public double getErrorEstimate() {
+      final IntByReference errcode = new IntByReference(0);
+      final double errEst = PHAML.lib.getErrorEstimate(handle, errcode);
+      final int err = errcode.getValue();
+      switch(err) {
+         case 0:
+            return errEst;
+         case 1:
+            PHAML.lib.meshDestructorAll(errcode);
+            throw new EPQFatalException("runFEA has not been called with handle " + handle + " in getErrorEstimate.");
+         case 2:
+            PHAML.lib.meshDestructorAll(errcode);
+            throw new EPQFatalException("Invalid handle in getErrorEstimate.");
+         default:
+            PHAML.lib.meshDestructorAll(errcode);
+            throw new EPQFatalException("Unknown nonzero error code in getVolume");
+      }
+   }
+
+   /**
+    * Returns the current value of errind.
+    * 
+    * @return
+    */
+   public int getErrind() {
+      return errind;
+   }
 
    /**
     * @return
@@ -559,8 +609,16 @@ public class PHAMLMeshFEARunner
    }
 
    /**
-    * @see gov.nist.nanoscalemetrology.JMONSEL.IAdaptiveMesh#getMeshRevision()
+    * A mesh revision number of 0 is assigned to the original mesh. IBasicMesh
+    * implementations that alter the mesh (e.g., classes that use adaptive
+    * meshes) increment the revision number each time the mesh is changed. This
+    * getMeshRevision() method returns the revision number, so the user can
+    * determine whether the mesh has changed.
+    * 
+    * @return
+    * @see gov.nist.nanoscalemetrology.JMONSEL.IBasicMesh#getMeshRevision()
     */
+   // TODO Test this routine
    @Override
    public int getMeshRevision() {
       final IntByReference errcode = new IntByReference(0);
@@ -580,7 +638,7 @@ public class PHAMLMeshFEARunner
    /**
     * Returns the current value of min_tet_size.
     *
-    * @return double
+    * @return
     */
    public double getMin_tet_size() {
       return min_tet_size;
@@ -863,6 +921,34 @@ public class PHAMLMeshFEARunner
    }
 
    /**
+    * Returns the current value of refinetol.
+    * 
+    * @return
+    */
+   public double getRefinetol() {
+      return refinetol;
+   }
+
+   /**
+    * Returns the value of saveMeshType. A value of 1 means mesh files are
+    * stored in GMSH format. A value of 2 means they are stored in PHAML format.
+    * 
+    * @return
+    */
+   public int getSaveMeshType() {
+      return saveMeshType;
+   }
+
+   /**
+    * Returns the index of the current solver (set using setSolver).
+    * 
+    * @return
+    */
+   public int getSolver() {
+      return solver;
+   }
+
+   /**
     * @param elementIndex
     * @return
     * @see gov.nist.nanoscalemetrology.JMONSEL.IBasicMesh#getTags(int)
@@ -926,7 +1012,7 @@ public class PHAMLMeshFEARunner
             throw new EPQFatalException("Invalid handle in getVolume.");
          default:
             PHAML.lib.meshDestructorAll(errcode);
-            throw new EPQFatalException("Unknown nonzero error code in getTags");
+            throw new EPQFatalException("Unknown nonzero error code in getVolume");
       }
    }
 
@@ -998,6 +1084,9 @@ public class PHAMLMeshFEARunner
    }
 
    private void initializeAllCache() {
+      /* TODO: In cases where PHAML generates its own mesh from a .geo file the mesh elements (and maybe
+       * other things) are not getting properly copied to the JMONSEL side of the interface.
+       */
       initializeAdjacentVolumesTable(); // re-cache adjacent volumes
       initializeNodeCoordinatesTable(); // re-cache node coordinates
       initializeNodeIndicesTable(); // re-cache node indices
@@ -1199,6 +1288,16 @@ public class PHAMLMeshFEARunner
    }
 
    /**
+    * Returns the current value of verbose (which determines the detail of what
+    * PHAML writes to out.txt).
+    *
+    * @return
+    */
+   public boolean isVerbose() {
+      return verbose;
+   }
+
+   /**
     * Returns true if the element is a volume type (e.g., a tetrahedron) and
     * false if not (lines, triangles, etc.) The determination is made by relying
     * on information in JMONSEL's cache of volume types.
@@ -1363,7 +1462,8 @@ public class PHAMLMeshFEARunner
 
       errcode.setValue(0);
       final int rev0 = getMeshRevision();
-      PHAML.lib.runFEA(handle, verbose, tolerance, maxtet, min_tet_size, errcode);
+      PHAML.lib.runFEA(handle, verbose, tolerance, maxtet, min_tet_size, refinetol, solver, errind, errcode);
+      err = errcode.getValue();
       switch(err) {
          case 0:
             break;
@@ -1371,19 +1471,34 @@ public class PHAMLMeshFEARunner
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Allocation failed in set_index_tables within runFEA.");
          case 2:
-            PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in runFEA.");
          case 3:
             PHAML.lib.meshDestructorAll(errcode);
-            throw new EPQFatalException("Dielectric constants have not been set in runFEA.");
+            throw new EPQFatalException("Invalid input value for solver within runFEA.");
          case 4:
             PHAML.lib.meshDestructorAll(errcode);
-            throw new EPQFatalException("Constraints have not been set in runFEA.");
+            throw new EPQFatalException("Invalid input value for errind within runFEA.");
          case 5:
+            PHAML.lib.meshDestructorAll(errcode);
+            throw new EPQFatalException("Dielectric constants have not been set in runFEA.");
+         case 6:
+            PHAML.lib.meshDestructorAll(errcode);
+            throw new EPQFatalException("Constraints have not been set in runFEA.");
+         case 7:
+         case 8:
             /*
-             * This is an informational return code, indicating that the
-             * tolerance was not met. I have nothing good to do with this
-             * message, so I currently just ignore it.
+             * These are informational return codes, indicating that a tolerance
+             * was not met. Code 7 means termination was due to reaching max_tet volume
+             * elements. Code 8 means termination was due to an apparent stalled refinement.
+             * I have nothing good to do with this message, so I
+             * currently just ignore it.
+             */
+            break;
+         case 9:
+            /*
+             * TODO: This code means "could not refresh output file". I'm not
+             * sure what this means so I don't know whether to ignore it or
+             * throw an exception.
              */
             break;
          default:
@@ -1391,9 +1506,9 @@ public class PHAMLMeshFEARunner
             throw new EPQFatalException("Unknown nonzero error code in setConstraints");
       }
       if(rev0 != getMeshRevision())
-         initializeAllCache(); // Re-cache the table if Mesh
+         initializeAllCache(); // Re-cache the table if Mesh was changed
       else
-         initializeNodePotentialTable(); // Re-cache to potentials to include
+         initializeNodePotentialTable(); // Re-cache the potentials to include
                                          // new solution, even if the mesh
                                          // wasn't changed.
       meshReg.getMesh().clearElementsCache(); // Force reinstantiation of any
@@ -1402,7 +1517,8 @@ public class PHAMLMeshFEARunner
    }
 
    /**
-    * Saves the mesh in a file with the specified name in GMSH format.
+    * Saves the mesh to a file with the specified name. The type of the file is
+    * determined by the saveMeshType() method. It is GMSH by default.
     *
     * @param meshFileName
     */
@@ -1410,7 +1526,8 @@ public class PHAMLMeshFEARunner
    public void saveMesh(String meshFileName) {
       final IntByReference errcode = new IntByReference(0);
       final int len = meshFileName.length();
-      PHAML.lib.saveMesh(handle, meshFileName, len, errcode);
+      final int meshType = 1; // GMSH format
+      PHAML.lib.saveMesh(handle, meshFileName, len, meshType, errcode);
       final int err = errcode.getValue();
       switch(err) {
          case 0:
@@ -1539,13 +1656,41 @@ public class PHAMLMeshFEARunner
    }
 
    /**
+    * Sets the error indicator to use as follows:
+    * </p>
+    * <p>
+    * 1 local problem p, energy norm
+    * </p>
+    * <p>
+    * 2 local problem p, H^1 seminorm
+    * </p>
+    * <p>
+    * 3 local problem p, L^2 norm
+    * </p>
+    * <p>
+    * 4 John's with local problem p, H^1 seminorm
+    * </p>
+    * <p>
+    * 5 John's with local problem p, L^1 norm
+    * </p>
+    * <p>
+    * 6 John's with local problem p, L^1-like seminorm without abs (default)
+    * </p>
+    * 
+    * @param errind
+    */
+   public void setErrind(int errind) {
+      this.errind = errind;
+   }
+
+   /**
     * The maximum number of tetrahedra to allow in the mesh. During refinement,
     * the number of tetrahedra in the mesh may increase up to approximately this
     * limit if needed to meet the error tolerance. Once maxtet tetrahedra are in
-    * the mesh, then estimated high error tets are refined and an approximately
-    * equal number of low error tetrahedra are de-refined. Refinement and
-    * de-refinement occur with groups of tetrahedra, so this limit is
-    * approximate. Default is 1 million.
+    * the mesh, then low error tetrahedra are de-refined and an approximately
+    * equal number of high error tets are refined. Refinement and de-refinement
+    * occur with groups of tetrahedra, so this limit is approximate. Default is
+    * 1 million.
     *
     * @param maxtet
     */
@@ -1560,7 +1705,7 @@ public class PHAMLMeshFEARunner
     * Sets the value of min_tet_size. If the cube root of the volume of a tet is
     * smaller than this value (default 0.3e-9 m), the tet will not be refined
     * unless it is necessary for compatibility (e.g., with an adjacent element
-    * that is refined.
+    * that is refined).
     *
     * @param min_tet_size in meters.
     */
@@ -1572,7 +1717,7 @@ public class PHAMLMeshFEARunner
    }
 
    /**
-    * @param nodeIndex
+    * @param index
     * @param coords
     * @see gov.nist.nanoscalemetrology.JMONSEL.IBasicMesh#setNodeCoordinates(int,
     *      double[])
@@ -1636,6 +1781,63 @@ public class PHAMLMeshFEARunner
    }
 
    /**
+    * When a mesh element's error estimate is less than refinetol, refinement is
+    * not performed on that element (unless required for compatability). The
+    * numberical meaning of refinetol depends on the chosen error estimator.
+    * 
+    * @param refinetol
+    */
+   public void setRefinetol(double refinetol) {
+      this.refinetol = refinetol;
+   }
+
+   /**
+    * If saveMeshType = 1 saveMesh saves to a GMSH format (default). If
+    * saveMeshType = 2 it saves in PHAML format. The PHAML mesh file is larger,
+    * but it retains information about refinement history that allows PHAML to
+    * unrefine previously refined tets. This may be important if an adaptive
+    * calculation is saved and later resumed
+    * 
+    * @param saveMeshType - int
+    */
+   public void setSaveMeshType(int saveMeshType) {
+      this.saveMeshType = saveMeshType;
+   }
+
+   /**
+    * The integer argument determines the solver/preconditioner combination used
+    * by PHAML, as follows:
+    * </p>
+    * <p>
+    * 1 GMRES/ILU (default)
+    * </p>
+    * <p>
+    * 2 GMRES/SOR
+    * </p>
+    * <p>
+    * 3 GMRES/AMG
+    * </p>
+    * <p>
+    * 4 CG/ILU
+    * </p>
+    * <p>
+    * 5 CG/SOR
+    * </p>
+    * <p>
+    * 6 CG/AMG
+    * </p>
+    * <p>
+    * where GMRES = Generalized minimum residual method, CG = Conjugate gradient
+    * method, ILU = Incomplete LU factorization, SOR = Successive
+    * over-relaxation, and AMG = Algebraic multigrid.
+    * 
+    * @param solver
+    */
+   public void setSolver(int solver) {
+      this.solver = solver;
+   }
+
+   /**
     * Sets the tolerance used by PHAML to determine which elements should be
     * adapted. Default is 0.0001. An error of this size would mean the estimated
     * rms fractional error (error/value) in the potential is 0.01%.
@@ -1647,6 +1849,18 @@ public class PHAMLMeshFEARunner
          this.tolerance = tolerance;
       else
          throw new EPQFatalException("Illegal tolerance");
+   }
+
+   /**
+    * PHAML generates a temporary out.txt file in the tempFEA folder each time
+    * runFEA is invoked. Verbose or not verbose (the default) output to out.txt
+    * is set by calling setVerbose with the argument respectively true or false.
+    *
+    * @param verbose
+    */
+   public void setVerbose(boolean verbose) {
+      if(this.verbose != verbose)
+         this.verbose = verbose;
    }
 
    /**
@@ -1718,27 +1932,5 @@ public class PHAMLMeshFEARunner
             throw new EPQFatalException("Unknown nonzero error code in tetFaceNodeIndices");
       }
 
-   }
-
-   /**
-    * Returns the current value of verbose (which determines the detail of what
-    * PHAML writes to out.txt).
-    *
-    * @return
-    */
-   public boolean isVerbose() {
-      return verbose;
-   }
-
-   /**
-    * PHAML generates a temporary out.txt file in the tempFEA folder each time
-    * runFEA is invoked. Verbose or not verbose (the default) output to out.txt
-    * is set by calling setVerbose with the argument respectively true or false.
-    *
-    * @param verbose
-    */
-   public void setVerbose(boolean verbose) {
-      if(this.verbose != verbose)
-         this.verbose = verbose;
    }
 }

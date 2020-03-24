@@ -169,6 +169,10 @@ public class Session {
    static private final boolean ENABLE_LW = false;
 
    private boolean mIsNew;
+   
+   static public void loadMe() {
+	   
+   }
 
    /**
     * Constructs a Session

@@ -103,6 +103,8 @@ public class Blobber {
 
    }
 
+   public static void loadMe() {}
+   
    private final ImageProxy mImage;
    private final ArrayList<Blob> mBlobs = new ArrayList<>();
 

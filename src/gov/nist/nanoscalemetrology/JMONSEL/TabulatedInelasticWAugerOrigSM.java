@@ -7,7 +7,6 @@ import gov.nist.microanalysis.EPQLibrary.EPQFatalException;
 import gov.nist.microanalysis.EPQLibrary.Material;
 import gov.nist.microanalysis.NISTMonte.Electron;
 import gov.nist.microanalysis.Utility.Math2;
-import gov.nist.nanoscalemetrology.JMONSEL.VacancyRelaxationData;
 
 import java.io.FileNotFoundException;
 import java.util.Arrays;

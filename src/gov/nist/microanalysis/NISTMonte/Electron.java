@@ -32,12 +32,6 @@ import gov.nist.microanalysis.Utility.Math2;
  */
 public class Electron {
    
-   /* CESC TEST   (ask whether we need "transient" )*/
-   private transient boolean mAuger=false;
-   private transient double mAugerEnergy=0.0;   
-   
-   /* CESC TEST */
-   
    // The x,y & z coordinates of the electron
    private final transient double[] mPosition;
 
@@ -122,22 +116,6 @@ public class Electron {
       mPrevRegion = mCurrentRegion;
       parentID = parent.getIdent();
    }
-
-   /* CESC TEST */
-   public void setAuger(boolean flagAuger) {
-      mAuger=flagAuger;
-   }
-   public boolean requiresAuger() {
-      return mAuger;
-   }
-   //
-   public void setAugerEnergy(double ene) {
-      mAugerEnergy=ene;
-   }
-   public double getAugerEnergy() {
-      return mAugerEnergy;
-   }
-   /* CESC TEST */
 
    /**
     * Permits changing the current direction of the electron to any direction as

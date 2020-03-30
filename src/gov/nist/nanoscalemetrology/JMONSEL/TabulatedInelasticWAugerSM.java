@@ -419,21 +419,6 @@ public class TabulatedInelasticWAugerSM
                // Generate SE, apply energy loss and trajectory change to SE
                // here
                se = new Electron(pe, thetaSE, phiSE, energySE);
-
-               /* CESC TEST */
-               if(vacancyRelaxationData != null) {
-                  final double augerEnergy = vacancyRelaxationData.augerEnergy(be, deltaE);
-                  if(augerEnergy > 0.0) {
-                     se.setAuger(true);
-                     se.setAugerEnergy(augerEnergy);
-                  }
-               }
-               /*
-                * else {
-                * System.out.println("No vacancy-relaxation data defined."); }
-                */
-               /* CESC TEST */
-
             } else { // SE generation from extended band
                final double root = 2. * Math.sqrt(offsetFermiEnergy * (offsetFermiEnergy + deltaE));
                final double sum = (2. * offsetFermiEnergy) + deltaE;

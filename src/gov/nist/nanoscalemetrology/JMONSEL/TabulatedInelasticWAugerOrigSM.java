@@ -103,10 +103,6 @@ import java.util.Arrays;
  */
 public class TabulatedInelasticWAugerOrigSM
    extends ScatterMechanism {
-
-   /* CESC */
-   private VacancyRelaxationData vacancyRelaxationData;
-   /* CESC */
    
    private final int methodSE;
    private double energyOffset = 0.;
@@ -518,10 +514,6 @@ public class TabulatedInelasticWAugerOrigSM
       };
    }
 
-   public void setVacancyRelaxationData(int z0){
-      vacancyRelaxationData = new VacancyRelaxationData(z0);      
-   }
-   
    /*
     * This is a private utility used to determine the binding energy associated
     * with the secondary electron excitation channel. The default method

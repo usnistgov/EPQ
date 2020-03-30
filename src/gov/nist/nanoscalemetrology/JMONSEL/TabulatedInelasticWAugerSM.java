@@ -105,10 +105,6 @@ public class TabulatedInelasticWAugerSM
    extends
    ScatterMechanism {
 
-   /* CESC */
-   private VacancyRelaxationData vacancyRelaxationData;
-   /* CESC */
-
    private final int methodSE;
    private double energyOffset = 0.;
 

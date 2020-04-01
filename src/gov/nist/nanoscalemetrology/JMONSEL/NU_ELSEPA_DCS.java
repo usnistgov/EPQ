@@ -275,6 +275,14 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 	transient private final double logElectronCharge = Math.log(PhysicalConstants.ElectronCharge);
 
 	/**
+	 * Constructs a NU_ELSEPA_DCS with the default muffin-tin potential model.
+	 * @param elm
+	 */
+	public NU_ELSEPA_DCS(Element elm) {
+		this(elm, 1);
+	}
+	
+	/**
 	 * NU_ELSEPA_DCS
 	 *
 	 * @param elm Element
@@ -327,14 +335,6 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 			throw new EPQFatalException("Unable to construct NU_ELSEPA_DCS: " + ex.toString());
 		}
 	}
-	
-	/**
-	 * Constructs a NU_ELSEPA_DCS with the default muffin-tin potential model.
-	 * @param elm
-	 */
-	public NU_ELSEPA_DCS(Element elm) {
-		this(elm, 1);
-	}
 
 	@Override
 	public Element getElement() {
@@ -363,18 +363,18 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 	}
 
 	/**
+	 * @return - the smallest tabulated energy
+	 */
+	public double getMinE() {
+		return Math.exp(minlogE);
+	}
+
+	/**
 	 * @return - the energy below which cross-sections and angles must be
 	 *         extrapolated
 	 */
 	public double getMinEforTable() {
 		return minEforTable;
-	}
-
-	/**
-	 * @return - the smallest tabulated energy
-	 */
-	public double getMinE() {
-		return Math.exp(minlogE);
 	}
 
 	/**

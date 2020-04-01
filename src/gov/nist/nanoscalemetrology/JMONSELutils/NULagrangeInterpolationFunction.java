@@ -63,7 +63,44 @@ public class NULagrangeInterpolationFunction implements IListFunction {
 	private int nvars;
 
 	/**
-	 * This constructor is used for interpolation of nvars variables, nvars > 1.
+	 * This constructor is used for interpolation on a single variable. fsamp is a
+	 * double[] array of function values at the sampled grid points.
+	 * 
+	 * @param fsamp - An array of function values
+	 * @param xsamp - A strictly increasing array of corresponding independent
+	 *              variable values
+	 * @param order - The polynomial order of the interpolation
+	 */
+	public NULagrangeInterpolationFunction(double[] fsamp, double[] xsamp, int order) {
+		super();
+		this.xsamp = xsamp;
+		this.order = order;
+		this.nvars = 1;
+		this.f = fsamp;
+
+		if ((order < 1) || (fsamp.length < (order + 1)))
+			throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
+		if (xsamp.length != xsamp.length)
+			throw new IllegalArgumentException(
+					"Dependent (fsamp) and independent (x) arrays must be of the same length.");
+		/* xsamp values must be strictly monotonic */
+		double sign = Math.signum(xsamp[1] - xsamp[0]);
+		if (sign == 0.)
+			throw new IllegalArgumentException("Illegal identical values in xsamp");
+		for (int i = 2; i < xsamp.length; i++) {
+			double newsign = Math.signum(xsamp[i] - xsamp[i - 1]);
+			if (newsign != sign) {
+				if (newsign == 0)
+					throw new IllegalArgumentException("Illegal identical values in xsamp");
+				else
+					new IllegalArgumentException("Illegal non-monotonic xsamp");
+			}
+		}
+
+	}
+
+	/**
+	 * This constructor is used for interpolation of nvars variables when nvars > 1.
 	 * fsamp is an array of IListFunction[], each of which takes nvars-1 variables
 	 * for input.
 	 * 
@@ -99,45 +136,6 @@ public class NULagrangeInterpolationFunction implements IListFunction {
 						"Elements of fsamp must all be IListFunctions of " + nRest + " variables.");
 		}
 
-		/* xsamp values must be strictly monotonic */
-		double sign = Math.signum(xsamp[1] - xsamp[0]);
-		if (sign == 0.)
-			throw new IllegalArgumentException("Illegal identical values in xsamp");
-		for (int i = 2; i < xsamp.length; i++) {
-			double newsign = Math.signum(xsamp[i] - xsamp[i - 1]);
-			if (newsign != sign) {
-				if (newsign == 0)
-					throw new IllegalArgumentException("Illegal identical values in xsamp");
-				else
-					new IllegalArgumentException("Illegal non-monotonic xsamp");
-			}
-		}
-
-	}
-
-	/**
-	 * This constructor is used for interpolation on a single variable. fsamp is a
-	 * double[] array of function values at the sampled grid points.
-	 * 
-	 * @param fsamp - An array of function values
-	 * @param xsamp - A strictly increasing array of corresponding independent
-	 *              variable values
-	 * @param order - The polynomial order of the interpolation
-	 * @param nvars - The number of variables accepted as input by this
-	 *              interpolation function
-	 */
-	public NULagrangeInterpolationFunction(double[] fsamp, double[] xsamp, int order) {
-		super();
-		this.xsamp = xsamp;
-		this.order = order;
-		this.nvars = 1;
-		this.f = fsamp;
-
-		if ((order < 1) || (fsamp.length < (order + 1)))
-			throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
-		if (xsamp.length != xsamp.length)
-			throw new IllegalArgumentException(
-					"Dependent (fsamp) and independent (x) arrays must be of the same length.");
 		/* xsamp values must be strictly monotonic */
 		double sign = Math.signum(xsamp[1] - xsamp[0]);
 		if (sign == 0.)

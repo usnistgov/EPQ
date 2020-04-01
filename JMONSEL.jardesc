@@ -10,7 +10,7 @@
             <packagesToUnSeal/>
         </sealing>
     </manifest>
-    <selectedElements exportClassFiles="false" exportJavaFiles="false" exportOutputFolder="true">
+    <selectedElements exportClassFiles="false" exportJavaFiles="true" exportOutputFolder="true">
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{ScanGenerator.java"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.NISTMonte.Gen3"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{IBasicMesh.java"/>
@@ -18,7 +18,6 @@
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{MollerInelasticSM.java"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{JoyLuoNieminenCSD.java"/>
-        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.MONSELtests"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSELutils"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{NUTableInterpolation.java"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{SparskitFEArunner.java"/>
@@ -45,6 +44,7 @@
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{ScatterMechanism.java"/>
         <file path="/EPQ/src/gov/nist/nanoscalemetrology/JMONSEL/atomconf.tab"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{ZeroCSD.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.JythonGUI"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary.CzyzewskiXSec"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{DepositedEnergyListener.java"/>
         <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL{NISTMottRS.java"/>

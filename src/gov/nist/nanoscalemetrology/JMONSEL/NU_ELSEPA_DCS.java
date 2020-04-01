@@ -30,16 +30,18 @@ import gov.nist.nanoscalemetrology.JMONSELutils.NULagrangeInterpolationFunction;
  * cross sections from either atomic or muffin-tin potentials, whereas the
  * previous classes were restricted to atomic potentials, and (3) the present
  * class internally uses interpolation tables with non-uniform instead of
- * uniform intervals. Difference #3 makes interpolation slightly slower, permits
- * the larger energy range, and results in maximum interpolation errors
- * relative to ELSEPA a factor of 10 more more smaller despite slightly smaller
- * tables.
+ * uniform intervals. Despite the slightly smaller tables and the the larger
+ * energy range, this implementation has maximum interpolation errors relative
+ * to the ELSEPA reference a factor of 10 more more smaller than the earlier
+ * uniformly interpolated implementations.
  * </p>
  * <p>
- * For energies below either 50 eV or 100 eV the value is interpolated assuming
- * 0 cross section at 0 eV. Interpolation may be linear or may follow Browning's
- * form. The default is Browning interpolation below 50 eV. Other options may be
- * chosen using setMethod(int methodnumber) with methodnumber = 1, 2, or 3.
+ * For energies below a minimum the value is interpolated assuming 0 cross
+ * section at 0 eV. This minimum is by default 50 eV, the table minimum, but a
+ * higher default may be specified with the setMinEforTable() method.
+ * Interpolation below this minimum may be specified by setMethod(int
+ * methodnumber) with methodnumber = 1 for Browning interpolation or 2 for
+ * linear interpolation. The default is Browning interpolation.
  * </p>
  * <p>
  * Copyright: Pursuant to title 17 Section 105 of the United States Code this
@@ -56,6 +58,14 @@ import gov.nist.nanoscalemetrology.JMONSELutils.NULagrangeInterpolationFunction;
 public class NU_ELSEPA_DCS extends RandomizedScatter {
 
 	/**
+	 * This Factory class a get(Element elm) method that returns a NU_ELSEPA_DCS
+	 * object for that element. It has methods that determine whether the
+	 * NU_ELSEPA_DCS object should extend RandomizedScatter with an atomic or
+	 * muffin-tin scattering model and to determine the behavior for energies below
+	 * a minimum. The factory class object is typically passed to scattering
+	 * mechanism implementations that then need only implement them for those
+	 * elements that compose the material being simulated.
+	 * 
 	 * @author John Villarrubia
 	 *
 	 */
@@ -73,21 +83,22 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 		 * whenever available and Browning extrapolation below the table minimum.
 		 */
 		public NU_ELSEPA_DCSFactory() {
-			this(1, ToSI.eV(50.), 1);
+			this(1, MIN_ELSEPA, 1);
 		}
 
 		/**
-		 * extrapMethod is an integer = 1 or 2. Since the ELSEPA tables are valid only
-		 * for energies in the interval [50 eV, 300 keV], cross sections for energies <
-		 * 50 eV can't be determined directly by table lookup. Optionally users may
-		 * specify a higher minimum for use of the tabulated values. Below the permitted
-		 * and available range, we use one of 2 methods: (1) extrapolation with
-		 * Browning's power law or (2) linear extrapolation from the final value to 0 at
-		 * 0 eV.
+		 * Constructs a NU_ELSEPA_DCSFactory object with given extrapolation method,
+		 * energy below which extrapolation is used, and potential model. extrapMethod
+		 * is an integer = 1 or 2. Since the ELSEPA tables are valid only for energies
+		 * in the interval [50 eV, 300 keV], cross sections for energies < 50 eV can't
+		 * be determined directly by table lookup. Optionally users may specify a higher
+		 * minimum for use of the tabulated values. Below the permitted and available
+		 * range, we use one of 2 methods: (1) extrapolation with Browning's power law
+		 * or (2) linear extrapolation from the final value to 0 at 0 eV.
 		 *
-		 * @param extrapMethod   - An integer, 1 = Browning's power law, 2 = linear
-		 * @param minEforTable   - Energy below which to use extrapolation
-		 * @param potentialModel - 0 for atomic potentials, 1 for muffin-tin
+		 * @param extrapMethod   - int 1 = Browning's power law, 2 = linear
+		 * @param minEforTable   - double Energy below which to use extrapolation
+		 * @param potentialModel - int 0 for atomic potentials, 1 for muffin-tin
 		 */
 		public NU_ELSEPA_DCSFactory(int extrapMethod, double minEforTable, int potentialModel) {
 			super("NIST Mott Inelastic Cross-Section", mReference);
@@ -104,7 +115,7 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 			final int z = elm.getAtomicNumber();
 			if (mScatter[z] == null || mScatter[z].getExtrapMethod() != extrapMethod
 					|| mScatter[z].getMinEforTable() != minEforTable) {
-				mScatter[z] = new NU_ELSEPA_DCS(elm,potentialModel);
+				mScatter[z] = new NU_ELSEPA_DCS(elm, potentialModel);
 				mScatter[z].setExtrapMethod(extrapMethod);
 				mScatter[z].setMinEforTable(minEforTable);
 			}
@@ -276,18 +287,18 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 
 	/**
 	 * Constructs a NU_ELSEPA_DCS with the default muffin-tin potential model.
+	 * 
 	 * @param elm
 	 */
 	public NU_ELSEPA_DCS(Element elm) {
 		this(elm, 1);
 	}
-	
+
 	/**
-	 * NU_ELSEPA_DCS
-	 *
-	 * @param elm Element
+	 * @param elm
+	 * @param potentialmodel
 	 */
-	public NU_ELSEPA_DCS(Element elm,int potentialmodel) {
+	public NU_ELSEPA_DCS(Element elm, int potentialmodel) {
 		super("ELSEPA Elastic cross-section", mReference);
 		assert (elm != null);
 		mElement = elm;
@@ -513,6 +524,14 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 	}
 
 	/**
+	 * This class is private because the potential model must be chosen within the
+	 * constructor prior to reading the tables, since the choice of model determines
+	 * which tables to read. The choice cannot then subsequently be changed. This
+	 * private setter's job is to insure that the choice is correctly recorded for
+	 * the benefit of getPotentialModel and internal access to the file name of the
+	 * imported tables. (In contrast, the NU_ELSEPA_DCSFactory method of the the
+	 * same name is public.
+	 * 
 	 * @param potentialModel - 0 for atomic, 1 for muffin-tin
 	 */
 	private void setPotentialModel(int potentialModel) {

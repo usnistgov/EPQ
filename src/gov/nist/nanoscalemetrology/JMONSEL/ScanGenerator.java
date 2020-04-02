@@ -39,78 +39,73 @@ package gov.nist.nanoscalemetrology.JMONSEL;
  * @version 1.0
  */
 public abstract class ScanGenerator {
-   private final TimeKeeper tk = TimeKeeper.getTimeKeeper();
+	private final TimeKeeper tk = TimeKeeper.getTimeKeeper();
 
-   private int index = -1;
+	private int index = -1;
 
-   private double[] currentPos = new double[] {
-      Double.NaN,
-      Double.NaN,
-      Double.NaN,
-      Double.NaN
-   };
+	private double[] currentPos = new double[] { Double.NaN, Double.NaN, Double.NaN, Double.NaN };
 
-   /**
-    * Returns the current [x,y,z,t]. When the IScanGenerator is constructed or
-    * reset the values are all equal to NaN. Does not increment the counter.
-    *
-    * @return - The current [x, y, z, t] array
-    */
-   public double[] current() {
-      return currentPos;
-   }
+	/**
+	 * Returns the current [x,y,z,t]. When the IScanGenerator is constructed or
+	 * reset the values are all equal to NaN. Does not increment the counter.
+	 *
+	 * @return - The current [x, y, z, t] array
+	 */
+	public double[] current() {
+		return currentPos;
+	}
 
-   /**
-    * Returns the current value of the index. The first point in the scan has
-    * index 0. Subsequent points increment by 1. When the IScanGenerator is
-    * constructed or reset, the index is -1.
-    *
-    * @return - the current index
-    */
-   public int currentIndex() {
-      return index;
-   }
+	/**
+	 * Returns the current value of the index. The first point in the scan has index
+	 * 0. Subsequent points increment by 1. When the IScanGenerator is constructed
+	 * or reset, the index is -1.
+	 *
+	 * @return - the current index
+	 */
+	public int currentIndex() {
+		return index;
+	}
 
-   /**
-    * Returns the scan value at index i. Does not increment the index or set the
-    * TimeKeeper's time.
-    *
-    * @param i
-    * @return - The [x, y, z, t] array for index i
-    */
-   abstract public double[] get(int i);
+	/**
+	 * Returns the scan value at index i. Does not increment the index or set the
+	 * TimeKeeper's time.
+	 *
+	 * @param i
+	 * @return - The [x, y, z, t] array for index i
+	 */
+	abstract public double[] get(int i);
 
-   /**
-    * Returns the scan value at the next index, increments the index, and sets
-    * the TimeKeeper to the returned time.
-    *
-    * @return - The current [x, y, z, t] array
-    */
-   public double[] next() {
-      index++;
-      currentPos = get(index);
-      tk.setTime(currentPos[3]);
-      return currentPos;
-   }
+	/**
+	 * Returns the scan value at the next index, increments the index, and sets the
+	 * TimeKeeper to the returned time.
+	 *
+	 * @return - The current [x, y, z, t] array
+	 */
+	public double[] next() {
+		index++;
+		currentPos = get(index);
+		tk.setTime(currentPos[3]);
+		return currentPos;
+	}
 
-   /**
-    * Resets the index to -1.
-    */
-   public void reset() {
-      index = -1;
-      currentPos = get(index);
-      tk.setTime(currentPos[3]);
-   }
+	/**
+	 * Resets the index to -1.
+	 */
+	public void reset() {
+		index = -1;
+		currentPos = get(index);
+		tk.setTime(currentPos[3]);
+	}
 
-   /**
-    * Sets the index to the designated value. Sets the TimeKeeper's time to the
-    * corresponding value.
-    *
-    * @param i
-    */
-   public void setIndex(int i) {
-      index = i;
-      currentPos = get(index);
-      tk.setTime(currentPos[3]);
-   }
+	/**
+	 * Sets the index to the designated value. Sets the TimeKeeper's time to the
+	 * corresponding value.
+	 *
+	 * @param i
+	 */
+	public void setIndex(int i) {
+		index = i;
+		currentPos = get(index);
+		tk.setTime(currentPos[3]);
+	}
 }

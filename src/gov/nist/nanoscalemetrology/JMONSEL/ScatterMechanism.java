@@ -34,40 +34,37 @@ import gov.nist.microanalysis.NISTMonte.Electron;
  * @author John Villarrubia
  * @version 1.0
  */
-abstract public class ScatterMechanism
-   implements
-   Cloneable {
+abstract public class ScatterMechanism implements Cloneable {
 
-   /**
-    * Returns the reciprocal of the mean free path.
-    *
-    * @param pe - the primary electron
-    * @return double Reciprocal of mfp in inverse meters
-    */
-   abstract public double scatterRate(Electron pe);
+	/**
+	 * Returns the reciprocal of the mean free path.
+	 *
+	 * @param pe - the primary electron
+	 * @return double Reciprocal of mfp in inverse meters
+	 */
+	abstract public double scatterRate(Electron pe);
 
-   /**
-    * Updates properties of the primary electron based on results of scattering
-    * and returns either a secondary electron or null.
-    *
-    * @param pe -- the primary electron
-    * @return Electron -- the generated secondary electron or null
-    */
-   abstract public Electron scatter(Electron pe);
+	/**
+	 * Updates properties of the primary electron based on results of scattering and
+	 * returns either a secondary electron or null.
+	 *
+	 * @param pe -- the primary electron
+	 * @return Electron -- the generated secondary electron or null
+	 */
+	abstract public Electron scatter(Electron pe);
 
-   /**
-    * Sets the material within which the electron scatters. This method
-    * typically precomputes and caches combinations of material properties
-    * required by the scattering model.
-    *
-    * @param mat
-    */
-   abstract public void setMaterial(Material mat);
+	/**
+	 * Sets the material within which the electron scatters. This method typically
+	 * precomputes and caches combinations of material properties required by the
+	 * scattering model.
+	 *
+	 * @param mat
+	 */
+	abstract public void setMaterial(Material mat);
 
-   @Override
-   public ScatterMechanism clone()
-         throws CloneNotSupportedException {
-      return (ScatterMechanism) super.clone();
-   }
+	@Override
+	public ScatterMechanism clone() throws CloneNotSupportedException {
+		return (ScatterMechanism) super.clone();
+	}
 
 }

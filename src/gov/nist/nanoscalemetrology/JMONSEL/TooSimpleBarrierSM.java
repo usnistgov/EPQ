@@ -24,32 +24,31 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS.RegionBase;
  * @version 1.0
  */
 @Deprecated
-public class TooSimpleBarrierSM
-   implements
-   BarrierScatterMechanism {
+public class TooSimpleBarrierSM implements BarrierScatterMechanism {
 
-   /**
-    *
-    */
-   public TooSimpleBarrierSM() {
-   }
+	/**
+	*
+	*/
+	public TooSimpleBarrierSM() {
+	}
 
-   /*
-    * (non-Javadoc)
-    * @see
-    * gov.nist.nanoscalemetrology.JMONSEL.BarrierScatterMechanism#barrierScatter
-    * (gov.nist.microanalysis.NISTMonte.Electron,
-    * gov.nist.microanalysis.NISTMonte.MonteCarloSS.RegionBase)
-    */
-   @Override
-   public Electron barrierScatter(Electron pe, RegionBase nextRegion) {
-      /*
-       *
-       */
-      if(pe.getEnergy() < ((SEmaterial) pe.getCurrentRegion().getMaterial()).getWorkfunction())
-         pe.setEnergy(0.);
-      else
-         pe.setCurrentRegion(nextRegion);
-      return null;
-   }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gov.nist.nanoscalemetrology.JMONSEL.BarrierScatterMechanism#barrierScatter
+	 * (gov.nist.microanalysis.NISTMonte.Electron,
+	 * gov.nist.microanalysis.NISTMonte.MonteCarloSS.RegionBase)
+	 */
+	@Override
+	public Electron barrierScatter(Electron pe, RegionBase nextRegion) {
+		/*
+		 *
+		 */
+		if (pe.getEnergy() < ((SEmaterial) pe.getCurrentRegion().getMaterial()).getWorkfunction())
+			pe.setEnergy(0.);
+		else
+			pe.setCurrentRegion(nextRegion);
+		return null;
+	}
 }

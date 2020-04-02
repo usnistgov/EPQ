@@ -57,95 +57,87 @@ package gov.nist.nanoscalemetrology.JMONSEL;
  * @version 1.0
  */
 
-public class CoarseFineRasterScanGenerator
-   extends ScanGenerator {
+public class CoarseFineRasterScanGenerator extends ScanGenerator {
 
-   private final double x0;
-   private final double y0;
-   private final double z;
-   private final double deltaX;
-   private final double deltaY;
-   private final int ncX;
-   private final int nfX;
-   private final double t0;
-   private final double pixelDwell;
+	private final double x0;
+	private final double y0;
+	private final double z;
+	private final double deltaX;
+	private final double deltaY;
+	private final int ncX;
+	private final int nfX;
+	private final double t0;
+	private final double pixelDwell;
 
-   private final int pixelsPerFrame; // fine pixels in a frame
-   private final int coarsePixelsPerPass; // coarse pixels in a frame
-   private final double totalLineTime; // time for ncX coarse pixels + retrace
-   private final double passTime; // time for each pass through coarse pixels
-   private final double totalFrameTime; //
-   private final double coarseXSize;
-   private final double coarseYSize;
+	private final int pixelsPerFrame; // fine pixels in a frame
+	private final int coarsePixelsPerPass; // coarse pixels in a frame
+	private final double totalLineTime; // time for ncX coarse pixels + retrace
+	private final double passTime; // time for each pass through coarse pixels
+	private final double totalFrameTime; //
+	private final double coarseXSize;
+	private final double coarseYSize;
 
-   /**
-    * Constructs a CoarseFineRasterScanGenerator with the supplied parameters.
-    *
-    * @param x0
-    * @param y0
-    * @param z
-    * @param deltaX
-    * @param deltaY
-    * @param ncX
-    * @param ncY
-    * @param nfX
-    * @param nfY
-    * @param t0
-    * @param pixelDwell
-    * @param retraceTime
-    * @param passSettleTime
-    */
-   public CoarseFineRasterScanGenerator(double x0, double y0, double z, double deltaX, double deltaY, int ncX, int ncY, int nfX, int nfY, double t0, double pixelDwell, double retraceTime, double passSettleTime) {
-      super();
+	/**
+	 * Constructs a CoarseFineRasterScanGenerator with the supplied parameters.
+	 *
+	 * @param x0
+	 * @param y0
+	 * @param z
+	 * @param deltaX
+	 * @param deltaY
+	 * @param ncX
+	 * @param ncY
+	 * @param nfX
+	 * @param nfY
+	 * @param t0
+	 * @param pixelDwell
+	 * @param retraceTime
+	 * @param passSettleTime
+	 */
+	public CoarseFineRasterScanGenerator(double x0, double y0, double z, double deltaX, double deltaY, int ncX, int ncY,
+			int nfX, int nfY, double t0, double pixelDwell, double retraceTime, double passSettleTime) {
+		super();
 
-      this.x0 = x0;
-      this.y0 = y0;
-      this.z = z;
-      this.deltaX = deltaX;
-      this.deltaY = deltaY;
-      this.ncX = ncX;
-      this.nfX = nfX;
-      this.t0 = t0;
-      this.pixelDwell = pixelDwell;
-      coarsePixelsPerPass = ncX * ncY;
-      final int pixelsPerCoarsePixel = nfX * nfY;
-      pixelsPerFrame = coarsePixelsPerPass * pixelsPerCoarsePixel;
-      totalLineTime = (ncX * pixelDwell) + retraceTime;
-      passTime = passSettleTime + (ncY * totalLineTime);
-      totalFrameTime = passTime * pixelsPerCoarsePixel;
-      coarseXSize = nfX * deltaX;
-      coarseYSize = nfY * deltaY;
-   }
+		this.x0 = x0;
+		this.y0 = y0;
+		this.z = z;
+		this.deltaX = deltaX;
+		this.deltaY = deltaY;
+		this.ncX = ncX;
+		this.nfX = nfX;
+		this.t0 = t0;
+		this.pixelDwell = pixelDwell;
+		coarsePixelsPerPass = ncX * ncY;
+		final int pixelsPerCoarsePixel = nfX * nfY;
+		pixelsPerFrame = coarsePixelsPerPass * pixelsPerCoarsePixel;
+		totalLineTime = (ncX * pixelDwell) + retraceTime;
+		passTime = passSettleTime + (ncY * totalLineTime);
+		totalFrameTime = passTime * pixelsPerCoarsePixel;
+		coarseXSize = nfX * deltaX;
+		coarseYSize = nfY * deltaY;
+	}
 
-   /**
-    * @param i
-    * @return
-    * @see gov.nist.nanoscalemetrology.JMONSEL.ScanGenerator#get(int)
-    */
-   @Override
-   public double[] get(int i) {
-      if(i < 0)
-         return new double[] {
-            Double.NaN,
-            Double.NaN,
-            Double.NaN,
-            Double.NaN
-         };
-      final int frameNum = i / pixelsPerFrame;
-      final int iframe = i % pixelsPerFrame;
-      final int passNum = iframe / coarsePixelsPerPass;
-      final int ipass = iframe % coarsePixelsPerPass;
-      final int ic = ipass % ncX;
-      final int jc = ipass / ncX;
-      final int ifine = passNum % nfX;
-      final int jfine = passNum / nfX;
-      final double[] temp = new double[] {
-         x0 + (ic * coarseXSize) + (ifine * deltaX),
-         y0 + (jc * coarseYSize) + (jfine * deltaY),
-         z,
-         t0 + (ic * pixelDwell) + (jc * totalLineTime) + (passNum * passTime) + (frameNum * totalFrameTime)
-      };
-      return temp;
-   }
+	/**
+	 * @param i
+	 * @return
+	 * @see gov.nist.nanoscalemetrology.JMONSEL.ScanGenerator#get(int)
+	 */
+	@Override
+	public double[] get(int i) {
+		if (i < 0)
+			return new double[] { Double.NaN, Double.NaN, Double.NaN, Double.NaN };
+		final int frameNum = i / pixelsPerFrame;
+		final int iframe = i % pixelsPerFrame;
+		final int passNum = iframe / coarsePixelsPerPass;
+		final int ipass = iframe % coarsePixelsPerPass;
+		final int ic = ipass % ncX;
+		final int jc = ipass / ncX;
+		final int ifine = passNum % nfX;
+		final int jfine = passNum / nfX;
+		final double[] temp = new double[] { x0 + (ic * coarseXSize) + (ifine * deltaX),
+				y0 + (jc * coarseYSize) + (jfine * deltaY), z,
+				t0 + (ic * pixelDwell) + (jc * totalLineTime) + (passNum * passTime) + (frameNum * totalFrameTime) };
+		return temp;
+	}
 
 }

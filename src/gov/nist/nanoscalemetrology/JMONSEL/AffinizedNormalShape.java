@@ -31,75 +31,69 @@ import Jama.Matrix;
  * @author John Villarrubia, Bin Ming
  * @version 1.0
  */
-public class AffinizedNormalShape
-   extends AffinizedShape
-   implements NormalShape {
+public class AffinizedNormalShape extends AffinizedShape implements NormalShape {
 
-   private final NormalShape baseShape;
-   private double[] result = null;
+	private final NormalShape baseShape;
+	private double[] result = null;
 
-   /**
-    * Constructs an AffinizedNormalShape. Initially, this shape is equivalent to
-    * the supplied baseShape. (It is constructed with its affine transformation
-    * matrix equal to the identity matrix.) It may be subsequently transformed
-    * using one or more of the provided affine transform methods.
-    *
-    * @param baseShape -
-    */
-   public AffinizedNormalShape(NormalShape baseShape) {
-      super(baseShape);
-      this.baseShape = baseShape;
-   }
+	/**
+	 * Constructs an AffinizedNormalShape. Initially, this shape is equivalent to
+	 * the supplied baseShape. (It is constructed with its affine transformation
+	 * matrix equal to the identity matrix.) It may be subsequently transformed
+	 * using one or more of the provided affine transform methods.
+	 *
+	 * @param baseShape -
+	 */
+	public AffinizedNormalShape(NormalShape baseShape) {
+		super(baseShape);
+		this.baseShape = baseShape;
+	}
 
-   /**
-    * Private utility to transform a direction vector (e.g., surface normal).
-    * Direction vectors transform like cross products, hence differently from
-    * ordinary vectors.
-    *
-    * @param normalVector - the direction vector to be transformed.
-    * @return - the normalized transformed direction vector
-    */
-   private double[] directionFromBaseCoordinate(double[] normalVector) {
-      final Matrix pVector = new Matrix(new double[] {
-         normalVector[0],
-         normalVector[1],
-         normalVector[2],
-      }, 1);
-      /* Multiply by the upper left 3x3 subset of the matrix */
-      final Matrix t = pVector.times(inverseAffine.getMatrix(0, 2, 0, 2));
-      return Math2.normalize(t.getRowPackedCopy());
-   }
+	/**
+	 * Private utility to transform a direction vector (e.g., surface normal).
+	 * Direction vectors transform like cross products, hence differently from
+	 * ordinary vectors.
+	 *
+	 * @param normalVector - the direction vector to be transformed.
+	 * @return - the normalized transformed direction vector
+	 */
+	private double[] directionFromBaseCoordinate(double[] normalVector) {
+		final Matrix pVector = new Matrix(new double[] { normalVector[0], normalVector[1], normalVector[2], }, 1);
+		/* Multiply by the upper left 3x3 subset of the matrix */
+		final Matrix t = pVector.times(inverseAffine.getMatrix(0, 2, 0, 2));
+		return Math2.normalize(t.getRowPackedCopy());
+	}
 
-   @Override
-   public double getFirstIntersection(double[] pos0, double[] pos1) {
-      return (getFirstNormal(pos0, pos1))[3];
-   }
+	@Override
+	public double getFirstIntersection(double[] pos0, double[] pos1) {
+		return (getFirstNormal(pos0, pos1))[3];
+	}
 
-   @Override
-   public boolean contains(double[] pos0, double[] pos1) {
-      return baseShape.contains(toBaseCoordinate(pos0), toBaseCoordinate(pos1));
-   }
+	@Override
+	public boolean contains(double[] pos0, double[] pos1) {
+		return baseShape.contains(toBaseCoordinate(pos0), toBaseCoordinate(pos1));
+	}
 
-   @Override
-   public double[] getFirstNormal(double[] pos0, double[] pos1) {
-      // Determine first normal in base coordinate system.
-      result = baseShape.getFirstNormal(toBaseCoordinate(pos0), toBaseCoordinate(pos1));
-      // Convert the normal vector portion back to our coordinate system.
-      final double[] normv = directionFromBaseCoordinate(result);
-      // Repack the result array with this normal vector and return it.
-      for(int i = 0; i < 3; i++)
-         result[i] = normv[i];
-      return result;
-   }
+	@Override
+	public double[] getFirstNormal(double[] pos0, double[] pos1) {
+		// Determine first normal in base coordinate system.
+		result = baseShape.getFirstNormal(toBaseCoordinate(pos0), toBaseCoordinate(pos1));
+		// Convert the normal vector portion back to our coordinate system.
+		final double[] normv = directionFromBaseCoordinate(result);
+		// Repack the result array with this normal vector and return it.
+		for (int i = 0; i < 3; i++)
+			result[i] = normv[i];
+		return result;
+	}
 
-   @Override
-   public double[] getPreviousNormal() {
-      return result;
-   }
+	@Override
+	public double[] getPreviousNormal() {
+		return result;
+	}
 
-   @Override
-   public String toString() {
-      return "AffinizedNormalShape[" + baseShape + "]";
-   }
+	@Override
+	public String toString() {
+		return "AffinizedNormalShape[" + baseShape + "]";
+	}
 
 }

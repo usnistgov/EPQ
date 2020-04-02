@@ -21,36 +21,35 @@ package gov.nist.nanoscalemetrology.JMONSEL;
  * @author John Villarrubia
  * @version 1.0
  */
-public interface IAdaptiveMesh
-   extends IBasicMesh {
+public interface IAdaptiveMesh extends IBasicMesh {
 
-   /**
-    * Returns an integer revision number such that whenever if the number
-    * remains the same it is guaranteed that the mesh is unchanged.
-    *
-    * @return
-    */
-   public int getMeshRevision();
+	/**
+	 * Returns an integer revision number such that whenever if the number remains
+	 * the same it is guaranteed that the mesh is unchanged.
+	 *
+	 * @return
+	 */
+	public int getMeshRevision();
 
-   /**
-    * Turns adaptivity on if the argument is true or off it it is false.
-    *
-    * @param doAdapt
-    */
-   public void setAdaptivityEnabled(boolean doAdapt);
+	/**
+	 * Turns adaptivity on if the argument is true or off it it is false.
+	 *
+	 * @param doAdapt
+	 */
+	public void setAdaptivityEnabled(boolean doAdapt);
 
-   /**
-    * Returns true if adaptivity is turn on, false if not.
-    *
-    * @return
-    */
-   public boolean getAdaptivityEnabled();
+	/**
+	 * Returns true if adaptivity is turn on, false if not.
+	 *
+	 * @return
+	 */
+	public boolean getAdaptivityEnabled();
 
-   /**
-    * Saves the current version of the mesh to a file with the specified name.
-    *
-    * @param meshFileName
-    */
-   public void saveMesh(String meshFileName);
+	/**
+	 * Saves the current version of the mesh to a file with the specified name.
+	 *
+	 * @param meshFileName
+	 */
+	public void saveMesh(String meshFileName);
 
 }

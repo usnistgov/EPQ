@@ -36,90 +36,88 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape;
  * @author John Villarrubia
  * @version 1.0
  */
-public class NormalComplementShape
-   implements Shape, ITransform, NormalShape {
+public class NormalComplementShape implements Shape, ITransform, NormalShape {
 
-   private final NormalShape shapeA;
+	private final NormalShape shapeA;
 
-   private double[] nv = null; // Most recent normal vector
+	private double[] nv = null; // Most recent normal vector
 
-   /**
-    * Construct a NormalComplementShape that is the complement of the input
-    * shape.
-    *
-    * @param shapeA - (NormalShape) The shape from which to form the complement.
-    */
-   public NormalComplementShape(NormalShape shapeA) {
-      this.shapeA = shapeA;
-   }
+	/**
+	 * Construct a NormalComplementShape that is the complement of the input shape.
+	 *
+	 * @param shapeA - (NormalShape) The shape from which to form the complement.
+	 */
+	public NormalComplementShape(NormalShape shapeA) {
+		this.shapeA = shapeA;
+	}
 
-   /**
-    * @see gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape#contains(double[])
-    */
-   @Override
-   public boolean contains(double[] pos) {
-      return !shapeA.contains(pos);
-   }
+	/**
+	 * @see gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape#contains(double[])
+	 */
+	@Override
+	public boolean contains(double[] pos) {
+		return !shapeA.contains(pos);
+	}
 
-   /**
-    * @see gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape#getFirstIntersection(double[],
-    *      double[])
-    */
-   @Override
-   public double getFirstIntersection(double[] pos0, double[] pos1) {
-      nv = getFirstNormal(pos0, pos1);
-      return nv[3];
-   }
+	/**
+	 * @see gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape#getFirstIntersection(double[],
+	 *      double[])
+	 */
+	@Override
+	public double getFirstIntersection(double[] pos0, double[] pos1) {
+		nv = getFirstNormal(pos0, pos1);
+		return nv[3];
+	}
 
-   /**
-    * @see gov.nist.microanalysis.EPQLibrary.ITransform#rotate(double[], double,
-    *      double, double)
-    */
-   @Override
-   public void rotate(double[] pivot, double phi, double theta, double psi) {
-      if(!(shapeA instanceof ITransform))
-         throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
-      ((ITransform) shapeA).rotate(pivot, phi, theta, psi);
+	/**
+	 * @see gov.nist.microanalysis.EPQLibrary.ITransform#rotate(double[], double,
+	 *      double, double)
+	 */
+	@Override
+	public void rotate(double[] pivot, double phi, double theta, double psi) {
+		if (!(shapeA instanceof ITransform))
+			throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
+		((ITransform) shapeA).rotate(pivot, phi, theta, psi);
 
-   }
+	}
 
-   /**
-    * @see gov.nist.microanalysis.EPQLibrary.ITransform#translate(double[])
-    */
-   @Override
-   public void translate(double[] distance) {
-      if(!(shapeA instanceof ITransform))
-         throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
-      ((ITransform) shapeA).translate(distance);
+	/**
+	 * @see gov.nist.microanalysis.EPQLibrary.ITransform#translate(double[])
+	 */
+	@Override
+	public void translate(double[] distance) {
+		if (!(shapeA instanceof ITransform))
+			throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
+		((ITransform) shapeA).translate(distance);
 
-   }
+	}
 
-   /**
-    * @see gov.nist.nanoscalemetrology.JMONSEL.NormalShape#getFirstNormal(double[],
-    *      double[])
-    */
-   @Override
-   public double[] getFirstNormal(double[] pos0, double[] pos1) {
-      nv = shapeA.getFirstNormal(pos0, pos1); // Get normal vector of
-      // shapeA
-      nv[0] *= -1.; // Reverse direction of normal vector
-      nv[1] *= -1.;
-      nv[2] *= -1.;
-      return nv;
-   }
+	/**
+	 * @see gov.nist.nanoscalemetrology.JMONSEL.NormalShape#getFirstNormal(double[],
+	 *      double[])
+	 */
+	@Override
+	public double[] getFirstNormal(double[] pos0, double[] pos1) {
+		nv = shapeA.getFirstNormal(pos0, pos1); // Get normal vector of
+		// shapeA
+		nv[0] *= -1.; // Reverse direction of normal vector
+		nv[1] *= -1.;
+		nv[2] *= -1.;
+		return nv;
+	}
 
-   /**
-    * @see gov.nist.nanoscalemetrology.JMONSEL.NormalShape#contains(double[],
-    *      double[])
-    */
-   @Override
-   public boolean contains(double[] pos0, double[] pos1) {
-      return !shapeA.contains(pos0, pos1);
-   }
+	/**
+	 * @see gov.nist.nanoscalemetrology.JMONSEL.NormalShape#contains(double[],
+	 *      double[])
+	 */
+	@Override
+	public boolean contains(double[] pos0, double[] pos1) {
+		return !shapeA.contains(pos0, pos1);
+	}
 
-   @Override
-   public double[] getPreviousNormal() {
-      return nv;
-   }
+	@Override
+	public double[] getPreviousNormal() {
+		return nv;
+	}
 
 }

@@ -30,54 +30,54 @@ package gov.nist.nanoscalemetrology.JMONSEL;
  */
 public class TimeKeeper {
 
-   /**
-    * Constructs a TimeKeeper
-    */
-   private double time = 0.;
-   static private TimeKeeper tk = null;
+	/**
+	 * Constructs a TimeKeeper
+	 */
+	private double time = 0.;
+	static private TimeKeeper tk = null;
 
-   /**
-    * Returns the existing TimeKeeper if there is one. Otherwise, it generates
-    * and returns a new one with initial time = 0.
-    *
-    * @return - Existing or new TimeKeeper
-    */
-   static public TimeKeeper getTimeKeeper() {
-      if(tk == null)
-         tk = new TimeKeeper();
-      return tk;
-   }
+	/**
+	 * Returns the existing TimeKeeper if there is one. Otherwise, it generates and
+	 * returns a new one with initial time = 0.
+	 *
+	 * @return - Existing or new TimeKeeper
+	 */
+	static public TimeKeeper getTimeKeeper() {
+		if (tk == null)
+			tk = new TimeKeeper();
+		return tk;
+	}
 
-   private TimeKeeper() {
-      super();
-   }
+	private TimeKeeper() {
+		super();
+	}
 
-   /**
-    * Gets the current value assigned to time
-    *
-    * @return Returns the time.
-    */
-   public double getTime() {
-      return time;
-   }
+	/**
+	 * Gets the current value assigned to time
+	 *
+	 * @return Returns the time.
+	 */
+	public double getTime() {
+		return time;
+	}
 
-   /**
-    * Sets the value assigned to time.
-    *
-    * @param time The value to which to set time.
-    */
-   public void setTime(double time) {
-      if(this.time != time)
-         this.time = time;
-   }
+	/**
+	 * Sets the value assigned to time.
+	 *
+	 * @param time The value to which to set time.
+	 */
+	public void setTime(double time) {
+		if (this.time != time)
+			this.time = time;
+	}
 
-   /**
-    * Adds deltat to the current time.
-    *
-    * @param deltat
-    */
-   public void incrementTime(double deltat) {
-      time += deltat;
-   }
+	/**
+	 * Adds deltat to the current time.
+	 *
+	 * @param deltat
+	 */
+	public void incrementTime(double deltat) {
+		time += deltat;
+	}
 
 }

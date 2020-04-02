@@ -26,21 +26,21 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS.RegionBase;
  */
 public interface BarrierScatterMechanism {
 
-   /**
-    * Simulates scattering of an electron at a barrier. The routine accepts a
-    * reference to the primary electron (PE), from which it may ascertain the
-    * electron's current region. It also accepts a reference (nextregion) to the
-    * RegionBase on the other side of the boundary. If the electron is
-    * transmitted, the PE region is updated to nextregion and its energy and
-    * trajectory are altered as needed to simulate the scattering event. If it
-    * is reflected its trajectory is updated. If a secondary electron is
-    * produced, barrierScatter creates one with appropriate energy and
-    * trajectory and returns it. Otherwise it returns null.
-    *
-    * @param pe -- the primary electron
-    * @param nextRegion -- the region on the other side of the boundary
-    * @return Electron -- a secondary electron if there is one (null otherwise).
-    */
-   Electron barrierScatter(Electron pe, RegionBase nextRegion);
+	/**
+	 * Simulates scattering of an electron at a barrier. The routine accepts a
+	 * reference to the primary electron (PE), from which it may ascertain the
+	 * electron's current region. It also accepts a reference (nextregion) to the
+	 * RegionBase on the other side of the boundary. If the electron is transmitted,
+	 * the PE region is updated to nextregion and its energy and trajectory are
+	 * altered as needed to simulate the scattering event. If it is reflected its
+	 * trajectory is updated. If a secondary electron is produced, barrierScatter
+	 * creates one with appropriate energy and trajectory and returns it. Otherwise
+	 * it returns null.
+	 *
+	 * @param pe         -- the primary electron
+	 * @param nextRegion -- the region on the other side of the boundary
+	 * @return Electron -- a secondary electron if there is one (null otherwise).
+	 */
+	Electron barrierScatter(Electron pe, RegionBase nextRegion);
 
 }

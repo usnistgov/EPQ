@@ -35,53 +35,52 @@ import java.util.Map;
  * advantage of that, it might make the delete and reinsert stuff I do below
  * unnecessary.
  */
-public class CacheLinkedHashMap<K, V>
-   extends LinkedHashMap<K, V> {
+public class CacheLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
 
-   private static final long serialVersionUID = 8414106666098859681L;
-   private final int cacheSize;
+	private static final long serialVersionUID = 8414106666098859681L;
+	private final int cacheSize;
 
-   /**
-    * Constructs a CacheLinkedHashMap with given maximum size.
-    * 
-    * @param cacheSize - maximum number of items to be held in this cache.
-    */
-   public CacheLinkedHashMap(int cacheSize) {
-      super(); // Makes an empty LinkedHashMap.
-      this.cacheSize = cacheSize;
-   }
+	/**
+	 * Constructs a CacheLinkedHashMap with given maximum size.
+	 * 
+	 * @param cacheSize - maximum number of items to be held in this cache.
+	 */
+	public CacheLinkedHashMap(int cacheSize) {
+		super(); // Makes an empty LinkedHashMap.
+		this.cacheSize = cacheSize;
+	}
 
-   @Override
-   protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-      return size() > cacheSize;
-   }
+	@Override
+	protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+		return size() > cacheSize;
+	}
 
-   /**
-    * Associates the specified value with the specified key in this map. If this
-    * mapping was already in the map, it is promoted to "most recent."
-    * 
-    * @param key
-    * @param value
-    * @return
-    * @see java.util.HashMap#put(java.lang.Object, java.lang.Object)
-    */
-   public V putPromote(K key, V value) {
-      remove(key); // To reset the order, remove if already present.
-      return super.put(key, value);
-   }
+	/**
+	 * Associates the specified value with the specified key in this map. If this
+	 * mapping was already in the map, it is promoted to "most recent."
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 * @see java.util.HashMap#put(java.lang.Object, java.lang.Object)
+	 */
+	public V putPromote(K key, V value) {
+		remove(key); // To reset the order, remove if already present.
+		return super.put(key, value);
+	}
 
-   public void putPromoteAll(Map<? extends K, ? extends V> m) {
-      for(final K k : m.keySet())
-         remove(k); // Remove all matching entries to preserve order
-      putAll(m);
-   }
+	public void putPromoteAll(Map<? extends K, ? extends V> m) {
+		for (final K k : m.keySet())
+			remove(k); // Remove all matching entries to preserve order
+		putAll(m);
+	}
 
-   /**
-    * Gets the size of this cache.
-    * 
-    * @return - the size of this cache
-    */
-   public int getCacheSize() {
-      return cacheSize;
-   }
+	/**
+	 * Gets the size of this cache.
+	 * 
+	 * @return - the size of this cache
+	 */
+	public int getCacheSize() {
+		return cacheSize;
+	}
 }

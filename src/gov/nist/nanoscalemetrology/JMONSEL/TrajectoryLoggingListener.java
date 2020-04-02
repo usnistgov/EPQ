@@ -55,178 +55,175 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS;
  * @author Nicholas W. M. Ritchie, John Villarrubia
  * @version 1.0
  */
-public class TrajectoryLoggingListener
-   implements ActionListener {
-   private int linecount = 0;
-   private final MonteCarloSS mMonte;
-   private final PrintWriter mWriter;
-   private int mDepth;
-   private long maxTrajectories = 100;
-   private long trajectoryCount = 0;
-   private boolean suspended = false;
+public class TrajectoryLoggingListener implements ActionListener {
+	private int linecount = 0;
+	private final MonteCarloSS mMonte;
+	private final PrintWriter mWriter;
+	private int mDepth;
+	private long maxTrajectories = 100;
+	private long trajectoryCount = 0;
+	private boolean suspended = false;
 
-   /**
-    * Constructs a TrajectoryLoggingListener
-    *
-    * @param mcss
-    * @param os
-    */
-   public TrajectoryLoggingListener(MonteCarloSS mcss, OutputStream os) {
-      super();
-      mMonte = mcss;
-      reset();
-      mWriter = new PrintWriter(os);
-      mWriter.print("Traj#\tID\tPEID\tStep#\tDepth\tx\ty\tz\tEvent\t");
-      mWriter.println("Energy\tDescriptor");
-   }
+	/**
+	 * Constructs a TrajectoryLoggingListener
+	 *
+	 * @param mcss
+	 * @param os
+	 */
+	public TrajectoryLoggingListener(MonteCarloSS mcss, OutputStream os) {
+		super();
+		mMonte = mcss;
+		reset();
+		mWriter = new PrintWriter(os);
+		mWriter.print("Traj#\tID\tPEID\tStep#\tDepth\tx\ty\tz\tEvent\t");
+		mWriter.println("Energy\tDescriptor");
+	}
 
-   public TrajectoryLoggingListener(MonteCarloSS mcss, File f)
-         throws FileNotFoundException {
-      this(mcss, new FileOutputStream(f));
-   }
+	public TrajectoryLoggingListener(MonteCarloSS mcss, File f) throws FileNotFoundException {
+		this(mcss, new FileOutputStream(f));
+	}
 
-   public TrajectoryLoggingListener(MonteCarloSS mcss, String filename)
-         throws FileNotFoundException {
-      this(mcss, new FileOutputStream(filename));
-   }
+	public TrajectoryLoggingListener(MonteCarloSS mcss, String filename) throws FileNotFoundException {
+		this(mcss, new FileOutputStream(filename));
+	}
 
-   /** Sets trajectoryCount, linecount, and depth to 0. */
-   public void reset() {
-      trajectoryCount = 0;
-      linecount = 0;
-      mDepth = 0;
-   }
+	/** Sets trajectoryCount, linecount, and depth to 0. */
+	public void reset() {
+		trajectoryCount = 0;
+		linecount = 0;
+		mDepth = 0;
+	}
 
-   /** close -- Flushes remaining output to the log file and closes it. */
-   public void close() {
-      mWriter.flush();
-      mWriter.close();
-   }
+	/** close -- Flushes remaining output to the log file and closes it. */
+	public void close() {
+		mWriter.flush();
+		mWriter.close();
+	}
 
-   /**
-    * actionPerformed
-    *
-    * @param arg0 (non-Javadoc)
-    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-    */
-   @Override
-   public void actionPerformed(ActionEvent arg0) {
-      if((trajectoryCount <= maxTrajectories) && (suspended == false)) {
-         assert arg0.getSource() == mMonte;
-         final int event = arg0.getID();
-         boolean output = true;
-         String name = "";
-         switch(event) {
-            case MonteCarloSS.ScatterEvent:
-               name = "Scatter";
-               break;
-            case MonteCarloSS.NonScatterEvent:
-               name = "Non-scatter";
-               break;
-            case MonteCarloSS.BackscatterEvent:
-               name = "Backscatter";
-               break;
-            case MonteCarloSS.ExitMaterialEvent:
-               name = mMonte.getElectron().getPreviousRegion().getMaterial().toString() + " to "
-                     + mMonte.getElectron().getCurrentRegion().getMaterial().toString();
-               break;
-            case MonteCarloSS.TrajectoryStartEvent:
-               trajectoryCount++;
-               if(trajectoryCount > maxTrajectories)
-                  output = false;
-               else
-                  name = "Start Trajectory";
-               break;
-            case MonteCarloSS.TrajectoryEndEvent:
-               output = true;
-               name = "End Trajectory";
-               break;
-            case MonteCarloSS.LastTrajectoryEvent:
-               name = "End Last Trajectory";
-               break;
-            case MonteCarloSS.FirstTrajectoryEvent:
-               // trajectoryCount = 0;
-               output = false;
-               break;
-            case MonteCarloSS.StartSecondaryEvent:
-               ++mDepth;
-               name = "Start SE";
-               break;
-            case MonteCarloSS.EndSecondaryEvent:
-               --mDepth;
-               name = "End SE";
-               break;
-            case MonteCarloSS.PostScatterEvent:
-               name = "PostScatter";
-               break;
-            case MonteCarloSS.BeamEnergyChanged:
-               mWriter.print("\"Beam energy changed to\"\t");
-               mWriter.print(FromSI.keV(mMonte.getBeamEnergy()));
-               mWriter.println(" keV");
-               output = false;
-               break;
-         }
-         if(output) {
-            final StringBuffer sb = new StringBuffer();
-            final Electron e = mMonte.getElectron();
-            sb.append(trajectoryCount);
-            sb.append("\t");
-            sb.append(e.getIdent());
-            sb.append("\t");
-            sb.append(e.getParentID());
-            sb.append("\t");
-            sb.append(e.getStepCount());
-            sb.append("\t");
-            sb.append(mDepth);
-            sb.append("\t");
-            final double[] pos = e.getPosition();
-            sb.append(String.format("%.7g\t", pos[0]));
-            // sb.append("\t");
-            // sb.append(pos[1]);
-            sb.append(String.format("%.7g\t", pos[1]));
-            // sb.append("\t");
-            sb.append(String.format("%.7g\t", pos[2]));
-            // sb.append("\t");
-            sb.append(event);
-            sb.append("\t");
-            sb.append(String.format("%.7g\t", FromSI.eV(e.getEnergy())));
-            // sb.append("\t");
-            sb.append(name);
-            mWriter.println(sb.toString());
-            linecount++;
-            if((linecount % 10) == 0)
-               mWriter.flush();
-         }
-      }
-   }
+	/**
+	 * actionPerformed
+	 *
+	 * @param arg0 (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		if ((trajectoryCount <= maxTrajectories) && (suspended == false)) {
+			assert arg0.getSource() == mMonte;
+			final int event = arg0.getID();
+			boolean output = true;
+			String name = "";
+			switch (event) {
+			case MonteCarloSS.ScatterEvent:
+				name = "Scatter";
+				break;
+			case MonteCarloSS.NonScatterEvent:
+				name = "Non-scatter";
+				break;
+			case MonteCarloSS.BackscatterEvent:
+				name = "Backscatter";
+				break;
+			case MonteCarloSS.ExitMaterialEvent:
+				name = mMonte.getElectron().getPreviousRegion().getMaterial().toString() + " to "
+						+ mMonte.getElectron().getCurrentRegion().getMaterial().toString();
+				break;
+			case MonteCarloSS.TrajectoryStartEvent:
+				trajectoryCount++;
+				if (trajectoryCount > maxTrajectories)
+					output = false;
+				else
+					name = "Start Trajectory";
+				break;
+			case MonteCarloSS.TrajectoryEndEvent:
+				output = true;
+				name = "End Trajectory";
+				break;
+			case MonteCarloSS.LastTrajectoryEvent:
+				name = "End Last Trajectory";
+				break;
+			case MonteCarloSS.FirstTrajectoryEvent:
+				// trajectoryCount = 0;
+				output = false;
+				break;
+			case MonteCarloSS.StartSecondaryEvent:
+				++mDepth;
+				name = "Start SE";
+				break;
+			case MonteCarloSS.EndSecondaryEvent:
+				--mDepth;
+				name = "End SE";
+				break;
+			case MonteCarloSS.PostScatterEvent:
+				name = "PostScatter";
+				break;
+			case MonteCarloSS.BeamEnergyChanged:
+				mWriter.print("\"Beam energy changed to\"\t");
+				mWriter.print(FromSI.keV(mMonte.getBeamEnergy()));
+				mWriter.println(" keV");
+				output = false;
+				break;
+			}
+			if (output) {
+				final StringBuffer sb = new StringBuffer();
+				final Electron e = mMonte.getElectron();
+				sb.append(trajectoryCount);
+				sb.append("\t");
+				sb.append(e.getIdent());
+				sb.append("\t");
+				sb.append(e.getParentID());
+				sb.append("\t");
+				sb.append(e.getStepCount());
+				sb.append("\t");
+				sb.append(mDepth);
+				sb.append("\t");
+				final double[] pos = e.getPosition();
+				sb.append(String.format("%.7g\t", pos[0]));
+				// sb.append("\t");
+				// sb.append(pos[1]);
+				sb.append(String.format("%.7g\t", pos[1]));
+				// sb.append("\t");
+				sb.append(String.format("%.7g\t", pos[2]));
+				// sb.append("\t");
+				sb.append(event);
+				sb.append("\t");
+				sb.append(String.format("%.7g\t", FromSI.eV(e.getEnergy())));
+				// sb.append("\t");
+				sb.append(name);
+				mWriter.println(sb.toString());
+				linecount++;
+				if ((linecount % 10) == 0)
+					mWriter.flush();
+			}
+		}
+	}
 
-   /**
-    * setMaxTrajectories - Sets the maximum number of trajectories to log.
-    *
-    * @param max int
-    */
-   public void setMaxTrajectories(int max) {
-      maxTrajectories = max;
-   }
+	/**
+	 * setMaxTrajectories - Sets the maximum number of trajectories to log.
+	 *
+	 * @param max int
+	 */
+	public void setMaxTrajectories(int max) {
+		maxTrajectories = max;
+	}
 
-   /**
-    * Returns true if logging is suspended, false otherwise.
-    *
-    * @return - true if logging is currently suspended, false otherwise.
-    */
-   public boolean isSuspended() {
-      return suspended;
-   }
+	/**
+	 * Returns true if logging is suspended, false otherwise.
+	 *
+	 * @return - true if logging is currently suspended, false otherwise.
+	 */
+	public boolean isSuspended() {
+		return suspended;
+	}
 
-   /**
-    * Setting suspended == true suspends logging. Setting it to false resumes.
-    * suspended == false by default.
-    *
-    * @param suspended
-    */
-   public void setSuspended(boolean suspended) {
-      if(this.suspended != suspended)
-         this.suspended = suspended;
-   }
+	/**
+	 * Setting suspended == true suspends logging. Setting it to false resumes.
+	 * suspended == false by default.
+	 *
+	 * @param suspended
+	 */
+	public void setSuspended(boolean suspended) {
+		if (this.suspended != suspended)
+			this.suspended = suspended;
+	}
 
 }

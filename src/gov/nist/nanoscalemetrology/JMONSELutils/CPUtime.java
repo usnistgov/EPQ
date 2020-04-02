@@ -31,21 +31,21 @@ import java.lang.management.ThreadMXBean;
  */
 public class CPUtime {
 
-   private final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+	private final ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 
-   /**
-    * Constructs a CPUtime
-    */
-   public CPUtime() {
+	/**
+	 * Constructs a CPUtime
+	 */
+	public CPUtime() {
 
-   }
+	}
 
-   /**
-    * Returns elapsed CPU time in seconds.
-    * 
-    * @return
-    */
-   public double getCPUtime() {
-      return bean.getCurrentThreadCpuTime() / 60.e9;
-   }
+	/**
+	 * Returns elapsed CPU time in seconds.
+	 * 
+	 * @return
+	 */
+	public double getCPUtime() {
+		return bean.getCurrentThreadCpuTime() / 60.e9;
+	}
 }

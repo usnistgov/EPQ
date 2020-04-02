@@ -26,26 +26,26 @@ import gov.nist.microanalysis.NISTMonte.MeshedRegion;
  */
 public interface IFEArunner {
 
-   /**
-    * Runs an FEA on this MeshedRegion, storing temporary files in the
-    * designated folder.
-    *
-    * @param meshReg - the MeshedRegion on which to run the FEA
-    */
-   public void runFEA(MeshedRegion meshReg);
+	/**
+	 * Runs an FEA on this MeshedRegion, storing temporary files in the designated
+	 * folder.
+	 *
+	 * @param meshReg - the MeshedRegion on which to run the FEA
+	 */
+	public void runFEA(MeshedRegion meshReg);
 
-   /**
-    * Sets the value assigned to chargeMultiplier. chargeMultiplier is a factor
-    * applied to trapped charges before performing finite element analysis.
-    *
-    * @param chargeMultiplier The value to which to set chargeMultiplier.
-    */
-   public void setChargeMultiplier(double chargeMultiplier);
+	/**
+	 * Sets the value assigned to chargeMultiplier. chargeMultiplier is a factor
+	 * applied to trapped charges before performing finite element analysis.
+	 *
+	 * @param chargeMultiplier The value to which to set chargeMultiplier.
+	 */
+	public void setChargeMultiplier(double chargeMultiplier);
 
-   /**
-    * Returns the value assigned to chargeMultiplier. A charge of n in the mesh
-    * is interpreted as n*e*chargeMultiplier, where e is the absolute value of
-    * the electronic charge.
-    */
-   public double getChargeMultiplier();
+	/**
+	 * Returns the value assigned to chargeMultiplier. A charge of n in the mesh is
+	 * interpreted as n*e*chargeMultiplier, where e is the absolute value of the
+	 * electronic charge.
+	 */
+	public double getChargeMultiplier();
 }

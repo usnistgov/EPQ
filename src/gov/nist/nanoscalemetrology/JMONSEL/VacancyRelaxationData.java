@@ -211,10 +211,10 @@ public class VacancyRelaxationData {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			res.append("Subshell, radprob: " + i + " " + radprob+"\n");
-			if(radprob > 1.0)
+			res.append("Subshell, radprob: " + i + " " + radprob + "\n");
+			if (radprob > 1.0)
 				throw new Error("RADIATIVE PROB>1.");
-			if(radprob < 0.0)
+			if (radprob < 0.0)
 				throw new Error("RADIATIVE PROB<0.");
 			radiativeTransitionProbability.add(radprob);
 		}

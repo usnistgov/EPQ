@@ -8,37 +8,37 @@ package gov.nist.nanoscalemetrology.MONSELtests;
  */
 public class FunctionTiming {
 
-   public static double timetest(long repeats) {
-      long t0; // Start time
-      long tint, tf;
-      double deltat = 0.;
+	public static double timetest(long repeats) {
+		long t0; // Start time
+		long tint, tf;
+		double deltat = 0.;
 
-      // Repeatedly execute the routine
-      @SuppressWarnings("unused")
-      double result1;
+		// Repeatedly execute the routine
+		@SuppressWarnings("unused")
+		double result1;
 
-      t0 = System.currentTimeMillis();
+		t0 = System.currentTimeMillis();
 
-      final double inc = 0.2;
+		final double inc = 0.2;
 
-      for(long i = 0; i < repeats; i++)
-         for(int j = 0; j < 10; j++) {
-            final double testval = -0.99 + (j * inc);
-            result1 = Math.asin(testval);
-         }
+		for (long i = 0; i < repeats; i++)
+			for (int j = 0; j < 10; j++) {
+				final double testval = -0.99 + (j * inc);
+				result1 = Math.asin(testval);
+			}
 
-      tint = System.currentTimeMillis();
-      for(long i = 0; i < repeats; i++)
-         for(int j = 0; j < 10; j++) {
-            final double testval = -0.99 + (j * inc);
-            result1 = testval;
-         }
+		tint = System.currentTimeMillis();
+		for (long i = 0; i < repeats; i++)
+			for (int j = 0; j < 10; j++) {
+				final double testval = -0.99 + (j * inc);
+				result1 = testval;
+			}
 
-      tf = System.currentTimeMillis();
-      deltat = (1000. * ((2. * tint) - tf - t0)) / repeats / 10.;
-      return deltat;
+		tf = System.currentTimeMillis();
+		deltat = (1000. * ((2. * tint) - tf - t0)) / repeats / 10.;
+		return deltat;
 
-   }
+	}
 
 }
 

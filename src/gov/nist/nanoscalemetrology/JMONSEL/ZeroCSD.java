@@ -20,32 +20,30 @@ import gov.nist.microanalysis.NISTMonte.Electron;
  * @author John Villarrubia
  * @version 1.0
  */
-public class ZeroCSD
-   implements
-   SlowingDownAlg {
+public class ZeroCSD implements SlowingDownAlg {
 
-   /**
-    * ZeroCSD - Creates a continuous slowing down object for the specified
-    * material.
-    */
-   public ZeroCSD() {
-   }
+	/**
+	 * ZeroCSD - Creates a continuous slowing down object for the specified
+	 * material.
+	 */
+	public ZeroCSD() {
+	}
 
-   @Override
-   public double compute(double d, Electron pe) {
-      return 0.;
-   }
+	@Override
+	public double compute(double d, Electron pe) {
+		return 0.;
+	}
 
-   @Override
-   public void setMaterial(SEmaterial mat) {
-   }
+	@Override
+	public void setMaterial(SEmaterial mat) {
+	}
 
-   /**
-    * @return - the string "ZeroCSD()"
-    */
-   @Override
-   public String toString() {
-      return "ZeroCSD()";
-   }
+	/**
+	 * @return - the string "ZeroCSD()"
+	 */
+	@Override
+	public String toString() {
+		return "ZeroCSD()";
+	}
 
 }

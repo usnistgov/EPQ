@@ -22,22 +22,22 @@ import gov.nist.microanalysis.NISTMonte.Electron;
  * @version 1.0
  */
 public interface SlowingDownAlg {
-   /**
-    * Sets the material for which the energy loss is to be computed
-    *
-    * @param mat
-    */
-   void setMaterial(SEmaterial mat);
+	/**
+	 * Sets the material for which the energy loss is to be computed
+	 *
+	 * @param mat
+	 */
+	void setMaterial(SEmaterial mat);
 
-   /**
-    * compute - Computes the energy change for an electron with initial energy
-    * eK traversing distance d. The return value is negative if the electron
-    * loses energy.
-    *
-    * @param d double -- the distance moved by the electron
-    * @param pe Electron, the primary electron
-    * @return double -- the energy change
-    */
-   double compute(double d, Electron pe);
+	/**
+	 * compute - Computes the energy change for an electron with initial energy eK
+	 * traversing distance d. The return value is negative if the electron loses
+	 * energy.
+	 *
+	 * @param d  double -- the distance moved by the electron
+	 * @param pe Electron, the primary electron
+	 * @return double -- the energy change
+	 */
+	double compute(double d, Electron pe);
 
 }

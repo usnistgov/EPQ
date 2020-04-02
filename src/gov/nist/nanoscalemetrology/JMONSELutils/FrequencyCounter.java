@@ -25,80 +25,79 @@ package gov.nist.nanoscalemetrology.JMONSELutils;
  * @author John Villarrubia
  * @version 1.0
  */
-public class FrequencyCounter
-   implements Comparable<FrequencyCounter> {
+public class FrequencyCounter implements Comparable<FrequencyCounter> {
 
-   private final Object id; // The object to be counted
-   private int count; // Current count value
+	private final Object id; // The object to be counted
+	private int count; // Current count value
 
-   /**
-    * Constructs a FrequencyCounter with initial count
-    * 
-    * @param id
-    * @param initialCount
-    */
-   public FrequencyCounter(Object id, int initialCount) {
-      this.id = id;
-      count = initialCount;
-   }
+	/**
+	 * Constructs a FrequencyCounter with initial count
+	 * 
+	 * @param id
+	 * @param initialCount
+	 */
+	public FrequencyCounter(Object id, int initialCount) {
+		this.id = id;
+		count = initialCount;
+	}
 
-   /**
-    * Constructs a FrequencyCounter with default initial count = 0
-    * 
-    * @param id
-    */
-   public FrequencyCounter(Object id) {
-      this(id, 0);
-   }
+	/**
+	 * Constructs a FrequencyCounter with default initial count = 0
+	 * 
+	 * @param id
+	 */
+	public FrequencyCounter(Object id) {
+		this(id, 0);
+	}
 
-   /**
-    * Increment the count by 1.
-    */
-   public void increment() {
-      count++;
-   }
+	/**
+	 * Increment the count by 1.
+	 */
+	public void increment() {
+		count++;
+	}
 
-   /**
-    * Decrement the count by 1
-    */
-   public void decrement() {
-      count--;
-   }
+	/**
+	 * Decrement the count by 1
+	 */
+	public void decrement() {
+		count--;
+	}
 
-   /**
-    * Set the count
-    * 
-    * @param count
-    */
-   public void setCount(int count) {
-      this.count = count;
-   }
+	/**
+	 * Set the count
+	 * 
+	 * @param count
+	 */
+	public void setCount(int count) {
+		this.count = count;
+	}
 
-   /**
-    * Returns the object being counted.
-    * 
-    * @return
-    */
-   public Object id() {
-      return id;
-   }
+	/**
+	 * Returns the object being counted.
+	 * 
+	 * @return
+	 */
+	public Object id() {
+		return id;
+	}
 
-   /**
-    * Returns the current count for this FrequencyCounter.
-    * 
-    * @return
-    */
-   public int count() {
-      return count;
-   }
+	/**
+	 * Returns the current count for this FrequencyCounter.
+	 * 
+	 * @return
+	 */
+	public int count() {
+		return count;
+	}
 
-   @Override
-   public int compareTo(FrequencyCounter b) {
-      if(count > b.count)
-         return -1;
-      else if(count < b.count)
-         return 1;
-      return 0;
-   }
+	@Override
+	public int compareTo(FrequencyCounter b) {
+		if (count > b.count)
+			return -1;
+		else if (count < b.count)
+			return 1;
+		return 0;
+	}
 
 }

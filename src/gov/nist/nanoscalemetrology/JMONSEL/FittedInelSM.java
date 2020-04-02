@@ -34,77 +34,75 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author John Villarrubia
  * @version 1.0
  */
-public class FittedInelSM
-   extends ScatterMechanism {
+public class FittedInelSM extends ScatterMechanism {
 
-   private final SlowingDownAlg sdAlg;
-   private final double energySEgen; // Average energy for SE generation
-   private double eFermi;
+	private final SlowingDownAlg sdAlg;
+	private final double energySEgen; // Average energy for SE generation
+	private double eFermi;
 
-   /**
-    * Constructs a FittedInelSM
-    */
-   public FittedInelSM(SEmaterial mat, double energySEgen, SlowingDownAlg sdAlg) {
-      super();
-      this.sdAlg = sdAlg;
-      this.energySEgen = energySEgen;
-      setMaterial(mat);
-   }
+	/**
+	 * Constructs a FittedInelSM
+	 */
+	public FittedInelSM(SEmaterial mat, double energySEgen, SlowingDownAlg sdAlg) {
+		super();
+		this.sdAlg = sdAlg;
+		this.energySEgen = energySEgen;
+		setMaterial(mat);
+	}
 
-   /**
-    * Computes the result of a scattering event. The primary electron energy and
-    * direction of travel are unmodified. I.e., it is necessary to separately
-    * account for slowing down by specifying a slowing down algorithm. A
-    * secondary electron with energy energySEgen (the parameter provided to the
-    * constructor) + the Fermi energy is produced with a randomly oriented
-    * (isotropic) initial velocity.
-    *
-    * @param pe
-    * @return - Returns a secondary electron
-    * @see gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatter(gov.nist.microanalysis.NISTMonte.Electron)
-    */
-   @Override
-   public Electron scatter(Electron pe) {
-      final double phi = 2 * Math.PI * Math2.rgen.nextDouble();
-      final double theta = Math.acos(1. - (2. * Math2.rgen.nextDouble()));
-      return new Electron(pe, theta, phi, energySEgen + eFermi);
-   }
+	/**
+	 * Computes the result of a scattering event. The primary electron energy and
+	 * direction of travel are unmodified. I.e., it is necessary to separately
+	 * account for slowing down by specifying a slowing down algorithm. A secondary
+	 * electron with energy energySEgen (the parameter provided to the constructor)
+	 * + the Fermi energy is produced with a randomly oriented (isotropic) initial
+	 * velocity.
+	 *
+	 * @param pe
+	 * @return - Returns a secondary electron
+	 * @see gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatter(gov.nist.microanalysis.NISTMonte.Electron)
+	 */
+	@Override
+	public Electron scatter(Electron pe) {
+		final double phi = 2 * Math.PI * Math2.rgen.nextDouble();
+		final double theta = Math.acos(1. - (2. * Math2.rgen.nextDouble()));
+		return new Electron(pe, theta, phi, energySEgen + eFermi);
+	}
 
-   /**
-    * Computes scattering rate (inverse mean free path) for the primary
-    * electron.
-    *
-    * @param pe
-    * @return - Returns number of scattering events per meter
-    * @see gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatterRate(gov.nist.microanalysis.NISTMonte.Electron)
-    */
-   @Override
-   public double scatterRate(Electron pe) {
-      if(pe.getEnergy() <= (energySEgen + eFermi))
-         return 0.;
-      return (-sdAlg.compute(1.e-10, pe) * 1.e10) / energySEgen;
-   }
+	/**
+	 * Computes scattering rate (inverse mean free path) for the primary electron.
+	 *
+	 * @param pe
+	 * @return - Returns number of scattering events per meter
+	 * @see gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatterRate(gov.nist.microanalysis.NISTMonte.Electron)
+	 */
+	@Override
+	public double scatterRate(Electron pe) {
+		if (pe.getEnergy() <= (energySEgen + eFermi))
+			return 0.;
+		return (-sdAlg.compute(1.e-10, pe) * 1.e10) / energySEgen;
+	}
 
-   /**
-    * @param mat
-    * @see gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#setMaterial(gov.nist.microanalysis.EPQLibrary.Material)
-    */
-   @Override
-   public void setMaterial(Material mat) {
-      eFermi = ((SEmaterial) mat).getEFermi();
+	/**
+	 * @param mat
+	 * @see gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#setMaterial(gov.nist.microanalysis.EPQLibrary.Material)
+	 */
+	@Override
+	public void setMaterial(Material mat) {
+		eFermi = ((SEmaterial) mat).getEFermi();
 
-   }
+	}
 
-   /**
-    * @return - a string in the form "FittedInelSM(eFermi,energySEgen,sdAlg)",
-    *         where eFermi is the Fermi energy of the material, energySEgen is
-    *         the average SE generation energy and sdAlg is the slowing down
-    *         algorithm supplied in the constructor.
-    */
-   @Override
-   public String toString() {
-      return "FittedInelSM(" + Double.valueOf(eFermi).toString() + "," + Double.valueOf(energySEgen).toString() + "," + sdAlg.toString()
-            + ")";
-   }
+	/**
+	 * @return - a string in the form "FittedInelSM(eFermi,energySEgen,sdAlg)",
+	 *         where eFermi is the Fermi energy of the material, energySEgen is the
+	 *         average SE generation energy and sdAlg is the slowing down algorithm
+	 *         supplied in the constructor.
+	 */
+	@Override
+	public String toString() {
+		return "FittedInelSM(" + Double.valueOf(eFermi).toString() + "," + Double.valueOf(energySEgen).toString() + ","
+				+ sdAlg.toString() + ")";
+	}
 
 }

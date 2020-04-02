@@ -25,139 +25,137 @@ import java.util.Collections;
  * @version 1.0
  */
 
-public class SortedArrayList<E extends Comparable<? super E>>
-   extends
-   AbstractList<E> {
+public class SortedArrayList<E extends Comparable<? super E>> extends AbstractList<E> {
 
-   private boolean duplicates = true;
-   private ArrayList<E> alist;
+	private boolean duplicates = true;
+	private ArrayList<E> alist;
 
-   /**
-    * Constructs an empty ArrayList with the specified initial capacity.
-    * 
-    * @param initialCapacity the initial capacity of the list.
-    * @exception IllegalArgumentException if the specified initial capacity is
-    *               negative
-    */
-   public SortedArrayList(int initialCapacity) {
-      alist = new ArrayList<E>(initialCapacity);
-   }
+	/**
+	 * Constructs an empty ArrayList with the specified initial capacity.
+	 * 
+	 * @param initialCapacity the initial capacity of the list.
+	 * @exception IllegalArgumentException if the specified initial capacity is
+	 *                                     negative
+	 */
+	public SortedArrayList(int initialCapacity) {
+		alist = new ArrayList<E>(initialCapacity);
+	}
 
-   /**
-    * Constructs an empty ArrayList with an initial capacity of ten.
-    */
-   public SortedArrayList() {
-      this(10);
-   }
+	/**
+	 * Constructs an empty ArrayList with an initial capacity of ten.
+	 */
+	public SortedArrayList() {
+		this(10);
+	}
 
-   /**
-    * Constructs an ArrayList containing the elements of the specified
-    * collection, as per the element's natural ordering. The
-    * <tt>SortedArrayList</tt> instance has an initial capacity of 110% the size
-    * of the specified collection.
-    * 
-    * @param c the collection whose elements are to be placed into this list.
-    * @throws NullPointerException if the specified collection is null.
-    */
-   public SortedArrayList(Collection<? extends E> c) {
-      // Allow 10% room for growth
-      this((int) Math.min((c.size() * 110L) / 100, Integer.MAX_VALUE));
-      this.addAll(c);
-   }
+	/**
+	 * Constructs an ArrayList containing the elements of the specified collection,
+	 * as per the element's natural ordering. The <tt>SortedArrayList</tt> instance
+	 * has an initial capacity of 110% the size of the specified collection.
+	 * 
+	 * @param c the collection whose elements are to be placed into this list.
+	 * @throws NullPointerException if the specified collection is null.
+	 */
+	public SortedArrayList(Collection<? extends E> c) {
+		// Allow 10% room for growth
+		this((int) Math.min((c.size() * 110L) / 100, Integer.MAX_VALUE));
+		this.addAll(c);
+	}
 
-   /**
-    * Adds the specified element to this list as per the element's natural
-    * ordering.
-    * 
-    * @param e element to be inserted into this list.
-    * @return <tt>true</tt> (as per the general contract of Collection.add).
-    * @throws ClassCastException if the specified element is not comparable to
-    *            existing elements.
-    */
-   @Override
-   public boolean add(E e) {
-      if(e == null)
-         return false;
+	/**
+	 * Adds the specified element to this list as per the element's natural
+	 * ordering.
+	 * 
+	 * @param e element to be inserted into this list.
+	 * @return <tt>true</tt> (as per the general contract of Collection.add).
+	 * @throws ClassCastException if the specified element is not comparable to
+	 *                            existing elements.
+	 */
+	@Override
+	public boolean add(E e) {
+		if (e == null)
+			return false;
 
-      // Find the index where this element belongs according to the natural
-      // ordering of the objects.
-      final int index = Collections.binarySearch(this, e);
+		// Find the index where this element belongs according to the natural
+		// ordering of the objects.
+		final int index = Collections.binarySearch(this, e);
 
-      if(index >= 0) {
-         if(duplicates) {
-            alist.add(index, e);
-            return true;
-         }
-         return false;
-      }
-      alist.add(-index - 1, e);
-      return true;
-   }
+		if (index >= 0) {
+			if (duplicates) {
+				alist.add(index, e);
+				return true;
+			}
+			return false;
+		}
+		alist.add(-index - 1, e);
+		return true;
+	}
 
-   /**
-    * Appends all of the elements in the specified Collection to this ArrayList,
-    * as per their natural ordering. The behavior of this operation is undefined
-    * if the specified Collection is modified while the operation is in
-    * progress. (This implies that the behavior of this call is undefined if the
-    * specified Collection is this ArrayList, and this ArrayList is nonempty.)
-    * 
-    * @param c the elements to be inserted into this ArrayList.
-    * @return <tt>true</tt> if this ArrayList changed as a result of the call.
-    * @throws NullPointerException if the specified collection is null.
-    */
-   @Override
-   public boolean addAll(Collection<? extends E> c) {
-      boolean changed = false;
-      boolean added;
+	/**
+	 * Appends all of the elements in the specified Collection to this ArrayList, as
+	 * per their natural ordering. The behavior of this operation is undefined if
+	 * the specified Collection is modified while the operation is in progress.
+	 * (This implies that the behavior of this call is undefined if the specified
+	 * Collection is this ArrayList, and this ArrayList is nonempty.)
+	 * 
+	 * @param c the elements to be inserted into this ArrayList.
+	 * @return <tt>true</tt> if this ArrayList changed as a result of the call.
+	 * @throws NullPointerException if the specified collection is null.
+	 */
+	@Override
+	public boolean addAll(Collection<? extends E> c) {
+		boolean changed = false;
+		boolean added;
 
-      for(final E e : c) {
-         added = this.add(e);
-         changed = changed || added;
-      }
-      return changed;
-   }
+		for (final E e : c) {
+			added = this.add(e);
+			changed = changed || added;
+		}
+		return changed;
+	}
 
-   /**
-    * Set duplicates allowed.
-    * 
-    * @param duplicates <tt>true</tt> if duplicates are to be allowed,
-    *           <tt>false</tt> otherwise. If there are existing elements in the
-    *           set when duplicates are disallowed, any duplicates are removed.
-    */
-   public void allowDuplicates(boolean duplicates) {
-      this.duplicates = duplicates;
-      for(int i = this.size() - 1; i > 0; i--)
-         if(this.get(i).compareTo(this.get(i - 1)) == 0)
-            this.remove(i);
-   }
+	/**
+	 * Set duplicates allowed.
+	 * 
+	 * @param duplicates <tt>true</tt> if duplicates are to be allowed,
+	 *                   <tt>false</tt> otherwise. If there are existing elements in
+	 *                   the set when duplicates are disallowed, any duplicates are
+	 *                   removed.
+	 */
+	public void allowDuplicates(boolean duplicates) {
+		this.duplicates = duplicates;
+		for (int i = this.size() - 1; i > 0; i--)
+			if (this.get(i).compareTo(this.get(i - 1)) == 0)
+				this.remove(i);
+	}
 
-   /**
-    * Query duplicates allowed.
-    * 
-    * @return <tt>true</tt> if duplicates are to be allowed, <tt>false</tt>
-    *         otherwise.
-    */
-   public boolean duplicatesAllowed() {
-      return this.duplicates;
-   }
+	/**
+	 * Query duplicates allowed.
+	 * 
+	 * @return <tt>true</tt> if duplicates are to be allowed, <tt>false</tt>
+	 *         otherwise.
+	 */
+	public boolean duplicatesAllowed() {
+		return this.duplicates;
+	}
 
-   @Override
-   public E get(int index) {
-      return alist.get(index);
-   }
+	@Override
+	public E get(int index) {
+		return alist.get(index);
+	}
 
-   @Override
-   public int size() {
-      return alist.size();
-   }
+	@Override
+	public int size() {
+		return alist.size();
+	}
 
-   @Override
-   public void clear() {
-      alist.clear();
-   }
+	@Override
+	public void clear() {
+		alist.clear();
+	}
 
-   @Override
-   public E remove(int index) {
-      return alist.remove(index);
-   }
+	@Override
+	public E remove(int index) {
+		return alist.remove(index);
+	}
 }

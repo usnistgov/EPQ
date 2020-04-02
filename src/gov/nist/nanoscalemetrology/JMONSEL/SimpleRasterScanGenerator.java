@@ -44,74 +44,65 @@ package gov.nist.nanoscalemetrology.JMONSEL;
  * @author John Villarrubia
  * @version 1.0
  */
-public class SimpleRasterScanGenerator
-   extends ScanGenerator {
+public class SimpleRasterScanGenerator extends ScanGenerator {
 
-   private final double x0;
-   private final double y0;
-   private final double deltaX;
-   private final double deltaY;
-   private final double z;
-   private final double t0;
-   private final double pixelDwell;
+	private final double x0;
+	private final double y0;
+	private final double deltaX;
+	private final double deltaY;
+	private final double z;
+	private final double t0;
+	private final double pixelDwell;
 
-   private final int nx;
-   private final int ny;
+	private final int nx;
+	private final int ny;
 
-   private final double totalLineTime;
-   private final double totalFrameTime;
+	private final double totalLineTime;
+	private final double totalFrameTime;
 
-   /**
-    * Constructs a SimpleRasterScanGenerator with the supplied parameters.
-    *
-    * @param x0
-    * @param y0
-    * @param z
-    * @param deltaX
-    * @param deltaY
-    * @param nx
-    * @param ny
-    * @param t0
-    * @param pixelDwell
-    * @param retraceTime
-    * @param frameSettleTime
-    */
-   public SimpleRasterScanGenerator(double x0, double y0, double z, double deltaX, double deltaY, int nx, int ny, double t0, double pixelDwell, double retraceTime, double frameSettleTime) {
-      super();
-      this.x0 = x0;
-      this.y0 = y0;
-      this.deltaX = deltaX;
-      this.deltaY = deltaY;
-      this.z = z;
-      this.t0 = t0;
-      this.pixelDwell = pixelDwell;
-      this.nx = nx;
-      this.ny = ny;
-      totalLineTime = (nx * pixelDwell) + retraceTime;
-      totalFrameTime = frameSettleTime + (ny * totalLineTime);
-   }
+	/**
+	 * Constructs a SimpleRasterScanGenerator with the supplied parameters.
+	 *
+	 * @param x0
+	 * @param y0
+	 * @param z
+	 * @param deltaX
+	 * @param deltaY
+	 * @param nx
+	 * @param ny
+	 * @param t0
+	 * @param pixelDwell
+	 * @param retraceTime
+	 * @param frameSettleTime
+	 */
+	public SimpleRasterScanGenerator(double x0, double y0, double z, double deltaX, double deltaY, int nx, int ny,
+			double t0, double pixelDwell, double retraceTime, double frameSettleTime) {
+		super();
+		this.x0 = x0;
+		this.y0 = y0;
+		this.deltaX = deltaX;
+		this.deltaY = deltaY;
+		this.z = z;
+		this.t0 = t0;
+		this.pixelDwell = pixelDwell;
+		this.nx = nx;
+		this.ny = ny;
+		totalLineTime = (nx * pixelDwell) + retraceTime;
+		totalFrameTime = frameSettleTime + (ny * totalLineTime);
+	}
 
-   /**
-    * @see gov.nist.nanoscalemetrology.JMONSEL.ScanGenerator#get(int)
-    */
-   @Override
-   public double[] get(int i) {
-      if(i < 0)
-         return new double[] {
-            Double.NaN,
-            Double.NaN,
-            Double.NaN,
-            Double.NaN
-         };
-      final int ix = i % nx;
-      final int iy = (i / nx) % ny;
-      final int iframe = i / (nx * ny);
-      return new double[] {
-         x0 + (ix * deltaX),
-         y0 + (iy * deltaY),
-         z,
-         t0 + (ix * pixelDwell) + (iy * totalLineTime) + (iframe * totalFrameTime)
-      };
-   }
+	/**
+	 * @see gov.nist.nanoscalemetrology.JMONSEL.ScanGenerator#get(int)
+	 */
+	@Override
+	public double[] get(int i) {
+		if (i < 0)
+			return new double[] { Double.NaN, Double.NaN, Double.NaN, Double.NaN };
+		final int ix = i % nx;
+		final int iy = (i / nx) % ny;
+		final int iframe = i / (nx * ny);
+		return new double[] { x0 + (ix * deltaX), y0 + (iy * deltaY), z,
+				t0 + (ix * pixelDwell) + (iy * totalLineTime) + (iframe * totalFrameTime) };
+	}
 
 }

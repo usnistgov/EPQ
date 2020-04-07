@@ -1062,25 +1062,23 @@ public class FilterFit extends LinearSpectrumFit {
 			return removeThese.size() > 0 ? removeThese : null;
 		}
 	}
-	
+
 	public static class CullByOptimal implements CullingStrategy {
 		final double mSigma;
 		final Map<Element, XRayTransition> mMapOfXRTS;
-		
-		
+
 		public CullByOptimal(double sigma, Collection<XRayTransitionSet> sxrts) {
-			mSigma=sigma;
+			mSigma = sigma;
 			mMapOfXRTS = new TreeMap<Element, XRayTransition>();
-			for(XRayTransitionSet xrts : sxrts)
+			for (XRayTransitionSet xrts : sxrts)
 				mMapOfXRTS.put(xrts.getElement(), xrts.getWeighiestTransition());
 		}
 
-		private CullByOptimal(double sigma,  Map<Element, XRayTransition> mxrt) {
-			mSigma=sigma;
+		private CullByOptimal(double sigma, Map<Element, XRayTransition> mxrt) {
+			mSigma = sigma;
 			mMapOfXRTS = new TreeMap<Element, XRayTransition>(mxrt);
 		}
 
-		
 		@Override
 		public CullingStrategy clone() {
 			return new CullByOptimal(mSigma, mMapOfXRTS);
@@ -1096,7 +1094,7 @@ public class FilterFit extends LinearSpectrumFit {
 				boolean keep = false;
 				for (int j = 0; (j < fps.size()) && (!keep); ++j) {
 					final FilteredPacket fp = fps.get(j);
-					if (fp.getElement().equals(elm) && fp.getXRayTransitionSet().contains(opt)){
+					if (fp.getElement().equals(elm) && fp.getXRayTransitionSet().contains(opt)) {
 						final UncertainValue2 kr = fp.mKRatio;
 						if (kr.uncertainty() > 0.0)
 							keep = (Math.max(0.0, kr.doubleValue()) / kr.uncertainty() > mSigma);
@@ -1319,8 +1317,8 @@ public class FilterFit extends LinearSpectrumFit {
 					if (removeUv.doubleValue() > 0.0) {
 						final double presentSN = presentUv.doubleValue() / presentUv.uncertainty();
 						final double removeSN = removeUv.doubleValue() / removeUv.uncertainty();
-						if (!(Double.isNaN(presentSN)) && (!Double.isNaN(removeSN)))
-							if (presentSN > (5.0 * removeSN))
+						if ((!Double.isNaN(presentSN)) && (!Double.isNaN(removeSN)))
+							if ((presentSN > 5.0 * removeSN) && (removeSN < 6.0))
 								removeThese.add(removeMe);
 					}
 				}

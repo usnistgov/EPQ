@@ -152,6 +152,14 @@ public class MLLSQSignature {
 			}
 			if (!mStrip.contains(Element.Ca))
 				sc.add(Element.Sb, Element.Ca);
+			if(!mStrip.contains(Element.S)) {
+				sc.add(Element.S, Element.Pb);
+				sc.add(Element.S, Element.Mo);
+			}
+			if(!mStrip.contains(Element.Pb)) {
+				sc.add(Element.Pb, Element.S);
+				sc.add(Element.Pb, Element.Mo);
+			}
 			cs.append(sc);
 			cs.append(new FilterFit.CullByOptimal(mThreshold, mOptimal.keySet()));
 			mFilterFit.setCullingStrategy(cs);
@@ -209,7 +217,7 @@ public class MLLSQSignature {
 			final double zaf = mZafCorrectRefs ? ca.relativeZAF(comp, xrt, refProps)[3] : 1.0;
 			res.put(xrts, Double.valueOf(comp.weightFraction(elm, true) * zaf));
 		}
-		System.out.println(res);
+		// System.out.println(res);
 		return res;
 	}
 

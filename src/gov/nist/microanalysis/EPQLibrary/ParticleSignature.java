@@ -40,23 +40,23 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  */
 public class ParticleSignature {
 	private final Map<Element, UncertainValue2> mValues = new TreeMap<Element, UncertainValue2>();
-	private UncertainValue2 mNormalization;
-	private UncertainValue2 mFullNorm;
+	private double mNormalization;
+	private double mFullNorm;
 	private final Set<Element> mStrip; // Those elements not included in the results
 	private final Set<Element> mSpecial; // Those elements not included in the full normalization
 
 	public ParticleSignature() {
 		super();
-		mNormalization = UncertainValue2.ONE;
-		mFullNorm = UncertainValue2.ONE;
+		mNormalization = 1.0;
+		mFullNorm = 1.0;
 		mStrip = new TreeSet<Element>();
 		mSpecial = new TreeSet<Element>();
 	}
 
 	public ParticleSignature(ParticleSignature ps) {
 		super();
-		mNormalization = ps.mNormalization != null ? ps.mNormalization.clone() : null;
-		mFullNorm = ps.mFullNorm != null ? ps.mFullNorm.clone() : null;
+		mNormalization = ps.mNormalization;
+		mFullNorm = ps.mFullNorm;
 		mValues.putAll(ps.mValues);
 		mStrip = new TreeSet<Element>(ps.mStrip);
 		mSpecial = new TreeSet<Element>(ps.mSpecial);
@@ -69,16 +69,16 @@ public class ParticleSignature {
 
 	public ParticleSignature(Collection<Element> strip, Collection<Element> special) {
 		super();
-		mNormalization = UncertainValue2.ONE;
-		mFullNorm = UncertainValue2.ONE;
+		mNormalization = 1.0;
+		mFullNorm = 1.0;
 		mStrip = new TreeSet<Element>(strip);
 		mSpecial = new TreeSet<Element>(special);
 	}
 
 	public ParticleSignature(KRatioSet krs, Collection<Element> strip, Collection<Element> special) {
 		super();
-		mNormalization = UncertainValue2.ONE;
-		mFullNorm = UncertainValue2.ONE;
+		mNormalization = 1.0;
+		mFullNorm = 1.0;
 		mStrip = new TreeSet<Element>(strip);
 		mSpecial = new TreeSet<Element>(special);
 		final Set<Element> elms = krs.getElementSet();
@@ -115,32 +115,34 @@ public class ParticleSignature {
 	}
 
 	private void renormalize() {
-		mNormalization = null;
-		mFullNorm = null;
+		mNormalization = Double.NaN;
+		mFullNorm = Double.NaN;
 	}
 
-	private UncertainValue2 getFullNorm() {
-		if (mFullNorm == null) {
-			mFullNorm = UncertainValue2.add(mValues.values());
-			if (mFullNorm.doubleValue() <= 0.0)
-				mFullNorm = UncertainValue2.ONE;
+	private double getFullNorm() {
+		if (Double.isNaN(mFullNorm)) {
+			mFullNorm = 0.0;
+			for(UncertainValue2 uv2 : mValues.values())
+				mFullNorm+=uv2.doubleValue();
+			if (mFullNorm <= 0.0)
+				mFullNorm = 1.0;
 		}
 		return mFullNorm;
 	}
 
-	private UncertainValue2 getNorm() {
-		if (mNormalization == null) {
-			mNormalization = UncertainValue2.ZERO;
+	private double getNorm() {
+		if (Double.isNaN(mNormalization)) {
+			mNormalization = 0.0;
 			for (final Map.Entry<Element, UncertainValue2> me : mValues.entrySet())
 				if (!mSpecial.contains(me.getKey()))
-					mNormalization = UncertainValue2.add(mNormalization, me.getValue());
-			if (mNormalization.doubleValue() <= 0.0)
-				mNormalization = UncertainValue2.ONE;
+					mNormalization += me.getValue().doubleValue();
+			if (mNormalization <= 0.0)
+				mNormalization = 1.0;
 		}
 		return mNormalization;
 	}
 
-	private UncertainValue2 getNorm(Element elm) {
+	private double getNorm(Element elm) {
 		return mSpecial.contains(elm) ? getFullNorm() : getNorm();
 	}
 

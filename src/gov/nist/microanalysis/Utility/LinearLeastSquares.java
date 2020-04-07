@@ -137,9 +137,9 @@ abstract public class LinearLeastSquares {
          }
          mFitCoefficients = new UncertainValue2[nTot];
          Arrays.fill(mFitCoefficients, UncertainValue2.ZERO);
-         final double[] expU = confidenceIntervals(INTERVAL_MODE.ONE_D_INTERVAL, 0.683);
+         final double[] expU = confidenceIntervals(INTERVAL_MODE.ONE_D_INTERVAL, 0.683, mCovariance);
          for(int j = 0; j < nFit; ++j)
-            mFitCoefficients[nzIndex[j]] = new UncertainValue2(fcs[j], "LLS", expU[nzIndex[j]]);
+        	 mFitCoefficients[nzIndex[j]] = new UncertainValue2(fcs[j], "LLS", expU[nzIndex[j]]);
       }
    }
 
@@ -369,14 +369,13 @@ abstract public class LinearLeastSquares {
     * @return An array of double containing the confidence intervals
     * @throws EPQException
     */
-   public double[] confidenceIntervals(INTERVAL_MODE mode, double prob)
+   public double[] confidenceIntervals(INTERVAL_MODE mode, double prob, Matrix cov)
          throws EPQException {
-      final Matrix cov = covariance();
       final double[] res = new double[cov.getRowDimension()];
       switch(mode) {
          case ONE_D_INTERVAL: {
             // The standard 1D recipe
-            final double k = chiSqr(1, prob);
+            final double k = prob==0.683 ? 1.0 : chiSqr(1, prob);
             for(int i = 0; i < res.length; ++i)
                res[i] = Math.sqrt(k * cov.get(i, i));
             break;

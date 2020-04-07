@@ -89,7 +89,7 @@ public class LinearLeastSquaresTest
       final DecimalFormat df = new DecimalFormat("0.00000");
       for(final UncertainValue2 r : res)
          System.out.println(r.formatLong(df));
-      final double[] cis = lls.confidenceIntervals(LinearLeastSquares.INTERVAL_MODE.JOINT_INTERVAL, 0.95);
+      final double[] cis = lls.confidenceIntervals(LinearLeastSquares.INTERVAL_MODE.JOINT_INTERVAL, 0.95, lls.covariance());
       for(final double ci : cis)
          System.out.println(df.format(ci));
       System.out.println("ChiSqr = " + lls.chiSquared());

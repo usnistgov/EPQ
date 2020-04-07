@@ -245,8 +245,7 @@ public class FilterFit extends LinearSpectrumFit {
 					if (removedElms.contains(raf.getElement()))
 						zeroFitCoefficient(i, true);
 					if (!isZeroFitCoefficient(i))
-						intervals = Interval.add(intervals,
-								Interval.nonZeroInterval(raf.getFiltered().getFilteredData()));
+						intervals = Interval.add(intervals, raf.getFiltered().getNonZeroInterval());
 				}
 				if (getNonZeroedCoefficientCount() == 0) {
 					System.out.println("All elements have been removed from the fit.");
@@ -275,9 +274,9 @@ public class FilterFit extends LinearSpectrumFit {
 				// by Thomas Dzubay
 				final double vcf = mFilter.varianceCorrectionFactor();
 				for (int j = 0; j < mFilteredPackets.size(); ++j) {
-					final FilteredPacket fpj = mFilteredPackets.get(j);
 					if (!isZeroFitCoefficient(j)) {
 						final UncertainValue2 uv = fitParams[j];
+						final FilteredPacket fpj = mFilteredPackets.get(j);
 						fpj.mKRatio = new UncertainValue2(uv.doubleValue(), "K", Math.sqrt(vcf * uv.variance()));
 						if (uv.doubleValue() < 0.0) {
 							zeroFitCoefficient(j, true);
@@ -1061,6 +1060,52 @@ public class FilterFit extends LinearSpectrumFit {
 					removeThese.add(elm);
 			}
 			return removeThese.size() > 0 ? removeThese : null;
+		}
+	}
+	
+	public static class CullByOptimal implements CullingStrategy {
+		final double mSigma;
+		final Map<Element, XRayTransition> mMapOfXRTS;
+		
+		
+		public CullByOptimal(double sigma, Collection<XRayTransitionSet> sxrts) {
+			mSigma=sigma;
+			mMapOfXRTS = new TreeMap<Element, XRayTransition>();
+			for(XRayTransitionSet xrts : sxrts)
+				mMapOfXRTS.put(xrts.getElement(), xrts.getWeighiestTransition());
+		}
+
+		private CullByOptimal(double sigma,  Map<Element, XRayTransition> mxrt) {
+			mSigma=sigma;
+			mMapOfXRTS = new TreeMap<Element, XRayTransition>(mxrt);
+		}
+
+		
+		@Override
+		public CullingStrategy clone() {
+			return new CullByOptimal(mSigma, mMapOfXRTS);
+		}
+
+		@Override
+		public Set<Element> compute(final FilterFit ff, final UncertainValue2[] fitParams) {
+			final Set<Element> elms = ff.getElements();
+			final TreeSet<Element> removeThese = new TreeSet<Element>();
+			final List<FilteredPacket> fps = ff.getFilteredPackets();
+			for (final Element elm : elms) {
+				final XRayTransition opt = mMapOfXRTS.get(elm);
+				boolean keep = false;
+				for (int j = 0; (j < fps.size()) && (!keep); ++j) {
+					final FilteredPacket fp = fps.get(j);
+					if (fp.getElement().equals(elm) && fp.getXRayTransitionSet().contains(opt)){
+						final UncertainValue2 kr = fp.mKRatio;
+						if (kr.uncertainty() > 0.0)
+							keep = (Math.max(0.0, kr.doubleValue()) / kr.uncertainty() > mSigma);
+					}
+				}
+				if (!keep)
+					removeThese.add(elm);
+			}
+			return removeThese;
 		}
 	}
 

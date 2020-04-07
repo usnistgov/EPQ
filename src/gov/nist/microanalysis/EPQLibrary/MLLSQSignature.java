@@ -48,8 +48,6 @@ public class MLLSQSignature {
 	private double mChiSquared = 0.0;
 	private double mCounts = Double.NaN;
 	private ISpectrumData mResidual;
-	private static final double K_TO_L = 1.66666;
-	private static final double L_TO_M = 2.00000;
 
 	private boolean mStripUnlikely;
 	private FilterFit mFilterFit;
@@ -60,7 +58,7 @@ public class MLLSQSignature {
 		res.add(Element.O);
 		return res;
 	}
-	
+
 	/**
 	 * Constructs a MLLSQSignature object to process spectra from the specified
 	 * detector at the specified beam energy.
@@ -134,6 +132,10 @@ public class MLLSQSignature {
 			mFilterFit = new FilterFit(mDetector, mBeamEnergy);
 			mFilterFit.setStripUnlikely(mStripUnlikely);
 			mFilterFit.setResidualModelThreshold(0.0);
+			for (Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())
+				mFilterFit.addReference(me.getKey(), me.getValue());
+			assert mOptimal == null;
+			mOptimal = computeOptimal(mFilterFit, mBeamEnergy);
 			// Special rules for one element masquerading as another
 			final FilterFit.CompoundCullingStrategy cs = new FilterFit.CompoundCullingStrategy();
 			// Special rules for one element masquerading as another
@@ -151,11 +153,8 @@ public class MLLSQSignature {
 			if (!mStrip.contains(Element.Ca))
 				sc.add(Element.Sb, Element.Ca);
 			cs.append(sc);
-			cs.append(new FilterFit.CullByAverageUncertainty(mThreshold, 0.6 * mThreshold));
-			// cs.append(new FilterFit.CullByBrightest(mThreshold));
+			cs.append(new FilterFit.CullByOptimal(mThreshold, mOptimal.keySet()));
 			mFilterFit.setCullingStrategy(cs);
-			for (Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())
-				mFilterFit.addReference(me.getKey(), me.getValue());
 		}
 		mFilterFit.forceZero(mExclude);
 		final KRatioSet res = mFilterFit.getKRatios(spec);
@@ -163,62 +162,54 @@ public class MLLSQSignature {
 		mChiSquared = mFilterFit.chiSquared();
 		mResidual = mFilterFit.getResidualSpectrum(spec);
 		mCounts = mFilterFit.getFitEventCount(spec, mStrip);
-		if (mOptimal == null)
-			synchronized (this) {
-				if (mOptimal == null) {
-					mOptimal = new TreeMap<XRayTransitionSet, Double>();
-					// Figure out which lines to use
-					for (final Map.Entry<Element, ISpectrumData> me : mStandards.entrySet()) {
-						final ISpectrumData ref = me.getValue();
-						SpectrumUtils.applyZeroPeakDiscriminator(ref, SpectrumUtils.channelForEnergy(ref, ToSI.eV(100.0)));
-						final Element elm = me.getKey();
-						RegionOfInterestSet.RegionOfInterest bestRoi = null;
-						int best = XRayTransition.None;
-						for (final FilteredSpectrum fs : mFilterFit.getFilteredSpectra(elm)) {
-							final RegionOfInterestSet.RegionOfInterest roi = fs.getRegionOfInterest();
-							final XRayTransitionSet xrts = fs.getXRayTransitionSet();
-							if (xrts.contains(XRayTransition.KA1)) {
-								// Always take K if it is below the overvoltage
-								// threshold
-								if (K_TO_L * XRayTransition.getEnergy(elm, XRayTransition.KA1) < mBeamEnergy) {
-									bestRoi = roi;
-									best = XRayTransition.KA1;
-								}
-							} else if (xrts.contains(XRayTransition.LA1)) {
-								// Take L if K not available and L below
-								// overvoltage
-								// threshold
-								if (best != XRayTransition.KA1)
-									if (L_TO_M * XRayTransition.getEnergy(elm, XRayTransition.LA1) < mBeamEnergy) {
-										bestRoi = roi;
-										best = XRayTransition.LA1;
-									}
-							} else if (xrts.contains(XRayTransition.MA1))
-								// Take M if K or L not available
-								if ((best != XRayTransition.KA1) && (best != XRayTransition.LA1)) {
-									bestRoi = roi;
-									best = XRayTransition.MA1;
-								}
-						}
-						if (bestRoi != null) {
-							final XRayTransitionSet xrts = bestRoi.getXRayTransitionSet(elm);
-							final XRayTransition xrt = xrts.find(best);
-							assert xrt != null;
-							final CorrectionAlgorithm ca = new XPP1991();
-							/**
-							 * Iref -> Measured intensity of reference Ipure = Iref/(wRef*ZAFref) wUnk ~
-							 * Iunk / Ipure = Iunk/(Iref/(wRef*ZAFref)) = (Iunk/Iref)*wRef*ZAFref
-							 */
-							final SpectrumProperties refProps = ref.getProperties();
-							final Composition comp = refProps
-									.getCompositionProperty(SpectrumProperties.StandardComposition);
-							final double zaf = mZafCorrectRefs ? ca.relativeZAF(comp, xrt, refProps)[3] : 1.0;
-							// System.out.println(comp+"("+xrt+")="+zaf);
-							mOptimal.put(xrts, Double.valueOf(comp.weightFraction(elm, true) * zaf));
-						}
-					}
+		return res;
+	}
+
+	public TreeMap<XRayTransitionSet, Double> computeOptimal(FilterFit ff, double e0) throws EPQException {
+		TreeMap<XRayTransitionSet, Double> res = new TreeMap<XRayTransitionSet, Double>();
+		// Figure out which lines to use and the matrix correction factors
+		final double MIN_E = ToSI.eV(2.0e3);
+		for (final Map.Entry<Element, ISpectrumData> me : mStandards.entrySet()) {
+			final Element elm = me.getKey();
+			RegionOfInterestSet.RegionOfInterest bestRoi = null;
+			int bestFam = -1;
+			XRayTransition bestXrt = null;
+			TreeSet<FilteredSpectrum> sfs = new TreeSet<>(ff.getFilteredSpectra(elm));
+			for (final FilteredSpectrum fs : sfs.descendingSet()) {
+				final RegionOfInterestSet.RegionOfInterest roi = fs.getRegionOfInterest();
+				final XRayTransition weightiest = fs.getXRayTransitionSet().getWeighiestTransition();
+				final int fam = weightiest.getFamily();
+				if((bestFam==-1) && (weightiest.getEnergy() < 0.8 * e0)) {
+					bestRoi = roi;
+					bestFam = fam;
+					bestXrt = weightiest;
+				} else if((fam == bestFam) && (weightiest.getWeight(XRayTransition.NormalizeDefault) > //
+							bestXrt.getWeight(XRayTransition.NormalizeDefault))){
+					bestRoi = roi;
+					bestFam = fam;
+					bestXrt = weightiest;
+				} else if ((fam > bestFam) && (weightiest.getEnergy() > MIN_E)) {
+					bestRoi = roi;
+					bestFam = fam;
+					bestXrt = weightiest;
 				}
 			}
+			// Compute the matrix correction factor
+			assert bestXrt != null;
+			final XRayTransitionSet xrts = bestRoi.getXRayTransitionSet(elm);
+			final XRayTransition xrt = xrts.getWeighiestTransition();
+			assert xrt != null;
+			final CorrectionAlgorithm ca = new XPP1991();
+			/**
+			 * Iref -> Measured intensity of reference Ipure = Iref/(wRef*ZAFref) wUnk ~
+			 * Iunk / Ipure = Iunk/(Iref/(wRef*ZAFref)) = (Iunk/Iref)*wRef*ZAFref
+			 */
+			final SpectrumProperties refProps = me.getValue().getProperties();
+			final Composition comp = refProps.getCompositionProperty(SpectrumProperties.StandardComposition);
+			final double zaf = mZafCorrectRefs ? ca.relativeZAF(comp, xrt, refProps)[3] : 1.0;
+			res.put(xrts, Double.valueOf(comp.weightFraction(elm, true) * zaf));
+		}
+		System.out.println(res);
 		return res;
 	}
 
@@ -256,7 +247,8 @@ public class MLLSQSignature {
 		final KRatioSet optimal = optimalKRatioSet(krs);
 		final HashSet<Element> strip = new HashSet<>(mStrip);
 		strip.remove(Element.C);
-		final ParticleSignature res = new ParticleSignature(mStrip.contains(Element.C) ? Collections.singleton(Element.C) : Collections.emptySet(), strip);
+		final ParticleSignature res = new ParticleSignature(
+				mStrip.contains(Element.C) ? Collections.singleton(Element.C) : Collections.emptySet(), strip);
 		for (final XRayTransitionSet xrts : optimal.getTransitions())
 			res.add(xrts.getElement(),
 					UncertainValue2.multiply(mOptimal.get(xrts).doubleValue(), optimal.getKRatioU(xrts)));
@@ -286,7 +278,6 @@ public class MLLSQSignature {
 		return new TreeSet<Element>(mStandards.keySet());
 	}
 
-
 	/**
 	 * All all the Element objects in the specified collection.
 	 * 
@@ -295,7 +286,7 @@ public class MLLSQSignature {
 	public void addStripped(Collection<Element> col) {
 		mStrip.addAll(col);
 	}
-	
+
 	/**
 	 * Is an element in the list of elements which will be stripped (ie. ignored in
 	 * the signature)
@@ -314,7 +305,6 @@ public class MLLSQSignature {
 	public void clearStripped() {
 		mStrip.clear();
 	}
-	
 
 	/**
 	 * Are the references ZAF corrected in addition to corrected for composition?

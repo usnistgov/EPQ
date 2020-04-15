@@ -201,9 +201,9 @@ public class NISTMottRS extends RandomizedScatter {
 	 * whenever we have them, but we can set this value higher. For example, Kieft
 	 * and Bosch don't trust the NISTMott cross sections below 100 eV.
 	 */
-	private int extrapMethod = 1; // 1 for Browning, 2 for linear
-	private double minEforTable = ToSI.eV(50.); // Energy below which to use
-												// extrapMethod
+	private int extrapMethod; // 1 for Browning, 2 for linear
+	private double minEforTable; // Energy below which to use
+									// extrapMethod
 
 	private double MottXSatMinEnergy;
 	private final Element mElement;
@@ -237,11 +237,23 @@ public class NISTMottRS extends RandomizedScatter {
 	 * interpolation between 0 at 0 eV and the tabulated value at minEforTable.
 	 * </p>
 	 *
-	 * @param elm Element
+	 * @param elm
+	 * @param extrapMethod -- int 1 for Browning, 2 for linear
+	 * @param minEforTable -- double, energy below which to use extrapolation
 	 */
-	public NISTMottRS(Element elm) {
+
+	public NISTMottRS(Element elm, int extrapMethod, double minEforTable) {
 		super("NIST Elastic cross-section", mReference);
 		assert (elm != null);
+		if (extrapMethod == 1 || extrapMethod == 2)
+			this.extrapMethod = extrapMethod;
+		else
+			throw new IllegalArgumentException("extrapMethod must be 1 or 2.");
+		if (minEforTable >= ToSI.eV(50.))
+			this.minEforTable = minEforTable;
+		else
+			throw new IllegalArgumentException("minEforTable must be > 50 eV");
+
 		mElement = elm;
 		try {
 			final String name = elm.getAtomicNumber() < 10
@@ -269,6 +281,16 @@ public class NISTMottRS extends RandomizedScatter {
 			throw new EPQFatalException("Unable to construct NISTMottRS: " + ex.toString());
 		}
 		MottXSatMinEnergy = this.totalCrossSection(minEforTable);
+	}
+
+	/**
+	 * Initializes a NISTMottRS for the given element with default potential
+	 * (muffin-tin) and minimum energy for extrapolation (50 eV).
+	 * 
+	 * @param elm
+	 */
+	public NISTMottRS(Element elm) {
+		this(elm, 1, ToSI.eV(50.));
 	}
 
 	@Override
@@ -311,6 +333,38 @@ public class NISTMottRS extends RandomizedScatter {
 		} else if (energy < MAX_NISTMOTT) {
 			final double q = ULagrangeInterpolation.d2(mX1, new double[] { DL50, 0. }, new double[] { PARAM, 0.005 },
 					qINTERPOLATIONORDER, new double[] { Math.log(energy), Math2.rgen.nextDouble() })[0];
+			final double com = 1.0 - (2.0 * q * q);
+			return com > -1.0 ? (com < 1.0 ? Math.acos(com) : 0.0) : Math.PI;
+		} else {
+			if (mRutherford == null)
+				mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
+			return mRutherford.randomScatteringAngle(energy);
+		}
+	}
+
+	/**
+	 * This version of randomScatteringAngle lets us see the theta values assigned
+	 * for fixed r in [0,1], provided energy is within the range of the NIST Mott
+	 * tables.
+	 * 
+	 * @param energy
+	 * @param r
+	 * @return
+	 */
+	public double randomScatteringAngle(double energy, double r) {
+		/*
+		 * Even in extrapMethod 2 (linear interpolation) we use Browning for the angular
+		 * distribution.
+		 */
+		if (energy < minEforTable) {
+			if (mBrowning == null) {
+				mBrowning = new BrowningEmpiricalCrossSection(mElement);
+				sfBrowning = this.totalCrossSection(MIN_NISTMOTT) / mBrowning.totalCrossSection(MIN_NISTMOTT);
+			}
+			return mBrowning.randomScatteringAngle(energy);
+		} else if (energy < MAX_NISTMOTT) {
+			final double q = ULagrangeInterpolation.d2(mX1, new double[] { DL50, 0. }, new double[] { PARAM, 0.005 },
+					qINTERPOLATIONORDER, new double[] { Math.log(energy), r })[0];
 			final double com = 1.0 - (2.0 * q * q);
 			return com > -1.0 ? (com < 1.0 ? Math.acos(com) : 0.0) : Math.PI;
 		} else {

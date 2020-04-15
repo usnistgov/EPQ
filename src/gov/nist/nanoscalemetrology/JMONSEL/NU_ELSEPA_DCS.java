@@ -115,9 +115,7 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 			final int z = elm.getAtomicNumber();
 			if (mScatter[z] == null || mScatter[z].getExtrapMethod() != extrapMethod
 					|| mScatter[z].getMinEforTable() != minEforTable) {
-				mScatter[z] = new NU_ELSEPA_DCS(elm, potentialModel);
-				mScatter[z].setExtrapMethod(extrapMethod);
-				mScatter[z].setMinEforTable(minEforTable);
+				mScatter[z] = new NU_ELSEPA_DCS(elm, potentialModel, extrapMethod, minEforTable);
 			}
 			return mScatter[z];
 		}
@@ -286,21 +284,31 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 	transient private final double logElectronCharge = Math.log(PhysicalConstants.ElectronCharge);
 
 	/**
-	 * Constructs a NU_ELSEPA_DCS with the default muffin-tin potential model.
+	 * Constructs a NU_ELSEPA_DCS with the default muffin-tin potential model and
+	 * minimum energy for extrapolation equal to the table minimum (50 eV).
 	 * 
 	 * @param elm
 	 */
 	public NU_ELSEPA_DCS(Element elm) {
-		this(elm, 1);
+		this(elm, 1, 1, MIN_ELSEPA);
 	}
 
 	/**
 	 * @param elm
 	 * @param potentialmodel
 	 */
-	public NU_ELSEPA_DCS(Element elm, int potentialmodel) {
+	public NU_ELSEPA_DCS(Element elm, int potentialmodel, int extrapMethod, double minEforTable) {
 		super("ELSEPA Elastic cross-section", mReference);
 		assert (elm != null);
+		if (extrapMethod == 1 || extrapMethod == 2)
+			this.extrapMethod = extrapMethod;
+		else
+			throw new IllegalArgumentException("extrapMethod must be 1 or 2.");
+		if (minEforTable >= ToSI.eV(50.))
+			this.minEforTable = minEforTable;
+		else
+			throw new IllegalArgumentException("minEforTable must be > 50 eV");
+
 		mElement = elm;
 		setPotentialModel(potentialmodel);
 

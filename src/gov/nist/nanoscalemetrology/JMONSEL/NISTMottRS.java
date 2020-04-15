@@ -56,11 +56,25 @@ import gov.nist.nanoscalemetrology.JMONSELutils.ULagrangeInterpolation;
  */
 public class NISTMottRS extends RandomizedScatter {
 
+	/*
+	 * MIN_ and MAX_ NISTMOTT are the limits of the scattering table that we
+	 * interpolate
+	 */
+	public static final double MAX_NISTMOTT = ToSI.keV(20.0);
+	public static final double MIN_NISTMOTT = ToSI.keV(0.050);
+	private static final int SPWEM_LEN = 61;
+	private static final int X1_LEN = 201;
+
+	private static final double DL50 = Math.log(MIN_NISTMOTT);
+
+	private static final double PARAM = (Math.log(MAX_NISTMOTT) - DL50) / 60.0;
+
+	
 	public static class NISTMottRSFactory extends RandomizedScatterFactory {
 
 		private int extrapMethod = 1;
 
-		private double minEforTable = ToSI.eV(50.);
+		private double minEforTable = MIN_NISTMOTT;
 
 		private final NISTMottRS[] mScatter = new NISTMottRS[Element.elmEndOfElements];
 
@@ -69,7 +83,7 @@ public class NISTMottRS extends RandomizedScatter {
 		 * whenever available and Browning extrapolation below the table minimum.
 		 */
 		public NISTMottRSFactory() {
-			this(1, ToSI.eV(50.));
+			this(1, MIN_NISTMOTT);
 		}
 
 		/**
@@ -183,19 +197,6 @@ public class NISTMottRS extends RandomizedScatter {
 	public static final RandomizedScatterFactory Factory100Lin = new NISTMottRSFactory(2, ToSI.eV(100.));
 
 	/*
-	 * MIN_ and MAX_ NISTMOTT are the limits of the scattering table that we
-	 * interpolate
-	 */
-	public static final double MAX_NISTMOTT = ToSI.keV(20.0);
-	public static final double MIN_NISTMOTT = ToSI.keV(0.050);
-	private static final int SPWEM_LEN = 61;
-	private static final int X1_LEN = 201;
-
-	private static final double DL50 = Math.log(MIN_NISTMOTT);
-
-	private static final double PARAM = (Math.log(MAX_NISTMOTT) - DL50) / 60.0;
-
-	/*
 	 * extrapolateBelowEnergy is the energy below which we switch to extrapolation
 	 * using the Browning formula. By default we use the NISTMott scattering tables
 	 * whenever we have them, but we can set this value higher. For example, Kieft
@@ -249,10 +250,10 @@ public class NISTMottRS extends RandomizedScatter {
 			this.extrapMethod = extrapMethod;
 		else
 			throw new IllegalArgumentException("extrapMethod must be 1 or 2.");
-		if (minEforTable >= ToSI.eV(50.))
+		if (minEforTable >= MIN_NISTMOTT)
 			this.minEforTable = minEforTable;
 		else
-			throw new IllegalArgumentException("minEforTable must be > 50 eV");
+			throw new IllegalArgumentException("minEforTable must be >= table minimum");
 
 		mElement = elm;
 		try {
@@ -290,7 +291,7 @@ public class NISTMottRS extends RandomizedScatter {
 	 * @param elm
 	 */
 	public NISTMottRS(Element elm) {
-		this(elm, 1, ToSI.eV(50.));
+		this(elm, 1, MIN_NISTMOTT);
 	}
 
 	@Override

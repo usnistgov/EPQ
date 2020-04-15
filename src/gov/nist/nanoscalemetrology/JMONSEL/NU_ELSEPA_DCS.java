@@ -69,6 +69,14 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 	 * @author John Villarrubia
 	 *
 	 */
+	
+	/*
+	 * MIN_ and MAX_ ELSEPA are the limits of the scattering table that we
+	 * interpolate
+	 */
+	public static final double MAX_ELSEPA = ToSI.keV(300.0);
+	public static final double MIN_ELSEPA = ToSI.eV(50.);
+	
 	public static class NU_ELSEPA_DCSFactory extends RandomizedScatterFactory {
 
 		private int extrapMethod = 1;
@@ -218,7 +226,7 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 	 * Returns a NU_ELSEPA_DCSFactory that uses minEforTable = 50 eV and
 	 * extrapMethod = 1 (Browning), and atomic potentials.
 	 */
-	public static final RandomizedScatterFactory FactoryAT = new NU_ELSEPA_DCSFactory(1, ToSI.eV(50.), 0);
+	public static final RandomizedScatterFactory FactoryAT = new NU_ELSEPA_DCSFactory(1, MIN_ELSEPA, 0);
 	/**
 	 * Returns a NU_ELSEPA_DCSFactory that uses minEforTable = 100 eV and
 	 * extrapMethod = 1 (Browning), and atomic potentials.
@@ -229,13 +237,6 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 	 * extrapMethod = 2 (linear), and atomic potentials.
 	 */
 	public static final RandomizedScatterFactory FactoryAT100Lin = new NU_ELSEPA_DCSFactory(2, ToSI.eV(100.), 0);
-
-	/*
-	 * MIN_ and MAX_ ELSEPA are the limits of the scattering table that we
-	 * interpolate
-	 */
-	public static final double MAX_ELSEPA = ToSI.keV(300.0);
-	public static final double MIN_ELSEPA = ToSI.eV(50.);
 
 	private double minlogE; // Smallest log(E) for tables
 	private double maxlogE; // Largest log(E) for tables
@@ -304,10 +305,10 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 			this.extrapMethod = extrapMethod;
 		else
 			throw new IllegalArgumentException("extrapMethod must be 1 or 2.");
-		if (minEforTable >= ToSI.eV(50.))
+		if (minEforTable >= MIN_ELSEPA)
 			this.minEforTable = minEforTable;
 		else
-			throw new IllegalArgumentException("minEforTable must be > 50 eV");
+			throw new IllegalArgumentException("minEforTable must be >= table minimum");
 
 		mElement = elm;
 		setPotentialModel(potentialmodel);

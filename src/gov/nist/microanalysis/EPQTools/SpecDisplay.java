@@ -531,9 +531,9 @@ public class SpecDisplay extends JComponent {
 				final int x = xPos, y = Math.max(mPlotRect.y + (2 * offset), hgt - sw - (2 * offset));
 				gr.rotate(Math.PI / 2, x, y);
 				gr.translate(0.0, 0.2 * rect.getHeight());
-				drawCallout(gr, Math.round(x - offset), //
+				drawCallout(gr, x - offset, //
 						(int) Math.round((y - (0.2 * rect.getHeight())) + rect.getY()), //
-						(int) rect.getWidth() + (2 * offset), //
+						(int) Math.round(rect.getWidth() + (2 * offset)), //
 						(int) Math.round((0.5 * rect.getHeight()) - rect.getY()), offset, offset);
 				gr.setColor(mKLMColor);
 				gr.drawString(str, x, y);
@@ -604,6 +604,7 @@ public class SpecDisplay extends JComponent {
 
 		private boolean add(KLMLine klm) {
 			if (mLines.isEmpty() || memberOf(klm)) {
+				assert !mLines.contains(klm);
 				mLines.add(klm);
 				mAmplitude += klm.mAmplitude;
 				mWgtAvgCenter += klm.mAmplitude * klm.getEnergy();
@@ -632,10 +633,18 @@ public class SpecDisplay extends JComponent {
 		}
 
 		/**
-		 * @return The weighted center energy in eV
+		 * @return The best estimate energy in eV
 		 */
 		public double getCenter() {
-			return FromSI.eV(mWgtAvgCenter / mAmplitude);
+			KLMLine res=mLines.get(0);
+			double br=res.mAmplitude;
+			for(KLMLine klm : mLines)
+				if(klm.mAmplitude>br) {
+					br=klm.mAmplitude;
+					res=klm;
+				}
+			return FromSI.eV(res.mEnergy);
+			// return FromSI.eV(mWgtAvgCenter / mAmplitude);
 		}
 
 		private KLMLine.KLMLineType getType() {

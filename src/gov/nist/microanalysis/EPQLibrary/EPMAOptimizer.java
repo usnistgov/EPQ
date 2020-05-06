@@ -923,7 +923,7 @@ abstract public class EPMAOptimizer {
             final double ee = xrt.getEdgeEnergy();
             if(((2.0 * ee) >= min) && ((2.0 * ee) <= max))
                res.add(2.0 * ee);
-            else if(((1.5 * ee) <= max) && ((1.5 * ee) <= max))
+            else if((1.5 * ee) <= max)
                res.add(1.5 * ee);
          }
       }

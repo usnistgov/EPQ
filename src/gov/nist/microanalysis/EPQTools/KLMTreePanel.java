@@ -299,7 +299,7 @@ public class KLMTreePanel
       }
    };
 
-   private Set<Element> parseElementField(String text) {
+   public Set<Element> parseElementField(String text) {
       if(text.startsWith("\""))
          text = text.substring(1);
       if(text.endsWith("\""))

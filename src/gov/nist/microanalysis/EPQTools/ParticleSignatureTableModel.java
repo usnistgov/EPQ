@@ -96,4 +96,8 @@ public class ParticleSignatureTableModel
       sb.append("</table>\n");
       return sb.toString();
    }
+   
+   public ParticleSignature getSignature() {
+	   return mSignature;
+   }
 }

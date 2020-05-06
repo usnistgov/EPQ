@@ -140,4 +140,8 @@ public class CompositionTableModel
       sb.append("</table>\n");
       return sb.toString();
    }
+   
+   public Composition getComposition() {
+	   return mComposition;
+   }
 }

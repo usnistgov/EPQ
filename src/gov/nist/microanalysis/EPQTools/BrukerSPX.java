@@ -31,7 +31,7 @@ public class BrukerSPX
    private final SpectrumProperties mProperties = new SpectrumProperties();
    private double[] mData;
 
-   static abstract private class BaseParser {
+   static abstract private class BaseParser<T> {
       private final SpectrumProperties.PropertyId mPid;
 
       protected BaseParser(SpectrumProperties.PropertyId pid) {
@@ -42,12 +42,12 @@ public class BrukerSPX
          return mPid;
       }
 
-      abstract public Object parse(String str);
+      abstract public T parse(String str);
    }
 
    static private class Parser
       extends
-      BaseParser {
+      BaseParser<Double> {
       private final double mScale;
 
       Parser(SpectrumProperties.PropertyId pid, double scale) {
@@ -56,34 +56,48 @@ public class BrukerSPX
       }
 
       @Override
-      public Object parse(String str) {
+      public Double parse(String str) {
          return Double.valueOf(mScale * Double.parseDouble(str.trim()));
       }
    }
+   
+   static private class ZParser
+   extends
+   BaseParser<Element> {
+
+   ZParser(SpectrumProperties.PropertyId pid) {
+      super(pid);
+   }
+
+   @Override
+   public Element parse(String str) {
+      return Element.byAtomicNumber(Integer.parseInt(str.trim()));
+   }
+}
 
    static private class StringParser
       extends
-      BaseParser {
+      BaseParser<String> {
 
       StringParser(SpectrumProperties.PropertyId pid) {
          super(pid);
       }
 
       @Override
-      public Object parse(String str) {
+      public String parse(String str) {
          return str;
       }
    }
 
    static private class DateParser
       extends
-      BaseParser {
+      BaseParser<Date> {
       DateParser(SpectrumProperties.PropertyId pid) {
          super(pid);
       }
 
       @Override
-      public Object parse(String str) {
+      public Date parse(String str) {
          final Calendar c = Calendar.getInstance();
          c.set(2010, 11, 29);
          // assume MM:DD:YY
@@ -99,13 +113,13 @@ public class BrukerSPX
 
    static private class TimeParser
       extends
-      BaseParser {
+      BaseParser<Date> {
       TimeParser(SpectrumProperties.PropertyId pid) {
          super(pid);
       }
 
       @Override
-      public Object parse(String str) {
+      public Date parse(String str) {
          final String[] item = str.split(":");
          final int hours = Integer.parseInt(item[0]);
          final int minutes = Integer.parseInt(item[1]);
@@ -117,16 +131,17 @@ public class BrukerSPX
       }
    }
 
-   static final private Map<String, BaseParser> mParsers = initSpectrumProperties();
+   static final private Map<String, BaseParser<?>> mParsers = initSpectrumProperties();
 
-   static private Map<String, BaseParser> initSpectrumProperties() {
-      final HashMap<String, BaseParser> res = new HashMap<String, BaseParser>();
+   static private Map<String, BaseParser<?>> initSpectrumProperties() {
+      final HashMap<String, BaseParser<?>> res = new HashMap<String, BaseParser<?>>();
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/RealTime", new Parser(SpectrumProperties.RealTime, 0.001));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/LifeTime", new Parser(SpectrumProperties.LiveTime, 0.001));
-      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/DeadTime", new Parser(SpectrumProperties.DeadPercent, 1.0));
+      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/DeadTime", new Parser(SpectrumProperties.DeadPercent, 100.0));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/PrimaryEnergy", new Parser(SpectrumProperties.BeamEnergy, 1.0));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/ElevationAngle", new Parser(SpectrumProperties.Elevation, 1.0));
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/CalibAbs", new Parser(SpectrumProperties.EnergyOffset, 1000.0));
+      // res.put("/TRTSpectrum/ClassInstance/ClassInstance/SigmaAbs", new Parser(SpectrumProperties.EnergyOffset, 1000.0));
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/CalibLin", new Parser(SpectrumProperties.EnergyScale, 1000.0));
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/Date", new DateParser(SpectrumProperties.AcquisitionTime));
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/Time", new TimeParser(SpectrumProperties.AcquisitionTime));
@@ -136,6 +151,11 @@ public class BrukerSPX
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/DetectorThickness", new Parser(SpectrumProperties.DetectorThickness, 1.0));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/SiDeadLayerThickness", new Parser(SpectrumProperties.DeadLayer, 1.0));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/WindowType", new StringParser(SpectrumProperties.WindowType));
+      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/Atmosphere", new StringParser(SpectrumProperties.XRFAtmosphere));
+      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/Filter", new StringParser(SpectrumProperties.XRFFilter));
+      res.put("/TRTSpectrum/ClassInstance/ClassInstance/Result/Atom", new ZParser(SpectrumProperties.ElementList));
+      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/HighVoltage", new Parser(SpectrumProperties.XRFSourceVoltage, 1.0));
+      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/TubeCurrent", new Parser(SpectrumProperties.XRFTubeCurrent, 1.0));
       return res;
    }
 
@@ -165,6 +185,8 @@ public class BrukerSPX
          throws XmlPullParserException,
          IOException,
          EPQException {
+	  getProperties().setNumericProperty(SpectrumProperties.EnergyOffset, 0.0);
+	  getProperties().setNumericProperty(SpectrumProperties.EnergyScale, 10.0);
       final XmlPullParserFactory factory = XmlPullParserFactory.newInstance(System.getProperty(XmlPullParserFactory.PROPERTY_NAME), null);
       factory.setNamespaceAware(true);
       final XmlPullParser xpp = factory.newPullParser();
@@ -252,7 +274,7 @@ public class BrukerSPX
          throws XmlPullParserException {
       final String str = xpp.getText();
       final String path = getXMPPath();
-      final BaseParser bp = mParsers.get(path);
+      final BaseParser<?> bp = mParsers.get(path);
       if(bp != null) {
          final Object res = bp.parse(str);
          if(res instanceof Double)
@@ -268,8 +290,16 @@ public class BrukerSPX
             } else
                c.setTimeInMillis(rd.getTime());
             mProperties.setTimestampProperty(bp.getPID(), c.getTime());
-         } else if(res instanceof String)
+         } else if(res instanceof String) {
             mProperties.setTextProperty(bp.getPID(), res.toString());
+         } else if(res instanceof Element) {
+        	String prev=mProperties.getTextWithDefault(SpectrumProperties.ElementList, null);
+        	if(prev==null)
+        		mProperties.setTextProperty(SpectrumProperties.ElementList, ((Element) res).toAbbrev());
+        	else
+        		mProperties.setTextProperty(SpectrumProperties.ElementList, prev+","+((Element) res).toAbbrev());
+         }
+    	  
       } else if(path.equals("/TRTSpectrum/ClassInstance/Channels")) {
          int begin, end = -1;
          for(int i = 0; i < mData.length; ++i) {

@@ -7,8 +7,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,8 +20,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import gov.nist.microanalysis.EPQLibrary.Detector.EDSDetector;
-import gov.nist.microanalysis.EPQTools.SpectrumFile.ZombieSpectrum;
-import gov.nist.microanalysis.EPQTools.WriteSpectrumAsTIFF;
 import gov.nist.microanalysis.Utility.DescriptiveStatistics;
 import gov.nist.microanalysis.Utility.HalfUpFormat;
 import gov.nist.microanalysis.Utility.LinearRegression;
@@ -1468,38 +1464,6 @@ final public class SpectrumUtils {
 		return scale(scale, 0.0, spec);
 	}
 
-	/**
-	 * Turns a spectrum into a ZombieSpectrum which is more friendly way to store a
-	 * spectrum in low memory circumstances.
-	 * 
-	 * @param spec
-	 * @return A ZombieSpectrum or the original ISpectrumData if a zombie can't be
-	 *         created.
-	 */
-	static public ISpectrumData createZombieSpectrum(ISpectrumData spec) {
-		if (spec instanceof ZombieSpectrum)
-			return spec;
-		try {
-			File f = null;
-			final String fn = spec.getProperties().getTextWithDefault(SpectrumProperties.SourceFile, null);
-			if (fn != null) {
-				f = new File(fn);
-				if (!f.exists())
-					f = null;
-			}
-			if (f == null) {
-				f = File.createTempFile("spec", ".tif");
-				try (final FileOutputStream fos = new FileOutputStream(f)) {
-					WriteSpectrumAsTIFF.write(spec, fos);
-				}
-				f.deleteOnExit();
-			}
-			return new ZombieSpectrum(f);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			return spec;
-		}
-	}
 
 	/**
 	 * Returns a copy of the input spectrum with the intensity of the spectrum data
@@ -2282,7 +2246,7 @@ final public class SpectrumUtils {
 			res = remap(spec, det.getChannelCount());
 			res.getProperties().setDetector(det);
 		} else
-			return res = spec;
+			res = spec;
 		return res;
 	}
 

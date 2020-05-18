@@ -4,14 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.util.List;
 
-import gov.nist.microanalysis.EPQLibrary.BaseSpectrum;
 import gov.nist.microanalysis.EPQLibrary.EPQException;
 import gov.nist.microanalysis.EPQLibrary.ISpectrumData;
 import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
-import gov.nist.microanalysis.EPQLibrary.SpectrumUtils;
 import gov.nist.microanalysis.EPQLibrary.StandardBundle;
 
 /**
@@ -31,149 +28,6 @@ import gov.nist.microanalysis.EPQLibrary.StandardBundle;
  */
 
 public class SpectrumFile {
-
-   /**
-    * ZombieSpectrum is used to manage memory when many spectra are loaded into
-    * memory simultaneously. Each ZombieSpectrum refers to a spectrum on disk.
-    * Most of the time the spectrum is loaded into memory. However occasionally
-    * the garbage collector will need more memory and will purge the
-    * SoftReference to the spectral data. If the spectrum is required again, the
-    * class will reload the spectrum from disk. All this happens transparent to
-    * the user.
-    */
-   public static class ZombieSpectrum
-      extends
-      BaseSpectrum {
-      private SoftReference<BaseSpectrum> mSpectrum;
-      private final File mFile;
-      private final int mIndex;
-
-      private BaseSpectrum revive() {
-         BaseSpectrum res = (mSpectrum != null ? mSpectrum.get() : null);
-         if(res == null) {
-            try {
-               res = SpectrumUtils.copy(SpectrumFile.open(mFile, mIndex));
-            }
-            catch(final EPQException ex) {
-               return BaseSpectrum.NullSpectrum;
-            }
-            mSpectrum = new SoftReference<BaseSpectrum>(res);
-         }
-         return res;
-      }
-
-      /**
-       * Constructs a ZombieSpectrum from the zeroth spectrum in the specified
-       * file.
-       *
-       * @param file File The name of a spectrum containing file
-       */
-      public ZombieSpectrum(final File file) {
-         this(file, 0, null);
-      }
-
-      /**
-       * Constructs a ZombieSpectrum from the idx-th spectrum in the specified
-       * file.
-       *
-       * @param file File The name of a spectrum containing file
-       * @param idx int The index (zero-based) for the spectrum within a
-       *           multispectrum file
-       */
-      public ZombieSpectrum(final File file, final int idx) {
-         this(file, idx, null);
-      }
-
-      /**
-       * Constructs a ZombieSpectrum from the idx-th spectrum in the specified
-       * file and assigns its contents as spec.
-       *
-       * @param file File The name of a spectrum containing file
-       * @param idx int The index (zero-based) for the spectrum within a
-       *           multispectrum file
-       * @param spec ISpectrumData The spectrum at idx in file.
-       */
-      public ZombieSpectrum(final File file, final int idx, final ISpectrumData spec) {
-         super();
-         mFile = file;
-         mIndex = idx;
-         if(spec != null) {
-            mSpectrum = new SoftReference<BaseSpectrum>(SpectrumUtils.copy(spec));
-            mHashCode = spec.hashCode();
-         } else
-            mHashCode = file.hashCode() ^ Integer.valueOf(mIndex).hashCode();
-      }
-
-      /**
-       * @see gov.nist.microanalysis.EPQLibrary.ISpectrumData#getChannelCount()
-       */
-      @Override
-      public int getChannelCount() {
-         return revive().getChannelCount();
-      }
-
-      /**
-       * @see gov.nist.microanalysis.EPQLibrary.ISpectrumData#getCounts(int)
-       */
-      @Override
-      public double getCounts(final int i) {
-         return revive().getCounts(i);
-      }
-
-      /**
-       * @see gov.nist.microanalysis.EPQLibrary.ISpectrumData#getChannelWidth()
-       */
-      @Override
-      public double getChannelWidth() {
-         return revive().getChannelWidth();
-      }
-
-      /**
-       * @see gov.nist.microanalysis.EPQLibrary.ISpectrumData#getZeroOffset()
-       */
-      @Override
-      public double getZeroOffset() {
-         return revive().getZeroOffset();
-      }
-
-      /**
-       * @see gov.nist.microanalysis.EPQLibrary.ISpectrumData#getProperties()
-       */
-      @Override
-      public SpectrumProperties getProperties() {
-         return revive().getProperties();
-      }
-
-      /**
-       * @see java.lang.Comparable#compareTo(java.lang.Object)
-       */
-      @Override
-      public int compareTo(final ISpectrumData arg0) {
-         return revive().compareTo(arg0);
-      }
-
-      /**
-       * getUndeadSpectrum - Get a reference to the underlying spectrum. Since
-       * there is not the additional indirection this method permits more
-       * efficient use of the ZombieSpectrum so long as all refering classes
-       * remember to null any direct references they hold.
-       *
-       * @return ISpectrumData - A ISpectrumData reference
-       */
-      public ISpectrumData getUndeadSpectrum() {
-         return revive();
-      }
-
-      @Override
-      public boolean equals(final Object obj) {
-         return revive().equals(obj);
-      }
-
-      @Override
-      public int hashCode() {
-         return revive().hashCode();
-      }
-   }
 
    static public ISpectrumData[] open(final String path)
          throws EPQException {
@@ -224,6 +78,10 @@ public class SpectrumFile {
             try (final FileInputStream st = new FileInputStream(file)) {
                res = BrukerSPX.isInstanceOf(st);
             }
+         if(!res)
+        	 try(final FileInputStream st = new FileInputStream(file)){
+        		 res = BrukerPDZ.isInstanceOf(st);
+        	 }
       }
       catch(final FileNotFoundException e) {
       }
@@ -323,6 +181,13 @@ public class SpectrumFile {
          if(StandardBundle.isInstance(file)) {
             final List<ISpectrumData> specs = StandardBundle.readSpectra(file);
             return wrapResult(specs.toArray(new ISpectrumData[specs.size()]), file);
+         }
+         if(BrukerPDZ.isInstanceOf(new FileInputStream(file))) {
+             res = new ISpectrumData[1];
+             try (final FileInputStream st18 = new FileInputStream(file)) {
+                res[0] = new BrukerPDZ(st18);
+                return wrapResult(res, file);
+             }
          }
          throw new EPQException("The file " + file.getName() + " does not seem to be in one of the known file formats.");
       }

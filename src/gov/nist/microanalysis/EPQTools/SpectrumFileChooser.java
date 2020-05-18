@@ -224,7 +224,8 @@ public class SpectrumFileChooser
             "sp0",
             "mca",
             "spd",
-            "spx"
+            "spx",
+            "pdz"
          }, "Spectrum file"));
          mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
             "ser",
@@ -264,7 +265,8 @@ public class SpectrumFileChooser
             "psmsa",
             "lsmsa",
             "spx",
-            "zstd"
+            "zstd",
+            "pdz"
          }, "Common spectrum file"));
          mFileChooser.setAcceptAllFileFilterUsed(true);
          mFileChooser.setControlButtonsAreShown(false);

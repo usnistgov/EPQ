@@ -173,11 +173,13 @@ public class SpectrumToolBar
          pos += 2;
       }
       if((mMode & ZOOM_VALUES) != 0) {
-         final PanelBuilder pb2 = new PanelBuilder(new FormLayout("pref, 1dlu, pref", "pref, 1dlu, pref"));
+         final PanelBuilder pb2 = new PanelBuilder(new FormLayout("pref, 1dlu, pref, 1dlu, pref", "pref, 1dlu, pref"));
          pb2.add(new ZoomButton(5), cc.xy(1, 1));
-         pb2.add(new ZoomButton(10), cc.xy(3, 1));
-         pb2.add(new ZoomButton(15), cc.xy(1, 3));
+         pb2.add(new ZoomButton(15), cc.xy(3, 1));
+         pb2.add(new ZoomButton(30), cc.xy(5, 1));
+         pb2.add(new ZoomButton(10), cc.xy(1, 3));
          pb2.add(new ZoomButton(20), cc.xy(3, 3));
+         pb2.add(new ZoomButton(40), cc.xy(5, 3));
          pb.add(pb2.getPanel(), cc.xy(1, pos));
       }
    }

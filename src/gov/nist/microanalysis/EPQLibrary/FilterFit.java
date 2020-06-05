@@ -740,7 +740,7 @@ public class FilterFit extends LinearSpectrumFit {
 	 * @author nritchie
 	 * @version 1.0
 	 */
-	public static class CullByVariance implements CullingStrategy {
+	public static class CullByVariance implements CullingStrategy, Cloneable {
 
 		private final double mSignificance;
 

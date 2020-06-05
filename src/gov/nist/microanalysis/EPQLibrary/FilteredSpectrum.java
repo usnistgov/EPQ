@@ -49,6 +49,8 @@ public class FilteredSpectrum extends DerivedSpectrum {
 	}
 	
 	public Interval getNonZeroInterval() {
+		if (mFilteredData == null)
+			computeFilteredSpectrum();
 		return mNonZero;
 	}
 

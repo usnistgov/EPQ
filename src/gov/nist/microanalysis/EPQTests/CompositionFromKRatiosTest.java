@@ -82,7 +82,7 @@ public class CompositionFromKRatiosTest
    public void testTwo()
          throws EPQException {
       final Strategy strategy = new Strategy();
-      strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.HyperbolicIteration);
+      strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       AlgorithmUser.applyGlobalOverride(strategy);
 
       final Composition mat = MaterialFactory.createCompound("FeO2");
@@ -210,7 +210,7 @@ public class CompositionFromKRatiosTest
          czc.addStandard(xrts, ref, props);
       }
       final Strategy strategy = new Strategy();
-      strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.HyperbolicIteration);
+      strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       AlgorithmUser.applyGlobalOverride(strategy);
 
       final Composition redux = czc.compute(result, props);
@@ -450,7 +450,7 @@ public class CompositionFromKRatiosTest
    public void testCompoundsHyperbolic()
          throws EPQException {
       final Strategy strategy = new Strategy();
-      strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.HyperbolicIteration);
+      strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       AlgorithmUser.applyGlobalOverride(strategy);
       // Fe2O3
       {
@@ -538,7 +538,7 @@ public class CompositionFromKRatiosTest
    public void testCompoundsPAP()
          throws EPQException {
       final Strategy strategy = new Strategy();
-      strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.PAPIteration);
+      strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       AlgorithmUser.applyGlobalOverride(strategy);
       // Fe2O3
       {

@@ -128,79 +128,6 @@ abstract public class IterationAlgorithm
    public static final IterationAlgorithm SimpleIteration = new SimpleIterationAlgorithm();
 
    /**
-    * Criss &amp; Birks phenomenological iteration algorithm based on alpha
-    * factors. Implementation doesn't work!?
-    */
-   public static class HyperbolicIterationAlgorithm
-      extends IterationAlgorithm {
-      public HyperbolicIterationAlgorithm() {
-         super("Hyperbolic iteration", new LitReference.BookChapter(LitReference.ElectronMicroprobe, "217", new LitReference.Author[] {
-            LitReference.JCriss,
-            LitReference.LBirks
-         }));
-      }
-
-      @Override
-      protected Composition perform(Map<XRayTransitionSet, Double> zafMap) {
-         final Composition estComp = previousEstimate();
-         final Composition next = new Composition();
-         for(final XRayTransitionSet xrts : mDesired.keySet())
-            if(zafMap.containsKey(xrts)) {
-               final double ca1 = estComp.weightFraction(xrts.getElement(), false);
-               final double ka1 = ca1 * zafMap.get(xrts);
-               final double alpha1 = (ca1 * (1.0 - ka1)) / ((1.0 - ca1) * ka1);
-               final double ka = mDesired.getKRatio(xrts);
-               final double ca2 = (alpha1 * ka) / (1.0 - (ka * (1.0 - alpha1)));
-               next.addElement(xrts.getElement(), Math2.bound(ca2, TINY, HUGE));
-            }
-         return next;
-      }
-   }
-
-   public static final IterationAlgorithm HyperbolicIteration = new HyperbolicIterationAlgorithm();
-
-   /**
-    * Pouchou &amp; Pichoir's modification to Criss &amp; Birk's iteration
-    * procedure. Implementation doesn't work!?
-    */
-   public static class PapIterationAlgorithm
-      extends IterationAlgorithm {
-      public PapIterationAlgorithm() {
-         super("Pouchou & Pichoir Iteration", new LitReference.BookChapter(LitReference.ElectronProbeQuant, "41", new LitReference.Author[] {
-            LitReference.JPouchou,
-            LitReference.FPichoir
-         }));
-      }
-
-      @Override
-      protected Composition perform(Map<XRayTransitionSet, Double> zafMap) {
-         final Composition estComp = previousEstimate();
-         final Composition next = new Composition();
-         for(final XRayTransitionSet xrts : mDesired.keySet())
-            if(zafMap.containsKey(xrts)) {
-               final Element el = xrts.getElement();
-               final double ca1 = estComp.weightFraction(el, false);
-               final double ka1 = ca1 * zafMap.get(xrts);
-               final double ka = mDesired.getKRatio(xrts);
-               double ce;
-               if((ka1 / ca1) <= 1.0) {
-                  // Hyperbolic approximation
-                  final double alpha1 = (ca1 * (1.0 - ka1)) / ((1.0 - ca1) * ka1);
-                  ce = (alpha1 * ka) / (1.0 - (ka * (1.0 - alpha1)));
-               } else {
-                  // Parabolic approximation
-                  final double alpha = (ka1 - (ca1 * ca1)) / (ca1 - (ca1 * ca1));
-                  ce = (-alpha + Math.sqrt((alpha * alpha) + (4.0 * (1.0 - alpha) * ka1))) / (2.0 * (1.0 - alpha));
-               }
-               next.addElement(el, Math2.bound(ce, TINY, HUGE));
-            }
-         return next;
-      }
-   }
-
-   public static final IterationAlgorithm PAPIteration = new PapIterationAlgorithm();
-
-   /**
     * An iteration algorithm based on a first-order estimator. Works nicely!
     */
    static public class WegsteinIterationAlgorithm
@@ -321,8 +248,6 @@ abstract public class IterationAlgorithm
 
    static private final AlgorithmClass[] mAllImplementations = {
       IterationAlgorithm.SimpleIteration,
-      IterationAlgorithm.HyperbolicIteration,
-      IterationAlgorithm.PAPIteration,
       IterationAlgorithm.WegsteinIteration
    };
 }

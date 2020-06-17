@@ -2,6 +2,7 @@ package gov.nist.microanalysis.EPQTests;
 
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 
 /**
  * <p>
@@ -77,6 +78,6 @@ public class EPQTestSuite
    public static void main(String[] args) {
       final EPQTestSuite suite = new EPQTestSuite();
       System.out.println(suite.testCount());
-      // TestRunner.run(EPQTestSuite.class);
+      TestRunner.run(suite);
    }
 }

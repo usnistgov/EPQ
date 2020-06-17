@@ -134,11 +134,6 @@ abstract public class ProportionalIonizationCrossSection
       return Arrays.asList(mAllImplementations);
    }
 
-   private static final AlgorithmClass[] mAllImplementations = {
-      ProportionalIonizationCrossSection.Pouchou86,
-      ProportionalIonizationCrossSection.Proza96,
-   };
-
    /**
     * Pouchou86 - The proportional ionization cross section descibed in Pochou
     * &amp; Pichoir's IXCOM 11 (1986) article. An additional factor is inserted
@@ -153,5 +148,11 @@ abstract public class ProportionalIonizationCrossSection
     * between different shells within the family.
     */
    public static final Proza96ICX Proza96 = new Proza96ICX();
+
+
+   private static final AlgorithmClass[] mAllImplementations = {
+		      ProportionalIonizationCrossSection.Pouchou86,
+		      ProportionalIonizationCrossSection.Proza96,
+		   };
 
 }

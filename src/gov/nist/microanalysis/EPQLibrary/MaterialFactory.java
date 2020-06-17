@@ -124,7 +124,7 @@ public class MaterialFactory {
 			if (c == '(') {
 				int pcx = 1;
 				for (int j = i + 1; j < str.length(); ++j) {
-					c =str.charAt(j);
+					c = str.charAt(j);
 					if (c == '(')
 						pcx++;
 					if (c == ')')
@@ -134,39 +134,41 @@ public class MaterialFactory {
 						if (tmp.size() == 0)
 							throw new EPQException(
 									"There must be something between the (). " + str.substring(i + 1, j - 1));
+						// Check for a trailing multiplicative factor....
+						i = j;
 						StringBuffer sb = new StringBuffer();
 						for (int k = j + 1; k < str.length(); ++k) {
 							c = str.charAt(k);
-							if (Character.isDigit(c))
+							if (Character.isDigit(c)) {
+								i=k;
 								sb.append(c);
-							else {
-								i = k;
+							} else
 								break;
-							}
 						}
 						final int cx = sb.length() > 0 ? Integer.valueOf(sb.toString()) : 1;
 						for (Map.Entry<Element, Integer> me : tmp.entrySet())
-							elMap.put(me.getKey(), cx * me.getValue()+elMap.getOrDefault(me.getKey(), 0));
+							elMap.put(me.getKey(), cx * me.getValue() + elMap.getOrDefault(me.getKey(), 0));
 						break;
 					}
 				}
 				if (pcx > 0)
 					throw new EPQException("Unmatched parenthesis in " + str);
+			} else {
+				final StringBuffer elStr = new StringBuffer();
+				if (!Character.isUpperCase(c))
+					throw new EPQException("Element abbreviations must start with a capital letter. (" + c + ")");
+				elStr.append(c);
+				if ((i + 1 < str.length()) && Character.isLowerCase(str.charAt(i + 1)))
+					elStr.append(str.charAt(++i));
+				Element elm = Element.byAbbrev(elStr.toString());
+				if (elm.equals(Element.None))
+					throw new EPQException("Unrecognized element: " + elStr.toString());
+				final StringBuffer qtyStr = new StringBuffer();
+				for (; (i + 1 < str.length()) && Character.isDigit(str.charAt(i + 1)); ++i)
+					qtyStr.append(str.charAt(i + 1));
+				final int cx = qtyStr.length() > 0 ? Integer.valueOf(qtyStr.toString()) : 1;
+				elMap.put(elm, cx + elMap.getOrDefault(elm, 0));
 			}
-			final StringBuffer elStr = new StringBuffer();
-			if (!Character.isUpperCase(c))
-				throw new EPQException("Element abbreviations must start with a capital letter.");
-			elStr.append(c);
-			if ((i + 1 < str.length()) && Character.isLowerCase(str.charAt(i + 1)))
-				elStr.append(str.charAt(++i));
-			Element elm = Element.byAbbrev(elStr.toString());
-			if (elm.equals(Element.None))
-				throw new EPQException("Unrecognized element: " + elStr.toString());
-			final StringBuffer qtyStr = new StringBuffer();
-			for (; (i + 1 < str.length()) && Character.isDigit(str.charAt(i + 1)); ++i)
-				qtyStr.append(str.charAt(i + 1));
-			final int cx = qtyStr.length() > 0 ? Integer.valueOf(qtyStr.toString()) : 1;
-			elMap.put(elm, cx + elMap.getOrDefault(elm, 0));
 		}
 		// Check for K411 and other anomalies
 		if (elMap.size() == 1)

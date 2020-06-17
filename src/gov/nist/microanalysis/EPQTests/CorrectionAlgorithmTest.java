@@ -123,8 +123,8 @@ public class CorrectionAlgorithmTest
          }
       }
       // The results quoted in the green book for this test were 0.9982 +- 1.91%
-      assertEquals(1.0004, ds.average(), 0.0001);
-      assertEquals(0.0218, ds.standardDeviation(), 0.0001);
+      assertEquals(1.0006, ds.average(), 0.0001);
+      assertEquals(0.0192, ds.standardDeviation(), 0.0001);
    }
 
    public void testPouchouAndPichoir2()
@@ -169,8 +169,8 @@ public class CorrectionAlgorithmTest
          catch(final Exception ex) {
          }
       // The results quoted in the green book for this test were 0.9997 +- 1.79%
-      assertEquals(ds.average(), 0.9995, 0.0001);
-      assertEquals(ds.standardDeviation(), 0.0211, 0.0001);
+      assertEquals(ds.average(), 0.9997, 0.0001);
+      assertEquals(ds.standardDeviation(), 0.01865, 0.0001);
    }
 
    public void testXPP2()
@@ -213,8 +213,8 @@ public class CorrectionAlgorithmTest
          }
          catch(final Exception ex) {
          }
-      assertEquals(ds.average(), 0.9995, 0.0001);
-      assertEquals(ds.standardDeviation(), 0.0211, 0.0001);
+      assertEquals(ds.average(), 0.99974, 0.0001);
+      assertEquals(ds.standardDeviation(), 0.01865, 0.0001);
    }
 
    public void testXPPExtended2()
@@ -224,82 +224,7 @@ public class CorrectionAlgorithmTest
       assertEquals(0.00, ds.standardDeviation(), 0.03);
    }
 
-   public void testProza96()
-         throws Exception {
-
-      final Strategy strat = new Strategy();
-      strat.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
-      strat.addAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Pouchou1991);
-      strat.addAlgorithm(CorrectionAlgorithm.class, CorrectionAlgorithm.Proza96);
-      strat.addAlgorithm(Fluorescence.class, Fluorescence.Reed);
-      AlgorithmUser.applyGlobalOverride(strat);
-
-      final DescriptiveStatistics ds = new DescriptiveStatistics();
-      final PandPDatabase papd = getDatabase();
-      for(int ii = 0; ii < papd.getSize(); ++ii)
-         try {
-            final Material mat = papd.createMaterial(ii);
-            final XRayTransitionSet xrts = new XRayTransitionSet(papd.transition(ii));
-
-            final SpectrumProperties unkProp = new SpectrumProperties();
-            unkProp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(papd.beamEnergy(ii)));
-            unkProp.setNumericProperty(SpectrumProperties.TakeOffAngle, Math.toDegrees(papd.takeOffAngle(ii)));
-
-            final KRatioSet krs = new KRatioSet();
-            krs.addKRatio(xrts, papd.kRatio(ii));
-
-            final CompositionFromKRatios cfk = new CompositionFromKRatios();
-            cfk.addStandard(xrts, papd.createStandard(ii), unkProp);
-            cfk.addUnmeasuredElementRule(new CompositionFromKRatios.ElementByDifference(papd.elementB(ii)));
-
-            final Composition res = cfk.compute(krs, unkProp);
-            final double r = res.weightFraction(xrts.getElement(), false) / mat.weightFraction(xrts.getElement(), false);
-            ds.add(r);
-         }
-         catch(final Exception ex) {
-         }
-      assertEquals(ds.average(), 0.9944, 0.0001);
-      assertEquals(ds.standardDeviation(), 0.0688, 0.0001);
-   }
-
-   public void testProza96Extended()
-         throws Exception {
-
-      final Strategy strat = new Strategy();
-      strat.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
-      strat.addAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Pouchou1991);
-      strat.addAlgorithm(CorrectionAlgorithm.class, CorrectionAlgorithm.Proza96Extended);
-      strat.addAlgorithm(Fluorescence.class, Fluorescence.Reed);
-      AlgorithmUser.applyGlobalOverride(strat);
-
-      final DescriptiveStatistics ds = new DescriptiveStatistics();
-      final PandPDatabase papd = getDatabase();
-      for(int ii = 0; ii < papd.getSize(); ++ii)
-         try {
-            final Material mat = papd.createMaterial(ii);
-            final XRayTransitionSet xrts = new XRayTransitionSet(papd.transition(ii));
-
-            final SpectrumProperties unkProp = new SpectrumProperties();
-            unkProp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(papd.beamEnergy(ii)));
-            unkProp.setNumericProperty(SpectrumProperties.TakeOffAngle, Math.toDegrees(papd.takeOffAngle(ii)));
-
-            final KRatioSet krs = new KRatioSet();
-            krs.addKRatio(xrts, papd.kRatio(ii));
-
-            final CompositionFromKRatios cfk = new CompositionFromKRatios();
-            cfk.addStandard(xrts, papd.createStandard(ii), unkProp);
-            cfk.addUnmeasuredElementRule(new CompositionFromKRatios.ElementByDifference(papd.elementB(ii)));
-
-            final Composition res = cfk.compute(krs, unkProp);
-            final double r = res.weightFraction(xrts.getElement(), false) / mat.weightFraction(xrts.getElement(), false);
-            ds.add(r);
-         }
-         catch(final Exception ex) {
-         }
-      assertEquals(ds.average(), 0.9944, 0.0001);
-      assertEquals(ds.standardDeviation(), 0.0688, 0.0001);
-   }
-
+   
    public void testJTA1982Test()
          throws Exception {
 

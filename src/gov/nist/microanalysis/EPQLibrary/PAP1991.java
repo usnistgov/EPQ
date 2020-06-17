@@ -195,10 +195,8 @@ public class PAP1991
                   if((mRm < 0.0) || (mRm > mRx))
                      throw new EPQException("Too small an overvoltage for this algorithm.");
                }
+            
             }
-            assert mRc < mRx : "Join must be less than largest depth";
-            assert mRc > mRm : "Join must be past peak";
-
             mA1 = mPhi0 / ((mRm * (mRc + mRx)) - (mRx * mRc));
          }
          mA2 = (mA1 * (mRc - mRm)) / (mRc - mRx);

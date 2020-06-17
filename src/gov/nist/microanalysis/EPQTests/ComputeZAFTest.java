@@ -9,7 +9,6 @@ import gov.nist.microanalysis.EPQLibrary.CorrectionAlgorithm;
 import gov.nist.microanalysis.EPQLibrary.EPQException;
 import gov.nist.microanalysis.EPQLibrary.Element;
 import gov.nist.microanalysis.EPQLibrary.MaterialFactory;
-import gov.nist.microanalysis.EPQLibrary.Proza96Base;
 import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
 import gov.nist.microanalysis.EPQLibrary.Strategy;
 import gov.nist.microanalysis.EPQLibrary.XRayTransition;
@@ -154,7 +153,7 @@ public class ComputeZAFTest
 
       final Composition reference = MaterialFactory.createPureElement(el);
       final int transition = XRayTransition.LA1;
-      final CorrectionAlgorithm ca = Proza96Base.Proza96Base;
+      final CorrectionAlgorithm ca = CorrectionAlgorithm.XPP;
 
       // Use the same SpectrumProperties for references and unknown
       final SpectrumProperties props = new SpectrumProperties();

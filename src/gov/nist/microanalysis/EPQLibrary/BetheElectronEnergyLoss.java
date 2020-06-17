@@ -140,45 +140,4 @@ abstract public class BetheElectronEnergyLoss
 
    static public BetheElectronEnergyLoss Bethe1930Strict = new Bethe30ElectronEnergyLoss();
 
-   /**
-    * <p>
-    * Modifies an existing BetheElectronEnergyLoss model to add variation in the
-    * amount of energy lost per step. The class takes the nominal energy loss
-    * and modifies it by a certain randomized fractional amount to emulate the
-    * way sometimes an electron may loose slightly more than average or slightly
-    * less than average.
-    * </p>
-    * <p>
-    * Copyright: Pursuant to title 17 Section 105 of the United States Code this
-    * software is not subject to copyright protection and is in the public
-    * domain
-    * </p>
-    * <p>
-    * Institution: National Institute of Standards and Technology
-    * </p>
-    * 
-    * @author nritchie
-    * @version 1.0
-    */
-   static public class StragglingModified
-      extends BetheElectronEnergyLoss {
-
-      private final BetheElectronEnergyLoss mBethe;
-      private final double mPercent;
-      private final Random mRandom;
-
-      public StragglingModified(BetheElectronEnergyLoss base, double percent) {
-         super("Straggling[" + base.getName() + "]", base.getReferenceObj());
-         mBethe = base;
-         mPercent = percent;
-         mRandom = new Random();
-      }
-
-      @Override
-      public double compute(Element elm, double eB) {
-         final double bee = mBethe.compute(elm, eB);
-         return Math.min(0.0, bee * (1.0 + (mRandom.nextGaussian() * mPercent)));
-      }
-   }
-
 }

@@ -42,8 +42,6 @@ import junit.framework.TestCase;
 public class FilterFitTest
    extends TestCase {
 
-   private ISpectrumData mAgRef;
-   private ISpectrumData mAuRef;
    private ISpectrumData mAuSpec;
    private ISpectrumData mAgSpec;
 
@@ -67,8 +65,6 @@ public class FilterFitTest
 
    @Override
    protected void tearDown() {
-      mAuRef = null;
-      mAgRef = null;
       mAuSpec = null;
       mAgSpec = null;
    }
@@ -81,8 +77,8 @@ public class FilterFitTest
       unk.add(mAgSpec, 1.0);
       final EDSDetector det = EDSDetector.createSDDDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
       final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)));
-      ff.addReference(Element.Au, mAuRef);
-      ff.addReference(Element.Ag, mAgRef);
+      ff.addReference(Element.Au, mAuSpec);
+      ff.addReference(Element.Ag, mAgSpec);
       final KRatioSet krs = ff.getKRatios(unk);
       System.out.println(krs.toString());
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Au)), 0.5, 0.01);
@@ -95,8 +91,8 @@ public class FilterFitTest
       unk.add(mAgSpec, 0.5);
       final EDSDetector det = EDSDetector.createSiLiDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
       final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)));
-      ff.addReference(Element.Au, mAuRef);
-      ff.addReference(Element.Ag, mAgRef);
+      ff.addReference(Element.Au, mAuSpec);
+      ff.addReference(Element.Ag, mAgSpec);
       final KRatioSet krs = ff.getKRatios(unk);
       System.out.println(krs.toString());
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Au)), 0.666, 0.01);
@@ -109,8 +105,8 @@ public class FilterFitTest
       unk.add(mAuSpec, 0.5);
       final EDSDetector det = EDSDetector.createSiLiDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
       final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)));
-      ff.addReference(Element.Au, mAuRef);
-      ff.addReference(Element.Ag, mAgRef);
+      ff.addReference(Element.Au, mAuSpec);
+      ff.addReference(Element.Ag, mAgSpec);
       final KRatioSet krs = ff.getKRatios(unk);
       System.out.println(krs.toString());
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Au)), 0.333, 0.01);
@@ -189,7 +185,7 @@ public class FilterFitTest
          final ISpectrumData unk = new NoisySpectrum(k3189, 1.0, (int) (Integer.MAX_VALUE * Math.random()));
          final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)));
          for(final Object[] ref2 : refs) {
-            final ISpectrumData ref = SpectrumUtils.copy((ISpectrumData) ref2[1]);
+            final ISpectrumData ref = SpectrumUtils.copy((ISpectrumData) ref2[3]);
             ref.getProperties().setCompositionProperty(SpectrumProperties.StandardComposition, (Material) ref2[2]);
             ff.addReference((Element) ref2[0], ref);
          }

@@ -760,15 +760,7 @@ abstract public class CorrectionAlgorithm
     * PAP1991.
     */
    static public final PAP1991 PouchouAndPichoir = new PAP1991();
-   /**
-    * The standard Proza96 algorithm as implemented in the class Proza96Base.
-    */
-   static public final Proza96Base Proza96 = new Proza96Base();
-   /**
-    * The Proza96 algorithm extended to handle both normal and non-normal beam
-    * incidence as in the class Proza96Ext.
-    */
-   static public final Proza96Ext Proza96Extended = new Proza96Ext();
+   
    /**
     * Pouchou &amp; Pichoir's XPP algorithm as implemented in the class XPP1991.
     */
@@ -843,8 +835,6 @@ abstract public class CorrectionAlgorithm
    static private final AlgorithmClass[] mAllImplementations = {
       NullCorrection,
       PouchouAndPichoir,
-      Proza96,
-      Proza96Extended,
       XPP,
       XPPExtended,
       ZAFCorrection,

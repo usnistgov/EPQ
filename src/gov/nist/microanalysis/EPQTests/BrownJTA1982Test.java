@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 public class BrownJTA1982Test
    extends TestCase {
    CorrectionAlgorithm ca = CorrectionAlgorithm.Armstrong1982;
-   CorrectionAlgorithm ca2 = CorrectionAlgorithm.Proza96;
+   CorrectionAlgorithm ca2 = CorrectionAlgorithm.XPP;
 
    private void helper(Composition mat, AtomicShell sh, SpectrumProperties props, XRayTransition xrt)
          throws EPQException {

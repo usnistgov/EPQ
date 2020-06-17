@@ -44,7 +44,7 @@ public class NoisySpectrum
       mChannels = new double[src.getChannelCount()];
       final PoissonDeviate pd = new PoissonDeviate(seed);
       for(int i = src.getChannelCount() - 1; i >= 0; --i)
-         mChannels[i] = pd.randomDeviate(scale * src.getCounts(i));
+         mChannels[i] = src.getCounts(i) > 0 ? pd.randomDeviate(scale * src.getCounts(i)) : 0.0;
       // Now take account for the rescaling in either the live time or the beam
       // current
       final SpectrumProperties sp = getProperties();

@@ -37,16 +37,16 @@ public class XRayTransitionSetTest
          throws EPQException {
       {
          final XRayTransitionSet xrts = new XRayTransitionSet(Element.Ba, XRayTransitionSet.L_ALPHA);
-         assertEquals(XRayTransitionSet.parseString(xrts.toString()), xrts);
+         assertEquals(XRayTransitionSet.parseString(xrts.toParseable()), xrts);
       }
 
       {
          final XRayTransitionSet xrts = new XRayTransitionSet(Element.Au, XRayTransitionSet.M_BETA);
-         assertEquals(XRayTransitionSet.parseString(xrts.toString()), xrts);
+         assertEquals(XRayTransitionSet.parseString(xrts.toParseable()), xrts);
       }
       {
          final XRayTransitionSet xrts = new XRayTransitionSet(new XRayTransition(Element.Cu, XRayTransition.KA1));
-         assertEquals(XRayTransitionSet.parseString(xrts.toString()), xrts);
+         assertEquals(XRayTransitionSet.parseString(xrts.toParseable()), xrts);
       }
       {
          final double min = 0.99 * XRayTransition.getEnergy(Element.Cu, XRayTransition.KA2);
@@ -56,18 +56,18 @@ public class XRayTransitionSetTest
          assertEquals(xrts.minEnergy().getTransitionIndex(), XRayTransition.KA2);
          assertEquals(xrts.maxEnergy().getTransitionIndex(), XRayTransition.KA1);
          assertEquals(xrts.toString(), "Cu " + XRayTransitionSet.K_ALPHA);
-         assertEquals(XRayTransitionSet.parseString(xrts.toString()), xrts);
+         assertEquals(XRayTransitionSet.parseString(xrts.toParseable()), xrts);
       }
       {
          final XRayTransitionSet xrts = new XRayTransitionSet(new XRayTransition(Element.Cu, XRayTransition.LA1));
          xrts.add(new XRayTransition(Element.Cu, XRayTransition.LA2));
-         assertEquals(XRayTransitionSet.parseString(xrts.toString()), xrts);
+         assertEquals(XRayTransitionSet.parseString(xrts.toParseable()), xrts);
       }
       {
          final XRayTransitionSet xrts = new XRayTransitionSet(new XRayTransition(Element.Cu, XRayTransition.LA1));
          xrts.add(new XRayTransition(Element.Cu, XRayTransition.LA2));
          xrts.add(new XRayTransition(Element.Cu, XRayTransition.KA1));
-         assertEquals(XRayTransitionSet.parseString(xrts.toString()), xrts);
+         assertEquals(XRayTransitionSet.parseString(xrts.toParseable()), xrts);
       }
       {
          final XRayTransitionSet xrts1 = new XRayTransitionSet(Element.Ba, XRayTransitionSet.M_BETA);

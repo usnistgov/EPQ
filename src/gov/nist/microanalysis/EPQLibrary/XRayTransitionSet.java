@@ -921,9 +921,16 @@ public class XRayTransitionSet
       assert (mNameToTransitions.get(mMode) != null);
       return getElement().toAbbrev() + " " + mMode;
    }
+   
+   public String toParseable() {
+	   ArrayList<String> strs = new ArrayList<String>();
+	   for(XRayTransition xrt : mSet)
+		   strs.add(xrt.toString());
+	   return String.join(", ", strs);
+   }
 
    /**
-    * parseString - The inverse of toString.
+    * parseString - The inverse of toParseable.
     * 
     * @param str
     * @return An XRayTransitionSet representing the contents of str

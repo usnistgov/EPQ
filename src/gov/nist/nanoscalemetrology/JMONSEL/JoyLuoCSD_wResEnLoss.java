@@ -95,6 +95,7 @@ public class JoyLuoCSD_wResEnLoss implements SlowingDownAlg {
 		this.mat = mat.clone();
 		this.resel = resel;
 		this.wf = wf;
+		minEforTracking = wf;
 		init();
 	}
 
@@ -109,6 +110,7 @@ public class JoyLuoCSD_wResEnLoss implements SlowingDownAlg {
 	public void setMaterial(SEmaterial mat) {
 		this.mat = mat.clone();
 		wf = mat.getWorkfunction();
+		minEforTracking = -mat.getEnergyCBbottom();
 		init();
 	}
 
@@ -139,13 +141,6 @@ public class JoyLuoCSD_wResEnLoss implements SlowingDownAlg {
 			coef[i] = (2.01507E-28 * mat.getDensity() * mat.weightFraction((Element) el[i], true)
 					* ((Element) el[i]).getAtomicNumber()) / ((Element) el[i]).getAtomicWeight();
 		}
-		/*
-		 * In the original MONSEL, the CSD routine knows the minEforTracking and can use
-		 * it to optimize--quitting early if the electron energy falls below this during
-		 * a step (since the electron will be dropped anyway). In this version,
-		 * minEforTracking is just a synonym for the work function.
-		 */
-		minEforTracking = wf;
 	}
 
 	private final double maxlossfraction = 0.1;

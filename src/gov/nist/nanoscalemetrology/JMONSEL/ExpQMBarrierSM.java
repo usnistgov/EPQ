@@ -230,11 +230,6 @@ public class ExpQMBarrierSM implements BarrierScatterMechanism {
 		if (nextmaterial instanceof SEmaterial)
 			deltaU += ((SEmaterial) nextmaterial).getEnergyCBbottom();
 
-		if (deltaU != 0.) {
-			@SuppressWarnings("unused")
-			int dummy = 0;
-		}
-
 		/* FIND THE OUTWARD POINTING NORMAL AT THE BOUNDARY */
 		double[] nb = null; // We'll store it here
 

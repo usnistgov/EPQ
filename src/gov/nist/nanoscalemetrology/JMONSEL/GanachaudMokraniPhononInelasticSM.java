@@ -3,6 +3,7 @@ package gov.nist.nanoscalemetrology.JMONSEL;
 import gov.nist.microanalysis.EPQLibrary.EPQFatalException;
 import gov.nist.microanalysis.EPQLibrary.Material;
 import gov.nist.microanalysis.EPQLibrary.PhysicalConstants;
+import gov.nist.microanalysis.EPQLibrary.ToSI;
 import gov.nist.microanalysis.NISTMonte.Electron;
 import gov.nist.microanalysis.Utility.Math2;
 
@@ -11,6 +12,15 @@ import gov.nist.microanalysis.Utility.Math2;
  * Implements a model for inelastic scattering of electrons from phonons as
  * described by Ganachaud and Mokrani in Surf. Sci. 334 (1995) p 329. The model
  * was attributed by them to earlier work of Llacer and Garwin and others.
+ * </p>
+ * <p>
+ * The model assigns a nonzero scattering cross section to electrons with energy
+ * phononE < E < maxEnergy. Assignment of an appropriate maxEnergy restricts the
+ * phonon model to low energies where its use will not interfere with modeling
+ * of electron-atom collisions via high energy atomic scattering models.
+ * (Otherwise, use of both a phonon and an atomic-scattering model double
+ * counts.) maxEnergy is 3.2e-17 J (200 eV) by default but can be changed via
+ * the provided setter.
  * </p>
  * <p>
  * Copyright: Pursuant to title 17 Section 105 of the United States Code this
@@ -33,6 +43,7 @@ public class GanachaudMokraniPhononInelasticSM extends ScatterMechanism {
 	private final double temperature;
 	private final double eps0;
 	private final double epsInfinity;
+	private double maxEnergy = ToSI.eV(200.);
 
 	/**
 	 * Constructs a GanachaudMokraniPhononInelasticSM
@@ -64,6 +75,14 @@ public class GanachaudMokraniPhononInelasticSM extends ScatterMechanism {
 			throw new EPQFatalException(
 					"(eps0-epsInfinity)/eps0/epsInfinity < 0 in GanachaudMokraniPhononInelasticSM constructor.");
 		prefactor = (this.ratemultiplier * occupationFactor * epsRatio) / PhysicalConstants.BohrRadius;
+	}
+
+	/**
+	 * 
+	 * @return -- Returns the maximum energy (in J) currently set for this model
+	 */
+	public double getMaxEnergy() {
+		return maxEnergy;
 	}
 
 	/**
@@ -107,7 +126,7 @@ public class GanachaudMokraniPhononInelasticSM extends ScatterMechanism {
 	@Override
 	public double scatterRate(Electron pe) {
 		final double kE = pe.getEnergy();
-		if (kE < phononE)
+		if (kE < phononE || kE > maxEnergy)
 			return 0.;
 		final double x = phononE / kE; // Energy ratio
 		/*
@@ -122,9 +141,7 @@ public class GanachaudMokraniPhononInelasticSM extends ScatterMechanism {
 		if (x < 0.1) {
 			result = prefactor * x * Math.log(4. / x);
 			return result;
-		} else if (x >= 1.) // phonon energy >= PE energy: no scattering possible
-			return 0.;
-		else {
+		} else {
 			final double temp = Math.sqrt(1. - x);
 			result = prefactor * x * Math.log((1. + temp) / (1. - temp));
 			return result;
@@ -141,6 +158,19 @@ public class GanachaudMokraniPhononInelasticSM extends ScatterMechanism {
 		 * There's nothing to do here. This is a required method, but the phonon model
 		 * doesn't require any parameters not already passed in the constructor.
 		 */
+	}
+
+	/**
+	 * At electron energies > maxEnergy this model is effectively turned off by
+	 * setting the scattering rate (inverse mean free path) to 0. maxEnergy =
+	 * 3.2e-17 J (200 eV) by default. This makes sense when higher energy collisions
+	 * are already modeled by an atomic scattering model. The cutoff value can be
+	 * changed with this method.
+	 * 
+	 * @param maxEnergy -- maximum energy for this model in Joules
+	 */
+	public void setMaxEnergy(double maxEnergy) {
+		this.maxEnergy = maxEnergy;
 	}
 
 	/**

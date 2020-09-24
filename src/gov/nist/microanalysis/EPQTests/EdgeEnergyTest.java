@@ -29,6 +29,7 @@ public class EdgeEnergyTest
 
    public void testOne() {
       final AtomicShell sh = new AtomicShell(Element.W, AtomicShell.LIII);
+      assertEquals(EdgeEnergy.Williams2011.compute(sh), EdgeEnergy.DTSA.compute(sh), ToSI.eV(10.0));
       assertEquals(EdgeEnergy.Chantler2005.compute(sh), EdgeEnergy.DTSA.compute(sh), ToSI.eV(10.0));
       assertEquals(EdgeEnergy.NISTxrtdb.compute(sh), EdgeEnergy.DTSA.compute(sh), ToSI.eV(10.0));
       assertEquals(EdgeEnergy.Wernish84.compute(sh), EdgeEnergy.DTSA.compute(sh), ToSI.eV(20.0));

@@ -225,7 +225,7 @@ final public class CharacteristicXRayGeneration3
    @Override
    protected void initializeDefaultStrategy() {
       addDefaultAlgorithm(AbsoluteIonizationCrossSection.class, AbsoluteIonizationCrossSection.BoteSalvat2008);
-      addDefaultAlgorithm(EdgeEnergy.class, EdgeEnergy.Chantler2005);
+      addDefaultAlgorithm(EdgeEnergy.class, EdgeEnergy.Default);
       addDefaultAlgorithm(TransitionProbabilities.class, TransitionProbabilities.Default);
    }
 

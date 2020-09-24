@@ -93,7 +93,7 @@ public class MicrocalSpectrumFitter {
    private TreeMap<RegionOfInterestSet.RegionOfInterest, MicrocalLineFitter> mFitResults;
    private final TreeSet<PeakData> mPeaks = new TreeSet<PeakData>();
    private final ArrayList<Double> mPeakPositions = new ArrayList<Double>();
-   private static TransitionEnergy mEnergy = new TransitionEnergy.Chantler2005TransitionEnergy();
+   private static TransitionEnergy mEnergy = TransitionEnergy.Default;
    private static final double PEAK_THRESHOLD = 20.0;
 
    /**

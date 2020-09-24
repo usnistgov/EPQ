@@ -64,7 +64,7 @@ abstract public class SpectrumSimulator
       protected void initializeDefaultStrategy() {
          addDefaultAlgorithm(CorrectionAlgorithm.PhiRhoZAlgorithm.class, CorrectionAlgorithm.XPPExtended);
          addDefaultAlgorithm(TransitionProbabilities.class, TransitionProbabilities.Default);
-         addDefaultAlgorithm(EdgeEnergy.class, EdgeEnergy.SuperSet);
+         addDefaultAlgorithm(EdgeEnergy.class, EdgeEnergy.Default);
          addDefaultAlgorithm(AbsoluteIonizationCrossSection.class, AbsoluteIonizationCrossSection.BoteSalvat2008);
          addDefaultAlgorithm(BremsstrahlungAnalytic.class, BremsstrahlungAnalytic.Lifshin74);
       }

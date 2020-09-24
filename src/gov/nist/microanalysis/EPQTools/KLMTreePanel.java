@@ -344,7 +344,7 @@ public class KLMTreePanel
       for(int tr = XRayTransition.KA1; tr < last; ++tr) {
          final XRayTransition xrt = new XRayTransition(elm, tr);
          try {
-            if((xrt.getWeight(XRayTransition.NormalizeKLM) >= mMajorWeight) && (xrt.getEnergy() > ToSI.keV(0.1)))
+            if(xrt.exists()&& (xrt.getWeight(XRayTransition.NormalizeKLM) >= mMajorWeight) && (xrt.getEnergy() > ToSI.keV(0.1)))
                res.add(new KLMLine.Transition(xrt));
          }
          catch(final EPQException e) {

@@ -70,7 +70,7 @@ final public class ComptonXRayGeneration3
     */
    @Override
    protected void initializeDefaultStrategy() {
-      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Chantler2005);
+      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Default);
       addDefaultAlgorithm(JumpRatio.class, JumpRatio.Springer1967);
       addDefaultAlgorithm(TransitionProbabilities.class, TransitionProbabilities.Default);
    }

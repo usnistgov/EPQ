@@ -194,6 +194,7 @@ public class Material
 
    @Override
    public Material clone() {
+	  super.clone();
       final Material res = new Material(mDensity);
       res.replicate(this);
       return res;

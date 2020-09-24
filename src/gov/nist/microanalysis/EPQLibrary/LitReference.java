@@ -95,7 +95,7 @@ abstract public class LitReference {
    static public final Author DNewbury = new Author("Dale", "Newbury", NIST);
    static public final Author KHeinrich = new Author("Kurt", "Heinrich", NIST);
    static public final Author JPouchou = new Author("Jean-Louis", "Pouchou", ONERA);
-   static public final Author FPichoir = new Author("Fran�iose", "Pichoir", ONERA);
+   static public final Author FPichoir = new Author("Franciose", "Pichoir", ONERA);
    static public final Author RCastaing = new Author("R", "Castaing", "Universit� de Paris-Sud");
    static public final Author RMyklebust = new Author("Robert", "Myklebust", NIST);
    static public final Author DBright = new Author("David", "Bright", NIST);
@@ -131,6 +131,7 @@ abstract public class LitReference {
    static public final Author Cullen = new Author("Dermott", "Cullen", "Lawrence Livermore National Laboratory");
    static public final Author CPowell = new Author("Cedric", "Powell", "N.I.S.T.");
    static public final Author FSalvat = new Author("Francesc", "Salvat", "Facultat de Física (ECM), Universitat de Barcelona, Diagonal 647, 08028 Barcelona, Spain");
+   static public final Author LSabbatucci = new Author("Sabbatucci", "Lorenzo", "Department of Industrial Engineering (DIN), Laboratory of Montecuccolino, Alma Mater Studiorum University of Bologna, via dei Colli 16, 40136 Bologna, Italy");
    static public final Author AJablonski = new Author("A", "Jablonksi");
    static public final Author BHenke = new Author("B.L.", "Henke");
    static public final Author EGullikson = new Author("E.M.", "Gullikson");
@@ -174,6 +175,7 @@ abstract public class LitReference {
    static public final Journal AtDatNucData = new Journal("Atomic Data and Nuclear Data Tables", "At. Dat. Nucl. Dat. Tables", "Academic Press");
    static public final Journal PhysRevA = new Journal("Physical Review A", "Phys. Rev. A", "American Physical Society");
    static public final Journal ApplPhysLett = new Journal("Applied Physics Letters", "Appl. Phys. Let.", "American Physical Society");
+   static public final Journal RadPhys = new Journal("Radiation Physics and Chemistry", "Rad Phys Chem.","");
 
    /**
     * A type of Reference representing journal articles.

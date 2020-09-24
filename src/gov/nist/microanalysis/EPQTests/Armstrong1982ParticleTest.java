@@ -158,7 +158,7 @@ public class Armstrong1982ParticleTest
          new XRayTransition(Element.Fe, XRayTransition.KA1),
       };
       final Strategy strat = new Strategy();
-      strat.addAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Chantler2005);
+      strat.addAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Default);
       AlgorithmUser.applyGlobalOverride(strat);
 
       for(final XRayTransition xrt : xrts) {

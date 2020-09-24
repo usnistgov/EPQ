@@ -256,8 +256,8 @@ public class EMSAFile extends BaseSpectrum {
 	private boolean storeData(String prefix, String value) {
 		prefix = prefix.trim();
 		prefix = prefix.toUpperCase();
-		value = value.trim();
 		try {
+			value = value.trim();
 			if (prefix.startsWith("#FORMAT")) {
 				final String du = value.toUpperCase();
 				if (!(du.equals("EMSA/MAS SPECTRAL DATA FILE") || du.equals("EMSA/MAS SPECTRAL DATA STANDARD")))
@@ -511,8 +511,8 @@ public class EMSAFile extends BaseSpectrum {
 				mProperties.setNumericProperty(SpectrumProperties.MultiSpectruMetric, Double.parseDouble(value));
 			} else
 				System.err.println("Unknown tag type in EMSA file - " + prefix);
-		} catch (final Exception ex) {
-			System.err.println("Error parsing: " + prefix + " : " + value);
+		} catch (NumberFormatException | ParseException e) {
+			e.printStackTrace();
 		}
 		return true;
 	}

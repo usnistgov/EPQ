@@ -125,7 +125,7 @@ abstract public class CorrectionAlgorithm
 
    @Override
    protected void initializeDefaultStrategy() {
-      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Chantler2005);
+      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Default);
       addDefaultAlgorithm(Fluorescence.class, Fluorescence.Reed);
    }
 

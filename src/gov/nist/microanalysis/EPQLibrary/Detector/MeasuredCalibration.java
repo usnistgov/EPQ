@@ -72,7 +72,7 @@ public class MeasuredCalibration
       }, "Silicon"), ToSI.gPerCC(2.329));
    }
 
-   final transient MassAbsorptionCoefficient mMAC = MassAbsorptionCoefficient.Chantler2005;
+   final transient MassAbsorptionCoefficient mMAC = MassAbsorptionCoefficient.Default;
 
    public void removeLayer(Composition comp) {
       mMassThickness.remove(comp);

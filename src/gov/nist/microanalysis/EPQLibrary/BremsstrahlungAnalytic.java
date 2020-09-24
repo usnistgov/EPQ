@@ -898,7 +898,7 @@ abstract public class BremsstrahlungAnalytic
 
    @Override
    protected void initializeDefaultStrategy() {
-      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Chantler2005);
+      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Default);
    }
 
    public static final Small1987 Small87 = new Small1987();

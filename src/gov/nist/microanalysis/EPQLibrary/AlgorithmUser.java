@@ -60,7 +60,7 @@ abstract public class AlgorithmUser {
     * @return EdgeEnergy
     */
    public static EdgeEnergy getDefaultEdgeEnergy() {
-      return sDefaultEdgeEnergy == null ? EdgeEnergy.SuperSet : sDefaultEdgeEnergy;
+      return sDefaultEdgeEnergy == null ? EdgeEnergy.Default : sDefaultEdgeEnergy;
    }
 
    /**
@@ -80,7 +80,7 @@ abstract public class AlgorithmUser {
     * @return TransitionEnergy
     */
    public static TransitionEnergy getDefaultTransitionEnergy() {
-      return sDefaultTransitionEnergy == null ? TransitionEnergy.SuperSet : sDefaultTransitionEnergy;
+      return sDefaultTransitionEnergy == null ? TransitionEnergy.Default : sDefaultTransitionEnergy;
    }
 
    /**
@@ -90,7 +90,7 @@ abstract public class AlgorithmUser {
     * @return MassAbsorptionCoefficient
     */
    public static MassAbsorptionCoefficient getDefaultMAC() {
-      return sDefaultMAC == null ? MassAbsorptionCoefficient.Chantler2005 : sDefaultMAC;
+      return sDefaultMAC == null ? MassAbsorptionCoefficient.Default : sDefaultMAC;
    }
 
    /**

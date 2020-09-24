@@ -81,7 +81,7 @@ abstract public class KLMLine
 
       public Transition(XRayTransition xrt)
             throws EPQException {
-         super(TransitionEnergy.SuperSet.compute(xrt), xrt.getWeight(XRayTransition.NormalizeKLM));
+         super(TransitionEnergy.Default.compute(xrt), xrt.getWeight(XRayTransition.NormalizeKLM));
          mTransition = xrt;
       }
 

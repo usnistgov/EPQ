@@ -291,7 +291,7 @@ public class SpectrumFitResult {
 
    private String fitToHTML() {
       final Strategy strat = new Strategy();
-      strat.addAlgorithm(TransitionEnergy.class, TransitionEnergy.DeslattesSuperSet);
+      strat.addAlgorithm(TransitionEnergy.class, TransitionEnergy.Default);
       AlgorithmUser.applyGlobalOverride(strat);
       try {
          final StringBuffer sb = new StringBuffer();

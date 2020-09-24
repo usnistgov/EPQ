@@ -32,7 +32,7 @@ abstract public class AbsorptionCorrection extends AlgorithmClass {
 
 	@Override
 	protected void initializeDefaultStrategy() {
-		addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Chantler2005);
+		addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Default);
 	}
 
 	protected AbsorptionCorrection(String name, LitReference ref) {

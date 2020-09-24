@@ -277,7 +277,7 @@ public class ZetaFactor
 
    @Override
    protected void initializeDefaultStrategy() {
-      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Chantler2005);
+      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Default);
    }
 
 }

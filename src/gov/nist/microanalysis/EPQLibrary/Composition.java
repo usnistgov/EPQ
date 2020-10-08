@@ -1315,8 +1315,8 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 	public Composition normalize() {
 		final Composition res = new Composition();
 		for (final Element elm : getElementSet())
-			res.addElement(elm, weightPercent(elm, true));
-		res.setName(getName());
+			res.addElement(elm, weightFraction(elm, true));
+		res.setName("N"+getName());
 		return res;
 	}
 

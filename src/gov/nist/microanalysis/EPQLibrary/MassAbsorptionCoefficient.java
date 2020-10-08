@@ -1313,8 +1313,8 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 		}
 
 		@Override
-		final public double compute(Element el, double energy) {
-			energy = FromSI.eV(energy);
+		final public double compute(Element el, double energySI) {
+			final double energy = FromSI.eV(energySI);
 			/**
 			 * Ref: Heinrich's formula as implemented by Myklebust translated into Java
 			 */
@@ -1417,7 +1417,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 				}
 			}
 			double mu;
-			if (energy > eeNI) {
+			if ((energy > eeNI) || Double.isNaN(eeNI)) {
 				mu = (cc * Math.pow(12397 / energy, nm) * z * z * z * z) / el.getAtomicWeight();
 				mu = mu * (1 - Math.exp((bias - energy) / az));
 			} else {

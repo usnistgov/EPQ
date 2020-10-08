@@ -82,6 +82,7 @@ public class XPP1991
    @Override
    public boolean initialize(Composition comp, AtomicShell shell, SpectrumProperties props)
          throws EPQException {
+      comp = comp.normalize();
       final boolean res = super.initialize(comp, shell, props);
       if(res) {
          final SurfaceIonization si = (SurfaceIonization) getAlgorithm(SurfaceIonization.class);
@@ -377,9 +378,9 @@ public class XPP1991
    public UncertainValue2 kratio(Composition std, Composition unk, XRayTransition xrt, SpectrumProperties props)
          throws EPQException {
       final XPP1991 unkXpp = new XPP1991();
-      unkXpp.initialize(unk, xrt.getDestination(), props);
+      unkXpp.initialize(unk.normalize(), xrt.getDestination(), props);
       final XPP1991 stdXpp = new XPP1991();
-      stdXpp.initialize(std, xrt.getDestination(), props);
+      stdXpp.initialize(std.normalize(), xrt.getDestination(), props);
       final UncertainValue2 cUnk = new UncertainValue2(unk.weightFraction(xrt.getElement(), false));
       cUnk.assignComponent(UNCERTAINTY_MAC, uMAC(stdXpp, unkXpp, xrt));
       cUnk.assignComponent(UNCERTAINTY_ETA, uEta(stdXpp, unkXpp, xrt));
@@ -398,8 +399,8 @@ public class XPP1991
       final XPP1991 unkXpp = new XPP1991();
       double wSum = 0.0;
       for(final XRayTransition xrt : xrts) {
-         unkXpp.initialize(unk, xrt.getDestination(), props);
-         stdXpp.initialize(std, xrt.getDestination(), props);
+         unkXpp.initialize(unk.normalize(), xrt.getDestination(), props);
+         stdXpp.initialize(std.normalize(), xrt.getDestination(), props);
          final UncertainValue2 mf = new UncertainValue2(unk.weightFraction(xrt.getElement(), false));
          mf.assignComponent(UNCERTAINTY_MAC, uMAC(stdXpp, unkXpp, xrt));
          mf.assignComponent(UNCERTAINTY_ETA, uEta(stdXpp, unkXpp, xrt));

@@ -150,7 +150,7 @@ abstract public class IterationAlgorithm
       protected Composition perform(Map<XRayTransitionSet, Double> zafMap) {
          final boolean normalize = false;
          final Composition res = new Composition();
-         if(mHistory.size() > 2) {
+         if(mHistory.size() >= 2) {
             assert mZAFMapNm1 != null;
             final Composition compN = mHistory.get(mHistory.size() - 1), compNm1 = mHistory.get(mHistory.size() - 2);
             for(final XRayTransitionSet xrts : mDesired.keySet())

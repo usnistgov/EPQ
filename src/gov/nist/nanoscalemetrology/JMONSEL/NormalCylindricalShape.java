@@ -8,7 +8,7 @@ import gov.nist.microanalysis.Utility.Transform3D;
  * <p>
  * Extends the NISTMonte CylindricalShape class in order to implement the
  * NormalShape interface. This requires one additional method, to return the
- * vector normal to the sphere at the point of intersection.
+ * vector normal to the cylinder at the point of intersection.
  * </p>
  * <p>
  * Copyright: Pursuant to title 17 Section 105 of the United States Code this
@@ -307,7 +307,7 @@ public class NormalCylindricalShape extends CylindricalShape implements NormalSh
 		case 3:
 		case 4:
 			/*
-			 * Method 1, by subracting axial component to leave perpendicular one
+			 * Method 1, by subtracting axial component to leave perpendicular one
 			 */
 			final double[] normalv = { (p0c[0] + (nv[3] * delta[0])) - (savedprojection * normalizedaxis[0]),
 					(p0c[1] + (nv[3] * delta[1])) - (savedprojection * normalizedaxis[1]),

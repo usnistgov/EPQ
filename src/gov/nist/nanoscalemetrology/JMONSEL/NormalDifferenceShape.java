@@ -25,6 +25,8 @@ public class NormalDifferenceShape implements NormalShape, ITransform {
 	private final NormalShape shapeA;
 
 	private final NormalShape shapeB;
+	
+	private final NormalIntersectionShape interShape;
 
 	private double[] nv = null;
 
@@ -39,6 +41,7 @@ public class NormalDifferenceShape implements NormalShape, ITransform {
 	public NormalDifferenceShape(NormalShape shapeA, NormalShape shapeB) {
 		this.shapeA = shapeA;
 		this.shapeB = shapeB;
+		interShape = new NormalIntersectionShape(shapeA, new NormalComplementShape(shapeB));
 	}
 
 	/*
@@ -66,7 +69,7 @@ public class NormalDifferenceShape implements NormalShape, ITransform {
 		 * originally planned to write a custom code for speed, but experience with the
 		 * intersection routine suggests the savings is only ~20%.
 		 */
-		nv = (new NormalIntersectionShape(shapeA, new NormalComplementShape(shapeB))).getFirstNormal(pos0, pos1);
+		nv = interShape.getFirstNormal(pos0, pos1);
 		return nv;
 	}
 

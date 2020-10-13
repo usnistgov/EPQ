@@ -58,7 +58,7 @@ abstract public class ScatterMechanism implements Cloneable {
 	 * precomputes and caches combinations of material properties required by the
 	 * scattering model.
 	 *
-	 * @param mat
+	 * @param mat - The new material
 	 */
 	abstract public void setMaterial(Material mat);
 

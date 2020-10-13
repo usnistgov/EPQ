@@ -14,13 +14,14 @@ import gov.nist.microanalysis.Utility.Math2;
  * was attributed by them to earlier work of Llacer and Garwin and others.
  * </p>
  * <p>
- * The model assigns a nonzero scattering cross section to electrons with energy
- * phononE < E < maxEnergy. Assignment of an appropriate maxEnergy restricts the
- * phonon model to low energies where its use will not interfere with modeling
- * of electron-atom collisions via high energy atomic scattering models.
- * (Otherwise, use of both a phonon and an atomic-scattering model double
- * counts.) maxEnergy is 3.2e-17 J (200 eV) by default but can be changed via
- * the provided setter.
+ * The model assigns a nonzero scattering cross section only to electrons with
+ * energy, E, such that phononE &lt; E &lt; maxEnergy. Assignment of an appropriate maxEnergy
+ * restricts the phonon model to low energies where its use will not interfere
+ * with modeling of electron-atom collisions via high energy atomic scattering
+ * models. (Otherwise, use of both a phonon and an atomic-scattering model
+ * double counts.) maxEnergy is 3.2e-17 J (200 eV) by default but can be changed
+ * via the provided setter. (Thanks to user Yasunari Sohda for helping me track
+ * down the source of the double-counting problem.)
  * </p>
  * <p>
  * Copyright: Pursuant to title 17 Section 105 of the United States Code this
@@ -86,7 +87,7 @@ public class GanachaudMokraniPhononInelasticSM extends ScatterMechanism {
 	}
 
 	/**
-	 * @param pe
+	 * @param pe - The instance of Electron class representing the primary electron
 	 * @return Always returns null, because this process does not generate secondary
 	 *         electrons.
 	 * @see gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatter(gov.nist.microanalysis.NISTMonte.Electron)
@@ -119,7 +120,7 @@ public class GanachaudMokraniPhononInelasticSM extends ScatterMechanism {
 	}
 
 	/**
-	 * @param pe
+	 * @param pe - The instance of Electron class representing the primary electron
 	 * @return - The average number of scattering events per meter
 	 * @see gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatterRate(gov.nist.microanalysis.NISTMonte.Electron)
 	 */
@@ -149,7 +150,7 @@ public class GanachaudMokraniPhononInelasticSM extends ScatterMechanism {
 	}
 
 	/**
-	 * @param mat
+	 * @param mat - The Material 
 	 * @see gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#setMaterial(gov.nist.microanalysis.EPQLibrary.Material)
 	 */
 	@Override
@@ -161,7 +162,7 @@ public class GanachaudMokraniPhononInelasticSM extends ScatterMechanism {
 	}
 
 	/**
-	 * At electron energies > maxEnergy this model is effectively turned off by
+	 * At electron energies &lt; maxEnergy this model is effectively turned off by
 	 * setting the scattering rate (inverse mean free path) to 0. maxEnergy =
 	 * 3.2e-17 J (200 eV) by default. This makes sense when higher energy collisions
 	 * are already modeled by an atomic scattering model. The cutoff value can be

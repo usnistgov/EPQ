@@ -12,7 +12,6 @@ import gov.nist.microanalysis.Utility.Transform3D;
  * cylinder, by two circular end caps at right angles to the axis that joins
  * their centers. Unlike the cylinder, these end caps need not have the same
  * radius. Thus, the surface that joins them is conical rather than cylindrical.
- * 
  * </p>
  * <p>
  * Copyright: Pursuant to title 17 Section 105 of the United States Code this
@@ -46,9 +45,9 @@ public class NormalConeShape implements NormalShape, ITransform {
 	private double[] nv = null; // Most recent normal vector
 
 	/**
-	 * Constructs a NormalConeShape. One end of the
-	 * cone is a disk at end0 (a 3-element array giving the center coordinates). The
-	 * other end is a disk at end1. The disks may have different positive radii. 
+	 * Constructs a NormalConeShape. One end of the cone is a disk at end0 (a
+	 * 3-element array giving the center coordinates). The other end is a disk at
+	 * end1. The disks may have different positive radii.
 	 *
 	 * @param end0    - 3 coordinates of one end of the cylinder
 	 * @param radius0 - radius of the cone at end0 in meters.
@@ -61,7 +60,8 @@ public class NormalConeShape implements NormalShape, ITransform {
 		this.r1 = radius0;
 		this.c2 = end1.clone();
 		this.r2 = radius1;
-		if (r1 < 0. || r2 < 0.) throw new EPQFatalException("NormalConeShape radii may not be negative.");
+		if (r1 < 0. || r2 < 0.)
+			throw new EPQFatalException("NormalConeShape radii may not be negative.");
 		precomputeValues(c1, r1, c2, r2);
 	}
 
@@ -135,74 +135,47 @@ public class NormalConeShape implements NormalShape, ITransform {
 		 * them eventually anyway, but if there's no intersection with them we can
 		 * usually avoid having to check the end caps.
 		 */
-		if (a == 0.) {
+		roots = stableQuadRoots(a, b, c);
+
+		if (roots == null) { // happens if discriminant < 0
 			/*
-			 * a == 0 needs special processing to avoid dividing by 0. a is the coefficient
-			 * of u^2, so when it is 0 we don't really have a quadratic equation. We have a
-			 * linear equation with solution u = -c/b. We wedge this into our quadratic
-			 * framework by assigning this to one of our two root-holders and making the
-			 * other one "infinite" to insure that it is never chosen.
+			 * This happens if there is a clean miss in which even the extension of the
+			 * electron's path to +/- infinity does not intersect the cone. However, it is
+			 * also possible that round-off error will give us a discriminant < 0. when in
+			 * reality it ought to be 0. or very tiny. There are two rare circumstances in
+			 * which discriminant == 0. wherein we should nevertheless check for end cap
+			 * intersections. These are when r1 == r2 and the trajectory is parallel to the
+			 * axis or when the trajectory goes through the apex of the cone. We will rule
+			 * out a falsely negative discriminant when even (1.+thresh)*b*b-4.*a*c remains
+			 * negative, despite the boost by the small positive fractional thresh.
+			 * 
 			 */
-			uminus = -c / b;
+
+			double discTest = (1. + 1.e-8) * b2 - ac4;
+			if (r1 != r2 && discTest < 0.) {
+				/*
+				 * In this case there can be no end cap intersections either, so we're finished.
+				 */
+				return nv;
+			} else {
+				/*
+				 * In this case we can't return because there may be end cap intersections. We
+				 * record "infinity" for distance to quadratic intersections before proceeding.
+				 */
+				uminus = uplus = Double.MAX_VALUE;
+			}
+		} else { // discriminant >= 0.
+			uminus = roots[0];
 			if (0 < uminus && uminus <= 1) {
 				zminus = p0c1dotUnitL + uminus * deltadotUnitL;
 				if (zminus < 0 || zminus > magL)
 					uminus = Double.MAX_VALUE;
 			}
-			uplus = Double.MAX_VALUE;
-		} else { // a != 0 so we can solve for roots
-			roots = stableQuadRoots(a, b, c);
-
-			if (roots == null) { // happens if det < 0
-				/*
-				 * This happens if there is a clean miss in which even the extension of the
-				 * electron's path to +/- infinity does not intersect the cone. However, it is
-				 * also possible that round-off error will give us a det < 0. when in reality it
-				 * ought to be 0. or very tiny. There are two rare circumstances in which det ==
-				 * 0. wherein we should nevertheless check for end cap intersections. These are
-				 * when r1 == r2 and the trajectory is parallel to the axis or when the
-				 * trajectory goes through the apex of the cone. We will rule out a falsely
-				 * negative determinant when even (1.+thresh)*b*b-4.*a*c remains negative,
-				 * despite the boost by the positive fractional threshold.
-				 * 
-				 */
-
-				double detTest = (1. + 1.e-8) * b2 - ac4;
-				if (r1 != r2 && detTest < 0.) {
-					/*
-					 * In this case there can be no end cap intersections either, so we're finished.
-					 */
-					return nv;
-				} else {
-					/*
-					 * In this case we can't return because there may be end cap intersections. We
-					 * record "infinity" for distance to quadratic intersections before proceeding.
-					 */
-					uminus = uplus = Double.MAX_VALUE;
-				}
-			} else { // det >= 0.
-				/*
-				 * In the limit that a is not identically 0 but is merely very close to it, the
-				 * two roots go to -c/b and -b/a. The latter is +/- infinity depending on the
-				 * sign of b and the direction of approach of a to 0. The sign need not concern
-				 * us, however, since either sign results in that root not being chosen. In this
-				 * section I rely on the stableQuadRoots routine to handle a small but not equal
-				 * to 0. One of its roots approaches -c/b and the other -b/a. The latter may
-				 * suffer from imprecision, but it is describing a root that is very large and
-				 * therefore ignored.
-				 */
-				uminus = roots[0];
-				if (0 < uminus && uminus <= 1) {
-					zminus = p0c1dotUnitL + uminus * deltadotUnitL;
-					if (zminus < 0 || zminus > magL)
-						uminus = Double.MAX_VALUE;
-				}
-				uplus = roots[1];
-				if (0 < uplus && uplus <= 1) {
-					zplus = p0c1dotUnitL + uplus * deltadotUnitL;
-					if (zplus < 0 || zplus > magL)
-						uplus = Double.MAX_VALUE;
-				}
+			uplus = roots[1];
+			if (0 < uplus && uplus <= 1) {
+				zplus = p0c1dotUnitL + uplus * deltadotUnitL;
+				if (zplus < 0 || zplus > magL)
+					uplus = Double.MAX_VALUE;
 			}
 		}
 
@@ -316,11 +289,21 @@ public class NormalConeShape implements NormalShape, ITransform {
 
 	/**
 	 * Solves a * x^2 +b * x +c = 0 to find real roots given the coefficients a, b,
-	 * and c. It picks the more numerically stable algorithm based on the value of
-	 * the b parameter. It returns a double[] with two entries, the first for the
-	 * root with the minus sign in the traditional formula (-b +/- sqrt(det))/2/a
-	 * and the second with the plus sign. If the determinant < 0 there are no real
-	 * roots.
+	 * and c. It picks the more algorithm that is more numerically stable against
+	 * small a*c based on the value of the b parameter. It returns a double[] with
+	 * two entries, the first for the root with the minus sign in the traditional
+	 * formula (-b +/- sqrt(discriminant))/2/a and the second with the plus sign. If
+	 * the discriminant < 0 there are no real roots, and it returns null.
+	 * </p>
+	 * <p>
+	 * The algorithm used here should be stable against a or c equal to or close to
+	 * 0. If c == 0 it correctly returns a root at 0 and another at -b/a. If a == 0
+	 * it returns a root at -c/b and another at Double.MAX_VALUE. Note that in the
+	 * limit a->0 the root's magnitude goes to infinity but the sign depends on the
+	 * direction of approach to 0 by a, so that strictly speaking the root is
+	 * indeterminate. Within this class, however, either sign indicates a lack of
+	 * intersection in the interval from pos0 and pos1, so the Double.MAX_VALUE
+	 * output works for our purpose.
 	 * 
 	 * @param a - double, the coefficient of u^2
 	 * @param b - double, the coefficient of u
@@ -331,18 +314,23 @@ public class NormalConeShape implements NormalShape, ITransform {
 		double uminus = 0.;
 		double uplus = 0.;
 
-		double det = b * b - 4. * a * c;
-		if (det < 0.)
-			return null;
-
-		if (b < 0) {
-			double denom = -b + Math.sqrt(det);
-			uminus = 2. * c / denom;
-			uplus = c / a / uminus;
+		if (a == 0.) {
+			uminus = -c / b;
+			uplus = Double.MAX_VALUE;
 		} else {
-			double denom = -b - Math.sqrt(det);
-			uplus = 2. * c / denom;
-			uminus = c / a / uplus;
+			double disc = b * b - 4. * a * c;
+			if (disc < 0.)
+				return null;
+
+			if (b < 0) {
+				double denom = (-b + Math.sqrt(disc)) / 2.;
+				uminus = c / denom;
+				uplus = denom / a;
+			} else {
+				double denom = (-b - Math.sqrt(disc)) / 2.;
+				uplus = c / denom;
+				uminus = denom / a;
+			}
 		}
 		return new double[] { uminus, uplus };
 

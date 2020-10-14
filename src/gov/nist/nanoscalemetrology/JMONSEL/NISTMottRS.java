@@ -70,6 +70,18 @@ public class NISTMottRS extends RandomizedScatter {
 	private static final double PARAM = (Math.log(MAX_NISTMOTT) - DL50) / 60.0;
 
 	
+	/**
+	 * This Factory class includes a get(Element elm) method that returns a NISTMottRS
+	 * object for that element. It has methods that determine whether the
+	 * NU_ELSEPA_DCS object should extend RandomizedScatter with an atomic or
+	 * muffin-tin scattering model and to determine the behavior for energies below
+	 * a minimum. The factory class object is typically passed to scattering
+	 * mechanism implementations that then need only implement them for those
+	 * elements that compose the material being simulated. 
+	 * 
+	 * @author John Villarrubia
+	 *
+	 */
 	public static class NISTMottRSFactory extends RandomizedScatterFactory {
 
 		private int extrapMethod = 1;

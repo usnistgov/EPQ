@@ -57,19 +57,6 @@ import gov.nist.nanoscalemetrology.JMONSELutils.NULagrangeInterpolationFunction;
 
 public class NU_ELSEPA_DCS extends RandomizedScatter {
 
-	/**
-	 * This Factory class a get(Element elm) method that returns a NU_ELSEPA_DCS
-	 * object for that element. It has methods that determine whether the
-	 * NU_ELSEPA_DCS object should extend RandomizedScatter with an atomic or
-	 * muffin-tin scattering model and to determine the behavior for energies below
-	 * a minimum. The factory class object is typically passed to scattering
-	 * mechanism implementations that then need only implement them for those
-	 * elements that compose the material being simulated.
-	 * 
-	 * @author John Villarrubia
-	 *
-	 */
-	
 	/*
 	 * MIN_ and MAX_ ELSEPA are the limits of the scattering table that we
 	 * interpolate
@@ -77,6 +64,18 @@ public class NU_ELSEPA_DCS extends RandomizedScatter {
 	public static final double MAX_ELSEPA = ToSI.keV(300.0);
 	public static final double MIN_ELSEPA = ToSI.eV(50.);
 	
+	/**
+	 * This Factory class includes a get(Element elm) method that returns a NU_ELSEPA_DCS
+	 * object for that element. It has methods that determine whether the
+	 * NU_ELSEPA_DCS object should extend RandomizedScatter with an atomic or
+	 * muffin-tin scattering model and to determine the behavior for energies below
+	 * a minimum. The factory class object is typically passed to scattering
+	 * mechanism implementations that then need only implement them for those
+	 * elements that compose the material being simulated. 
+	 * 
+	 * @author John Villarrubia
+	 *
+	 */
 	public static class NU_ELSEPA_DCSFactory extends RandomizedScatterFactory {
 
 		private int extrapMethod = 1;

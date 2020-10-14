@@ -105,7 +105,6 @@ public class NormalConeShape implements NormalShape, ITransform {
 		double u2; // distance to end cap 2
 		double uminus; // distance to intersection with curved surface, quad soln with minus sign
 		double uplus; // distance to intersection with curved surface, quad soln with plus sign
-		nv = new double[] { 0., 0., 0., Double.MAX_VALUE };
 
 		final double[] p0c1 = { pos0[0] - c1[0], pos0[1] - c1[1], pos0[2] - c1[2] }; // pos0 - c1
 		final double[] delta = { pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2] }; // pos1 - pos0
@@ -123,8 +122,6 @@ public class NormalConeShape implements NormalShape, ITransform {
 				* (p0c1dotDelta - deltadotUnitL * (p0c1dotUnitL * onePlusdeltarMagLRatioSq + r1 * deltarMagLRatio));
 		double a = delta2 - deltadotUnitL * deltadotUnitL * onePlusdeltarMagLRatioSq;
 
-		double b2 = b * b;
-		double ac4 = 4. * a * c;
 		double zminus = 0.;
 		double zplus = 0.;
 
@@ -151,12 +148,12 @@ public class NormalConeShape implements NormalShape, ITransform {
 			 * 
 			 */
 
-			double discTest = (1. + 1.e-8) * b2 - ac4;
+			double discTest = (1. + 1.e-8) * b * b - 4. * a * c;
 			if (r1 != r2 && discTest < 0.) {
 				/*
 				 * In this case there can be no end cap intersections either, so we're finished.
 				 */
-				return nv;
+				return nv = new double[] { 0., 0., 0., Double.MAX_VALUE };
 			} else {
 				/*
 				 * In this case we can't return because there may be end cap intersections. We
@@ -219,7 +216,7 @@ public class NormalConeShape implements NormalShape, ITransform {
 		}
 
 		if (index == -1) { // There were no intersections
-			return nv;
+			return nv = new double[] { 0., 0., 0., Double.MAX_VALUE };
 		}
 
 		// Construct the normal vector for the chosen index

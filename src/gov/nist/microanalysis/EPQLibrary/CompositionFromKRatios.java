@@ -346,7 +346,7 @@ public class CompositionFromKRatios extends AlgorithmClass {
 	private ConductiveCoating mCoating = null;
 	private String mWarningMessage = null;
 
-	private static final boolean LOG_ITERATION = true;
+	private static final boolean LOG_ITERATION = false;
 
 	public void addUserSelectedTransition(final Element elm, final XRayTransitionSet xrts) {
 		mUserSelectedTransitions.put(elm, xrts);

@@ -82,6 +82,10 @@ public class SpectrumFile {
         	 try(final FileInputStream st = new FileInputStream(file)){
         		 res = BrukerPDZ.isInstanceOf(st);
         	 }
+         if(!res)
+        	 try(final FileInputStream st = new FileInputStream(file)){
+        		 res = OxfordSPTFile.isInstanceOf(st);
+        	 }
       }
       catch(final FileNotFoundException e) {
       }
@@ -188,6 +192,17 @@ public class SpectrumFile {
                 res[0] = new BrukerPDZ(st18);
                 return wrapResult(res, file);
              }
+         }
+         if(OxfordSPTFile.isInstanceOf(new FileInputStream(file))) {
+        	 res = new ISpectrumData[2];
+             try (final FileInputStream st19 = new FileInputStream(file)) {
+                 res[0] = new OxfordSPTFile(st19, false);
+              }
+             try (final FileInputStream st20= new FileInputStream(file)) {
+                 res[1] = new OxfordSPTFile(st20, true);
+              }
+             return wrapResult(res, file);
+        	 
          }
          throw new EPQException("The file " + file.getName() + " does not seem to be in one of the known file formats.");
       }

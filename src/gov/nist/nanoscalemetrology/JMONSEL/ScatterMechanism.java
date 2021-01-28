@@ -12,7 +12,7 @@ import gov.nist.microanalysis.NISTMonte.Electron;
  * </p>
  * <p>
  * Its likelihood of occurring may be characterized by a cross section, mean
- * free path, or scatting rate. Here we use scattering rate. It is in general a
+ * free path, or scattering rate. Here we use scattering rate. It is in general a
  * function of the material in which the electron is traveling and the
  * electron's kinetic energy.
  * </p>

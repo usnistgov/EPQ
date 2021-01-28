@@ -55,7 +55,8 @@ public class NShapes {
 	/**
 	 * createNormalFilm - Construct a NormalMultiPlane object corresponding to a
 	 * film. Normal defines the orientation of the plane associated with pt1. A
-	 * second plane is constructed a distance thickness from the first plane.
+	 * second plane is constructed a distance thickness from the first plane in the direction
+	 * opposite to the normal vector.
 	 *
 	 * @param normal    double[]
 	 * @param pt1       double[]

@@ -107,6 +107,7 @@ public class RegionDetector implements ActionListener {
 		final long electronID;
 		final long trajStep;
 		final double mkEeV;
+		final double[] mPosition0;
 		final double[] mPosition;
 		final double mTheta;
 		final double mPhi;
@@ -139,6 +140,15 @@ public class RegionDetector implements ActionListener {
 		}
 
 		/**
+		 * Gets the logged value of detected electron's position when it was generated.
+		 *
+		 * @return Returns the position.
+		 */
+		public double[] getPosition0() {
+			return mPosition0;
+		}
+		
+		/**
 		 * Gets the logged value of detected electron position
 		 *
 		 * @return Returns the position.
@@ -166,19 +176,20 @@ public class RegionDetector implements ActionListener {
 			return mPhi;
 		}
 
-		private Datum(final long eID, final long tStep, final double e0, final double[] pos, final double theta,
+		private Datum(final long eID, final long tStep, final double e0, final double[] pos0, final double[] pos, final double theta,
 				final double phi) {
 			electronID = eID;
 			trajStep = tStep;
 			mkEeV = e0;
 			assert pos.length == 3;
+			mPosition0 = pos0.clone();
 			mPosition = pos.clone();
 			mTheta = theta;
 			mPhi = phi;
 		}
 
 		public static String getHeader() {
-			return "Electron ID\tTraj Step\tkinetic E (eV)\tx\ty\tz\ttheta\tphi";
+			return "Electron ID\tTraj Step\tkinetic E (eV)\tx0\ty0\tz0\tx\ty\tz\ttheta\tphi";
 		}
 
 		@Override
@@ -189,6 +200,12 @@ public class RegionDetector implements ActionListener {
 			sb.append(trajStep);
 			sb.append("\t");
 			sb.append(mkEeV);
+			sb.append("\t");
+			sb.append(mPosition0[0]);
+			sb.append("\t");
+			sb.append(mPosition0[1]);
+			sb.append("\t");
+			sb.append(mPosition0[2]);
 			sb.append("\t");
 			sb.append(mPosition[0]);
 			sb.append("\t");
@@ -282,7 +299,7 @@ public class RegionDetector implements ActionListener {
 				final double kEeV = FromSI.eV(el.getEnergy());
 				mEnergyBins.add(kEeV);
 				if (mLogDetected)
-					mLog.add(new Datum(el.getIdent(), el.getStepCount(), kEeV, el.getPosition(), el.getTheta(),
+					mLog.add(new Datum(el.getIdent(), el.getStepCount(), kEeV, el.getPosition0(), el.getPosition(), el.getTheta(),
 							el.getPhi()));
 			}
 			if (destructive)

@@ -35,375 +35,400 @@ import gov.nist.microanalysis.Utility.Histogram;
  * @author John Villarrubia
  * @version 1.0
  */
-final public class BackscatterStats
-   implements ActionListener {
-   private int mEnergyBinCount;
-   private final transient MonteCarloSS mMonte;
-   private double mBeamEnergy; // in eV
-   private Histogram mFwdEnergyBins;
-   private Histogram mBackEnergyBins;
-   private Histogram mAzimuthalBins;
-   private Histogram mElevationBins;
-   private int mEventCount = 0;
+final public class BackscatterStats implements ActionListener {
+	private int mEnergyBinCount;
+	private final transient MonteCarloSS mMonte;
+	private double mBeamEnergy; // in eV
+	private Histogram mFwdEnergyBins;
+	private Histogram mBackEnergyBins;
+	private Histogram mAzimuthalBins;
+	private Histogram mElevationBins;
+	private int mEventCount = 0;
 
-   private boolean mLogDetected = false;
+	private boolean mLogDetected = false;
 
-   /**
-    * <p>
-    * Collects electron ID, trajectory step number, energy, position and
-    * direction information from detected electrons.
-    * </p>
-    * <p>
-    * Copyright: Pursuant to title 17 Section 105 of the United States Code this
-    * software is not subject to copyright protection and is in the public
-    * domain
-    * </p>
-    * <p>
-    * Institution: National Institute of Standards and Technology
-    * </p>
-    * 
-    * @author nritchie
-    * @version 1.0
-    */
-   static public class Datum {
+	/**
+	 * <p>
+	 * Collects electron ID, trajectory step number, energy, position0, position and
+	 * direction information from detected electrons. (position is the electron's
+	 * position when it was detected. position0 is the position at which the
+	 * electron was generated, e.g., in the electron gun or as a secondary electron.
+	 * Inclusion of this value in the log is useful for computing escape depths when
+	 * the sample geometry is simple enough.)
+	 * </p>
+	 * <p>
+	 * Copyright: Pursuant to title 17 Section 105 of the United States Code this
+	 * software is not subject to copyright protection and is in the public domain
+	 * </p>
+	 * <p>
+	 * Institution: National Institute of Standards and Technology
+	 * </p>
+	 * 
+	 * @author nritchie, jvillar
+	 * @version 1.0
+	 */
+	static public class Datum {
 
-      final long electronID;
-      final long trajStep;
-      final double mkEeV;
-      final double[] mPosition;
-      final double mTheta;
-      final double mPhi;
+		final long electronID;
+		final long trajStep;
+		final double mkEeV;
+		final double[] mPosition0;
+		final double[] mPosition;
+		final double mTheta;
+		final double mPhi;
 
-      /**
-       * Gets the ID number of the detected electron.
-       *
-       * @return
-       */
-      public long getElectronID() {
-         return electronID;
-      }
+		/**
+		 * Gets the ID number of the detected electron.
+		 *
+		 * @return
+		 */
+		public long getElectronID() {
+			return electronID;
+		}
 
-      /**
-       * Gets the trajectory step number of the detected electron.
-       * 
-       * @return
-       */
-      public long getTrajStep() {
-         return trajStep;
-      }
+		/**
+		 * Gets the trajectory step number of the detected electron.
+		 * 
+		 * @return
+		 */
+		public long getTrajStep() {
+			return trajStep;
+		}
 
-      /**
-       * Gets the logged value of detected electron energy in eV
-       * 
-       * @return Returns the beamEnergy.
-       */
-      public double getEnergyeV() {
-         return mkEeV;
-      }
+		/**
+		 * Gets the logged value of detected electron energy in eV
+		 * 
+		 * @return Returns the beamEnergy.
+		 */
+		public double getEnergyeV() {
+			return mkEeV;
+		}
 
-      /**
-       * Gets the logged value of detected electron position
-       * 
-       * @return Returns the position.
-       */
-      public double[] getPosition() {
-         return mPosition;
-      }
+		/**
+		 * Gets the logged value of detected electron's position when it was generated.
+		 * 
+		 * @return Returns the position.
+		 */
+		public double[] getPosition0() {
+			return mPosition0;
+		}
 
-      /**
-       * Gets the logged value of detected electron polar angle of direction of
-       * motion
-       * 
-       * @return Returns the theta.
-       */
-      public double getTheta() {
-         return mTheta;
-      }
+		/**
+		 * Gets the logged value of detected electron position
+		 * 
+		 * @return Returns the position.
+		 */
+		public double[] getPosition() {
+			return mPosition;
+		}
 
-      /**
-       * Gets the logged value of detected electron aziumuthal angle of
-       * direction of motion
-       * 
-       * @return Returns the phi.
-       */
-      public double getPhi() {
-         return mPhi;
-      }
+		/**
+		 * Gets the logged value of detected electron polar angle of direction of motion
+		 * 
+		 * @return Returns the theta.
+		 */
+		public double getTheta() {
+			return mTheta;
+		}
 
-      private Datum(final long eID, final long tStep, final double e0, final double[] pos, final double theta, final double phi) {
-         electronID = eID;
-         trajStep = tStep;
-         mkEeV = e0;
-         assert pos.length == 3;
-         mPosition = pos.clone();
-         mTheta = theta;
-         mPhi = phi;
-      }
+		/**
+		 * Gets the logged value of detected electron aziumuthal angle of direction of
+		 * motion
+		 * 
+		 * @return Returns the phi.
+		 */
+		public double getPhi() {
+			return mPhi;
+		}
 
-      public static String getHeader() {
-         return "Electron ID\tTraj Step\tkinetic E (eV)\tx\ty\tz\ttheta\tphi";
-      }
+		private Datum(final long eID, final long tStep, final double e0, final double[] pos0, final double[] pos,
+				final double theta, final double phi) {
+			electronID = eID;
+			trajStep = tStep;
+			mkEeV = e0;
+			assert pos.length == 3;
+			mPosition0 = pos0.clone();
+			mPosition = pos.clone();
+			mTheta = theta;
+			mPhi = phi;
+		}
 
-      @Override
-      public String toString() {
-         final StringBuffer sb = new StringBuffer();
-         sb.append(electronID);
-         sb.append("\t");
-         sb.append(trajStep);
-         sb.append("\t");
-         sb.append(mkEeV);
-         sb.append("\t");
-         sb.append(mPosition[0]);
-         sb.append("\t");
-         sb.append(mPosition[1]);
-         sb.append("\t");
-         sb.append(mPosition[2]);
-         sb.append("\t");
-         sb.append(mTheta);
-         sb.append("\t");
-         sb.append(mPhi);
-         return sb.toString();
-      }
-   }
+		public static String getHeader() {
+			return "Electron ID\tTraj Step\tkinetic E (eV)\tx0\ty0\tz0\tx\ty\tz\ttheta\tphi";
+		}
 
-   private ArrayList<Datum> mLog;
+		@Override
+		public String toString() {
+			final StringBuffer sb = new StringBuffer();
+			sb.append(electronID);
+			sb.append("\t");
+			sb.append(trajStep);
+			sb.append("\t");
+			sb.append(mkEeV);
+			sb.append("\t");
+			sb.append(mPosition0[0]);
+			sb.append("\t");
+			sb.append(mPosition0[1]);
+			sb.append("\t");
+			sb.append(mPosition0[2]);
+			sb.append("\t");
+			sb.append(mPosition[0]);
+			sb.append("\t");
+			sb.append(mPosition[1]);
+			sb.append("\t");
+			sb.append(mPosition[2]);
+			sb.append("\t");
+			sb.append(mTheta);
+			sb.append("\t");
+			sb.append(mPhi);
+			return sb.toString();
+		}
+	}
 
-   public BackscatterStats(final MonteCarloSS mcss) {
-      this(mcss, 400);
-   }
+	private ArrayList<Datum> mLog;
 
-   public BackscatterStats(final MonteCarloSS mcss, final int nEnergyBins) {
-      mMonte = mcss;
-      mEnergyBinCount = nEnergyBins;
-      initialize();
-   }
+	public BackscatterStats(final MonteCarloSS mcss) {
+		this(mcss, 400);
+	}
 
-   private void initialize() {
-      mBeamEnergy = FromSI.eV(mMonte.getBeamEnergy());
-      mElevationBins = new Histogram(0.0, Math.PI, 180);
-      mAzimuthalBins = new Histogram(0.0, 2.0 * Math.PI, 360);
-      mFwdEnergyBins = new Histogram(0.0, mBeamEnergy, mEnergyBinCount);
-      mBackEnergyBins = new Histogram(0.0, mBeamEnergy, mEnergyBinCount);
-      mLog = new ArrayList<Datum>();
-   }
+	public BackscatterStats(final MonteCarloSS mcss, final int nEnergyBins) {
+		mMonte = mcss;
+		mEnergyBinCount = nEnergyBins;
+		initialize();
+	}
 
-   @Override
-   public void actionPerformed(final ActionEvent ae) {
-      assert (ae.getSource() instanceof MonteCarloSS);
-      assert (ae.getSource() == mMonte);
-      switch(ae.getID()) {
-         case MonteCarloSS.FirstTrajectoryEvent: {
-            mEventCount = 0;
-            break;
-         }
-         case MonteCarloSS.BackscatterEvent: {
-            final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
-            final Electron el = mcss.getElectron();
-            final double[] pos = el.getPosition();
-            final double elevation = (Math.PI / 2) - Math.atan2(pos[2], Math.sqrt((pos[0] * pos[0]) + (pos[1] * pos[1])));
-            assert (elevation >= 0.0);
-            assert (elevation <= Math.PI);
-            double azimuth = Math.atan2(pos[1], pos[0]);
-            if(azimuth < 0.0)
-               azimuth = (2.0 * Math.PI) + azimuth;
-            assert (azimuth >= 0.0);
-            assert (azimuth <= (2.0 * Math.PI));
-            synchronized(this) {
-               mElevationBins.add(elevation);
-               mAzimuthalBins.add(azimuth);
-               final double kEeV = FromSI.eV(el.getEnergy());
-               if(elevation < (Math.PI / 2.0))
-                  mFwdEnergyBins.add(kEeV);
-               else
-                  mBackEnergyBins.add(kEeV);
-               if(mLogDetected)
-                  mLog.add(new Datum(el.getIdent(), el.getStepCount(), kEeV, pos, el.getTheta(), el.getPhi()));
-            }
-            break;
-         }
-         case MonteCarloSS.TrajectoryEndEvent:
-            synchronized(this) {
-               mEventCount++;
-            }
-            break;
-         case MonteCarloSS.BeamEnergyChanged:
-            synchronized(this) {
-               initialize();
-            }
-            break;
+	private void initialize() {
+		mBeamEnergy = FromSI.eV(mMonte.getBeamEnergy());
+		mElevationBins = new Histogram(0.0, Math.PI, 180);
+		mAzimuthalBins = new Histogram(0.0, 2.0 * Math.PI, 360);
+		mFwdEnergyBins = new Histogram(0.0, mBeamEnergy, mEnergyBinCount);
+		mBackEnergyBins = new Histogram(0.0, mBeamEnergy, mEnergyBinCount);
+		mLog = new ArrayList<Datum>();
+	}
 
-      }
-   }
+	@Override
+	public void actionPerformed(final ActionEvent ae) {
+		assert (ae.getSource() instanceof MonteCarloSS);
+		assert (ae.getSource() == mMonte);
+		switch (ae.getID()) {
+		case MonteCarloSS.FirstTrajectoryEvent: {
+			mEventCount = 0;
+			break;
+		}
+		case MonteCarloSS.BackscatterEvent: {
+			final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
+			final Electron el = mcss.getElectron();
+			final double[] pos0 = el.getPosition0();
+			final double[] pos = el.getPosition();
+			final double elevation = (Math.PI / 2)
+					- Math.atan2(pos[2], Math.sqrt((pos[0] * pos[0]) + (pos[1] * pos[1])));
+			assert (elevation >= 0.0);
+			assert (elevation <= Math.PI);
+			double azimuth = Math.atan2(pos[1], pos[0]);
+			if (azimuth < 0.0)
+				azimuth = (2.0 * Math.PI) + azimuth;
+			assert (azimuth >= 0.0);
+			assert (azimuth <= (2.0 * Math.PI));
+			synchronized (this) {
+				mElevationBins.add(elevation);
+				mAzimuthalBins.add(azimuth);
+				final double kEeV = FromSI.eV(el.getEnergy());
+				if (elevation < (Math.PI / 2.0))
+					mFwdEnergyBins.add(kEeV);
+				else
+					mBackEnergyBins.add(kEeV);
+				if (mLogDetected)
+					mLog.add(new Datum(el.getIdent(), el.getStepCount(), kEeV, pos0, pos, el.getTheta(), el.getPhi()));
+			}
+			break;
+		}
+		case MonteCarloSS.TrajectoryEndEvent:
+			synchronized (this) {
+				mEventCount++;
+			}
+			break;
+		case MonteCarloSS.BeamEnergyChanged:
+			synchronized (this) {
+				initialize();
+			}
+			break;
 
-   /**
-    * Returns a histogram object representing the accumulated backscatter energy
-    * statistics.
-    * 
-    * @return Histogram
-    */
-   public Histogram backscatterEnergyHistogram() {
-      return mBackEnergyBins;
-   }
+		}
+	}
 
-   /**
-    * Returns a histogram object representing the accumulated backscatter energy
-    * statistics.
-    * 
-    * @return Histogram
-    */
-   public Histogram forwardscatterEnergyHistogram() {
-      return mFwdEnergyBins;
-   }
+	/**
+	 * Returns a histogram object representing the accumulated backscatter energy
+	 * statistics.
+	 * 
+	 * @return Histogram
+	 */
+	public Histogram backscatterEnergyHistogram() {
+		return mBackEnergyBins;
+	}
 
-   /**
-    * Returns a histogram of the backscattered and forward scattered electrons
-    * as a function of elevation. The beam is at bin zero.
-    * 
-    * @return Histogram
-    */
-   public Histogram elevationHistogram() {
-      return mElevationBins;
-   }
+	/**
+	 * Returns a histogram object representing the accumulated backscatter energy
+	 * statistics.
+	 * 
+	 * @return Histogram
+	 */
+	public Histogram forwardscatterEnergyHistogram() {
+		return mFwdEnergyBins;
+	}
 
-   /**
-    * Returns a histogram of the backscattered and forward scattered electrons
-    * as a function of the azimuthal angle.
-    * 
-    * @return Histogram
-    */
-   public Histogram azimuthalHistogram() {
-      return mAzimuthalBins;
-   }
+	/**
+	 * Returns a histogram of the backscattered and forward scattered electrons as a
+	 * function of elevation. The beam is at bin zero.
+	 * 
+	 * @return Histogram
+	 */
+	public Histogram elevationHistogram() {
+		return mElevationBins;
+	}
 
-   public void dump(final OutputStream os) {
-      final NumberFormat nf = NumberFormat.getInstance();
-      nf.setMaximumFractionDigits(3);
-      final PrintWriter pw = new PrintWriter(os);
-      { // Header
-         pw.println("Beam energy\t" + nf.format(mBeamEnergy / 1000.0) + " keV");
-         pw.println("Backscatter\t" + Integer.toString(mBackEnergyBins.totalCounts()));
-         pw.println("Forwardscatter\t" + Integer.toString(mFwdEnergyBins.totalCounts()));
-      }
-      pw.println("Forward and back scattered electron energy histogram");
-      pw.println("Bin\tBack\tForward");
-      assert mBackEnergyBins.binCount() == mFwdEnergyBins.binCount();
-      final Iterator<Integer> bs = mBackEnergyBins.getResultMap("{0,number,#.##}").values().iterator();
-      for(final Map.Entry<Histogram.BinName, Integer> me : mFwdEnergyBins.getResultMap("{0,number,#.##}").entrySet()) {
-         pw.print(me.getKey().toString());
-         pw.print("\t");
-         pw.print(bs.next().toString());
-         pw.print("\t");
-         pw.println(me.getValue().toString());
-      }
+	/**
+	 * Returns a histogram of the backscattered and forward scattered electrons as a
+	 * function of the azimuthal angle.
+	 * 
+	 * @return Histogram
+	 */
+	public Histogram azimuthalHistogram() {
+		return mAzimuthalBins;
+	}
 
-      pw.println("Azimuthal angle histogram");
-      pw.println("Bin\tAngle");
-      for(final Map.Entry<Histogram.BinName, Integer> me : mAzimuthalBins.getResultMap("{0,number,#.##}").entrySet()) {
-         pw.print(me.getKey().toString());
-         pw.print("\t");
-         pw.println(me.getValue().toString());
-      }
+	public void dump(final OutputStream os) {
+		final NumberFormat nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(3);
+		final PrintWriter pw = new PrintWriter(os);
+		{ // Header
+			pw.println("Beam energy\t" + nf.format(mBeamEnergy / 1000.0) + " keV");
+			pw.println("Backscatter\t" + Integer.toString(mBackEnergyBins.totalCounts()));
+			pw.println("Forwardscatter\t" + Integer.toString(mFwdEnergyBins.totalCounts()));
+		}
+		pw.println("Forward and back scattered electron energy histogram");
+		pw.println("Bin\tBack\tForward");
+		assert mBackEnergyBins.binCount() == mFwdEnergyBins.binCount();
+		final Iterator<Integer> bs = mBackEnergyBins.getResultMap("{0,number,#.##}").values().iterator();
+		for (final Map.Entry<Histogram.BinName, Integer> me : mFwdEnergyBins.getResultMap("{0,number,#.##}")
+				.entrySet()) {
+			pw.print(me.getKey().toString());
+			pw.print("\t");
+			pw.print(bs.next().toString());
+			pw.print("\t");
+			pw.println(me.getValue().toString());
+		}
 
-      pw.println("Elevation angle histogram");
-      pw.println("Bin\tAngle");
-      for(final Map.Entry<Histogram.BinName, Integer> me : mElevationBins.getResultMap("{0,number,#.##}").entrySet()) {
-         pw.print(me.getKey().toString());
-         pw.print("\t");
-         pw.println(me.getValue().toString());
-      }
+		pw.println("Azimuthal angle histogram");
+		pw.println("Bin\tAngle");
+		for (final Map.Entry<Histogram.BinName, Integer> me : mAzimuthalBins.getResultMap("{0,number,#.##}")
+				.entrySet()) {
+			pw.print(me.getKey().toString());
+			pw.print("\t");
+			pw.println(me.getValue().toString());
+		}
 
-      /* If logging is turned on, output data for each detected electron */
-      if(mLogDetected) {
-         pw.println("Detected electron log (electron ID, energy, position, and direction of motion at detection)");
-         pw.println("Number of logged electrons: " + Integer.toString(mLog.size()));
-         pw.println(Datum.getHeader());
-         for(final Datum logEntry : mLog)
-            pw.println(logEntry.toString());
-      }
-      pw.close();
-   }
+		pw.println("Elevation angle histogram");
+		pw.println("Bin\tAngle");
+		for (final Map.Entry<Histogram.BinName, Integer> me : mElevationBins.getResultMap("{0,number,#.##}")
+				.entrySet()) {
+			pw.print(me.getKey().toString());
+			pw.print("\t");
+			pw.println(me.getValue().toString());
+		}
 
-   /**
-    * Fraction scattered into the upper hemisphere
-    * 
-    * @return double
-    */
-   public double backscatterFraction() {
-      return (double) mBackEnergyBins.totalCounts() / (double) mEventCount;
-   }
+		/* If logging is turned on, output data for each detected electron */
+		if (mLogDetected) {
+			pw.println(
+					"Detected electron log (electron ID, energy, position0, position, and direction of motion at detection)");
+			pw.println("Number of logged electrons: " + Integer.toString(mLog.size()));
+			pw.println(Datum.getHeader());
+			for (final Datum logEntry : mLog)
+				pw.println(logEntry.toString());
+		}
+		pw.close();
+	}
 
-   /**
-    * Returns the number of bins in the energy histograms
-    * 
-    * @return Returns the energyBinCount.
-    */
-   public int getEnergyBinCount() {
-      return mEnergyBinCount;
-   }
+	/**
+	 * Fraction scattered into the upper hemisphere
+	 * 
+	 * @return double
+	 */
+	public double backscatterFraction() {
+		return (double) mBackEnergyBins.totalCounts() / (double) mEventCount;
+	}
 
-   /**
-    * Sets the number of bins in the energy histograms
-    * 
-    * @param energyBinCount The value to which to set energyBinCount.
-    */
-   public void setEnergyBinCount(final int energyBinCount) {
-      if(mEnergyBinCount != energyBinCount) {
-         mEnergyBinCount = energyBinCount;
-         initialize();
-      }
-   }
+	/**
+	 * Returns the number of bins in the energy histograms
+	 * 
+	 * @return Returns the energyBinCount.
+	 */
+	public int getEnergyBinCount() {
+		return mEnergyBinCount;
+	}
 
-   /**
-    * Fraction scattered into the lower hemisphere
-    * 
-    * @return double
-    */
-   public double forwardscatterFraction() {
-      return (double) mFwdEnergyBins.totalCounts() / (double) mEventCount;
-   }
+	/**
+	 * Sets the number of bins in the energy histograms
+	 * 
+	 * @param energyBinCount The value to which to set energyBinCount.
+	 */
+	public void setEnergyBinCount(final int energyBinCount) {
+		if (mEnergyBinCount != energyBinCount) {
+			mEnergyBinCount = energyBinCount;
+			initialize();
+		}
+	}
 
-   /**
-    * All electrons which leave the sample and strike either the upper
-    * hemisphere or the lower hemisphere.
-    * 
-    * @return double
-    */
-   public double scatterFraction() {
-      return backscatterFraction() + forwardscatterFraction();
-   }
+	/**
+	 * Fraction scattered into the lower hemisphere
+	 * 
+	 * @return double
+	 */
+	public double forwardscatterFraction() {
+		return (double) mFwdEnergyBins.totalCounts() / (double) mEventCount;
+	}
 
-   /**
-    * Gets the current value assigned to logDetected. It is true if logging is
-    * enabled, false if not.
-    * 
-    * @return Returns the logDetected.
-    */
-   public boolean getLogDetected() {
-      return mLogDetected;
-   }
+	/**
+	 * All electrons which leave the sample and strike either the upper hemisphere
+	 * or the lower hemisphere.
+	 * 
+	 * @return double
+	 */
+	public double scatterFraction() {
+		return backscatterFraction() + forwardscatterFraction();
+	}
 
-   /**
-    * Sets the value assigned to logDetected. If logDetected = true the electron
-    * ID, trajectory step number, energy, position, and angles of each detected
-    * electron are stored and will be included in the output file generated by
-    * dump.
-    * 
-    * @param logDetected The value to which to set logDetected.
-    */
-   public void setLogDetected(final boolean logDetected) {
-      mLogDetected = logDetected;
-   }
+	/**
+	 * Gets the current value assigned to logDetected. It is true if logging is
+	 * enabled, false if not.
+	 * 
+	 * @return Returns the logDetected.
+	 */
+	public boolean getLogDetected() {
+		return mLogDetected;
+	}
 
-   /**
-    * Returns the log of detected electrons in the form of an ArrayList, each
-    * element of which is a Datum object containing information about an
-    * electron at the time it was detected. The information consists of the
-    * electron's ID, trajectory step number, energy (in eV), position, polar and
-    * azimuthal angles of its direction of motion.
-    * 
-    * @return List&lt;Datum&gt; -- Each entry in the list is
-    */
-   public List<Datum> getLog() {
-      return Collections.unmodifiableList(mLog);
-   }
+	/**
+	 * Sets the value assigned to logDetected. If logDetected = true the electron
+	 * ID, trajectory step number, energy, position, and angles of each detected
+	 * electron are stored and will be included in the output file generated by
+	 * dump.
+	 * 
+	 * @param logDetected The value to which to set logDetected.
+	 */
+	public void setLogDetected(final boolean logDetected) {
+		mLogDetected = logDetected;
+	}
+
+	/**
+	 * Returns the log of detected electrons in the form of an ArrayList, each
+	 * element of which is a Datum object containing information about an electron
+	 * at the time it was detected. The information consists of the electron's ID,
+	 * trajectory step number, energy (in eV), position, polar and azimuthal angles
+	 * of its direction of motion.
+	 * 
+	 * @return List&lt;Datum&gt; -- Each entry in the list is
+	 */
+	public List<Datum> getLog() {
+		return Collections.unmodifiableList(mLog);
+	}
 }

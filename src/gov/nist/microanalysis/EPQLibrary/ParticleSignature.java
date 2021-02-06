@@ -39,18 +39,46 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @version 1.0
  */
 public class ParticleSignature {
+	
+	
+	public enum StripMode {
+		/**
+		 * Don't ever include in the signature
+		 */
+		Strip,  // Strip and ignore
+		/**
+		 * Include in the signature (normalize relative to all elements)
+		 */
+		Exclude, // Exclude from ParticleSignature
+		/**
+		 * Include in the signature (normalize relative to all Normal elements.)
+		 */
+		Normal // Quantify and include
+	};
+	
+	public static TreeMap<Element, StripMode> DEFAULT_STRIP = defaultStrip();
+
+	static TreeMap<Element, StripMode> defaultStrip() {
+		final TreeMap<Element, StripMode> res = new TreeMap<Element, StripMode>();
+		res.put(Element.C, StripMode.Strip);
+		res.put(Element.O, StripMode.Exclude);
+		return res;
+	}
+	
+	public static StripMode defStripMode(Element elm) {
+		return DEFAULT_STRIP.get(elm)!=null ? DEFAULT_STRIP.get(elm) : StripMode.Normal;
+	}
+	
 	private final Map<Element, UncertainValue2> mValues = new TreeMap<Element, UncertainValue2>();
 	private double mNormalization;
 	private double mFullNorm;
-	private final Set<Element> mStrip; // Those elements not included in the results
-	private final Set<Element> mSpecial; // Those elements not included in the full normalization
+	public final Map<Element, StripMode> mStrip;
 
 	public ParticleSignature() {
 		super();
 		mNormalization = 1.0;
 		mFullNorm = 1.0;
-		mStrip = new TreeSet<Element>();
-		mSpecial = new TreeSet<Element>();
+		mStrip = new TreeMap<Element,StripMode>();
 	}
 
 	public ParticleSignature(ParticleSignature ps) {
@@ -58,8 +86,7 @@ public class ParticleSignature {
 		mNormalization = ps.mNormalization;
 		mFullNorm = ps.mFullNorm;
 		mValues.putAll(ps.mValues);
-		mStrip = new TreeSet<Element>(ps.mStrip);
-		mSpecial = new TreeSet<Element>(ps.mSpecial);
+		mStrip = new TreeMap<Element,StripMode>(ps.mStrip);
 	}
 
 	public void removeStrip(Element elm) {
@@ -71,16 +98,21 @@ public class ParticleSignature {
 		super();
 		mNormalization = 1.0;
 		mFullNorm = 1.0;
-		mStrip = new TreeSet<Element>(strip);
-		mSpecial = new TreeSet<Element>(special);
+		mStrip = new TreeMap<Element,StripMode>();
+		for(Element el : strip)
+			mStrip.put(el,StripMode.Strip);
+		for(Element el : special)
+			mStrip.put(el,StripMode.Exclude);
 	}
 
 	public ParticleSignature(KRatioSet krs, Collection<Element> strip, Collection<Element> special) {
 		super();
 		mNormalization = 1.0;
 		mFullNorm = 1.0;
-		mStrip = new TreeSet<Element>(strip);
-		mSpecial = new TreeSet<Element>(special);
+		mStrip = new TreeMap<Element,StripMode>();
+		
+		addStripped(strip);
+		addExlude(special);
 		final Set<Element> elms = krs.getElementSet();
 		final KRatioSet opt = krs.optimalKRatioSet();
 		for (final Element elm : elms) {
@@ -88,14 +120,37 @@ public class ParticleSignature {
 			add(xrts.getElement(), opt.getKRatioU(xrts));
 		}
 	}
+	
+	/**
+	 * All all the Element objects in the specified collection.
+	 * 
+	 * @param col
+	 */
+	public void addStripped(Collection<Element> col) {
+		for(Element el : col)
+			mStrip.put(el, StripMode.Strip);
+	}
+	
+	public void addExlude(Collection<Element> col) {
+		for(Element el : col)
+			mStrip.put(el, StripMode.Exclude);
+	}
 
 	public boolean isStripped(Element elm) {
-		return mStrip.contains(elm);
+		return (mStrip.get(elm)!=null) && (mStrip.get(elm)==StripMode.Strip);
+	}
+	
+	public boolean isExcluded(Element elm) {
+		return (mStrip.get(elm)!=null) && (mStrip.get(elm)==StripMode.Exclude);
+	}
+	
+	public StripMode stripMode(Element elm) {
+		return mStrip.get(elm)==null ? StripMode.Normal : mStrip.get(elm);
 	}
 
 	public void add(Element elm, UncertainValue2 value) {
 		if (!value.isNaN()) {
-			if (!mStrip.contains(elm)) {
+			if (!isStripped(elm)) {
 				if ((value.doubleValue() < 0) && ((value.doubleValue() + value.uncertainty()) > 0.0))
 					mValues.put(elm, new UncertainValue2(0.0, "PS", value.uncertainty()));
 				else
@@ -122,8 +177,8 @@ public class ParticleSignature {
 	private double getFullNorm() {
 		if (Double.isNaN(mFullNorm)) {
 			mFullNorm = 0.0;
-			for(UncertainValue2 uv2 : mValues.values())
-				mFullNorm+=uv2.doubleValue();
+			for (final Map.Entry<Element, UncertainValue2> me : mValues.entrySet())
+				mFullNorm += me.getValue().doubleValue();
 			if (mFullNorm <= 0.0)
 				mFullNorm = 1.0;
 		}
@@ -134,7 +189,7 @@ public class ParticleSignature {
 		if (Double.isNaN(mNormalization)) {
 			mNormalization = 0.0;
 			for (final Map.Entry<Element, UncertainValue2> me : mValues.entrySet())
-				if (!mSpecial.contains(me.getKey()))
+				if (stripMode(me.getKey())==StripMode.Normal)
 					mNormalization += me.getValue().doubleValue();
 			if (mNormalization <= 0.0)
 				mNormalization = 1.0;
@@ -143,7 +198,7 @@ public class ParticleSignature {
 	}
 
 	private double getNorm(Element elm) {
-		return mSpecial.contains(elm) ? getFullNorm() : getNorm();
+		return isExcluded(elm) ? getFullNorm() : getNorm();
 	}
 
 	public UncertainValue2 getU(Element elm) {
@@ -161,11 +216,16 @@ public class ParticleSignature {
 	 * @return Set&lt;Element&gt;
 	 */
 	public Set<Element> getUnstrippedElementSet() {
-		final TreeSet<Element> res = new TreeSet<Element>(mValues.keySet());
-		res.removeAll(mStrip);
+		return Collections.unmodifiableSet(mValues.keySet());
+	}
+	
+	public Set<Element> getNormalElementSet(){
+		final TreeSet<Element> res = new TreeSet<Element>();
+		for(Element elm : mValues.keySet())
+			if(stripMode(elm)==StripMode.Normal)
+				res.add(elm);
 		return Collections.unmodifiableSet(res);
 	}
-
 	/**
 	 * Get a list of elements present in the ParticleSignature.
 	 *
@@ -254,7 +314,7 @@ public class ParticleSignature {
 	 * @return Element
 	 */
 	public Element getNthElement(int n) {
-		final Element[] sorted = getSorted(getUnstrippedElementSet());
+		final Element[] sorted = getSorted(getNormalElementSet());
 		return n < sorted.length ? sorted[n] : Element.None;
 	}
 

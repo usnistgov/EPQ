@@ -63,6 +63,8 @@ public class StandardBundle {
 
    public void checkSuitableAsStandard(final ISpectrumData spec)
          throws EPQException {
+	   if(spec == null)
+		   throw new EPQException("No standard spectrum has been specified.");
       if(!(spec.getProperties().getDetector() instanceof EDSDetector))
          throw new EPQException("No EDS detector is defined for this standard.");
       if(spec.getProperties().getNumericWithDefault(SpectrumProperties.BeamEnergy, -1.0) == -1.0)
@@ -116,7 +118,7 @@ public class StandardBundle {
       final Set<RegionOfInterest> rois = mOutline.suitableAsReference(spec.getProperties().getElements());
       for(final RegionOfInterest roi2 : rois)
          if(roi2.fullyContains(roi))
-            return true;
+            return roi2.getElementSet().size()==1;
       return false;
    }
 

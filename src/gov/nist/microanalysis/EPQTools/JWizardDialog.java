@@ -30,6 +30,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
@@ -197,7 +198,7 @@ public class JWizardDialog
       jButton_Next.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if(jWizardPanel_Active.permitNext()) {
+            if((jWizardPanel_Active != null) && jWizardPanel_Active.permitNext()) {
                assert (jWizardPanel_Active != null);
                assert (jWizardPanel_Next != null);
                mPreviousPanels.add(jWizardPanel_Active);
@@ -640,15 +641,20 @@ public class JWizardDialog
       protected Object getResult(String name) {
          return mWizard.getResult(name);
       }
+
+      
+      public void addInScrollPane(JPanel jp) {
+		JPanel base = new JPanel();
+		base.setLayout(new FormLayout("300dlu", "155dlu"));
+		base.add(new JScrollPane(jp), CC.xy(1, 1));
+		add(base);
+      }
    }
 
    abstract public class JProgressPanel
       extends
       JWizardPanel {
 
-      /**
-       * 
-       */
       private static final long serialVersionUID = -2510365605502237127L;
       private JProgressBar mProgressBar;
 

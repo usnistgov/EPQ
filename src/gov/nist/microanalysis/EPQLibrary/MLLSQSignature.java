@@ -42,7 +42,6 @@ public class MLLSQSignature implements Cloneable {
 	
 	private Set<Element> mDontFit = new TreeSet<Element>();
 	
-	private double mFitQuality = 0.0;
 	private double mChiSquared = 0.0;
 	private double mCounts = Double.NaN;
 	private ISpectrumData mResidual;
@@ -77,7 +76,6 @@ public class MLLSQSignature implements Cloneable {
 			res.mOptimal = new TreeMap<XRayTransitionSet, Double>(mOptimal);
 		res.mZafCorrectRefs = mZafCorrectRefs;
 		res.mStrip = new TreeMap<Element,StripMode>(mStrip);
-		res.mFitQuality = mFitQuality;
 		res.mChiSquared = mChiSquared;
 		res.mCounts = mCounts;
 		res.mResidual = mResidual;
@@ -190,7 +188,6 @@ public class MLLSQSignature implements Cloneable {
 		}
 		mFilterFit.forceZero(mDontFit);
 		final KRatioSet res = mFilterFit.getKRatios(spec);
-		mFitQuality = mFilterFit.getFitMetric(spec);
 		mChiSquared = mFilterFit.chiSquared();
 		mResidual = mFilterFit.getResidualSpectrum(spec);
 		mCounts = mFilterFit.getFitEventCount(spec, stripped());
@@ -282,16 +279,6 @@ public class MLLSQSignature implements Cloneable {
 			res.add(xrts.getElement(),
 					UncertainValue2.multiply(mOptimal.get(xrts).doubleValue(), optimal.getKRatioU(xrts)));
 		return res;
-	}
-
-	/**
-	 * Returns the value of fit quality calculated as a result of the last call to
-	 * <code>compute</code>
-	 * 
-	 * @return 1.0 for perfect fit, 0.0 for perfectly lousy
-	 */
-	public double getFitQuality() {
-		return mFitQuality;
 	}
 
 	public double getChiSquared() {

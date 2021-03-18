@@ -169,24 +169,72 @@ public class ExpQMBarrierSM implements BarrierScatterMechanism {
 	 * @param deltaU
 	 * @return
 	 */
-	private double generalBarrierT(double rootPerpE, double rootDiff) {
+	private double generalBarrierTOLD(double rootPerpE, double rootDiff) {
 		/*
 		 * In the small wavelength (large energy) limit, our sinh functions below can
 		 * overflow, but there is no need in this limit to go to the trouble of
 		 * computing them. Transmission in that limit is indistinguishable from 1. We
-		 * arbitrarily choose k1 > 50 as our definition of large k. With this choice,
-		 * approximating by 1 has error less than 5% for kE > 1.0002*deltaE.
+		 * arbitrarily choose k1 or k2 > 50 as our definition of large k.
 		 */
 		final double k1 = lambdaFactor * rootPerpE;
-		if (k1 > 50.)
-			return 1.;
 		final double k2 = lambdaFactor * rootDiff;
+		if (k1 > 50. || k2 > 50.)
+			return 1.;
 		final double kplus = k1 + k2;
 		final double kminus = k1 - k2;
 		final double sinhPlus = Math.sinh(kplus);
 		final double sinhMinus = Math.sinh(kminus);
 		final double ratio = sinhMinus / sinhPlus;
 		return 1. - (ratio * ratio);
+	}
+
+	/**
+	 * generalBarrierT -- a private utility routine. It computes the quantum
+	 * mechanical transmission probability for a barrier of nonzero width as a
+	 * function of the kinetic energy associated with the electron's motion
+	 * perpendicular to the barrier (kE*cos(theta)^2) and the barrier height,
+	 * deltaU.
+	 *
+	 * @param perpE
+	 * @param deltaU
+	 * @return
+	 */
+	private double generalBarrierT(double rootPerpE, double rootDiff) {
+		/*
+		 * In the small wavelength (large energy) limit, our sinh functions below can
+		 * overflow. The following algorithm avoids overflow but in a more rigorous way
+		 * than the original version (saved above). See the end of my
+		 * BarrierTransmission2.nb.
+		 *
+		 */
+		final double k1 = lambdaFactor * rootPerpE;
+		final double k2 = lambdaFactor * rootDiff;
+		/*
+		 * ln(2/epsrel - 1)/2 = klimit with epsrel the error of the high k formula
+		 * relative to the general formual. (See my BarrierTransmission2.nb notes)
+		 */
+		final double klimit = 10.;
+
+		double klarger, ksmaller;
+		if (k1 >= k2) {
+			klarger = k1;
+			ksmaller = k2;
+		} else {
+			klarger = k2;
+			ksmaller = k2;
+		}
+		if (ksmaller > klimit)
+			return 1.; // Both are large
+		if (klarger < klimit) { // Both are smaller than the cutoff
+			final double kplus = k1 + k2;
+			final double kminus = k1 - k2;
+			final double sinhPlus = Math.sinh(kplus);
+			final double sinhMinus = Math.sinh(kminus);
+			final double ratio = sinhMinus / sinhPlus;
+			return 1. - (ratio * ratio);
+		} else { // The smaller is below and the larger above the cutoff
+			return 1. - Math.exp(-4. * ksmaller);
+		}
 	}
 
 	/*

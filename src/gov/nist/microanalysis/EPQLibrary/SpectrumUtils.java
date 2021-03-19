@@ -1736,7 +1736,7 @@ final public class SpectrumUtils {
 	static public double getDose(SpectrumProperties props) throws EPQException {
 		final double fc = getAverageFaradayCurrent(props, 0.0);
 		if (fc <= 0.0)
-			throw new EPQException("The beam current is unavailable.");
+			throw new EPQException("The probe current is unavailable.");
 		final double lt = props.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0);
 		if (lt <= 0.0)
 			throw new EPQException("The live-time is unavailable.");

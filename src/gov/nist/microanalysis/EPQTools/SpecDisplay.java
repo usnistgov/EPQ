@@ -1966,7 +1966,7 @@ public class SpecDisplay extends JComponent {
 			saveMenu.add(mi);
 
 			if (GnuplotFile.generateSupported()) {
-				mi = new JMenuItem("As Latex script");
+				mi = new JMenuItem("As LaTeX script");
 				mi.addActionListener(new AbstractAction() {
 
 					private static final long serialVersionUID = 1L;

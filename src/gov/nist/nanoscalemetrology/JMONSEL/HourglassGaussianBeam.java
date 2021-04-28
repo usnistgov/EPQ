@@ -56,6 +56,8 @@ public class HourglassGaussianBeam implements ElectronGun {
 	private double[] mCenter; // best focus position
 	private double mBeamEnergy; // beam energy
 	private double mWidth; // standard deviation at best focus
+	private final double minBeamWidth = 5.e-12;
+
 	private double[] beamDirection = { 0., 0., 1. };
 	/* beamDirection in polar coordinates */
 	private double meanTheta = 0.;
@@ -81,7 +83,10 @@ public class HourglassGaussianBeam implements ElectronGun {
 	 * @param center double[] - The coordinates of best focus.
 	 */
 	public HourglassGaussianBeam(double width, double[] center) {
-		mWidth = width;
+		if (width < minBeamWidth)
+			mWidth = minBeamWidth;
+		else
+			mWidth = width;
 		mCenter = center.clone();
 	}
 
@@ -95,11 +100,19 @@ public class HourglassGaussianBeam implements ElectronGun {
 	 * sqrt(x^2+y^2), then necessarily is sqrt(2)*width. There is another convention
 	 * that defines "beam diameter" as that diameter which contains 56% of the beam
 	 * current. Let's call this d56. Then width = 0.3902*d56.
+	 * </p>
+	 * <p>
+	 * To avoid numerical issues at sharp corners, there is a minimum beam width of
+	 * 5.e-12 m. Widths specified smaller than this are replaced by this minimum
+	 * value.
 	 *
 	 * @param width double
 	 */
 	public void setWidth(double width) {
-		mWidth = width;
+		if (width < minBeamWidth)
+			mWidth = minBeamWidth;
+		else
+			mWidth = width;
 	}
 
 	/**

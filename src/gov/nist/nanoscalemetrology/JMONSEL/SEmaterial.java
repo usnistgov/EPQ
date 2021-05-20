@@ -81,6 +81,8 @@ public class SEmaterial extends Material implements Cloneable {
 
 	// Additional material properties
 	private double workfunction; // work function
+	private double deltaU; // surface barrier
+	private boolean deltaUisSet = false;
 	private double dielectricBreakdownField = Double.POSITIVE_INFINITY;
 	private double epsr = 1.; // relative dielectric function
 	private double eplasmon; // plasmon resonance energy
@@ -541,6 +543,7 @@ public class SEmaterial extends Material implements Cloneable {
 		super.replicate(mat);
 		workfunction = mat.getWorkfunction();
 		energyCBbottom = mat.getEnergyCBbottom();
+		if (mat.isDeltaUisSet()) setDeltaU(mat.getDeltaU());
 		eplasmon = mat.getEplasmon();
 		bindingEnergy.addAll(mat.bindingEnergy);
 		electronDensity.addAll(mat.electronDensity);
@@ -775,5 +778,33 @@ public class SEmaterial extends Material implements Cloneable {
 	public void setDielectricBreakdownField(double breakdownField) {
 		dielectricBreakdownField = breakdownField;
 		version = (version == Long.MAX_VALUE) ? 0L : version + 1L;
+	}
+
+	/**
+	 * Returns the surface barrier height, either the value explicitly set with
+	 * setDeltaU or, if it was not explicitly set, the negative of the energy at the
+	 * conduction band bottom (-energyCBbottom). I.e., it defaults to conduction
+	 * band reference.
+	 * 
+	 * @return
+	 */
+	public double getDeltaU() {
+		if (deltaUisSet)
+			return deltaU;
+		else
+			return -energyCBbottom;
+	}
+
+	/**
+	 * @param deltaU - surface potential barrier (in Joules).
+	 */
+	public void setDeltaU(double deltaU) {
+		this.deltaU = deltaU;
+		deltaUisSet = true;
+		version = (version == Long.MAX_VALUE) ? 0L : version + 1L;
+	}
+
+	public boolean isDeltaUisSet() {
+		return deltaUisSet;
 	}
 }

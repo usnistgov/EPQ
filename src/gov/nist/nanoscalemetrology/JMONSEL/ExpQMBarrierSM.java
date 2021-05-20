@@ -92,7 +92,7 @@ public class ExpQMBarrierSM implements BarrierScatterMechanism {
 	 * related by work function + Fermi energy + potential energy = 0.
 	 */
 
-	private double u0; // Barrier height of this material to vacuum.
+	private double dU; // Barrier height of this material to vacuum.
 	private double lambda; // Barrier width
 	private boolean classical;
 	/*
@@ -102,6 +102,13 @@ public class ExpQMBarrierSM implements BarrierScatterMechanism {
 	 */
 	private double lambdaFactor;
 	private Material mat;
+
+	/*
+	 * By default JMONSEL uses conduction-band-referenced energies. To switch to a
+	 * valence-band reference, energyOffset should be set to the difference between
+	 * the CB minimum and VB minimum.
+	 */
+	private double energyOffset;
 
 	/**
 	 * ExpQMBarrierSM -- Constructs a barrier scatter mechanism for the special case
@@ -116,9 +123,9 @@ public class ExpQMBarrierSM implements BarrierScatterMechanism {
 		super();
 		// this.mat = mat;
 		if (mat instanceof SEmaterial)
-			u0 = ((SEmaterial) mat).getEnergyCBbottom();
+			dU = ((SEmaterial) mat).getDeltaU();
 		else
-			u0 = 0.;
+			dU = 0.;
 		classical = true;
 	}
 
@@ -270,13 +277,13 @@ public class ExpQMBarrierSM implements BarrierScatterMechanism {
 		double deltaU;
 		final Material currentMaterial = currentRegion.getMaterial();
 		if (currentMaterial instanceof SEmaterial)
-			deltaU = -((SEmaterial) currentMaterial).getEnergyCBbottom();
+			deltaU = ((SEmaterial) currentMaterial).getDeltaU();
 		else
 			deltaU = 0.;
 
-		assert deltaU == -u0;
+		assert deltaU == -dU;
 		if (nextmaterial instanceof SEmaterial)
-			deltaU += ((SEmaterial) nextmaterial).getEnergyCBbottom();
+			deltaU -= ((SEmaterial) nextmaterial).getDeltaU();
 
 		/* FIND THE OUTWARD POINTING NORMAL AT THE BOUNDARY */
 		double[] nb = null; // We'll store it here
@@ -351,7 +358,7 @@ public class ExpQMBarrierSM implements BarrierScatterMechanism {
 			return null;
 		}
 
-		final double kE0 = pe.getEnergy();
+		final double kE0 = pe.getEnergy() + energyOffset;
 		double perpE;
 		if (kE0 <= 0.)
 			perpE = 0.;
@@ -445,7 +452,29 @@ public class ExpQMBarrierSM implements BarrierScatterMechanism {
 	 */
 	@Override
 	public String toString() {
-		return "ExpQMBarrierSM(" + mat.toString() + "," + Double.valueOf(u0).toString() + ","
+		return "ExpQMBarrierSM(" + mat.toString() + "," + Double.valueOf(dU).toString() + ","
 				+ Double.valueOf(lambda).toString() + ")";
+	}
+
+	/**
+	 * Returns the current value of the energy offset to be used
+	 * 
+	 * @return
+	 */
+	public double getEnergyOffset() {
+		return energyOffset;
+	}
+
+	/**
+	 * The barrier model assumes the electron energy and the barrier are referenced
+	 * to the conduction band bottom. To use a model that references both to the
+	 * valence band bottom, use this setter with energyOffset = energy of conduction
+	 * band bottom minus energy of valence band bottom AND use the
+	 * SEmaterial.setDeltaU to specify the appropriately bigger surface barrier.
+	 * 
+	 * @param energyOffset
+	 */
+	public void setEnergyOffset(double energyOffset) {
+		this.energyOffset = energyOffset;
 	}
 }

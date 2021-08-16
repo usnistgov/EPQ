@@ -245,7 +245,7 @@ abstract public class TransitionEnergy extends AlgorithmClass {
 		public double compute(XRayTransition xrt) throws EPQException {
 			final AtomicShell dest = xrt.getDestination();
 			AtomicShell src = xrt.getSource();
-			if(!(EdgeEnergy.Williams2011.isSupported(dest) && EdgeEnergy.Williams2011.isSupported(src)))
+			if(!isSupported(xrt))
 				throw new EPQException(xrt+"  is not supported by Williams001.");
 			final double res = EdgeEnergy.Williams2011.compute(dest) - EdgeEnergy.Williams2011.compute(src);
 			assert (res == 0.0) || ((res > ToSI.eV(0.1)) && (res < ToSI.eV(1.0e6)));

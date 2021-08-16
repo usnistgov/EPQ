@@ -411,6 +411,10 @@ final public class XRayTransition implements Comparable<XRayTransition>, Cloneab
 		if (dest == src)
 			throw new EPQFatalException(
 					"No transition is possible if the source and destination are equal. " + dest + " == " + src);
+		if(!AtomicShell.exists(element, src))
+			throw new EPQFatalException("The source shell does not exist. - "+element.toAbbrev()+" "+src);
+		if(!AtomicShell.exists(element, dest))
+			throw new EPQFatalException("The destination shell does not exist. - "+element.toAbbrev()+" "+dest);
 		if (dest > src) {
 			final int tmp = src;
 			src = dest;
@@ -557,6 +561,10 @@ final public class XRayTransition implements Comparable<XRayTransition>, Cloneab
 		final int dest = AtomicShell.parseIUPACName(str.substring(p + 1, q));
 		final int src = AtomicShell.parseIUPACName(str.substring(q + 1));
 		assert (dest != 1001) && (src != 1001) : str.substring(p + 1, q) + " and " + str.substring(q + 1);
+		if(!AtomicShell.exists(el, dest))
+			throw new EPQFatalException("The destination shell is not occupied in the ground state.");
+		if(!AtomicShell.exists(el, src))
+			throw new EPQFatalException("The source shell is not occupied in the ground state.");
 		return new XRayTransition(el, src, dest);
 	}
 
@@ -1142,6 +1150,8 @@ final public class XRayTransition implements Comparable<XRayTransition>, Cloneab
 		// The static table mWeight is loaded on demand from LineWeights.csv
 		if (mWeight == null)
 			readLineWeights();
+		if (!(AtomicShell.exists(el, mSourceShell[xrt]) && AtomicShell.exists(el, mDestinationShell[xrt])))
+			return false;
 		final int ani = el.getAtomicNumber() - 1;
 		return (ani >= 0) && (ani < mWeight.length) && (mWeight[ani] != null) && (xrt < mWeight[ani].length)
 				&& (mWeight[ani][xrt] > 0.0);
@@ -1159,7 +1169,10 @@ final public class XRayTransition implements Comparable<XRayTransition>, Cloneab
 		// The static table mWeight is loaded on demand from LineWeights.csv
 		if (mWeight == null)
 			readLineWeights();
-		final int ani = mSource.getElement().getAtomicNumber() - 1;
+		Element el = mSource.getElement();
+		if (!(AtomicShell.exists(el, mSource.getShell()) && AtomicShell.exists(el, mDestination.getShell())))
+			return false;
+		final int ani = el.getAtomicNumber() - 1;
 		return (mWeight[ani] != null) && (mTransition < mWeight[ani].length) && (mWeight[ani][mTransition] > 0.0);
 	}
 

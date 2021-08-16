@@ -287,7 +287,7 @@ public class EMSAFile extends BaseSpectrum {
 				// not necessary
 			} else if (prefix.startsWith("#XUNITS")) {
 				mBaseXUnit = 1.0;
-				if (value.equalsIgnoreCase("kev")) {
+				if(value.toUpperCase().contains("KEV")){
 					mBaseXUnit = 1000.0; // eV
 					value = "eV";
 				}

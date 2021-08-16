@@ -545,16 +545,16 @@ public class FilterFit extends LinearSpectrumFit {
 	 * Returns the total number of x-ray events explained by the elements in the fit
 	 * excluding the ones listed in <code>exclude</code>.
 	 *
-	 * @param exclude (may be null)
+	 * @param strip (may be null)
 	 * @return double
 	 * @throws EPQException
 	 */
-	public double getFitEventCount(final ISpectrumData unk, final Set<Element> exclude) throws EPQException {
+	public double getFitEventCount(final ISpectrumData unk, final Set<Element> strip) throws EPQException {
 		updateUnknown(unk);
 		double res = 0.0;
 		for (final FilteredPacket raf : mFilteredPackets) {
 			final FilteredSpectrum fs = raf.mFiltered;
-			if ((exclude == null) || (!exclude.contains(fs.getElement()))) {
+			if ((strip == null) || (!strip.contains(fs.getElement()))) {
 				final double norm = Math.max(0.0, raf.mKRatio.doubleValue())
 						* (fs.getNormalization() / mFilteredUnknown.getNormalization());
 				if (norm > 0.0)

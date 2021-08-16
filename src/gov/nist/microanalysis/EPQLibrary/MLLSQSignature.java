@@ -2,13 +2,12 @@ package gov.nist.microanalysis.EPQLibrary;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import gov.nist.microanalysis.EPQLibrary.ParticleSignature.StripMode;
 import gov.nist.microanalysis.EPQLibrary.Detector.EDSDetector;
 import gov.nist.microanalysis.Utility.UncertainValue2;
 
@@ -29,7 +28,7 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @author nritchie
  * @version 1.0
  */
-public class MLLSQSignature {
+public class MLLSQSignature implements Cloneable {
 
 	private double mThreshold = 3.29;
 	private final TreeMap<Element, ISpectrumData> mStandards;
@@ -37,14 +36,12 @@ public class MLLSQSignature {
 	private final EDSDetector mDetector;
 	private boolean mZafCorrectRefs = true;
 	private boolean mStoreResiduals = true;
-	private final TreeSet<Element> mExclude = new TreeSet<Element>();
-
 	private final double mBeamEnergy; // in
 										// Joules
-	private Set<Element> mStrip = new TreeSet<Element>();
-	public static Set<Element> DEFAULT_STRIP = defaultStrip();
-
-	private double mFitQuality = 0.0;
+	private TreeMap<Element, StripMode> mStrip = new TreeMap<Element, StripMode>();
+	
+	private Set<Element> mDontFit = new TreeSet<Element>();
+	
 	private double mChiSquared = 0.0;
 	private double mCounts = Double.NaN;
 	private ISpectrumData mResidual;
@@ -52,12 +49,6 @@ public class MLLSQSignature {
 	private boolean mStripUnlikely;
 	private FilterFit mFilterFit;
 
-	private static Set<Element> defaultStrip() {
-		final Set<Element> res = new TreeSet<Element>();
-		res.add(Element.C);
-		res.add(Element.O);
-		return res;
-	}
 
 	/**
 	 * Constructs a MLLSQSignature object to process spectra from the specified
@@ -72,8 +63,9 @@ public class MLLSQSignature {
 		mOptimal = null;
 		mDetector = detector;
 		mBeamEnergy = e0;
-		mStrip = defaultStrip();
+		mStrip = ParticleSignature.defaultStrip();
 		mStripUnlikely = true;
+		mDontFit = new TreeSet<Element>();
 	}
 
 	@Override
@@ -83,14 +75,13 @@ public class MLLSQSignature {
 		if (mOptimal != null)
 			res.mOptimal = new TreeMap<XRayTransitionSet, Double>(mOptimal);
 		res.mZafCorrectRefs = mZafCorrectRefs;
-		res.mExclude.addAll(mExclude);
-		res.mStrip = new TreeSet<Element>(mStrip);
-		res.mFitQuality = mFitQuality;
+		res.mStrip = new TreeMap<Element,StripMode>(mStrip);
 		res.mChiSquared = mChiSquared;
 		res.mCounts = mCounts;
 		res.mResidual = mResidual;
 		res.mStripUnlikely = mStripUnlikely;
 		res.mThreshold = mThreshold;
+		res.mDontFit = new TreeSet<Element>(mDontFit);
 		return res;
 	}
 
@@ -113,6 +104,37 @@ public class MLLSQSignature {
 		mOptimal = null;
 	}
 
+	public Set<Element> stripped(){
+		Set<Element> res=new TreeSet<Element>();
+		for(Element elm : mStrip.keySet())
+			if(mStrip.get(elm)==StripMode.Strip)
+				res.add(elm);
+		return res;
+	}
+	
+	public Set<Element> excluded(){
+		Set<Element> res=new TreeSet<Element>();
+		for(Element elm : mStrip.keySet())
+			if(mStrip.get(elm)==StripMode.Exclude)
+				res.add(elm);
+		return res;
+	}
+	
+	public Set<Element> dontFit(){
+		return mDontFit;
+	}
+	
+	public void setDontFit(Collection<Element> elms) {
+		mDontFit.clear();
+		if(elms!=null)
+			mDontFit.addAll(elms);
+	}
+	
+	public StripMode stripMode(Element elm) {
+		return mStrip.get(elm)==null ? StripMode.Normal : mStrip.get(elm);
+	}
+
+	
 	/**
 	 * Compute the full k-ratio set for all fitted transitions.
 	 * 
@@ -140,23 +162,23 @@ public class MLLSQSignature {
 			final FilterFit.CompoundCullingStrategy cs = new FilterFit.CompoundCullingStrategy();
 			// Special rules for one element masquerading as another
 			final FilterFit.SpecialCulling sc = new FilterFit.SpecialCulling();
-			if (!mStrip.contains(Element.Fe))
+			if (mStrip.get(Element.Fe)!=StripMode.Strip)
 				sc.add(Element.F, Element.Fe);
-			if (!mStrip.contains(Element.Th))
+			if (mStrip.get(Element.Th)!=StripMode.Strip)
 				sc.add(Element.Ag, Element.Th);
-			if (!mStrip.contains(Element.Sr))
+			if (mStrip.get(Element.Sr)!=StripMode.Strip)
 				sc.add(Element.Si, Element.Sr);
-			if (!mStrip.contains(Element.Si)) {
+			if (mStrip.get(Element.Si)!=StripMode.Strip) {
 				sc.add(Element.Sr, Element.Si);
 				sc.add(Element.W, Element.Si);
 			}
-			if (!mStrip.contains(Element.Ca))
+			if (mStrip.get(Element.Ca)!=StripMode.Strip)
 				sc.add(Element.Sb, Element.Ca);
-			if(!mStrip.contains(Element.S)) {
+			if(mStrip.get(Element.S)!=StripMode.Strip) {
 				sc.add(Element.S, Element.Pb);
 				sc.add(Element.S, Element.Mo);
 			}
-			if(!mStrip.contains(Element.Pb)) {
+			if(mStrip.get(Element.Pb)!=StripMode.Strip) {
 				sc.add(Element.Pb, Element.S);
 				sc.add(Element.Pb, Element.Mo);
 			}
@@ -164,12 +186,11 @@ public class MLLSQSignature {
 			cs.append(new FilterFit.CullByOptimal(mThreshold, mOptimal.keySet()));
 			mFilterFit.setCullingStrategy(cs);
 		}
-		mFilterFit.forceZero(mExclude);
+		mFilterFit.forceZero(mDontFit);
 		final KRatioSet res = mFilterFit.getKRatios(spec);
-		mFitQuality = mFilterFit.getFitMetric(spec);
 		mChiSquared = mFilterFit.chiSquared();
 		mResidual = mFilterFit.getResidualSpectrum(spec);
-		mCounts = mFilterFit.getFitEventCount(spec, mStrip);
+		mCounts = mFilterFit.getFitEventCount(spec, stripped());
 		return res;
 	}
 
@@ -253,24 +274,11 @@ public class MLLSQSignature {
 	 */
 	public ParticleSignature signature(KRatioSet krs) {
 		final KRatioSet optimal = optimalKRatioSet(krs);
-		final HashSet<Element> strip = new HashSet<>(mStrip);
-		strip.remove(Element.C);
-		final ParticleSignature res = new ParticleSignature(
-				mStrip.contains(Element.C) ? Collections.singleton(Element.C) : Collections.emptySet(), strip);
+		final ParticleSignature res = new ParticleSignature(stripped(), excluded());
 		for (final XRayTransitionSet xrts : optimal.getTransitions())
 			res.add(xrts.getElement(),
 					UncertainValue2.multiply(mOptimal.get(xrts).doubleValue(), optimal.getKRatioU(xrts)));
 		return res;
-	}
-
-	/**
-	 * Returns the value of fit quality calculated as a result of the last call to
-	 * <code>compute</code>
-	 * 
-	 * @return 1.0 for perfect fit, 0.0 for perfectly lousy
-	 */
-	public double getFitQuality() {
-		return mFitQuality;
 	}
 
 	public double getChiSquared() {
@@ -292,7 +300,13 @@ public class MLLSQSignature {
 	 * @param col
 	 */
 	public void addStripped(Collection<Element> col) {
-		mStrip.addAll(col);
+		for(Element el : col)
+			mStrip.put(el, StripMode.Strip);
+	}
+	
+	public void addExluded(Collection<Element> col) {
+		for(Element el : col)
+			mStrip.put(el, StripMode.Exclude);
 	}
 
 	/**
@@ -303,7 +317,7 @@ public class MLLSQSignature {
 	 * @return boolean
 	 */
 	public boolean isStripped(Element elm) {
-		return mStrip.contains(elm);
+		return (mStrip.get(elm)!=null) && (mStrip.get(elm)==StripMode.Strip);
 	}
 
 	/**
@@ -352,36 +366,6 @@ public class MLLSQSignature {
 	 */
 	public ArrayList<ISpectrumData> getStandards() {
 		return new ArrayList<ISpectrumData>(mStandards.values());
-	}
-
-	/**
-	 * Specify a set of elements to exclude from the signature fit. Even if a
-	 * reference exists for this element it will not be fit.
-	 * 
-	 * @param exclude
-	 */
-	public void setExclusionSet(Collection<Element> exclude) {
-		mExclude.clear();
-		if (exclude != null)
-			mExclude.addAll(exclude);
-	}
-
-	/**
-	 * Clear the exclusion set so that all elements for which there are references
-	 * is fit.
-	 */
-	public void clearExclusionSet() {
-		mExclude.clear();
-	}
-
-	/**
-	 * Returns a set of elements which are excluded from the signature fit. Even if
-	 * a reference exists for this element it will not be fit.
-	 * 
-	 * @return TreeSet&gt;Element&lt;
-	 */
-	public Set<Element> getExclusionSet() {
-		return Collections.unmodifiableSet(mExclude);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Class-Path: jama-1.0.3.jar jai-imageio-core-1.4.0.jar xmlpull-1.1.3.1.jar xpp3_min-1.1.4c.jar xstream-1.4.15.jar junit-4.13.jar jgoodies-forms-1.8.0.jar derby-10.14.1.0.jar derbynet-10.14.1.0.jar derbyclient-10.14.1.0.jar commons-math-2.1.jar 
+Class-Path: jama-1.0.3.jar jai-imageio-core-1.4.0.jar xmlpull-1.1.3.1.jar xpp3_min-1.1.4c.jar xstream-1.4.17.jar junit-4.13.jar jgoodies-forms-1.8.0.jar derby-10.14.1.0.jar derbynet-10.14.1.0.jar derbyclient-10.14.1.0.jar commons-math-2.1.jar 
 Specification-Title: NIST Electron Probe Quantification library
 Specification-Vendor: National Institute of Standards and Technology
 EOF

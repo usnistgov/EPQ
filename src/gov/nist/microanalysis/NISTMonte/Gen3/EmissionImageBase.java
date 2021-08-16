@@ -433,6 +433,22 @@ public abstract class EmissionImageBase implements ActionListener {
 	public void setLabel(boolean label) {
 		mLabel = label;
 	}
+	
+	public void dumpPalette(File file, int height) throws IOException {
+		final int width = 256;
+		BufferedImage res = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED, sPalette);
+		for(int xx=0;xx<256;++xx) {
+			for(int yy=0;yy<height;++yy)
+				res.setRGB(xx, yy, res.getColorModel().getRGB(xx));
+		}
+		final Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
+		try (final ImageOutputStream ios = ImageIO.createImageOutputStream(file)) {
+			final ImageWriter writer = writers.next();
+			writer.setOutput(ios);
+			writer.write(res);
+		}
+	}
+	
 
 	abstract protected String getTitle();
 

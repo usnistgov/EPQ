@@ -395,10 +395,10 @@ abstract public class EdgeEnergy extends AlgorithmClass {
 		@Override
 		public double compute(AtomicShell shell) {
 			try {
-				return Default.compute(shell);
+				return Chantler2005.compute(shell);
 			} catch (final Throwable e0) {
 				try {
-					return Chantler2005.compute(shell);
+					return Williams2011.compute(shell);
 				} catch (final Throwable e1) {
 					try {
 						return NISTxrtdb.compute(shell);
@@ -415,13 +415,13 @@ abstract public class EdgeEnergy extends AlgorithmClass {
 
 		@Override
 		public boolean isSupported(AtomicShell shell) {
-			return Default.isSupported(shell) || Chantler2005.isSupported(shell) || NISTxrtdb.isSupported(shell) || DTSA.isSupported(shell);
+			return Williams2011.isSupported(shell) || Chantler2005.isSupported(shell) || NISTxrtdb.isSupported(shell) || DTSA.isSupported(shell);
 		}
 	}
 
 	public static final EdgeEnergy SuperSet = new SuperSetEdgeEnergy();
 
-	public static final EdgeEnergy Default = EdgeEnergy.Williams2011;
+	public static final EdgeEnergy Default = EdgeEnergy.SuperSet;
 
 	static private final AlgorithmClass[] mAllImplementations = { EdgeEnergy.DTSA, EdgeEnergy.Chantler2005,
 			EdgeEnergy.NISTxrtdb, EdgeEnergy.Wernish84, EdgeEnergy.DHSIonizationEnergy, EdgeEnergy.Williams2011,

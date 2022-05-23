@@ -1623,7 +1623,9 @@ public class Session {
                         final Integer id = rs.getInt("ID");
                         final String xml = rs.getString("XML_OBJ");
                         final Timestamp retired = rs.getTimestamp("RETIRED");
+                        // System.out.println(xml);
                         final DetectorProperties det = (DetectorProperties) xs.fromXML(xml);
+                        // System.out.println("Read "+det.toString());
                         mDetectors.put(det, id);
                         if(retired == null)
                            mActiveDetectors.put(det, id);

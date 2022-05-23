@@ -56,111 +56,134 @@ abstract public class LinearLeastSquares {
     * 
     * @throws EPQException
     */
-   protected void perform()
-         throws EPQException {
-      if(mFitCoefficients == null) {
-         if((mXCoordinate == null) || (mData == null) || (mSigma == null))
-            throw new IllegalArgumentException("No data specified for the linear least squares fit.");
-         final int nTot = fitFunctionCount();
-         final int nFit = getNonZeroedCoefficientCount();
-         // Allocate an array showing the location of non-zeroed coefficients
-         final int[] nzIndex = new int[nFit];
-         for(int j = 0, k = 0; j < nTot; ++j)
-            if(!isZeroFitCoefficient(j)) {
-               nzIndex[k] = j;
-               ++k;
-            }
-         final int dataLen = mXCoordinate.length;
-         if(mSVD == null) {
-            // the "design matrix"
-            final Matrix a = new Matrix(dataLen, nFit);
-            final double[] afunc = new double[nTot];
-            for(int i = 0; i < dataLen; ++i) {
-               assert mSigma[i] >= 0.0 : Double.toString(mSigma[i]);
-               fitFunction(mXCoordinate[i], afunc);
-               for(int j = 0; j < nFit; ++j) {
-                  final double val = afunc[nzIndex[j]] / Math.max(mSigma[i], 1.0e-20);
-                  assert !(Double.isNaN(val) || Double.isInfinite(val)) : val;
-                  a.set(i, j, val);
-               }
-            }
-            mSVD = a.svd();
-            // Check that mSVD really solves the linear equation defined by a
-            assert (a.minus(mSVD.getU().times(mSVD.getS().times(mSVD.getV().transpose()))).norm1() / a.norm1()) < 1.0e-6;
-         }
-         final Matrix u = mSVD.getU(), s = mSVD.getS(), v = mSVD.getV();
-         assert (u.getRowDimension() == dataLen) && (u.getColumnDimension() == nFit);
-         assert (s.getRowDimension() == nFit) && (s.getColumnDimension() == nFit);
-         assert (v.getRowDimension() == nFit) && (v.getColumnDimension() == nFit);
-         // Edit singular values
-         final double[] w = new double[nFit];
-         {
-            double[] wi = new double[nTot];
-            for(int i = 0; i < nFit; ++i)
-               wi[nzIndex[i]] = s.get(i, i);
-            wi = editSingularValues(wi);
-            for(int i = 0; i < nFit; ++i)
-               w[i] = wi[nzIndex[i]];
-         }
-         // Compute the covariance matrix
-         mCovariance = new Matrix(nTot, nTot);
-         {
-            final double[] wti = new double[nFit];
-            for(int i = 0; i < nFit; ++i)
-               wti[i] = (w[i] != 0.0 ? 1.0 / (w[i] * w[i]) : 0.0);
-            for(int j = 0; j < nFit; ++j)
-               for(int k = 0; k <= j; ++k) {
-                  double sum = 0.0;
-                  for(int i = 0; i < nFit; ++i)
-                     sum += v.get(j, i) * v.get(k, i) * wti[i];
-                  mCovariance.set(nzIndex[j], nzIndex[k], sum);
-                  mCovariance.set(nzIndex[k], nzIndex[j], sum);
-               }
-         }
-         final double[] fcs = new double[nFit];
-         {
-            final double[] b = new double[dataLen];
-            for(int i = 0; i < dataLen; ++i)
-               b[i] = mData[i] / mSigma[i];
-            // Compute fit coefficients
-            for(int k = 0; k < nFit; ++k) {
-               double fc = 0.0;
-               for(int i = 0; i < nFit; ++i)
-                  if(w[i] != 0.0) {
-                     double dot = 0.0;
-                     for(int j = 0; j < dataLen; ++j)
-                        dot += u.get(j, i) * b[j];
-                     fc += (dot / w[i]) * v.get(k, i);
+   protected void perform() throws EPQException {
+      performFit();
+   }
+   
+   private void performFit() throws EPQException {
+      if (mFitCoefficients == null) {
+         synchronized (this) {
+            if (mFitCoefficients == null) {
+               if ((mXCoordinate == null) || (mData == null)
+                     || (mSigma == null))
+                  throw new IllegalArgumentException(
+                        "No data specified for the linear least squares fit.");
+               final int nTot = fitFunctionCount();
+               mFitCoefficients = new UncertainValue2[nTot];
+               Arrays.fill(mFitCoefficients, UncertainValue2.ZERO);
+               final int nFit = getNonZeroedCoefficientCount();
+               if (nFit == 0)
+                  return;
+               // Allocate an array showing the location of non-zeroed coefficients
+               final int[] nzIndex = new int[nFit];
+               for (int j = 0, k = 0; j < nTot; ++j)
+                  if (!isZeroFitCoefficient(j)) {
+                     nzIndex[k] = j;
+                     ++k;
                   }
-               fcs[k] = fc;
+               final int dataLen = mXCoordinate.length;
+               if (mSVD == null) {
+                  // the "design matrix"
+                  final Matrix a = new Matrix(dataLen, nFit);
+                  final double[] afunc = new double[nTot];
+                  for (int i = 0; i < dataLen; ++i) {
+                     assert mSigma[i] >= 0.0 : Double.toString(mSigma[i]);
+                     fitFunction(mXCoordinate[i], afunc);
+                     for (int j = 0; j < nFit; ++j) {
+                        final double val = afunc[nzIndex[j]]
+                              / Math.max(mSigma[i], 1.0e-20);
+                        assert !(Double.isNaN(val) || Double.isInfinite(val))
+                              : val;
+                        a.set(i, j, val);
+                     }
+                  }
+                  mSVD = a.svd();
+                  // Check that mSVD really solves the linear equation defined
+                  // by a
+                  assert (a
+                        .minus(mSVD.getU().times(
+                              mSVD.getS().times(mSVD.getV().transpose())))
+                        .norm1() / a.norm1()) < 1.0e-6;
+               }
+               final Matrix u = mSVD.getU(), s = mSVD.getS(), v = mSVD.getV();
+               assert (u.getRowDimension() == dataLen)
+                     && (u.getColumnDimension() == nFit);
+               assert (s.getRowDimension() == nFit)
+                     && (s.getColumnDimension() == nFit);
+               assert (v.getRowDimension() == nFit)
+                     && (v.getColumnDimension() == nFit);
+               // Edit singular values
+               final double[] w = new double[nFit];
+               {
+                  double[] wi = new double[nTot];
+                  for (int i = 0; i < nFit; ++i)
+                     wi[nzIndex[i]] = s.get(i, i);
+                  wi = editSingularValues(wi);
+                  for (int i = 0; i < nFit; ++i)
+                     w[i] = wi[nzIndex[i]];
+               }
+               // Compute the covariance matrix
+               mCovariance = new Matrix(nTot, nTot);
+               {
+                  final double[] wti = new double[nFit];
+                  for (int i = 0; i < nFit; ++i)
+                     wti[i] = (w[i] != 0.0 ? 1.0 / (w[i] * w[i]) : 0.0);
+                  for (int j = 0; j < nFit; ++j)
+                     for (int k = 0; k <= j; ++k) {
+                        double sum = 0.0;
+                        for (int i = 0; i < nFit; ++i)
+                           sum += v.get(j, i) * v.get(k, i) * wti[i];
+                        mCovariance.set(nzIndex[j], nzIndex[k], sum);
+                        mCovariance.set(nzIndex[k], nzIndex[j], sum);
+                     }
+               }
+               final double[] fcs = new double[nFit];
+               {
+                  final double[] b = new double[dataLen];
+                  for (int i = 0; i < dataLen; ++i)
+                     b[i] = mData[i] / mSigma[i];
+                  // Compute fit coefficients
+                  for (int k = 0; k < nFit; ++k) {
+                     double fc = 0.0;
+                     for (int i = 0; i < nFit; ++i)
+                        if (w[i] != 0.0) {
+                           double dot = 0.0;
+                           for (int j = 0; j < dataLen; ++j)
+                              dot += u.get(j, i) * b[j];
+                           fc += (dot / w[i]) * v.get(k, i);
+                        }
+                     fcs[k] = fc;
+                  }
+               }
+               final double[] expU = confidenceIntervals(
+                     INTERVAL_MODE.ONE_D_INTERVAL, 0.683, mCovariance);
+               for (int j = 0; j < nFit; ++j)
+                  mFitCoefficients[nzIndex[j]] = new UncertainValue2(fcs[j],
+                        "LLS", expU[nzIndex[j]]);
             }
          }
-         mFitCoefficients = new UncertainValue2[nTot];
-         Arrays.fill(mFitCoefficients, UncertainValue2.ZERO);
-         final double[] expU = confidenceIntervals(INTERVAL_MODE.ONE_D_INTERVAL, 0.683, mCovariance);
-         for(int j = 0; j < nFit; ++j)
-        	 mFitCoefficients[nzIndex[j]] = new UncertainValue2(fcs[j], "LLS", expU[nzIndex[j]]);
       }
    }
-
+   //
    /**
     * This function implements a simple default method for setting 1/w[i] to 0
     * depending upon the relative w[i] compared with the other w[*]. Override
     * this function to provide a more sophisticated method.
     * 
-    * @param wi The initial values
+    * @param wi
+    *           The initial values
     * @return double[] The edited values
     */
    protected double[] editSingularValues(double[] wi) {
       final double[] w = wi.clone();
       // Set the singular values to zero....
       double wMax = 0.0;
-      for(final double element : w)
-         if(element > wMax)
+      for (final double element : w)
+         if (element > wMax)
             wMax = element;
       final double thresh = wMax * TOLERANCE;
-      for(int j = 0; j < w.length; ++j)
-         if(w[j] < thresh)
+      for (int j = 0; j < w.length; ++j)
+         if (w[j] < thresh)
             w[j] = 0.0;
       return w;
    }
@@ -177,9 +200,12 @@ abstract public class LinearLeastSquares {
     * LinearLeastSquares - Construct an object that represents the linear least
     * squares fit of the abstract fitFunction to the data in x &amp; y.
     * 
-    * @param x double[] - The abscissa
-    * @param y double[] - The ordinate
-    * @param sig double[] - The error for each ordinate value respectively.
+    * @param x
+    *           double[] - The abscissa
+    * @param y
+    *           double[] - The ordinate
+    * @param sig
+    *           double[] - The error for each ordinate value respectively.
     */
    public LinearLeastSquares(double[] x, double[] y, double[] sig) {
       super();
@@ -191,8 +217,10 @@ abstract public class LinearLeastSquares {
     * errors in the measured parameter y are all due to counting statistics and
     * can be modeled as the square root of the signal size.
     * 
-    * @param x double[]
-    * @param y double[]
+    * @param x
+    *           double[]
+    * @param y
+    *           double[]
     */
    public LinearLeastSquares(double[] x, double[] y) {
       this(x, y, null);
@@ -202,27 +230,29 @@ abstract public class LinearLeastSquares {
     * setData - Set the data to be fit. Setting new data will cause everything
     * to be recalculated.
     * 
-    * @param x double[]
-    * @param y double[]
-    * @param sig double[] - The error associated with the data in the argument
-    *           y.
+    * @param x
+    *           double[]
+    * @param y
+    *           double[]
+    * @param sig
+    *           double[] - The error associated with the data in the argument y.
     */
    public void setData(double[] x, double[] y, double[] sig) {
       assert (y.length == x.length);
       assert (sig == null) || (sig.length == x.length);
       int cx = 0;
-      if(sig == null)
+      if (sig == null)
          cx = y.length;
       else
-         for(final double element : sig)
-            if(element < 1.0e300)
+         for (final double element : sig)
+            if (element < 1.0e300)
                ++cx;
-      if(cx < y.length) {
+      if (cx < y.length) {
          mXCoordinate = new double[cx];
          mData = new double[cx];
          mSigma = new double[cx];
-         for(int i = 0, j = 0; i < sig.length; ++i)
-            if(sig[i] < 1.0e300) {
+         for (int i = 0, j = 0; i < sig.length; ++i)
+            if (sig[i] < 1.0e300) {
                mXCoordinate[j] = x[i];
                mData[j] = y[i];
                mSigma[j] = sig[i];
@@ -242,8 +272,10 @@ abstract public class LinearLeastSquares {
     * by default counting statistics (sigma[i]=sqrt(y[i])). Setting new data
     * will cause everything to be recalculated.
     * 
-    * @param x double[]
-    * @param y double[]
+    * @param x
+    *           double[]
+    * @param y
+    *           double[]
     */
    public void setData(double[] x, double[] y) {
       setData(x, y, null);
@@ -256,12 +288,10 @@ abstract public class LinearLeastSquares {
     * @return double[]
     * @throws EPQException
     */
-   public double[] fitParameters()
-         throws EPQException {
-      if(mFitCoefficients == null)
-         perform();
+   public double[] fitParameters() throws EPQException {
+      performFit();
       final double[] res = new double[mFitCoefficients.length];
-      for(int i = 0; i < res.length; ++i)
+      for (int i = 0; i < res.length; ++i)
          res[i] = mFitCoefficients[i].doubleValue();
       return res;
    }
@@ -274,24 +304,21 @@ abstract public class LinearLeastSquares {
     * @return UncertainValue[]
     * @throws EPQException
     */
-   public UncertainValue2[] getResults()
-         throws EPQException {
-      if(mFitCoefficients == null)
-         perform();
+   public UncertainValue2[] getResults() throws EPQException {
+      performFit();
       return mFitCoefficients;
    }
 
    /**
     * Returns the i-th fit parameter.
     * 
-    * @param i parameter index
+    * @param i
+    *           parameter index
     * @return double value
     * @throws EPQException
     */
-   public double fitParamter(int i)
-         throws EPQException {
-      if(mFitCoefficients == null)
-         perform();
+   public double fitParamter(int i) throws EPQException {
+      performFit();
       return mFitCoefficients[i].doubleValue();
    }
 
@@ -302,12 +329,10 @@ abstract public class LinearLeastSquares {
     * @return double[]
     * @throws EPQException
     */
-   public double[] errors()
-         throws EPQException {
-      if(mFitCoefficients == null)
-         perform();
+   public double[] errors() throws EPQException {
+      performFit();
       final double[] res = new double[mCovariance.getRowDimension()];
-      for(int i = 0; i < res.length; ++i)
+      for (int i = 0; i < res.length; ++i)
          res[i] = Math.sqrt(mCovariance.get(i, i));
       return res;
    }
@@ -320,10 +345,8 @@ abstract public class LinearLeastSquares {
     * @return Matrix
     * @throws EPQException
     */
-   public Matrix covariance()
-         throws EPQException {
-      if(mFitCoefficients == null)
-         perform();
+   public Matrix covariance() throws EPQException {
+      performFit();
       return mCovariance;
    }
 
@@ -333,13 +356,13 @@ abstract public class LinearLeastSquares {
       double maxV = 1.0 - Math2.gammq(0.5 * degsOfFree, 0.5 * max);
       assert minV < prob;
       assert maxV > prob;
-      while(Math.abs(max - min) > 0.01) {
+      while (Math.abs(max - min) > 0.01) {
          final double test = 0.5 * (max + min);
          final double testV = 1.0 - Math2.gammq(0.5 * degsOfFree, 0.5 * test);
-         if(testV > prob) {
+         if (testV > prob) {
             max = test;
             maxV = testV;
-         } else if(testV < prob) {
+         } else if (testV < prob) {
             min = test;
             minV = testV;
          }
@@ -364,32 +387,35 @@ abstract public class LinearLeastSquares {
    /**
     * Calculates the confidence intervals for each parameter in the fit.
     * 
-    * @param mode Either ONE_D_INTERVAL or JOINT_INTERVAL
-    * @param prob 0.683 for "1 sigma" etc.
+    * @param mode
+    *           Either ONE_D_INTERVAL or JOINT_INTERVAL
+    * @param prob
+    *           0.683 for "1 sigma" etc.
     * @return An array of double containing the confidence intervals
     * @throws EPQException
     */
-   public double[] confidenceIntervals(INTERVAL_MODE mode, double prob, Matrix cov)
-         throws EPQException {
+   public double[] confidenceIntervals(INTERVAL_MODE mode, double prob,
+         Matrix cov) throws EPQException {
       final double[] res = new double[cov.getRowDimension()];
-      switch(mode) {
-         case ONE_D_INTERVAL: {
+      switch (mode) {
+         case ONE_D_INTERVAL : {
             // The standard 1D recipe
-            final double k = prob==0.683 ? 1.0 : chiSqr(1, prob);
-            for(int i = 0; i < res.length; ++i)
+            final double k = prob == 0.683 ? 1.0 : chiSqr(1, prob);
+            for (int i = 0; i < res.length; ++i)
                res[i] = Math.sqrt(k * cov.get(i, i));
             break;
          }
-         case JOINT_INTERVAL: {
+         case JOINT_INTERVAL : {
             final Matrix ci = cov.inverse();
             final double k = chiSqr(res.length, prob);
             final double d = ci.det();
             final int subDim = res.length - 1;
             final Matrix sub = new Matrix(subDim, subDim);
-            for(int i = 0; i < res.length; ++i) {
-               for(int r = 0; r < subDim; ++r)
-                  for(int c = 0; c < subDim; ++c)
-                     sub.set(r, c, ci.get(r < i ? r : r + 1, c < i ? c : c + 1));
+            for (int i = 0; i < res.length; ++i) {
+               for (int r = 0; r < subDim; ++r)
+                  for (int c = 0; c < subDim; ++c)
+                     sub.set(r, c,
+                           ci.get(r < i ? r : r + 1, c < i ? c : c + 1));
                res[i] = Math.sqrt(Math.abs((k * sub.det()) / d));
             }
             break;
@@ -406,16 +432,17 @@ abstract public class LinearLeastSquares {
     * @return Matrix
     * @throws EPQException
     */
-   public Matrix correlation()
-         throws EPQException {
-      if(mFitCoefficients == null)
-         perform();
+   public Matrix correlation() throws EPQException {
+      performFit();
       final Matrix res = mCovariance.copy();
-      for(int r = 0; r < res.getRowDimension(); ++r) {
+      for (int r = 0; r < res.getRowDimension(); ++r) {
          res.set(r, r, 1.0);
-         for(int c = r + 1; c < res.getColumnDimension(); ++c) {
+         for (int c = r + 1; c < res.getColumnDimension(); ++c) {
             final double cv = mCovariance.get(r, c);
-            final double corr = cv != 0.0 ? cv / Math.sqrt(mCovariance.get(r, r) * mCovariance.get(c, c)) : 0.0;
+            final double corr = cv != 0.0
+                  ? cv / Math
+                        .sqrt(mCovariance.get(r, r) * mCovariance.get(c, c))
+                  : 0.0;
             assert corr >= -1.0 : "Correlation is " + Double.toString(corr);
             assert corr <= 1.0 : "Correlation is " + Double.toString(corr);
             res.set(r, c, corr);
@@ -431,8 +458,7 @@ abstract public class LinearLeastSquares {
     * @return double
     * @throws EPQException
     */
-   public double chiSquared()
-         throws EPQException {
+   public double chiSquared() throws EPQException {
       return chiSquared(fitParameters());
    }
 
@@ -440,30 +466,31 @@ abstract public class LinearLeastSquares {
     * Computes the reduced chi-square metric based on the desired confidence
     * level and the number of degrees of freedom.
     * 
-    * @param confidenceLevel - Use 0.683 for 1 sigma, 0.954 for 2 sigma etc. on
-    *           range (0,1).
+    * @param confidenceLevel
+    *           - Use 0.683 for 1 sigma, 0.954 for 2 sigma etc. on range (0,1).
     * @return double
     * @throws EPQException
     */
-   public double reducedChiSquared(double confidenceLevel)
-         throws EPQException {
+   public double reducedChiSquared(double confidenceLevel) throws EPQException {
       final double[] fp = fitParameters();
       // Count the number of degrees of freedom
       int dof = 0;
-      for(final double element : mSigma)
-         if(element != MAX_ERROR)
+      for (final double element : mSigma)
+         if (element != MAX_ERROR)
             ++dof;
-      for(final double element : fp)
-         if(element != 0.0)
+      for (final double element : fp)
+         if (element != 0.0)
             --dof;
       assert dof > 0;
-      return chiSquared(fp) / Math2.chiSquaredConfidenceLevel(confidenceLevel, dof);
+      return chiSquared(fp)
+            / Math2.chiSquaredConfidenceLevel(confidenceLevel, dof);
    }
 
    /**
     * Computes the chiSquared metric for the specified fitCoefficient array.
     * 
-    * @param fitCoeff - double[fitFunctionCount()]
+    * @param fitCoeff
+    *           - double[fitFunctionCount()]
     * @return double
     */
    protected double chiSquared(double[] fitCoeff) {
@@ -471,10 +498,10 @@ abstract public class LinearLeastSquares {
       assert fitCoeff.length == n;
       final double[] ff = new double[n];
       double chi2 = 0.0;
-      for(int ch = 0; ch < mXCoordinate.length; ++ch) {
+      for (int ch = 0; ch < mXCoordinate.length; ++ch) {
          fitFunction(mXCoordinate[ch], ff);
          double y = 0.0;
-         for(int j = 0; j < n; ++j)
+         for (int j = 0; j < n; ++j)
             y += fitCoeff[j] * ff[j];
          chi2 += Math2.sqr((y - mData[ch]) / mSigma[ch]);
       }
@@ -484,7 +511,8 @@ abstract public class LinearLeastSquares {
    /**
     * Computes the chiSquared metric for the specified fitCoefficient array.
     * 
-    * @param fitCoeff - UncertainValue[fitFunctionCount()]
+    * @param fitCoeff
+    *           - UncertainValue[fitFunctionCount()]
     * @return double
     */
    protected double chiSquared(UncertainValue2[] fitCoeff) {
@@ -492,10 +520,10 @@ abstract public class LinearLeastSquares {
       assert fitCoeff.length == n;
       final double[] ff = new double[n];
       double chi2 = 0.0;
-      for(int ch = 0; ch < mXCoordinate.length; ++ch) {
+      for (int ch = 0; ch < mXCoordinate.length; ++ch) {
          fitFunction(mXCoordinate[ch], ff);
          double y = 0.0;
-         for(int j = 0; j < n; ++j)
+         for (int j = 0; j < n; ++j)
             y += fitCoeff[j].doubleValue() * ff[j];
          chi2 += Math2.sqr((y - mData[ch]) / mSigma[ch]);
       }
@@ -523,7 +551,7 @@ abstract public class LinearLeastSquares {
    }
 
    public void clearZeroedCoefficients() {
-      if(mZeroThese != null)
+      if (mZeroThese != null)
          Arrays.fill(mZeroThese, false);
    }
 
@@ -531,25 +559,27 @@ abstract public class LinearLeastSquares {
     * Specify whether to force the coefficient for the specified fit function to
     * zero.
     * 
-    * @param i Index of fit function
-    * @param b true to force to zero; false otherwise
+    * @param i
+    *           Index of fit function
+    * @param b
+    *           true to force to zero; false otherwise
     */
    public void zeroFitCoefficient(int i, boolean b) {
-      if((mZeroThese == null) && b)
+      if ((mZeroThese == null) && b)
          mZeroThese = new boolean[fitFunctionCount()];
-      if((mZeroThese != null) && (mZeroThese[i] != b)) {
+      if ((mZeroThese != null) && (mZeroThese[i] != b)) {
          mZeroThese[i] = b;
          reevaluateAll();
       }
    }
 
    public int getNonZeroedCoefficientCount() {
-      if(mZeroThese == null)
+      if (mZeroThese == null)
          return fitFunctionCount();
       else {
          int cx = 0;
-         for(final boolean b : mZeroThese)
-            if(!b)
+         for (final boolean b : mZeroThese)
+            if (!b)
                ++cx;
          return cx;
       }
@@ -559,15 +589,15 @@ abstract public class LinearLeastSquares {
     * Determine whether the coefficient for the specified fit function has been
     * forced to zero.
     * 
-    * @param i Index of fit function
+    * @param i
+    *           Index of fit function
     * @return boolean true to forced to zero
     */
    public boolean isZeroFitCoefficient(int i) {
       return (mZeroThese != null) && mZeroThese[i];
    }
 
-   public double fitQuality()
-         throws EPQException {
+   public double fitQuality() throws EPQException {
       return fitQuality(fitParameters());
    }
 
@@ -577,14 +607,15 @@ abstract public class LinearLeastSquares {
     * If the fit is poor and the model does not fit the data then the fit
     * quality is near 1.0.
     * 
-    * @param fp double[]
+    * @param fp
+    *           double[]
     * @return double
     */
    public double fitQuality(double[] fp) {
       final int dataPtCx = mXCoordinate.length;
       int paramCx = 0;
-      for(final double element : fp)
-         if(element != 0.0)
+      for (final double element : fp)
+         if (element != 0.0)
             ++paramCx;
       return Math2.gammq(0.5 * (dataPtCx - paramCx), 0.5 * chiSquared(fp));
    }
@@ -602,9 +633,11 @@ abstract public class LinearLeastSquares {
     * fitFunction - For the specified abscissa coordinate, computes the m
     * different values of the fit function at the abscissa value xi.
     * 
-    * @param xi double - The abscissa coordinate
-    * @param afunc double[] - Takes a blank m element double array and returns
-    *           the m ordinate values of the fit function.
+    * @param xi
+    *           double - The abscissa coordinate
+    * @param afunc
+    *           double[] - Takes a blank m element double array and returns the
+    *           m ordinate values of the fit function.
     */
    abstract protected void fitFunction(double xi, double[] afunc);
 };

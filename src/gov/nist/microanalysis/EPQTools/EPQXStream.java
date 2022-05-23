@@ -13,6 +13,7 @@ import com.thoughtworks.xstream.converters.ConverterRegistry;
 import com.thoughtworks.xstream.converters.reflection.ReflectionProvider;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.mapper.Mapper;
+import com.thoughtworks.xstream.security.*;
 
 import gov.nist.microanalysis.EPQLibrary.AtomicShell;
 import gov.nist.microanalysis.EPQLibrary.Composition;
@@ -53,13 +54,64 @@ public class EPQXStream
    }
 
    private void init() {
-      XStream.setupDefaultSecurity(this); // to be removed after 1.5
-      allowTypesByWildcard(new String[] {
-         "gov.nist.microanalysis.**",
-         "gov.nist.nanoscalemetrology.**",
-         "org.python.**",
-         "Jama.**"
-      });
+	   // clear out existing permissions and start a whitelist
+	   addPermission(NoTypePermission.NONE);
+	   // allow some basics
+	   addPermission(NullPermission.NULL);
+	   addPermission(PrimitiveTypePermission.PRIMITIVES);
+	   addPermission(ArrayTypePermission.ARRAYS);
+	   allowTypeHierarchy(java.util.Collection.class);
+	   allowTypeHierarchy(java.util.Map.class);
+	   allowTypes(new Class[] {
+			   java.io.File.class, 
+			   // java.nio.charset.Charset.class,
+			   // java.util.BitSet.class,
+			   // java.lang.Class.class,
+			   // java.lang.Object.class,
+			   // java.lang.StackTraceElement.class, 
+			   java.lang.String.class,
+			   // java.lang.StringBuffer.class, 
+			   // java.lang.StringBuilder.class,
+			   java.net.URI.class,
+			   java.net.URL.class,
+			   java.sql.Date.class,
+			   java.sql.Time.class,
+			   java.sql.Timestamp.class,
+			   // java.text.DecimalFormatSymbols.class, 
+			   // java.time.Duration.class,
+			   // java.time.Instant.class,
+			   java.time.LocalDate.class,
+			   java.time.LocalDateTime.class,
+			   java.time.LocalTime.class,
+			   java.time.MonthDay.class,
+			   java.time.OffsetDateTime.class,
+			   java.time.OffsetTime.class,
+			   // java.time.Period.class,
+			   // java.time.Ser.class,
+			   java.time.Year.class,
+			   java.time.YearMonth.class,
+			   java.time.ZonedDateTime.class,
+			   // java.time.chrono.HijrahDate.class,
+			   // java.time.chrono.JapaneseDate.class,
+			   // java.time.chrono.JapaneseEra.class,
+			   // java.time.chrono.MinguoDate.class,
+			   // java.time.chrono.Ser.class,
+			   // java.time.chrono.ThaiBuddhistDate.class, 
+			   // java.time.temporal.ValueRange.class,
+			   // java.time.temporal.WeekFields.class,
+			   // java.util.Currency.class,
+			   java.util.Date.class,
+			   java.util.Locale.class,
+			   // java.util.regex.Pattern.class,
+			   java.util.UUID.class,
+	   });
+	   // allow any type from the same package
+	   allowTypesByWildcard(new String[] {
+		         "gov.nist.microanalysis.**",
+		         "gov.nist.nanoscalemetrology.**",
+		         "org.python.**",
+		         "Jama.**"
+	   });
       setMode(XStream.ID_REFERENCES);
       alias("AtomicShell", AtomicShell.class);
       alias("BasicSiLiLineshape", BasicSiLiLineshape.class);

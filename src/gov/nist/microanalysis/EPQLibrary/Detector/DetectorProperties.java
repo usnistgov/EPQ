@@ -22,7 +22,7 @@ import java.util.Arrays;
  * @author nicholas
  * @version 1.0
  */
-public class DetectorProperties {
+public class DetectorProperties implements Cloneable {
 
    public static final String SILI = "Si(Li)";
    public static final String SDD = "Silicon Drift Detector";

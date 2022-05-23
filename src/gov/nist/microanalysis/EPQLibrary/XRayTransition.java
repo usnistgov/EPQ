@@ -411,10 +411,6 @@ final public class XRayTransition implements Comparable<XRayTransition>, Cloneab
 		if (dest == src)
 			throw new EPQFatalException(
 					"No transition is possible if the source and destination are equal. " + dest + " == " + src);
-		if(!AtomicShell.exists(element, src))
-			throw new EPQFatalException("The source shell does not exist. - "+element.toAbbrev()+" "+src);
-		if(!AtomicShell.exists(element, dest))
-			throw new EPQFatalException("The destination shell does not exist. - "+element.toAbbrev()+" "+dest);
 		if (dest > src) {
 			final int tmp = src;
 			src = dest;

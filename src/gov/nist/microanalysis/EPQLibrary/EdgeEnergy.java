@@ -394,23 +394,16 @@ abstract public class EdgeEnergy extends AlgorithmClass {
 
 		@Override
 		public double compute(AtomicShell shell) {
-			try {
+			if(Chantler2005.isSupported(shell))
 				return Chantler2005.compute(shell);
-			} catch (final Throwable e0) {
-				try {
-					return Williams2011.compute(shell);
-				} catch (final Throwable e1) {
-					try {
-						return NISTxrtdb.compute(shell);
-					} catch (final Throwable e2) {
-						try {
-							return DTSA.compute(shell);
-						} catch (final Throwable e3) {
-							return -1.0;
-						}
-					}
-				}
-			}
+			else if(Williams2011.isSupported(shell))
+				return Williams2011.compute(shell);
+			else if(NISTxrtdb.isSupported(shell))
+				return NISTxrtdb.compute(shell);
+			else if(DTSA.isSupported(shell))
+				return DTSA.compute(shell);
+			else
+				return -1.0;
 		}
 
 		@Override

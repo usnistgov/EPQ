@@ -1965,7 +1965,15 @@ public class SpectrumProperties implements Cloneable, Serializable {
 			PropertyId pid = findPreDefinedPropertyId(propName);
 			if (pid == null)
 				pid = new PropertyId(propName, "", "");
-			mProperty.put(pid, in.readObject());
+			try {
+				Object obj = in.readObject();
+				mProperty.put(pid, obj);
+			} 
+			catch(Exception e) {
+				System.out.println(e.getMessage());
+				System.out.println(pid);
+				throw e;
+			}
 		}
 	}
 

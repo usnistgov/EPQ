@@ -7,10 +7,13 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import gov.nist.microanalysis.EPQLibrary.EPQException;
 import gov.nist.microanalysis.EPQLibrary.PhysicalConstants;
 import gov.nist.microanalysis.EPQLibrary.XRayTransition;
 import gov.nist.microanalysis.EPQLibrary.XRayTransitionSet;
@@ -40,19 +43,18 @@ final public class XRayAccumulator3
    ActionListener {
 
    private class Accumulator {
-      final XRayTransitionSet mTransitions;
+      final XRayTransition mTransition;
       double mGenerated;
       double mTransmitted;
 
-      private Accumulator(XRayTransitionSet xrt) {
-         mTransitions = xrt;
+      private Accumulator(XRayTransition xrt) {
+         mTransition = xrt;
          mGenerated = 0.0;
          mTransmitted = 0.0;
       }
    }
 
-   private final TreeMap<XRayTransition, Accumulator> mData = new TreeMap<XRayTransition, Accumulator>();
-   private final ArrayList<Accumulator> mAccumulators = new ArrayList<Accumulator>();
+   private final Map<XRayTransition, Accumulator> mAccumulators = new HashMap<XRayTransition, Accumulator>();
    private int mElectronCount;
    private int mEventCount;
    private final double mScale;
@@ -70,9 +72,8 @@ final public class XRayAccumulator3
     */
    public XRayAccumulator3(Collection<XRayTransition> lines, String type, double dose) {
       for(XRayTransition xrt : lines) {
-         final Accumulator acc = new Accumulator(new XRayTransitionSet(xrt));
-         mData.put(xrt, acc);
-         mAccumulators.add(acc);
+         final Accumulator acc = new Accumulator(xrt);
+         mAccumulators.put(xrt, acc);
       }
       mScale = computeScale(dose);
       mType = type;
@@ -90,12 +91,9 @@ final public class XRayAccumulator3
     * @param dose in amps
     */
    public XRayAccumulator3(Set<XRayTransitionSet> xrtss, String type, double dose) {
-      for(final XRayTransitionSet xrts : xrtss) {
-         final Accumulator acc = new Accumulator(xrts);
-         for(XRayTransition xrt : xrts)
-            mData.put(xrt, acc);
-         mAccumulators.add(acc);
-      }
+      for(final XRayTransitionSet xrts : xrtss)
+    	  for(final XRayTransition xrt : xrts.getTransitions())
+    		  mAccumulators.put(xrt, new Accumulator(xrt));
       mScale = computeScale(dose);
       mType = type;
       clear();
@@ -109,7 +107,7 @@ final public class XRayAccumulator3
     */
    public List<XRayTransition> getTransitions() {
       ArrayList<XRayTransition> res = new ArrayList<XRayTransition>();
-      for(XRayTransition xrt : mData.keySet())
+      for(XRayTransition xrt : mAccumulators.keySet())
          res.add(xrt);
       return Collections.unmodifiableList(res);
    }
@@ -118,7 +116,7 @@ final public class XRayAccumulator3
     * clear - Reset the accumulator to zero.
     */
    public void clear() {
-      for(final Accumulator acc : mAccumulators) {
+      for(final Accumulator acc : mAccumulators.values()) {
          acc.mGenerated = 0.0;
          acc.mTransmitted = 0.0;
       }
@@ -142,7 +140,7 @@ final public class XRayAccumulator3
                final XRay tr = tran.getXRay(i);
                if(tr instanceof CharacteristicXRay) {
                   final XRayTransition xrt = ((CharacteristicXRay) tr).getTransition();
-                  final Accumulator acc = mData.get(xrt);
+                  final Accumulator acc = mAccumulators.get(xrt);
                   if(acc != null) {
                      acc.mGenerated += tr.getGenerated();
                      acc.mTransmitted += tr.getIntensity();
@@ -166,7 +164,7 @@ final public class XRayAccumulator3
     * @return double
     */
    public double getEmitted(XRayTransition xrt) {
-      final Accumulator acc = mData.get(xrt);
+      final Accumulator acc = mAccumulators.get(xrt);
       return acc != null ? I_NORM * mScale * acc.mTransmitted / mElectronCount : 0.0;
    }
 
@@ -188,7 +186,7 @@ final public class XRayAccumulator3
     */
    public double getSumEmitted() {
       double res = 0.0;
-      for(final Accumulator acc : mAccumulators)
+      for(final Accumulator acc : mAccumulators.values())
          res += acc.mTransmitted;
       return I_NORM * mScale * res / mElectronCount;
    }
@@ -201,7 +199,7 @@ final public class XRayAccumulator3
     */
    public double getSumGenerated() {
       double res = 0.0;
-      for(final Accumulator acc : mAccumulators)
+      for(final Accumulator acc : mAccumulators.values())
          res += acc.mGenerated;
       return I_NORM * mScale * res / mElectronCount;
    }
@@ -214,12 +212,12 @@ final public class XRayAccumulator3
     * @return double
     */
    public double getGenerated(XRayTransition xrt) {
-      final Accumulator acc = mData.get(xrt);
+      final Accumulator acc = mAccumulators.get(xrt);
       return acc != null ? I_NORM * mScale * acc.mGenerated / mElectronCount : 0.0;
    }
 
    public boolean contains(XRayTransition xrt) {
-      return mData.get(xrt) != null;
+      return mAccumulators.get(xrt) != null;
    }
 
    /**
@@ -235,7 +233,7 @@ final public class XRayAccumulator3
       pw.print("# of scattering events\t");
       pw.println(mEventCount);
       pw.println("Transition\tGenerated (1/mSr)\tTransmitted (1/mSr)");
-      for(final XRayTransition xrt : mData.keySet()) {
+      for(final XRayTransition xrt : mAccumulators.keySet()) {
          pw.print(xrt.toString());
          pw.print('\t');
          pw.print(getGenerated(xrt));
@@ -250,10 +248,17 @@ final public class XRayAccumulator3
       final StringBuffer sb = new StringBuffer();
       final NumberFormat nf1 = new HalfUpFormat("#,##0.0");
       sb.append("<table class=\"leftalign\">");
-      sb.append("<tr><th>Transition</th><th>Generated<br>1/msR</th><th>Emitted<br>1/msR</th><th>&nbsp;&nbsp;Ratio&nbsp;&nbsp;<br>(&#37;)</th></tr>");
-      for(final XRayTransition xrt : mData.keySet()) {
+      sb.append("<tr><th>Transition</th><th>Energy<br/>(eV)</th><th>Generated<br/>1/msR</th><th>Emitted<br/>1/msR</th><th>&nbsp;&nbsp;Ratio&nbsp;&nbsp;<br/>&nbsp;&nbsp;(&#37;)&nbsp;&nbsp;</th></tr>");
+      TreeMap<XRayTransition, Accumulator> sm = new TreeMap<>(mAccumulators);
+      for(final XRayTransition xrt : sm.keySet()) {
          sb.append("<tr><th>");
          sb.append(xrt.toString());
+         sb.append("</th><td>");
+         try {
+			sb.append(nf1.format(xrt.getEnergy_eV()));
+		} catch (EPQException e) {
+			sb.append("? eV");
+		}
          sb.append("</th><td>");
          sb.append(nf1.format(getGenerated(xrt)));
          sb.append("</td><td>");
@@ -269,11 +274,8 @@ final public class XRayAccumulator3
       return sb.toString();
    }
 
-   private Accumulator find(XRayTransitionSet xrts) {
-      for(final Accumulator acc : mAccumulators)
-         if(acc.mTransitions.equals(xrts))
-            return acc;
-      return null;
+   private Accumulator find(XRayTransition xrt) {
+	   return mAccumulators.get(xrt);
    }
 
    public String compareAsHTML(XRayAccumulator3 xra2) {
@@ -281,11 +283,11 @@ final public class XRayAccumulator3
       final NumberFormat nf1 = new HalfUpFormat("0.0000");
       sb.append("<table class=\"leftalign\">");
       sb.append("<tr><th>Transition</th><th>&nbsp;&nbsp;Generated&nbsp;&nbsp;<br>(ratio)</th><th>&nbsp;&nbsp;Emitted&nbsp;&nbsp;<br>(ratio)</th></tr>");
-      for(final Accumulator acc : mAccumulators) {
-         final Accumulator acc2 = xra2.find(acc.mTransitions);
+      for(final Accumulator acc : mAccumulators.values()) {
+         final Accumulator acc2 = xra2.find(acc.mTransition);
          if((acc2 != null) && (acc.mGenerated > 0.0)) {
             sb.append("<tr><th>");
-            sb.append(acc.mTransitions.toString());
+            sb.append(acc.mTransition.toString());
             sb.append("</th><td>");
             sb.append(nf1.format((xra2.mScale * acc2.mGenerated / xra2.mElectronCount)
                   / (mScale * acc.mGenerated / mElectronCount)));

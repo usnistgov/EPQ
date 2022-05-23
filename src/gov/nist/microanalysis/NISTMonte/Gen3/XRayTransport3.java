@@ -9,6 +9,7 @@ import gov.nist.microanalysis.EPQLibrary.MACCache;
 import gov.nist.microanalysis.EPQLibrary.MassAbsorptionCoefficient;
 import gov.nist.microanalysis.EPQLibrary.Material;
 import gov.nist.microanalysis.EPQLibrary.PhysicalConstants;
+import gov.nist.microanalysis.EPQLibrary.ToSI;
 import gov.nist.microanalysis.EPQLibrary.Detector.IXRayDetector;
 import gov.nist.microanalysis.NISTMonte.MonteCarloSS;
 import gov.nist.microanalysis.Utility.Math2;
@@ -163,7 +164,7 @@ final public class XRayTransport3
     * @param xrE In Joules
     * @return double The fractional change in x-ray energy
     */
-   final private double comptonShift(final double th, final double xrE) {
+   final private static double comptonShift(final double th, final double xrE) {
       return (1.0 / (1 + ((xrE / PhysicalConstants.ElectronRestMass) * (1 - Math.cos(th)))));
    }
 
@@ -176,9 +177,12 @@ final public class XRayTransport3
     * @param th
     * @return double
     */
-   final private double comptonAngular(final double e, final double th) {
+   final public static double comptonAngular(final double e, final double th) {
       final double p = comptonShift(th, e);
       final double sinTh = Math.sin(th);
-      return 0.3710367 * sinTh * (p + 1.0 / p - sinTh * sinTh) / (p * p);
+      final double me=ToSI.keV(511.0);
+      final double den = (4*Math.PI*me*((e*(e*e*e + 9*e*e*me + 8*e*me*me + 2*me*me*me))/
+    		  Math2.sqr(2*e +me) + (e*e - 2*e*me - 2*me*me)*Math.atan(e/(e + me))))/(e*e*e);
+      return  (p*p*(p + 1.0/p - sinTh*sinTh))/den;
    }
 }

@@ -247,10 +247,6 @@ public class FilterFit extends LinearSpectrumFit {
 					if (!isZeroFitCoefficient(i))
 						intervals = Interval.add(intervals, raf.getFiltered().getNonZeroInterval());
 				}
-				if (getNonZeroedCoefficientCount() == 0) {
-					System.out.println("All elements have been removed from the fit.");
-					break;
-				}
 				removeElms.clear();
 				Interval.validate(intervals);
 				// Get the spectrum data on the fit intervals
@@ -267,7 +263,7 @@ public class FilterFit extends LinearSpectrumFit {
 					mTmpFitData[i] = checkNotNaN(Interval.extract(fs.getFilteredData(), intervals));
 					assert mTmpFitData[i].length == x.length;
 				}
-				super.perform();
+				// super.perform();
 				final UncertainValue2[] fitParams = getResults();
 				// See Schamber in
 				// "X-Ray Fluorescence Analysis of Environmental Samples" edited
@@ -295,6 +291,10 @@ public class FilterFit extends LinearSpectrumFit {
 				for (final FilteredPacket fp : mFilteredPackets)
 					fp.mKRatio = UncertainValue2.nonNegative(fp.mKRatio);
 				repeat |= !removedElms.containsAll(removeElms);
+				if (getNonZeroedCoefficientCount() == 0) {					
+					// System.out.println("All elements have been removed from the fit.");
+					break;
+				}
 			}
 			mDirty = false;
 		}
@@ -783,7 +783,7 @@ public class FilterFit extends LinearSpectrumFit {
 	 * specific line is positive.
 	 * </p>
 	 */
-	public static class DontCull implements CullingStrategy {
+	public static class DontCull implements CullingStrategy, Cloneable {
 
 		private final CullingStrategy mBase;
 		private final Set<XRayTransitionSet> mDont;
@@ -838,7 +838,7 @@ public class FilterFit extends LinearSpectrumFit {
 	 * @author nritchie
 	 * @version 1.0
 	 */
-	public class CullByChiSquared implements CullingStrategy {
+	public class CullByChiSquared implements CullingStrategy, Cloneable {
 
 		private double mThreshold = 1.01;
 
@@ -897,7 +897,7 @@ public class FilterFit extends LinearSpectrumFit {
 	 * @author nritchie
 	 * @version 1.0
 	 */
-	public static class CullWithinFamily implements CullingStrategy {
+	public static class CullWithinFamily implements CullingStrategy, Cloneable {
 
 		static private final int[] mLines = { XRayTransition.KA1, // 0
 				XRayTransition.KB1, // 1
@@ -997,7 +997,7 @@ public class FilterFit extends LinearSpectrumFit {
 	 * @author nritchie
 	 * @version 1.0
 	 */
-	public static class CullByFamilies implements CullingStrategy {
+	public static class CullByFamilies implements CullingStrategy, Cloneable {
 
 		private double mThreshold = 3.0;
 
@@ -1063,7 +1063,7 @@ public class FilterFit extends LinearSpectrumFit {
 		}
 	}
 
-	public static class CullByOptimal implements CullingStrategy {
+	public static class CullByOptimal implements CullingStrategy, Cloneable {
 		final double mSigma;
 		final Map<Element, XRayTransition> mMapOfXRTS;
 
@@ -1107,7 +1107,7 @@ public class FilterFit extends LinearSpectrumFit {
 		}
 	}
 
-	public static class CullByAverageUncertainty implements CullingStrategy {
+	public static class CullByAverageUncertainty implements CullingStrategy, Cloneable {
 
 		final double mOneAbove;
 		final double mAvgAbove;
@@ -1175,7 +1175,7 @@ public class FilterFit extends LinearSpectrumFit {
 	 * @author nritchie
 	 * @version 1.0
 	 */
-	public static class CullByBrightest implements CullingStrategy {
+	public static class CullByBrightest implements CullingStrategy, Cloneable {
 
 		private final double mThreshold;
 
@@ -1241,7 +1241,7 @@ public class FilterFit extends LinearSpectrumFit {
 	 * @author nritchie
 	 * @version 1.0
 	 */
-	public static class SpecialCulling implements CullingStrategy {
+	public static class SpecialCulling implements CullingStrategy, Cloneable {
 
 		private final TreeMap<Element, Element> mMap = new TreeMap<Element, Element>();
 
@@ -1346,7 +1346,7 @@ public class FilterFit extends LinearSpectrumFit {
 	 * @author nritchie
 	 * @version 1.0
 	 */
-	public static class CompoundCullingStrategy implements CullingStrategy {
+	public static class CompoundCullingStrategy implements CullingStrategy, Cloneable {
 
 		private final List<CullingStrategy> mStrategies;
 

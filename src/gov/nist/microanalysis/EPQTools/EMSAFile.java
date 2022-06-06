@@ -495,9 +495,16 @@ public class EMSAFile extends BaseSpectrum {
 					break;
 				}
 			} else if (prefix.startsWith("##SAMPLE")) {
+			try {
 				Object obj = EPQXStream.getInstance().fromXML(massage(value));
 				if (obj instanceof SampleShape)
 					mProperties.setSampleShape(SpectrumProperties.SampleShape, (SampleShape) obj);
+			}
+			catch(Exception e) {
+			   // TESCAN also uses the ##SAMPLE tag but it just contains a specimen description.
+			   mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, value);
+			
+			}
 				// ignored special custom tag (ignore)
 			} else if (prefix.startsWith("##MASSTHICK")) {
 				mProperties.setNumericProperty(SpectrumProperties.MassThickness, Double.parseDouble(value));

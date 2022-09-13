@@ -112,7 +112,7 @@ public class KLMTreePanel
 
    /**
     * Constructs a KLMTreePanel<br>
-    * <table summary="">
+    * <table>
     * <tr>
     * <td>K Transitions</td>
     * <td>Kalpha</td>

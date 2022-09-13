@@ -52,7 +52,7 @@ import java.util.Arrays;
  * </p>
  * <p>
  * methodSE = 1: This selection is an implementation of the method described by
- * Ding & Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE is
+ * Ding &amp; Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE is
  * greater than a core level binding energy, the SE final energy is
  * deltaE-Ebinding. Otherwise, it is deltaE+EFermi, where EFermi is the Fermi
  * energy of the material. The final direction of the SE is determined from
@@ -61,7 +61,7 @@ import java.util.Arrays;
  * </p>
  * <p>
  * methodSE = 2: This selection is an implementation of the method described by
- * Ding, Tang, & Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is greater
+ * Ding, Tang, &amp; Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is greater
  * than a core level binding energy the treatment is the same as methodSE = 1.
  * If not, the SE final energy is deltaE + E'. If E' were the Fermi energy this
  * would be the same as methodSE = 1. However, E' lies in the range max(0,EFermi
@@ -154,7 +154,7 @@ public class TabulatedInelasticWAugerOrigSM
 
    /*
     * E0 method. E0 is the energy available to ionize an inner shell. My
-    * original method based on the description in Ding & Shimizu's SCANNING
+    * original method based on the description in Ding &amp; Shimizu's SCANNING
     * article was to assume that deltaE, i.e., all energy transferred in an
     * inelastic event, is available for ionization. Ding et al later modified
     * this procedure. By the plasmon dispersion (I use Penn's form) deltaE can
@@ -186,9 +186,9 @@ public class TabulatedInelasticWAugerOrigSM
    }
 
    /**
-    * Constructs a TabulatedInelasticSM for the specified material. This form of
+    * <p>Constructs a TabulatedInelasticSM for the specified material. This form of
     * the constructor has an additional argument, energyOffset, allowing this
-    * parameter to be set to a value other than its default value of 0. </p>
+    * parameter to be set to a value other than its default value of 0.</p>
     * <p>
     * energyOffset = (energy of conduction band bottom) - (the energy defined as
     * the zero for purpose of the tables, generally the scattering band bottom)
@@ -279,7 +279,7 @@ public class TabulatedInelasticWAugerOrigSM
        * Larger discrepancies are most likely because we've been supplied an
        * empirical table that includes non-electronic energy losses (e.g.,
        * scattering from phonons). These should really be handled separately
-       * because our model is only valid for electrons & plasmons. (E.g., phonon
+       * because our model is only valid for electrons &amp; plasmons. (E.g., phonon
        * of energy deltaE carries very different momentum from electron of
        * energy deltaE, so scattering angles can't be determined in the present
        * model.) We skip the angular scattering part for such events. Any
@@ -517,7 +517,7 @@ public class TabulatedInelasticWAugerOrigSM
    /*
     * This is a private utility used to determine the binding energy associated
     * with the secondary electron excitation channel. The default method
-    * inherited from Ding & Shimizu's SCANNING paper is to simply chose the
+    * inherited from Ding &amp; Shimizu's SCANNING paper is to simply chose the
     * highest binding energy that is lower than deltaE. If the user has
     * specified branching ratios to associate with the various binding energies,
     * the alternative method chooses a binding energy at random with probability
@@ -549,7 +549,7 @@ public class TabulatedInelasticWAugerOrigSM
          return 0.;
       if(defaultRatios)
          /*
-          * The advertised default behavior, as described by Ding & Shimizu (Scanning).
+          * The advertised default behavior, as described by Ding &amp; Shimizu (Scanning).
           */
          return coreEnergies[i-1];
       else {
@@ -750,6 +750,7 @@ public class TabulatedInelasticWAugerOrigSM
    }
 
    /**
+    * <p>
     * Branching ratios control how this class associates a core (binding) energy
     * with an excitation. If deltaE is the energy lost by the primary electron
     * in a scattering event, the secondary electron's final energy is equal to
@@ -767,12 +768,14 @@ public class TabulatedInelasticWAugerOrigSM
     * array of these ratios. The first ratio in the array is associated with the
     * lowest nonzero core energy (i.e., the first non-valence band bound state).
     * The length of the array must be equal to the length of the material's
-    * coreEnergies array. </p>
+    * coreEnergies array. 
+    * </p>
     * <p>
     * The default behavior, if this method is not called or if it is called with
     * no argument, is to assume all entries are 0. That is, the largest eligible
     * binding energy state is assumed to be the one associated with the excitation
-    * channel. This is the method described by Ding & Shimizu in SCANNING.
+    * channel. This is the method described by Ding &amp; Shimizu in SCANNING.
+    * <</p>
     */
    public void setBranchingRatios() {
       defaultRatios = true;
@@ -805,11 +808,13 @@ public class TabulatedInelasticWAugerOrigSM
    }
 
    /**
+    * <p>
     * This method was added to deal with LiF and similar materials. The
     * distinction between energyGap and bandgap is this: JMONSEL understands the
     * bandgap to be the distance between the top of the valence band and the
     * bottom of the conduction band. The energyGap is the value of the smallest
-    * allowed deltaE in the scattering tables. </p>
+    * allowed deltaE in the scattering tables. 
+    * </p>
     * <p>
     * These two ordinarily are the same, and they are set equal by default.
     * However, they can differ if there are significant bound states within the
@@ -826,6 +831,7 @@ public class TabulatedInelasticWAugerOrigSM
     * the distance between the bands. If these are the same (usual case) this
     * method need not be called. If they differ, use this method to distinguish
     * them.
+    * </p>
     *
     * @param energyGap
     * @return
@@ -867,7 +873,7 @@ public class TabulatedInelasticWAugerOrigSM
     * than the ionization energy. If E0fromDispersion = true, it uses Ding et
     * al's later method, in which 0-momentum part (E0) of the energy is computed
     * from the plasmon dispersion for an event which transfers deltaE. Inner
-    * shell ionization can only happen if E0 > ionization energy. This is more
+    * shell ionization can only happen if E0 &gt; ionization energy. This is more
     * restrictive than deltaE > ionization energy.
     *
     * @param e0fromDispersion The value to which to set E0fromDispersion.

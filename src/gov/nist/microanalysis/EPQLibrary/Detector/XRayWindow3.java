@@ -53,7 +53,6 @@ public class XRayWindow3
     * agree. 19-Feb-2008
     * 
     * @param resourceName "AP3_3.csv" or similar
-    * @param chWidth in SI
     * @param sp SpectrumProperties associated with the Window
     * @throws EPQException
     */

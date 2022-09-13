@@ -30,7 +30,7 @@ import gov.nist.nanoscalemetrology.JMONSEL.Mesh.Tetrahedron;
  * threshold, the electron flows along the field lines until it reaches a region
  * where the field is lower than the threshold. In this model, electrons will
  * flow across material boundaries, but will not flow into regions with density
- * < 100 kg/m^3.
+ *&lt;100 kg/m^3.
  * </p>
  * <p>
  * Copyright: Pursuant to title 17 Section 105 of the United States Code this
@@ -82,9 +82,10 @@ public class ThresholdConductionModel2
     * (deltat) is included only for conformity to the more general
     * IConductionModel interface. The supplied value of deltat is not used.
     *
-    * @param meshedRegion - The MeshedRegion in which to possibly conduct
+    * @param thisMeshedRegion - The MeshedRegion in which to possibly conduct
     *           charges
     * @param deltat - the time to conduct them (unused)
+    * @param feaRunner
     * @return - true if an FEA update is needed due to moved charges, false if
     *         it is not needed (either because charges were not moved or because
     *         the FEA was already performed).

@@ -114,7 +114,7 @@ public class ConductiveCoating {
     * Build a single element coating
     *
     * @param elm An Element
-    * @param density In g/cm<sup>3</3>
+    * @param density In g/cm<sup>3</sup>
     * @param thickness In meters
     * @return {@link ConductiveCoating}
     */

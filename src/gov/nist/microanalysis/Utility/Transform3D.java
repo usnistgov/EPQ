@@ -10,7 +10,7 @@ import Jama.Matrix;
  * <p>
  * The rotation matrix is...
  * </p>
- * <table cellspacing=10 summary="">
+ * <table>
  * <tr>
  * <td>[</td>
  * <td>cos(phi)*cos(th)*cos(psi)-sin(phi)*sin(psi)</td>

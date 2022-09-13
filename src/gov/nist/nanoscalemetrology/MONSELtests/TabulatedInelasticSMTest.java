@@ -55,7 +55,7 @@ import java.io.FileNotFoundException;
  * </p>
  * <p>
  * methodSE = 1: This selection is my implementation of the method described by
- * Ding & Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE is
+ * Ding &amp; Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE is
  * greater than a core level binding energy, the SE final energy is
  * deltaE-Ebinding. Otherwise, it is deltaE+EFermi, where EFermi is the Fermi
  * energy of the material. The final direction of the SE is determined from
@@ -64,11 +64,11 @@ import java.io.FileNotFoundException;
  * </p>
  * <p>
  * methodSE = 2: This selection is my implementation of the method described by
- * Ding, Tang, & Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is greater
+ * Ding, Tang, &amp; Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is greater
  * than a core level binding energy the treatment is the same as before. If not,
  * the SE final energy is deltaE + E'. If E' were the Fermi energy this would be
  * the same as methodSE = 1. However, E' lies in the range max(0,EFermi -
- * deltaE) <= E' <= EFermi. The value of E' is determined probabilistically
+ * deltaE) &le; E' &le; EFermi. The value of E' is determined probabilistically
  * based upon the free electron densities of occupied and unoccupied states.
  * </p>
  * <p>
@@ -159,6 +159,7 @@ public class TabulatedInelasticSMTest
    }
 
    /**
+    * <p>
     * Constructs a TabulatedInelasticSM for the specified material. This form of
     * the constructor has an additional argument, energyOffset, allowing this
     * parameter to be set to a value other than its default value of 0. </p>
@@ -252,7 +253,7 @@ public class TabulatedInelasticSMTest
        * Larger discrepancies are most likely because we've been supplied an
        * empirical table that includes non-electronic energy losses (e.g.,
        * scattering from phonons). These should really be handled separately
-       * because our model is only valid for electrons & plasmons. (E.g., phonon
+       * because our model is only valid for electrons &amp; plasmons. (E.g., phonon
        * of energy deltaE carries very different momentum from electron of
        * energy deltaE, so scattering angles can't be determined in the present
        * model.) We skip the angular scattering part for such events. Any

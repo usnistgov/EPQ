@@ -701,7 +701,7 @@ public class Element
     * atomicNumberForAbbrev - Get the atomic number for the named element. THe
     * name may be the abbreviation.
     * 
-    * @param name String
+    * @param abbrev String
     * @return int
     */
    static public int atomicNumberForAbbrev(String abbrev) {

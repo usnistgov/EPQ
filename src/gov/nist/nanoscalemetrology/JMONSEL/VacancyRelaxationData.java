@@ -98,7 +98,7 @@ public class VacancyRelaxationData {
 
 	/**
 	 * Given an atomic number z0 this method loads the subshell binding energies
-	 * from atomconf.tab (from inner-shell calculations of Bote&Salvat 2008).
+	 * from atomconf.tab (from inner-shell calculations of Bote &amp; Salvat 2008).
 	 * 
 	 * @param z0 Atomic number.
 	 */

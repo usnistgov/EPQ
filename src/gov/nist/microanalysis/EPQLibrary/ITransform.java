@@ -24,7 +24,7 @@ public interface ITransform {
     * z-axis followed by theta round the y-axis followed by psi around the
     * z-axis. These is the standard Euler angle rotation. The rotation matrix
     * is...
-    * <table cellspacing=10 summary="">
+    * <table>
     * <tr>
     * <td>[</td>
     * <td>cos(phi)*cos(th)*cos(psi)-sin(phi)*sin(psi)</td>

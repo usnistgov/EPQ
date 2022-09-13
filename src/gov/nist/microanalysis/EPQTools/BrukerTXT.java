@@ -17,7 +17,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumUtils;
 /**
  * <p>
  * This was designed to read a type of Bruker text output file that Monika
- * Doneva <monika.doneva@mail.polimi.it> sent me. It is based on parsing one
+ * Doneva (monika.doneva@mail.polimi.it) sent me. It is based on parsing one
  * instance of a file she sent me. It is not likely to be very robust. I believe
  * that there are also German language versions of this text file that it won't
  * read.

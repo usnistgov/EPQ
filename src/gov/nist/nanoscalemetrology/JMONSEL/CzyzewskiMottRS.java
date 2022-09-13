@@ -32,7 +32,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * Company: National Institute of Standards and Technology
  * </p>
  *
- * @author Nicholas W. M. Ritchie (with addition of E<20 eV behavior by John
+ * @author Nicholas W. M. Ritchie (with addition of E &lt; 20 eV behavior by John
  *         Villarrubia)
  * @version 1.0
  */

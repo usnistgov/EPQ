@@ -44,7 +44,7 @@ public class BSEDDepthDetector
    }
 
    /**
-    * @param arg0
+    * @param ae
     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
     */
    @Override

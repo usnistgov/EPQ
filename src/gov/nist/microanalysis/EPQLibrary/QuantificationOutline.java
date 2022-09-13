@@ -1798,8 +1798,7 @@ public class QuantificationOutline {
     * Set the material for a surface coating such as a conductive carbon
     * coating.
     *
-    * @param material
-    * @param thickness
+    * @param cc
     */
    public void setCoating(ConductiveCoating cc) {
       mConductiveCoating = cc;

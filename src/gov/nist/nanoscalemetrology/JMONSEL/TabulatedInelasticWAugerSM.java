@@ -187,6 +187,7 @@ public class TabulatedInelasticWAugerSM
    }
 
    /**
+    * <p>
     * Constructs a TabulatedInelasticSM for the specified material. This form of
     * the constructor has an additional argument, energyOffset, allowing this
     * parameter to be set to a value other than its default value of 0.
@@ -781,6 +782,7 @@ public class TabulatedInelasticWAugerSM
    }
 
    /**
+    * <p>
     * Branching ratios control how this class associates a core (binding) energy
     * with an excitation. If deltaE is the energy lost by the primary electron
     * in a scattering event, the secondary electron's final energy is equal to
@@ -838,6 +840,7 @@ public class TabulatedInelasticWAugerSM
    }
 
    /**
+    * <p>
     * This method was added to deal with LiF and similar materials. The
     * distinction between energyGap and bandgap is this: JMONSEL understands the
     * bandgap to be the distance between the top of the valence band and the
@@ -862,7 +865,6 @@ public class TabulatedInelasticWAugerSM
     * them.
     *
     * @param energyGap
-    * @return
     */
    public void setEnergyGap(double energyGap) {
       this.energyGap = energyGap;

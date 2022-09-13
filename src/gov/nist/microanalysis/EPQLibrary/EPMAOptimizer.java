@@ -39,6 +39,7 @@ import gov.nist.microanalysis.Utility.TextUtilities;
  * <ul>
  * <li>Optional references that are satisfied by standards (ie Fe Kb in K411)
  * </ul>
+ * </p>
  * 
  * @author Nicholas
  * @version 1.0

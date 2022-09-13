@@ -29,7 +29,7 @@ import gov.nist.microanalysis.Utility.TextUtilities;
  * <p>
  * These classes represent a minimalist standard block database. Each standard
  * block is defined a name and the materials it contains.
- * <p>
+ * </p>
  * <p>
  * This simple structure facilitates
  * <ul>
@@ -38,6 +38,7 @@ import gov.nist.microanalysis.Utility.TextUtilities;
  * <li>Specifying the minimal number of blocks necessary to perform an analysis
  * </li>
  * </ul>
+ * </p>
  * 
  * @author nicholas
  */

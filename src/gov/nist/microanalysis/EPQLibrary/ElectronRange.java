@@ -115,7 +115,7 @@ abstract public class ElectronRange
     * range of an electron in a Material divide the results by
     * Material.getDensity().
     * 
-    * @param comp The composition
+    * @param mat The composition
     * @param e0 The beam energy in Joules
     * @return The result is in meters
     */

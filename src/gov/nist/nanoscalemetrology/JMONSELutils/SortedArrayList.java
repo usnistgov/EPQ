@@ -53,7 +53,7 @@ public class SortedArrayList<E extends Comparable<? super E>>
    /**
     * Constructs an ArrayList containing the elements of the specified
     * collection, as per the element's natural ordering. The
-    * <tt>SortedArrayList</tt> instance has an initial capacity of 110% the size
+    * SortedArrayList instance has an initial capacity of 110% the size
     * of the specified collection.
     * 
     * @param c the collection whose elements are to be placed into this list.
@@ -70,7 +70,7 @@ public class SortedArrayList<E extends Comparable<? super E>>
     * ordering.
     * 
     * @param e element to be inserted into this list.
-    * @return <tt>true</tt> (as per the general contract of Collection.add).
+    * @return true (as per the general contract of Collection.add).
     * @throws ClassCastException if the specified element is not comparable to
     *            existing elements.
     */
@@ -102,7 +102,7 @@ public class SortedArrayList<E extends Comparable<? super E>>
     * specified Collection is this ArrayList, and this ArrayList is nonempty.)
     * 
     * @param c the elements to be inserted into this ArrayList.
-    * @return <tt>true</tt> if this ArrayList changed as a result of the call.
+    * @return true if this ArrayList changed as a result of the call.
     * @throws NullPointerException if the specified collection is null.
     */
    @Override
@@ -120,8 +120,8 @@ public class SortedArrayList<E extends Comparable<? super E>>
    /**
     * Set duplicates allowed.
     * 
-    * @param duplicates <tt>true</tt> if duplicates are to be allowed,
-    *           <tt>false</tt> otherwise. If there are existing elements in the
+    * @param duplicates true if duplicates are to be allowed,
+    *           false otherwise. If there are existing elements in the
     *           set when duplicates are disallowed, any duplicates are removed.
     */
    public void allowDuplicates(boolean duplicates) {
@@ -134,7 +134,7 @@ public class SortedArrayList<E extends Comparable<? super E>>
    /**
     * Query duplicates allowed.
     * 
-    * @return <tt>true</tt> if duplicates are to be allowed, <tt>false</tt>
+    * @return true if duplicates are to be allowed, false
     *         otherwise.
     */
    public boolean duplicatesAllowed() {

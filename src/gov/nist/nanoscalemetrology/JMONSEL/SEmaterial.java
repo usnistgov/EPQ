@@ -601,7 +601,7 @@ public class SEmaterial
     * setCoreEnergy - Sets the core energy list to the supplied list. (Any
     * previous values are cleared.)
     *
-    * @param coreEnergy - List<Double> Energies of core levels in Joules
+    * @param coreEnergy - List of Energies of core levels in Joules
     */
    public void setCoreEnergy(List<Double> coreEnergy) {
       this.coreEnergy = new TreeSet<Double>();

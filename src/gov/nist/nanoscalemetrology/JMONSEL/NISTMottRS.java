@@ -47,12 +47,11 @@ import gov.nist.nanoscalemetrology.JMONSELutils.ULagrangeInterpolation;
  *         Villarrubia)
  * @version 1.0
  */
-
 /*
  * TODO: Consider revising to reuse Nicholas's EPQLibrary routine of the same
  * name for the energy range above 20 eV. Possibly I should also make an
  * interface with contract specifying that the routine is valid for all energies
- * 0<E<infinity, so code can distinguish those that do from those that don't.
+ * 0 &lt; E &lt; infinity, so code can distinguish those that do from those that don't.
  */
 public class NISTMottRS
    extends
@@ -79,7 +78,7 @@ public class NISTMottRS
       /**
        * extrapMethod is an integer = 1 or 2. Since the NISTMott tables are
        * valid only for energies in the interval [50 eV, 20 keV], cross sections
-       * for energies < 50 eV can't be determined directly by table lookup.
+       * for energies &lt; 50 eV can't be determined directly by table lookup.
        * Optionally users may specify a higher minimum for use of the tabulated
        * values. Outside of the permitted and availabe range, we use one of 2
        * methods: (1) extrapolation with Browning's power law or (2) linear
@@ -232,6 +231,7 @@ public class NISTMottRS
    transient private final double scale = PhysicalConstants.BohrRadius * PhysicalConstants.BohrRadius;
 
    /**
+    * <p>
     * NISTMottRS - Creates an object representing the NIST SRD 64 method for
     * computing random scattering angles using Mott cross sections. The
     * constructor loads a table of numbers which are used to quickly compute

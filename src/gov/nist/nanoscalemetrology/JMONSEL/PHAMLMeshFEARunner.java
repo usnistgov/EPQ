@@ -554,8 +554,7 @@ public class PHAMLMeshFEARunner
    }
    
    /**
-    * @param index
-    * @return
+    * @return The error estimate
     */
    public double getErrorEstimate() {
       final IntByReference errcode = new IntByReference(0);
@@ -615,8 +614,6 @@ public class PHAMLMeshFEARunner
     * getMeshRevision() method returns the revision number, so the user can
     * determine whether the mesh has changed.
     * 
-    * @return
-    * @see gov.nist.nanoscalemetrology.JMONSEL.IBasicMesh#getMeshRevision()
     */
    // TODO Test this routine
    @Override
@@ -1656,6 +1653,7 @@ public class PHAMLMeshFEARunner
    }
 
    /**
+    * <p>
     * Sets the error indicator to use as follows:
     * </p>
     * <p>
@@ -1717,7 +1715,7 @@ public class PHAMLMeshFEARunner
    }
 
    /**
-    * @param index
+    * @param nodeIndex
     * @param coords
     * @see gov.nist.nanoscalemetrology.JMONSEL.IBasicMesh#setNodeCoordinates(int,
     *      double[])
@@ -1805,6 +1803,7 @@ public class PHAMLMeshFEARunner
    }
 
    /**
+    * <p>
     * The integer argument determines the solver/preconditioner combination used
     * by PHAML, as follows:
     * </p>

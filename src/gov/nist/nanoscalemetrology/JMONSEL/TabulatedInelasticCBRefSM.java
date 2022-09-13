@@ -120,7 +120,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * </p>
  * <p>
  * methodSE = 1: This selection is an implementation of the method described by
- * Ding & Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE is
+ * Ding &amp; Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE is
  * greater than a core level binding energy, the SE final energy is
  * deltaE-Ebinding. Otherwise, it is deltaE+EFermi, where EFermi is the Fermi
  * energy of the material. The final direction of the SE is determined from
@@ -129,11 +129,11 @@ import gov.nist.microanalysis.Utility.Math2;
  * </p>
  * <p>
  * methodSE = 2: This selection is an implementation of the method described by
- * Ding, Tang, & Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is greater
+ * Ding, Tang, &amp; Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is greater
  * than a core level binding energy the treatment is the same as methodSE = 1.
  * If not, the SE final energy is deltaE + E'. If E' were the Fermi energy this
  * would be the same as methodSE = 1. However, E' lies in the range max(0,EFermi
- * - deltaE) <= E' <= EFermi. The value of E' is determined probabilistically
+ * - deltaE) &le; E' &le; EFermi. The value of E' is determined probabilistically
  * based upon the free electron densities of occupied and unoccupied states.
  * </p>
  * <p>
@@ -224,7 +224,7 @@ public class TabulatedInelasticCBRefSM
 
    /*
     * E0 method. E0 is the energy available to ionize an inner shell. My
-    * original method based on the description in Ding & Shimizu's SCANNING
+    * original method based on the description in Ding &amp; Shimizu's SCANNING
     * article was to assume that deltaE, i.e., all energy transferred in an
     * inelastic event, is available for ionization. Ding et al later modified
     * this procedure. By the plasmon dispersion (I use Penn's form) deltaE can
@@ -256,6 +256,7 @@ public class TabulatedInelasticCBRefSM
    }
 
    /**
+    * <p>
     * Constructs a TabulatedInelasticCBRefSM for the specified material. This
     * form of the constructor has an additional argument, energyOffset, allowing
     * this parameter to be set to a value other than its default value of 0.
@@ -599,7 +600,7 @@ public class TabulatedInelasticCBRefSM
    /*
     * This is a private utility used to determine the binding energy associated
     * with the secondary electron excitation channel. The default method
-    * inherited from Ding & Shimizu's SCANNING paper is to simply chose the
+    * inherited from Ding &amp; Shimizu's SCANNING paper is to simply chose the
     * highest binding energy that is lower than deltaE. If the user has
     * specified branching ratios to associate with the various binding energies,
     * the alternative method chooses a binding energy at random with probability
@@ -833,6 +834,7 @@ public class TabulatedInelasticCBRefSM
    }
 
    /**
+    * <p>
     * Branching ratios control how this class associates a core (binding) energy
     * with an excitation. If deltaE is the energy lost by the primary electron
     * in a scattering event, the secondary electron's final energy is equal to
@@ -856,8 +858,9 @@ public class TabulatedInelasticCBRefSM
     * The default behavior, if this method is not called or if it is called with
     * no argument, is to assume all entries are 0. That is, the largest eligible
     * binding energy state is assumed to be the one associated with the
-    * excitation channel. This is the method described by Ding & Shimizu in
+    * excitation channel. This is the method described by Ding &amp;Shimizu in
     * SCANNING.
+    * </p>
     */
    public void setBranchingRatios() {
       defaultRatios = true;
@@ -890,6 +893,7 @@ public class TabulatedInelasticCBRefSM
    }
 
    /**
+    * <p>
     * This method was added to deal with LiF and similar materials. The
     * distinction between energyGap and bandgap is this: JMONSEL understands the
     * bandgap to be the distance between the top of the valence band and the
@@ -912,6 +916,7 @@ public class TabulatedInelasticCBRefSM
     * the distance between the bands. If these are the same (usual case) this
     * method need not be called. If they differ, use this method to distinguish
     * them.
+    * </p>
     *
     * @param energyGap
     * @return
@@ -953,8 +958,8 @@ public class TabulatedInelasticCBRefSM
     * than the ionization energy. If E0fromDispersion = true, it uses Ding et
     * al's later method, in which 0-momentum part (E0) of the energy is computed
     * from the plasmon dispersion for an event which transfers deltaE. Inner
-    * shell ionization can only happen if E0 > ionization energy. This is more
-    * restrictive than deltaE > ionization energy.
+    * shell ionization can only happen if E0 &gt; ionization energy. This is more
+    * restrictive than deltaE &gt; ionization energy.
     *
     * @param e0fromDispersion The value to which to set E0fromDispersion.
     */

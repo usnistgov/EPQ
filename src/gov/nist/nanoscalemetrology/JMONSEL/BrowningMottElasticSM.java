@@ -17,6 +17,7 @@ import gov.nist.microanalysis.NISTMonte.Electron;
 import gov.nist.microanalysis.Utility.Math2;
 
 /**
+ * <p>
  * Extends ScatterMechanism to create a Mott Elastic mechanism approximated
  * using Browning's interpolation. This class differs from the
  * BrowningEmpiricalCrossSection class because the latter computes scattering

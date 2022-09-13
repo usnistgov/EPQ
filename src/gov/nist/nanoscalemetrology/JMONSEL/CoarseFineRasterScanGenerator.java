@@ -26,7 +26,6 @@ package gov.nist.nanoscalemetrology.JMONSEL;
  * appropriately, more electrons can be run between FEA.
  * </p>
  * <p>
- * <p>
  * X and Y scans are along the coordinate axes. The
  * CoarseFineRasterScanGenerator is characterized by parameters: <br>
  * x0 - initial x position <br>

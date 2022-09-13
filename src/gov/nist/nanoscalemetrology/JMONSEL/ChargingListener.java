@@ -37,6 +37,7 @@ import gov.nist.nanoscalemetrology.JMONSEL.Mesh.Tetrahedron;
 import Jama.Matrix;
 
 /**
+ * <p>
  * ChargingListener is used to simulate the effect of charging. It keeps an
  * account of charge accumulation or depletion within MeshedRegions,
  * periodically performs finite element analysis (FEA) to compute the resulting
@@ -85,7 +86,7 @@ import Jama.Matrix;
  * of the constructor for which this is the default setting.
  * </p>
  * <p>
- * ChargingListener can be set to log the charge & potential state of the mesh
+ * ChargingListener can be set to log the charge &amp; potential state of the mesh
  * to a file each cycle. The user calls setCPlog(), supplying the path to a
  * destination folder. Log files are generated internally using the
  * mesh.exportChargeAndPotentials method (see this method documentation for
@@ -1196,8 +1197,6 @@ public class ChargingListener
 
    /**
     * Sets the current value assigned to solnInterval
-    *
-    * @return Returns the solnInterval.
     */
    public void setSolnInterval(int solnInterval) {
       this.solnInterval = solnInterval;

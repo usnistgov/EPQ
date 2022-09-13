@@ -107,28 +107,7 @@ public class SpectrumFileChooser
 
             @Override
             public void updateUI() {
-               final String ver = System.getProperty("java.version");
-               boolean use = false;
-               if(ver != null) {
-                  int st = 0;
-                  int end = ver.indexOf('.', st);
-                  if((end > st) && (Integer.parseInt(ver.substring(st, end)) >= 1)) {
-                     st = end + 1;
-                     end = ver.indexOf('.', st);
-                     if((end > st) && (Integer.parseInt(ver.substring(st, end)) >= 6)) {
-                        st = end + 1;
-                        end = ver.indexOf('_', st);
-                        if((end > st) && (Integer.parseInt(ver.substring(st, end)) >= 0)) {
-                           st = end + 1;
-                           end = ver.indexOf('-', st);
-                           if(end == -1)
-                              end = ver.length();
-                           use = (Integer.parseInt(ver.substring(st, end)) >= 4);
-                        }
-                     }
-                  }
-               }
-               putClientProperty("FileChooser.useShellFolder", use ? Boolean.TRUE : Boolean.FALSE);
+               putClientProperty("FileChooser.useShellFolder", Boolean.TRUE);
                super.updateUI();
             }
          };

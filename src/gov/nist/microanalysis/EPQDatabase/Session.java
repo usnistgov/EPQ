@@ -2708,7 +2708,7 @@ public class Session {
          int entryIdx = Integer.MAX_VALUE;
          {
             final int specIdx = addSpectrum(spec, true);
-            final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO QC_ENTRY ( ID, CREATED, PROJECT, SPECTRUM ) VALUES ( DEFAULT, ?, ?, ? )", Statement.RETURN_GENERATED_KEYS);
+            final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO QC_ENTRY ( ID, CREATED, PROJECT, SPECTRUM, CULL ) VALUES ( DEFAULT, ?, ?, ?, 0 )", Statement.RETURN_GENERATED_KEYS);
             ps.setTimestamp(1, ts);
             ps.setInt(2, getIndex());
             ps.setInt(3, specIdx);
@@ -2718,22 +2718,25 @@ public class Session {
                   entryIdx = rs.getInt(1);
             }
          }
+         if(entryIdx != Integer.MAX_VALUE) {
          // Update the
-         final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO QC_ITEM ( ID, ENTRY, DATUM, QC_VALUE, QC_UNC ) VALUES ( DEFAULT, ?, ?, ?, ? )");
-         for(final Map.Entry<String, UncertainValue2> me : data.entrySet()) {
-            final String name = me.getKey();
-            final UncertainValue2 uv = me.getValue();
-            ps.clearParameters();
-            ps.setInt(1, entryIdx);
-            ps.setInt(2, getQCDatumIdx(name));
-            ps.setDouble(3, uv.doubleValue());
-            ps.setDouble(4, uv.uncertainty());
-            ps.executeUpdate();
-         }
-         final QCEntry qce = new QCEntry(entryIdx);
-         if(mEntries != null)
-            mEntries.add(qce);
-         return qce;
+            final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO QC_ITEM ( ID, ENTRY, DATUM, QC_VALUE, QC_UNC ) VALUES ( DEFAULT, ?, ?, ?, ? )");
+            for(final Map.Entry<String, UncertainValue2> me : data.entrySet()) {
+               final String name = me.getKey();
+               final UncertainValue2 uv = me.getValue();
+               ps.clearParameters();
+               ps.setInt(1, entryIdx);
+               ps.setInt(2, getQCDatumIdx(name));
+               ps.setDouble(3, uv.doubleValue());
+               ps.setDouble(4, uv.uncertainty());
+               ps.executeUpdate();
+            }
+            final QCEntry qce = new QCEntry(entryIdx);
+            if(mEntries != null)
+               mEntries.add(qce);
+            return qce;
+         } else 
+            throw new EPQException("Unable to insert the QC item into the database.");
       }
 
       public void setControlLimit(String name, UncertainValue2 uc)

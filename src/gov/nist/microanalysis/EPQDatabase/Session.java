@@ -87,9 +87,7 @@ public class Session {
     * @author nritchie
     * @version 1.0
     */
-   public class SpectrumSummary
-      implements
-      Comparable<SpectrumSummary> {
+   public class SpectrumSummary implements Comparable<SpectrumSummary> {
       private final int mID;
       private final String mDisplayName;
       private final Timestamp mTimestamp;
@@ -107,11 +105,11 @@ public class Session {
       @Override
       public int compareTo(SpectrumSummary o) {
          int res = 0;
-         if(mID != o.mID) {
+         if (mID != o.mID) {
             res = mTimestamp.compareTo(o.mTimestamp);
-            if(res == 0)
+            if (res == 0)
                res = mDisplayName.compareTo(o.mDisplayName);
-            if(res == 0)
+            if (res == 0)
                res = (mID < o.mID ? -1 : 1);
          }
          return res;
@@ -120,8 +118,8 @@ public class Session {
       public ISpectrumData load()
             throws SQLException, IOException, EPQException {
          // synchronize it to facilitate use in threaded applications
-         synchronized(this) {
-            if(mSpectrum == null)
+         synchronized (this) {
+            if (mSpectrum == null)
                mSpectrum = readSpectrum(mID);
             return mSpectrum;
          }
@@ -137,9 +135,7 @@ public class Session {
       }
    }
 
-   public class AlreadyInDatabaseException
-      extends
-      Exception {
+   public class AlreadyInDatabaseException extends Exception {
 
       private static final long serialVersionUID = -297714303436448772L;
 
@@ -169,9 +165,9 @@ public class Session {
    static private final boolean ENABLE_LW = false;
 
    private boolean mIsNew;
-   
+
    static public void loadMe() {
-	   
+
    }
 
    /**
@@ -189,91 +185,91 @@ public class Session {
       try {
          nsc = new NetworkServerControl();
          nsc.ping();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          startServer = true;
       }
-      if(startServer)
+      if (startServer)
          try {
             nsc.start(null);
             Class.forName(CLIENT_DRIVER);
             client = true;
-         }
-         catch(final java.lang.ClassNotFoundException cnfe) {
+         } catch (final java.lang.ClassNotFoundException cnfe) {
             System.err.print("ClassNotFoundException: ");
             System.err.println(cnfe.getMessage());
-            System.out.println("\n    >>> Please check your CLASSPATH variable   <<<\n");
-         }
-         catch(final Exception e) {
+            System.out.println(
+                  "\n    >>> Please check your CLASSPATH variable   <<<\n");
+         } catch (final Exception e) {
             try {
                Class.forName(EMBEDDED_DRIVER);
                client = false;
-            }
-            catch(final java.lang.ClassNotFoundException cnfe) {
+            } catch (final java.lang.ClassNotFoundException cnfe) {
                System.err.print("ClassNotFoundException: ");
                System.err.println(cnfe.getMessage());
-               System.out.println("\n    >>> Please check your CLASSPATH variable   <<<\n");
+               System.out.println(
+                     "\n    >>> Please check your CLASSPATH variable   <<<\n");
             }
          }
-      while(mConnection == null)
+      while (mConnection == null)
          // Create (if needed) and connect to the database
          try {
-            mConnection = DriverManager.getConnection((client ? CONN_CLIENT_BASE : CONN_EMBEDDED_BASE) + dbName);
+            mConnection = DriverManager.getConnection(
+                  (client ? CONN_CLIENT_BASE : CONN_EMBEDDED_BASE) + dbName);
             mIsNew = false;
-         }
-         catch(final SQLException se) {
+         } catch (final SQLException se) {
             final String theError = se.getSQLState();
-            if(theError.equals("08001")) {
+            if (theError.equals("08001")) {
                // The client database has failed; try the embedded...
                client = false;
                continue;
-            } else if(theError.equals("XJ040"))
-               throw new EPQFatalException("Is your home directory on a network share and are you running another instance of Graf on another computer?");
-            else if(theError.equals("XJ004") || theError.equals("08004")) {
+            } else if (theError.equals("XJ040"))
+               throw new EPQFatalException(
+                     "Is your home directory on a network share and are you running another instance of Graf on another computer?");
+            else if (theError.equals("XJ004") || theError.equals("08004")) {
                // Database does not yet exist...
                try {
-                  final String connectStr = (client ? CONN_CLIENT_BASE : CONN_EMBEDDED_BASE) + dbName + ";create=true";
+                  final String connectStr = (client
+                        ? CONN_CLIENT_BASE
+                        : CONN_EMBEDDED_BASE) + dbName + ";create=true";
                   mConnection = DriverManager.getConnection(connectStr);
-               }
-               catch(final SQLException e) {
+               } catch (final SQLException e) {
                   e.printStackTrace();
                   throw new EPQFatalException("Unable to create database.");
                }
                try {
                   createDatabase();
                   mIsNew = true;
-               }
-               catch(final EPQException epq) {
+               } catch (final EPQException epq) {
                   client = false;
                   epq.printStackTrace();
                   throw new EPQFatalException("Unable to populate database.");
                }
-            } else if(theError.equals("XJ040"))
-               throw new EPQFatalException("Unable to connect to the database.\nYour firewall may be blocking TCP/IP port 1527 thereby forcing "
-                     + "this application to use the database in embedded mode.\nThe embedded database only permits one simultaneous connection.");
+            } else if (theError.equals("XJ040"))
+               throw new EPQFatalException(
+                     "Unable to connect to the database.\nYour firewall may be blocking TCP/IP port 1527 thereby forcing "
+                           + "this application to use the database in embedded mode.\nThe embedded database only permits one simultaneous connection.");
             else
                throw new EPQFatalException(se);
          }
-      if(mConnection != null) {
+      if (mConnection != null) {
          try {
-            final PreparedStatement ps = mConnection.prepareStatement("SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME='QC_ITEM'");
+            final PreparedStatement ps = mConnection.prepareStatement(
+                  "SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME='QC_ITEM'");
             try (final ResultSet rs = ps.executeQuery()) {
-               if(!rs.next())
+               if (!rs.next())
                   buildQCTables();
             }
-         }
-         catch(final Exception e) {
+         } catch (final Exception e) {
             throw new EPQFatalException(e);
          }
-         if(ENABLE_LW)
+         if (ENABLE_LW)
             try {
-               final PreparedStatement ps = mConnection.prepareStatement("SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME='LINEWEIGHT_DATA'");
+               final PreparedStatement ps = mConnection.prepareStatement(
+                     "SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME='LINEWEIGHT_DATA'");
                try (final ResultSet rs = ps.executeQuery()) {
-                  if(!rs.next())
+                  if (!rs.next())
                      buildLineweightTables();
                }
-            }
-            catch(final Exception e) {
+            } catch (final Exception e) {
                throw new EPQFatalException(e);
             }
       }
@@ -281,21 +277,23 @@ public class Session {
 
    public void addDetector(IXRayDetector xrd) {
       final DetectorProperties dp = xrd.getDetectorProperties();
-      if(!dp.getProperties().isDefined(SpectrumProperties.DetectorGUID))
-         dp.getProperties().setTextProperty(SpectrumProperties.DetectorGUID, EPQXStream.generateGUID(dp));
+      if (!dp.getProperties().isDefined(SpectrumProperties.DetectorGUID))
+         dp.getProperties().setTextProperty(SpectrumProperties.DetectorGUID,
+               EPQXStream.generateGUID(dp));
       addElectronProbe(dp.getOwner());
       addCalibration(dp, xrd.getCalibration());
    }
 
    public void addDetector(DetectorProperties xrd) {
-      if(!getDetectors().contains(xrd)) {
+      if (!getDetectors().contains(xrd)) {
          final String sql = "INSERT INTO DETECTOR (ID, CREATED, NAME, INSTRUMENT_KEY, XML_OBJ) VALUES (DEFAULT, CURRENT_TIMESTAMP, ?, ?, ?)";
          try {
-            final PreparedStatement ps = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            final PreparedStatement ps = mConnection.prepareStatement(sql,
+                  Statement.RETURN_GENERATED_KEYS);
             final EPQXStream xs = EPQXStream.getInstance();
             ps.setString(1, xrd.toString());
             Integer i = getElectronProbes().get(xrd.getOwner());
-            if(i == null) {
+            if (i == null) {
                addElectronProbe(xrd.getOwner());
                i = getElectronProbes().get(xrd.getOwner());
             }
@@ -304,14 +302,13 @@ public class Session {
             ps.setString(3, xml);
             ps.executeUpdate();
             try (final ResultSet rs = ps.getGeneratedKeys()) {
-               if(rs.next()) {
+               if (rs.next()) {
                   final Integer idx = Integer.valueOf(rs.getInt(1));
                   mDetectors.put(xrd, idx);
                   mActiveDetectors.put(xrd, idx);
                }
             }
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
       }
@@ -330,46 +327,51 @@ public class Session {
    }
 
    public void setEnabled(DetectorProperties dp, boolean enabled) {
-      if(isEnabled(dp) != enabled) {
+      if (isEnabled(dp) != enabled) {
          final int idx = findDetector(dp);
          assert idx != -1;
          getElectronProbes(); // to ensure mDetectors != null
-         final String sql = "UPDATE DETECTOR SET RETIRED=" + (enabled ? "NULL" : "CURRENT_TIMESTAMP") + " WHERE ID=?";
+         final String sql = "UPDATE DETECTOR SET RETIRED="
+               + (enabled ? "NULL" : "CURRENT_TIMESTAMP") + " WHERE ID=?";
          try {
-            assert enabled ^ mActiveDetectors.containsValue(Integer.valueOf(idx));
+            assert enabled
+                  ^ mActiveDetectors.containsValue(Integer.valueOf(idx));
             final PreparedStatement ps = mConnection.prepareStatement(sql);
             ps.setInt(1, idx);
             ps.executeUpdate();
-            if(enabled)
+            if (enabled)
                mActiveDetectors.put(dp, Integer.valueOf(idx));
             else
                mActiveDetectors.remove(dp);
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
       }
    }
 
-   public void addCalibration(DetectorProperties xrd, DetectorCalibration calib) {
+   public void addCalibration(DetectorProperties xrd,
+         DetectorCalibration calib) {
       {
          final SpectrumProperties cp = calib.getProperties();
-         if(!cp.isDefined(SpectrumProperties.CalibrationGUID))
-            cp.setTextProperty(SpectrumProperties.CalibrationGUID, EPQXStream.generateGUID(calib));
+         if (!cp.isDefined(SpectrumProperties.CalibrationGUID))
+            cp.setTextProperty(SpectrumProperties.CalibrationGUID,
+                  EPQXStream.generateGUID(calib));
       }
       final Map<DetectorCalibration, Integer> mdci = getCalibrationsInt(xrd);
-      if(!mdci.containsKey(calib)) {
+      if (!mdci.containsKey(calib)) {
          {
             final SpectrumProperties cp = calib.getProperties();
-            if(!cp.isDefined(SpectrumProperties.CalibrationGUID))
-               cp.setTextProperty(SpectrumProperties.CalibrationGUID, EPQXStream.generateGUID(calib));
+            if (!cp.isDefined(SpectrumProperties.CalibrationGUID))
+               cp.setTextProperty(SpectrumProperties.CalibrationGUID,
+                     EPQXStream.generateGUID(calib));
          }
          final String sql = "INSERT INTO CALIBRATION (ID, DETECTOR, START_DATE, XML_OBJ) VALUES (DEFAULT, ?, ?, ?)";
          PreparedStatement ps;
          try {
-            ps = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps = mConnection.prepareStatement(sql,
+                  Statement.RETURN_GENERATED_KEYS);
             int xrdIdx = findDetector(xrd);
-            if(xrdIdx < 0) {
+            if (xrdIdx < 0) {
                addDetector(xrd);
                xrdIdx = findDetector(xrd);
                assert xrdIdx >= 0;
@@ -379,11 +381,10 @@ public class Session {
             ps.setString(3, EPQXStream.getInstance().toXML(calib));
             ps.executeUpdate();
             try (final ResultSet rs = ps.getGeneratedKeys()) {
-               if(rs.next())
+               if (rs.next())
                   mdci.put(calib, Integer.valueOf(rs.getInt(1)));
             }
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
       }
@@ -393,50 +394,54 @@ public class Session {
     * Updates the name and XML definition of the 'old' detector to reflect the
     * new defintion in xrd.
     * 
-    * @param old The previous definition
-    * @param xrd The new defintion
+    * @param old
+    *           The previous definition
+    * @param xrd
+    *           The new defintion
     */
    public void updateDetector(DetectorProperties old, DetectorProperties xrd) {
       final String sql = "UPDATE DETECTOR SET NAME=?, XML_OBJ=? WHERE ID=?";
       try {
-         final PreparedStatement ps = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+         final PreparedStatement ps = mConnection.prepareStatement(sql,
+               Statement.RETURN_GENERATED_KEYS);
          final EPQXStream xs = EPQXStream.getInstance();
          final int oldIdx = findDetector(old);
-         if(oldIdx >= 0) {
-            if(!xrd.getProperties().isDefined(SpectrumProperties.DetectorGUID))
-               xrd.getProperties().setTextProperty(SpectrumProperties.DetectorGUID, EPQXStream.generateGUID(xrd));
+         if (oldIdx >= 0) {
+            if (!xrd.getProperties().isDefined(SpectrumProperties.DetectorGUID))
+               xrd.getProperties().setTextProperty(
+                     SpectrumProperties.DetectorGUID,
+                     EPQXStream.generateGUID(xrd));
             ps.setString(1, xrd.toString());
             ps.setString(2, xs.toXML(xrd));
             ps.setInt(3, oldIdx);
             ps.executeUpdate();
             mDetectors.remove(old);
             mDetectors.put(xrd, Integer.valueOf(oldIdx));
-            if(mActiveDetectors.containsKey(old)) {
+            if (mActiveDetectors.containsKey(old)) {
                mActiveDetectors.remove(old);
                mActiveDetectors.put(xrd, Integer.valueOf(oldIdx));
             }
          } else
             addDetector(xrd);
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
    }
 
    public void updateInstrument(ElectronProbe ep) {
       final Integer idx = mElectronProbes.get(ep);
-      if(idx != null)
+      if (idx != null)
          try {
             final String sql = "UPDATE ELECTRONPROBE SET NAME=?, XML_OBJ=? WHERE ID=?";
             final EPQXStream xs = EPQXStream.getInstance();
             final String xml = xs.toXML(ep.getProbeProperties());
-            final PreparedStatement ps = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            final PreparedStatement ps = mConnection.prepareStatement(sql,
+                  Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, ep.toString());
             ps.setString(2, xml);
             ps.setInt(3, idx.intValue());
             ps.executeUpdate();
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
       else
@@ -444,57 +449,59 @@ public class Session {
    }
 
    private void addElectronProbe(ElectronProbe ep) {
-      if(!getElectronProbes().containsKey(ep)) {
+      if (!getElectronProbes().containsKey(ep)) {
          final String sql = "INSERT INTO ELECTRONPROBE (ID, CREATED, NAME, XML_OBJ) VALUES (DEFAULT, CURRENT_TIMESTAMP, ?, ?)";
          try {
-            final PreparedStatement ps = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            final PreparedStatement ps = mConnection.prepareStatement(sql,
+                  Statement.RETURN_GENERATED_KEYS);
             final EPQXStream xs = EPQXStream.getInstance();
             final String xml = xs.toXML(ep.getProbeProperties());
             ps.setString(1, ep.toString());
             ps.setString(2, xml);
             ps.executeUpdate();
             try (final ResultSet rs = ps.getGeneratedKeys()) {
-               if(rs.next()) {
+               if (rs.next()) {
                   getElectronProbes();
                   final int id = rs.getInt(1);
                   mElectronProbes.put(ep, Integer.valueOf(id));
                }
             }
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
       }
    }
 
-   private int addElementalDatum(Composition comp, Session.ElementDataTypes type, int uncertainty)
-         throws SQLException {
+   private int addElementalDatum(Composition comp,
+         Session.ElementDataTypes type, int uncertainty) throws SQLException {
       final Set<Element> elms = comp.getElementSet();
       final StringBuffer sql = new StringBuffer();
       final StringBuffer vals = new StringBuffer();
-      sql.append("INSERT INTO ELEMENT_DATA (ID, COMP_TYPE, PRESENT, ENTERED_BY, UNCERTAINTY_KEY");
+      sql.append(
+            "INSERT INTO ELEMENT_DATA (ID, COMP_TYPE, PRESENT, ENTERED_BY, UNCERTAINTY_KEY");
       vals.append(") VALUES (DEFAULT, ?, ?, ?, ?");
-      for(int i = 0; (i < 5) && (i < elms.size()); ++i) {
+      for (int i = 0; (i < 5) && (i < elms.size()); ++i) {
          sql.append(", ELM");
          sql.append(i);
          vals.append(", ?");
       }
-      for(final Element elm : elms) {
+      for (final Element elm : elms) {
          sql.append(", ELM_");
          sql.append(elm.toAbbrev().toUpperCase());
          vals.append(", ?");
       }
       vals.append(" )");
       sql.append(vals);
-      final PreparedStatement ps = mConnection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+      final PreparedStatement ps = mConnection.prepareStatement(sql.toString(),
+            Statement.RETURN_GENERATED_KEYS);
       ps.setInt(1, type.ordinal());
       ps.setBytes(2, computePresent(elms));
       ps.setInt(3, findPerson(System.getProperty("user.name")));
       ps.setInt(4, uncertainty);
       int pos = 5;
-      for(int i = 0; (i < 5) && (i < elms.size()); ++i, ++pos)
+      for (int i = 0; (i < 5) && (i < elms.size()); ++i, ++pos)
          ps.setInt(pos, comp.getNthElementByWeight(i).getAtomicNumber());
-      for(final Element elm : elms) {
+      for (final Element elm : elms) {
          ps.setFloat(pos, (float) comp.weightFraction(elm, false));
          ++pos;
       }
@@ -511,10 +518,9 @@ public class Session {
     * @return The index of the measurement (ELEMENT_DATA object) in the database
     * @throws SQLException
     */
-   public int addMeasurement(Composition comp)
-         throws SQLException {
+   public int addMeasurement(Composition comp) throws SQLException {
       int u = -1;
-      if(comp.isUncertain())
+      if (comp.isUncertain())
          u = addElementalDatum(comp, ElementDataTypes.UNCERTAINTY_MEASURE, -1);
       return addElementalDatum(comp, ElementDataTypes.MEASURED_COMPOSITION, u);
    }
@@ -526,34 +532,35 @@ public class Session {
     * @return The index of the ELEMENT_DATA record in the database
     * @throws SQLException
     */
-   public int addParticleSignature(ParticleSignature sig)
-         throws SQLException {
+   public int addParticleSignature(ParticleSignature sig) throws SQLException {
       final Set<Element> elms = sig.getUnstrippedElementSet();
       final StringBuffer sql = new StringBuffer();
       final StringBuffer vals = new StringBuffer();
-      sql.append("INSERT INTO ELEMENT_DATA (ID, COMP_TYPE, PRESENT, ENTERED_BY, UNCERTAINTY_KEY");
+      sql.append(
+            "INSERT INTO ELEMENT_DATA (ID, COMP_TYPE, PRESENT, ENTERED_BY, UNCERTAINTY_KEY");
       vals.append(") VALUES (DEFAULT, ?, ?, ?, ?");
-      for(int i = 0; (i < 5) && (i < elms.size()); ++i) {
+      for (int i = 0; (i < 5) && (i < elms.size()); ++i) {
          sql.append(", ELM");
          sql.append(i);
          vals.append(", ?");
       }
-      for(final Element elm : elms) {
+      for (final Element elm : elms) {
          sql.append(", ELM_");
          sql.append(elm.toAbbrev().toUpperCase());
          vals.append(", ?");
       }
       vals.append(" )");
       sql.append(vals);
-      final PreparedStatement ps = mConnection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS);
+      final PreparedStatement ps = mConnection.prepareStatement(sql.toString(),
+            Statement.RETURN_GENERATED_KEYS);
       ps.setInt(1, ElementDataTypes.PARTICLE_SIGNATURE.ordinal());
       ps.setBytes(2, computePresent(elms));
       ps.setInt(3, findPerson(System.getProperty("user.name")));
       ps.setInt(4, -1);
       int pos = 5;
-      for(int i = 0; (i < 5) && (i < elms.size()); ++i, ++pos)
+      for (int i = 0; (i < 5) && (i < elms.size()); ++i, ++pos)
          ps.setInt(pos, sig.getNthElement(i + 1).getAtomicNumber());
-      for(final Element elm : elms) {
+      for (final Element elm : elms) {
          ps.setFloat(pos, (float) sig.get(elm));
          ++pos;
       }
@@ -563,23 +570,26 @@ public class Session {
       }
    }
 
-   public int addParticleSpectrum(File specFile, ParticleSignature signature, double beamEnergy, String project, DetectorProperties detector, DetectorCalibration calibration, String collectedBy, Date acqDate)
+   public int addParticleSpectrum(File specFile, ParticleSignature signature,
+         double beamEnergy, String project, DetectorProperties detector,
+         DetectorCalibration calibration, String collectedBy, Date acqDate)
          throws EPQException, AlreadyInDatabaseException {
       try {
          byte[] digest;
          {
             try {
                final MessageDigest md = MessageDigest.getInstance("SHA");
-               final BufferedInputStream is = new BufferedInputStream(new FileInputStream(specFile));
-               try (final DigestInputStream dis = new DigestInputStream(is, md)) {
+               final BufferedInputStream is = new BufferedInputStream(
+                     new FileInputStream(specFile));
+               try (final DigestInputStream dis = new DigestInputStream(is,
+                     md)) {
                   final byte[] buffer = new byte[1024];
-                  while(dis.read(buffer) != -1)
-                     ;
+                  while (dis.read(buffer) != -1);
                   digest = md.digest();
-                  assert md.getDigestLength() == 20 : "Message digest length is not 20 bytes!";
+                  assert md.getDigestLength() == 20
+                        : "Message digest length is not 20 bytes!";
                }
-            }
-            catch(final NoSuchAlgorithmException e) {
+            } catch (final NoSuchAlgorithmException e) {
                e.printStackTrace();
                digest = new byte[0];
             }
@@ -589,17 +599,19 @@ public class Session {
             final PreparedStatement ps = mConnection.prepareStatement(mdSel);
             ps.setBytes(1, digest);
             try (final ResultSet rs = ps.executeQuery()) {
-               if(rs.next())
+               if (rs.next())
                   throw new AlreadyInDatabaseException(specFile.getName());
             }
          }
          final int detIdx = mDetectors.get(detector).intValue();
-         final int calIdx = getCalibrationsInt(detector).get(calibration).intValue();
+         final int calIdx = getCalibrationsInt(detector).get(calibration)
+               .intValue();
          final int projIdx = mProjects.get(project).intValue();
          final int colByIdx = mPeople.get(collectedBy).intValue();
          final String sql = "INSERT INTO SPECTRUM (ID, DIGEST, SIGNATURE, BEAM_ENERGY, OPERATOR, DETECTOR, CALIBRATION, PROJECT, ACQUIRED, FILENAME, DISPLAY_NAME, SPECTRUM ) "
                + "VALUES ( DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
-         final PreparedStatement ps = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+         final PreparedStatement ps = mConnection.prepareStatement(sql,
+               Statement.RETURN_GENERATED_KEYS);
          ps.setBytes(1, digest);
          ps.setInt(2, addParticleSignature(signature));
          ps.setFloat(3, (float) beamEnergy);
@@ -618,18 +630,17 @@ public class Session {
             dispName.append(specFile.getName().substring(0, p));
          }
          ps.setString(10, dispName.toString());
-         try (final BufferedInputStream is = new BufferedInputStream(new FileInputStream(specFile))) {
+         try (final BufferedInputStream is = new BufferedInputStream(
+               new FileInputStream(specFile))) {
             ps.setBlob(11, is, specFile.length()); // SPECTRUM_BLOB
             ps.executeUpdate();
             try (final ResultSet rs = ps.getGeneratedKeys()) {
                return rs.next() ? rs.getInt(1) : -1;
             }
          }
-      }
-      catch(final AlreadyInDatabaseException aide) {
+      } catch (final AlreadyInDatabaseException aide) {
          throw aide;
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          throw new EPQException(e);
       }
    }
@@ -643,21 +654,22 @@ public class Session {
    public void addPerson(String name, String comment) {
       final Map<String, Integer> people = getPeople();
       try {
-         if(!people.containsKey(name)) {
-            final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO PERSON (ID, NAME, COMMENT) VALUES (DEFAULT, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+         if (!people.containsKey(name)) {
+            final PreparedStatement ps = mConnection.prepareStatement(
+                  "INSERT INTO PERSON (ID, NAME, COMMENT) VALUES (DEFAULT, ?, ?)",
+                  Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, name);
             ps.setString(2, comment);
             ps.executeUpdate();
             try (final ResultSet rs = ps.getGeneratedKeys()) {
-               if(rs.next()) {
+               if (rs.next()) {
                   final Integer id = Integer.valueOf(rs.getInt(1));
                   mPeople.put(name, id);
                   mInvPeople.put(id, name);
                }
             }
          }
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
    }
@@ -672,22 +684,23 @@ public class Session {
     */
    public void addProject(String name, int client, String comment) {
       final Map<String, Integer> projects = getProjects();
-      if(!projects.containsKey(name))
+      if (!projects.containsKey(name))
          try {
-            final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO PROJECT (ID, NAME, CLIENT, COMMENT) VALUES (DEFAULT, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            final PreparedStatement ps = mConnection.prepareStatement(
+                  "INSERT INTO PROJECT (ID, NAME, CLIENT, COMMENT) VALUES (DEFAULT, ?, ?, ?)",
+                  Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, name);
             ps.setInt(2, client);
             ps.setString(3, comment);
             ps.executeUpdate();
             try (final ResultSet rs = ps.getGeneratedKeys()) {
-               if(rs.next()) {
+               if (rs.next()) {
                   final Integer id = Integer.valueOf(rs.getInt(1));
                   mProjects.put(name, id);
                   mInvProjects.put(id, name);
                }
             }
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
    }
@@ -698,7 +711,8 @@ public class Session {
     * spectrum.
     * 
     * @param spec
-    * @param force true -&gt; Add the spectrum regardless of whether the digest
+    * @param force
+    *           true -&gt; Add the spectrum regardless of whether the digest
     *           says it is already in the database
     * @return int
     * @throws FileNotFoundException
@@ -707,27 +721,31 @@ public class Session {
     * @throws SQLException
     */
    public int addSpectrum(ISpectrumData spec, boolean force)
-         throws FileNotFoundException, IOException, EPQException, SQLException, AlreadyInDatabaseException {
+         throws FileNotFoundException, IOException, EPQException, SQLException,
+         AlreadyInDatabaseException {
       final SpectrumProperties sp = spec.getProperties();
-      if(sp.isDefined(SpectrumProperties.SpectrumDB))
+      if (sp.isDefined(SpectrumProperties.SpectrumDB))
          throw new EPQException("This spectrum is already in the database.");
       File file = null;
       {
-         final String fn = sp.getTextWithDefault(SpectrumProperties.SourceFile, null);
-         if(fn != null)
+         final String fn = sp.getTextWithDefault(SpectrumProperties.SourceFile,
+               null);
+         if (fn != null)
             file = new File(fn);
-         if((file == null) || (!file.canRead())) {
+         if ((file == null) || (!file.canRead())) {
             file = File.createTempFile("spectrum", ".emsa");
             file.deleteOnExit();
             try (final FileOutputStream os = new FileOutputStream(file)) {
-               WriteSpectrumAsEMSA1_0.write(spec, os, WriteSpectrumAsEMSA1_0.Mode.COMPATIBLE);
+               WriteSpectrumAsEMSA1_0.write(spec, os,
+                     WriteSpectrumAsEMSA1_0.Mode.COMPATIBLE);
             }
          }
       }
       StringReader diffReader = null;
       {
          final ISpectrumData onDisk = SpectrumFile.open(file)[0];
-         final SpectrumProperties diff = SpectrumProperties.difference(spec.getProperties(), onDisk.getProperties());
+         final SpectrumProperties diff = SpectrumProperties
+               .difference(spec.getProperties(), onDisk.getProperties());
          diff.setDetector(null);
          diffReader = new StringReader(EPQXStream.getInstance().toXML(diff));
       }
@@ -735,27 +753,28 @@ public class Session {
       {
          try {
             final MessageDigest md = MessageDigest.getInstance("SHA");
-            try (final BufferedInputStream is = new BufferedInputStream(new FileInputStream(file))) {
-               try (final DigestInputStream dis = new DigestInputStream(is, md)) {
+            try (final BufferedInputStream is = new BufferedInputStream(
+                  new FileInputStream(file))) {
+               try (final DigestInputStream dis = new DigestInputStream(is,
+                     md)) {
                   final byte[] buffer = new byte[1024];
-                  while(dis.read(buffer) != -1)
-                     ;
+                  while (dis.read(buffer) != -1);
                   digest = md.digest();
-                  assert md.getDigestLength() == 20 : "Message digest length is not 20 bytes!";
+                  assert md.getDigestLength() == 20
+                        : "Message digest length is not 20 bytes!";
                }
             }
-         }
-         catch(final NoSuchAlgorithmException e) {
+         } catch (final NoSuchAlgorithmException e) {
             e.printStackTrace();
             digest = new byte[0];
          }
       }
-      if(!force) { // Search for replicas
+      if (!force) { // Search for replicas
          final String mdSel = "SELECT ID, DISPLAY_NAME FROM SPECTRUM WHERE DIGEST = ?";
          final PreparedStatement ps = mConnection.prepareStatement(mdSel);
          ps.setBytes(1, digest);
          try (final ResultSet rs = ps.executeQuery()) {
-            if(rs.next())
+            if (rs.next())
                throw new AlreadyInDatabaseException(spec.toString());
          }
       }
@@ -763,53 +782,60 @@ public class Session {
          final String sql = "INSERT INTO SPECTRUM (ID, DIGEST, STD_COMP, MICRO_COMP, SIGNATURE, BEAM_ENERGY, OPERATOR, "
                + "DETECTOR, CALIBRATION, PROJECT, ACQUIRED, FILENAME, DISPLAY_NAME, EXTRA_PROPERTIES, SPECTRUM ) "
                + "VALUES ( DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )";
-         final PreparedStatement ps = mConnection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+         final PreparedStatement ps = mConnection.prepareStatement(sql,
+               Statement.RETURN_GENERATED_KEYS);
          ps.setBytes(1, digest); // DIGEST
          {
-            final Composition std = sp.getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
+            final Composition std = sp.getCompositionWithDefault(
+                  SpectrumProperties.StandardComposition, null);
             int i = -1;
-            if(std != null) {
+            if (std != null) {
                i = find(std, ElementDataTypes.STANDARD_COMPOSITION);
-               if(i == -1)
+               if (i == -1)
                   i = this.addStandard(std);
             }
             ps.setInt(2, i);
          }
          {
-            final Composition comp = sp.getCompositionWithDefault(SpectrumProperties.MicroanalyticalComposition, null);
+            final Composition comp = sp.getCompositionWithDefault(
+                  SpectrumProperties.MicroanalyticalComposition, null);
             int i = -1;
-            if(comp != null) {
+            if (comp != null) {
                i = find(comp, ElementDataTypes.MEASURED_COMPOSITION);
-               if(i == -1)
+               if (i == -1)
                   i = this.addMeasurement(comp);
             }
             ps.setInt(3, i);
          }
          {
-            final ParticleSignature sig = sp.getParticleSignatureWithDefault(SpectrumProperties.ParticleSignature, null);
+            final ParticleSignature sig = sp.getParticleSignatureWithDefault(
+                  SpectrumProperties.ParticleSignature, null);
             int i = -1;
-            if(sig != null) {
+            if (sig != null) {
                i = find(sig);
-               if(i == -1)
+               if (i == -1)
                   i = this.addParticleSignature(sig);
             }
             ps.setInt(4, i);
          }
          // Beam energy
-         ps.setFloat(5, (float) sp.getNumericWithDefault(SpectrumProperties.BeamEnergy, 0.0));
+         ps.setFloat(5, (float) sp
+               .getNumericWithDefault(SpectrumProperties.BeamEnergy, 0.0));
          // Operator
-         ps.setInt(6, findPerson(sp.getTextWithDefault(SpectrumProperties.InstrumentOperator, "Unknown")));
+         ps.setInt(6, findPerson(sp.getTextWithDefault(
+               SpectrumProperties.InstrumentOperator, "Unknown")));
          // Detector & Calibration
          {
 
             final IXRayDetector det = sp.getDetector();
-            if(det != null) {
+            if (det != null) {
                final int detIdx = findDetector(det.getDetectorProperties());
                ps.setInt(7, detIdx);
                // Calibration
                final DetectorCalibration calib = det.getCalibration();
-               final int calIdx = findCalibration(det.getDetectorProperties(), calib);
-               if(calIdx == -1)
+               final int calIdx = findCalibration(det.getDetectorProperties(),
+                     calib);
+               if (calIdx == -1)
                   addCalibration(det.getDetectorProperties(), calib);
                ps.setInt(8, calIdx);
             } else {
@@ -819,17 +845,24 @@ public class Session {
          }
          // Project
          {
-            final String project = sp.getTextWithDefault(SpectrumProperties.ProjectName, null);
-            final Integer pjIdx = project != null ? getProjects().get(project) : null;
-            ps.setInt(9, pjIdx != null ? pjIdx.intValue() : findProject("None"));
+            final String project = sp
+                  .getTextWithDefault(SpectrumProperties.ProjectName, null);
+            final Integer pjIdx = project != null
+                  ? getProjects().get(project)
+                  : null;
+            ps.setInt(9,
+                  pjIdx != null ? pjIdx.intValue() : findProject("None"));
          }
          // Acquired
-         final java.util.Date acquired = sp.getTimestampWithDefault(SpectrumProperties.AcquisitionTime, new java.util.Date(System.currentTimeMillis()));
+         final java.util.Date acquired = sp.getTimestampWithDefault(
+               SpectrumProperties.AcquisitionTime,
+               new java.util.Date(System.currentTimeMillis()));
          ps.setDate(10, new java.sql.Date(acquired.getTime())); // Acquired
          ps.setString(11, file.getName()); // Filename
          ps.setString(12, spec.toString()); // DISPLAY_NAME
          ps.setClob(13, diffReader);
-         try (final BufferedInputStream is = new BufferedInputStream(new FileInputStream(file))) {
+         try (final BufferedInputStream is = new BufferedInputStream(
+               new FileInputStream(file))) {
             ps.setBlob(14, is, file.length()); // SPECTRUM_BLOB
             ps.executeUpdate();
             try (final ResultSet rs = ps.getGeneratedKeys()) {
@@ -846,32 +879,37 @@ public class Session {
     * @return The index of the (ELEMENT_DATA) standard in the database.
     * @throws SQLException
     */
-   public int addStandard(Composition comp)
-         throws SQLException {
+   public int addStandard(Composition comp) throws SQLException {
       int res = -1;
       // Does it already exist in the database?
-      final PreparedStatement st = mConnection.prepareStatement("SELECT ELM_DATA, DENSITY FROM STANDARD WHERE NAME = ?");
+      final PreparedStatement st = mConnection.prepareStatement(
+            "SELECT ELM_DATA, DENSITY FROM STANDARD WHERE NAME = ?");
       st.setMaxRows(1);
       st.setString(1, comp.getName());
       try (final ResultSet rs = st.executeQuery()) {
          final double NO_DENSITY = -1.0;
-         final double density = (comp instanceof Material ? ((Material) comp).getDensity() : NO_DENSITY);
-         if(rs.next()) {
+         final double density = (comp instanceof Material
+               ? ((Material) comp).getDensity()
+               : NO_DENSITY);
+         if (rs.next()) {
             // A material of this name exists in database (update it??)
             res = rs.getInt(1);
             final Composition dbComp = (Composition) getElementalDatum(res);
             boolean update = (Math.abs(density - rs.getDouble(2)) > 0.001);
-            if(!dbComp.almostEquals(comp, 1.0e-5)) {
+            if (!dbComp.almostEquals(comp, 1.0e-5)) {
                // Compositions are essentially not equal!
                int u = -1;
-               if(comp.isUncertain())
-                  u = addElementalDatum(comp, ElementDataTypes.UNCERTAINTY_MEASURE, -1);
-               res = addElementalDatum(comp, ElementDataTypes.STANDARD_COMPOSITION, u);
+               if (comp.isUncertain())
+                  u = addElementalDatum(comp,
+                        ElementDataTypes.UNCERTAINTY_MEASURE, -1);
+               res = addElementalDatum(comp,
+                     ElementDataTypes.STANDARD_COMPOSITION, u);
                update = true;
             }
-            if(update) {
+            if (update) {
                // Composition or density is different!
-               final PreparedStatement us = mConnection.prepareStatement("UPDATE STANDARD SET ELM_DATA=?, DENSITY=? WHERE NAME=?");
+               final PreparedStatement us = mConnection.prepareStatement(
+                     "UPDATE STANDARD SET ELM_DATA=?, DENSITY=? WHERE NAME=?");
                us.setInt(1, res);
                us.setDouble(2, density);
                us.setString(3, comp.getName());
@@ -879,10 +917,13 @@ public class Session {
             }
          } else {
             int u = -1;
-            if(comp.isUncertain())
-               u = addElementalDatum(comp, ElementDataTypes.UNCERTAINTY_MEASURE, -1);
-            res = addElementalDatum(comp, ElementDataTypes.STANDARD_COMPOSITION, u);
-            final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO STANDARD (NAME, ELM_DATA, DENSITY) VALUES (?, ?, ?)");
+            if (comp.isUncertain())
+               u = addElementalDatum(comp, ElementDataTypes.UNCERTAINTY_MEASURE,
+                     -1);
+            res = addElementalDatum(comp, ElementDataTypes.STANDARD_COMPOSITION,
+                  u);
+            final PreparedStatement ps = mConnection.prepareStatement(
+                  "INSERT INTO STANDARD (NAME, ELM_DATA, DENSITY) VALUES (?, ?, ?)");
             ps.setString(1, comp.toString());
             ps.setInt(2, res);
             ps.setDouble(3, density);
@@ -894,33 +935,31 @@ public class Session {
 
    private byte[] computePresent(Collection<Element> elms) {
       final byte[] c = new byte[((Element.elmCf - Element.elmH) + 7) / 8];
-      for(int z = Element.elmH; z < Element.elmCf; ++z)
-         if(elms.contains(Element.byAtomicNumber(z))) {
+      for (int z = Element.elmH; z < Element.elmCf; ++z)
+         if (elms.contains(Element.byAtomicNumber(z))) {
             final int zm1 = z - Element.elmH;
             c[zm1 / 8] = (byte) (c[zm1 / 8] + (1 << (zm1 % 8)));
          }
       return c;
    }
 
-   private void buildQCTables()
-         throws EPQException {
+   private void buildQCTables() throws EPQException {
       final InputStream is = Session.class.getResourceAsStream("qc.sql");
       assert is != null : "Where is qc.sql?";
       executeSQL(is);
 
    }
 
-   private void buildLineweightTables()
-         throws EPQException {
-      if(ENABLE_LW) {
-         final InputStream is = Session.class.getResourceAsStream("lineweight.sql");
+   private void buildLineweightTables() throws EPQException {
+      if (ENABLE_LW) {
+         final InputStream is = Session.class
+               .getResourceAsStream("lineweight.sql");
          assert is != null : "Where is lineweight.sql?";
          executeSQL(is);
       }
    }
 
-   private void createDatabase()
-         throws EPQException {
+   private void createDatabase() throws EPQException {
       final InputStream is = Session.class.getResourceAsStream("trixy.sql");
       assert is != null : "Where is trixy.sql?";
       executeSQL(is);
@@ -932,23 +971,22 @@ public class Session {
     * @param is
     * @throws EPQException
     */
-   private void executeSQL(final InputStream is)
-         throws EPQException {
+   private void executeSQL(final InputStream is) throws EPQException {
       try {
          final Reader isr = new InputStreamReader(is, "US-ASCII");
          assert isr != null;
          final BufferedReader br = new BufferedReader(isr);
          final StringBuffer sb = new StringBuffer();
-         while(br.ready()) {
+         while (br.ready()) {
             String s = br.readLine();
             // strip comments
-            if(s != null) {
+            if (s != null) {
                int p = s.indexOf("---");
-               if(p >= 0)
+               if (p >= 0)
                   s = s.substring(0, p);
                // Look for end-of-statement
                p = s.indexOf(';');
-               if(p >= 0) {
+               if (p >= 0) {
                   sb.append(s.substring(0, p).trim());
                   // System.out.println(sb.toString());
                   final Statement st = mConnection.createStatement();
@@ -960,74 +998,69 @@ public class Session {
                }
             }
          }
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          throw new EPQException(e);
       }
    }
 
-   public void defaultInitialization()
-         throws SQLException {
-      addPerson(System.getProperty("user.name"), "Automatically added by the system based on the user who created the database.");
+   public void defaultInitialization() throws SQLException {
+      addPerson(System.getProperty("user.name"),
+            "Automatically added by the system based on the user who created the database.");
       final EDSDetector det = EDSDetector.createSiLiDetector(2048, 10.0, 132);
       addDetector(det);
       addStandard(MaterialFactory.createMaterial("K411"));
       addStandard(MaterialFactory.createMaterial("K412"));
       addMeasurement(MaterialFactory.createMaterial("K3189"));
-      final Element[] elms = new Element[] {
-         Element.Cu,
-         Element.Mn,
-         Element.Zn,
-         Element.Fe
-      };
-      for(final Element elm : elms) {
+      final Element[] elms = new Element[]{Element.Cu, Element.Mn, Element.Zn,
+            Element.Fe};
+      for (final Element elm : elms) {
          Composition comp;
          try {
             comp = MaterialFactory.createPureElement(elm);
             comp.setName(elm.toAbbrev() + " standard");
             addStandard(comp);
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             e.printStackTrace();
          }
       }
    }
 
    private String edtColumn(ElementDataTypes edt) {
-      switch(edt) {
-         case STANDARD_COMPOSITION:
+      switch (edt) {
+         case STANDARD_COMPOSITION :
             return "STD_COMP";
-         case MEASURED_COMPOSITION:
+         case MEASURED_COMPOSITION :
             return "MICRO_COMP";
-         case PARTICLE_SIGNATURE:
+         case PARTICLE_SIGNATURE :
             return "PARTICLE_SIGNATURE";
-         default:
+         default :
             throw new EPQFatalException("Not a valid type for edtColumn.");
       }
    }
 
    public int find(Composition comp, ElementDataTypes edt) {
-      final StringBuffer sql = new StringBuffer("SELECT ID FROM ELEMENT_DATA WHERE COMP_TYPE = ? AND PRESENT = ?");
+      final StringBuffer sql = new StringBuffer(
+            "SELECT ID FROM ELEMENT_DATA WHERE COMP_TYPE = ? AND PRESENT = ?");
       final Set<Element> elms = comp.getElementSet();
-      for(final Element elm : elms) {
+      for (final Element elm : elms) {
          sql.append(" AND ELM_");
          sql.append(elm.toAbbrev().toUpperCase());
          sql.append(" = ?");
       }
       try {
-         final PreparedStatement ps = mConnection.prepareStatement(sql.toString());
+         final PreparedStatement ps = mConnection
+               .prepareStatement(sql.toString());
          ps.setInt(1, edt.ordinal());
          ps.setBytes(2, computePresent(elms));
          int pos = 3;
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             ps.setFloat(pos, (float) comp.weightFraction(elm, false));
             ++pos;
          }
          try (final ResultSet rs = ps.executeQuery()) {
             return rs.next() ? rs.getInt(1) : -1;
          }
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
       return -1;
@@ -1040,27 +1073,28 @@ public class Session {
     * @return The index of the ELEMENT_DATA record in the database
     */
    public int find(ParticleSignature sig) {
-      final StringBuffer sql = new StringBuffer("SELECT ID FROM ELEMENT_DATA WHERE COMP_TYPE = ? AND PRESENT = ?");
+      final StringBuffer sql = new StringBuffer(
+            "SELECT ID FROM ELEMENT_DATA WHERE COMP_TYPE = ? AND PRESENT = ?");
       final Set<Element> elms = sig.getUnstrippedElementSet();
-      for(final Element elm : elms) {
+      for (final Element elm : elms) {
          sql.append(" AND ELM_");
          sql.append(elm.toAbbrev().toUpperCase());
          sql.append(" = ?");
       }
       try {
-         final PreparedStatement ps = mConnection.prepareStatement(sql.toString());
+         final PreparedStatement ps = mConnection
+               .prepareStatement(sql.toString());
          ps.setInt(1, ElementDataTypes.PARTICLE_SIGNATURE.ordinal());
          ps.setBytes(2, computePresent(elms));
          int pos = 3;
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             ps.setFloat(pos, (float) sig.get(elm));
             ++pos;
          }
          try (final ResultSet rs = ps.executeQuery()) {
             return rs.next() ? rs.getInt(1) : -1;
          }
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
       return -1;
@@ -1070,21 +1104,26 @@ public class Session {
     * Find all spectra within the fractional tolerance of the specified
     * ParticleSignature
     * 
-    * @param sig - A ParticleSignature
-    * @param tol - Tolerance 0.0001 to 0.9999
-    * @param maxSpec - Maximum number of spectra to return
+    * @param sig
+    *           - A ParticleSignature
+    * @param tol
+    *           - Tolerance 0.0001 to 0.9999
+    * @param maxSpec
+    *           - Maximum number of spectra to return
     * @return TreeSet&lt;SpectrumSummary&gt;
     */
-   public TreeSet<SpectrumSummary> find(ParticleSignature sig, double tol, int maxSpec) {
+   public TreeSet<SpectrumSummary> find(ParticleSignature sig, double tol,
+         int maxSpec) {
       final TreeSet<SpectrumSummary> res = new TreeSet<SpectrumSummary>();
       final Set<Element> elms = sig.getUnstrippedElementSet();
       final boolean comp = true, present = false;
-      final StringBuffer sql = new StringBuffer("SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE SPECTRUM.SIGNATURE IN (SELECT ID");
+      final StringBuffer sql = new StringBuffer(
+            "SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE SPECTRUM.SIGNATURE IN (SELECT ID");
       sql.append(" FROM ELEMENT_DATA WHERE COMP_TYPE = 3");
-      if(present)
+      if (present)
          sql.append(" AND PRESENT = ?");
-      if(comp)
-         for(final Element elm : elms) {
+      if (comp)
+         for (final Element elm : elms) {
             final String elmStr = elm.toAbbrev().toUpperCase();
             sql.append(" AND (ELM_");
             sql.append(elmStr);
@@ -1094,13 +1133,14 @@ public class Session {
          }
       sql.append(")");
       try {
-         final PreparedStatement ps = mConnection.prepareStatement(sql.toString());
+         final PreparedStatement ps = mConnection
+               .prepareStatement(sql.toString());
          ps.setMaxRows(maxSpec);
          int pos = 1;
-         if(present)
+         if (present)
             ps.setBytes(pos++, computePresent(elms));
-         if(comp)
-            for(final Element elm : elms) {
+         if (comp)
+            for (final Element elm : elms) {
                final double delta = Math.max(sig.get(elm), 0.1) * tol;
                final double min = Math.max(0.0, sig.get(elm) - delta);
                final double max = Math.min(1.0, sig.get(elm) + delta);
@@ -1108,17 +1148,16 @@ public class Session {
                ps.setFloat(pos++, (float) max);
             }
          try (final ResultSet rs = ps.executeQuery()) {
-            for(int i = 0; (i < maxSpec) && rs.next();)
+            for (int i = 0; (i < maxSpec) && rs.next();)
                try {
-                  res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2), rs.getTimestamp(3)));
+                  res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2),
+                        rs.getTimestamp(3)));
                   ++i;
-               }
-               catch(final Exception e) {
+               } catch (final Exception e) {
                   e.printStackTrace();
                }
          }
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
       return res;
@@ -1134,17 +1173,16 @@ public class Session {
     */
    public int findPerson(String name) {
       Integer res = getPeople().get(name);
-      if(res == null) {
+      if (res == null) {
          addPerson(name, "");
          res = getPeople().get(name);
       }
       return res.intValue();
    }
 
-   public int findProject(String name)
-         throws EPQException {
+   public int findProject(String name) throws EPQException {
       final Integer res = getProjects().get(name);
-      if(res == null)
+      if (res == null)
          throw new EPQException("No project of this name has been defined.");
       return res.intValue();
    }
@@ -1153,7 +1191,8 @@ public class Session {
     * Search for spectra by composition match with the specified tolerance.
     * 
     * @param comp
-    * @param tol (1.0e-6 to 0.1)
+    * @param tol
+    *           (1.0e-6 to 0.1)
     * @param det
     * @param eBeam
     * @param collectedBy
@@ -1164,21 +1203,23 @@ public class Session {
     * @throws IOException
     * @throws FileNotFoundException
     */
-   public TreeSet<SpectrumSummary> findSpectra(Composition comp, double tol, DetectorProperties det, double eBeam, String collectedBy, int maxSpec)
+   public TreeSet<SpectrumSummary> findSpectra(Composition comp, double tol,
+         DetectorProperties det, double eBeam, String collectedBy, int maxSpec)
          throws SQLException, FileNotFoundException, IOException, EPQException {
       final TreeSet<SpectrumSummary> res = new TreeSet<SpectrumSummary>();
       final StringBuffer sql = new StringBuffer();
       tol = Math.max(1.0e-6, Math.min(0.1, tol));
-      sql.append("SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRA WHERE ID=ELM_DATA.ID AND ");
-      if(det != null) {
+      sql.append(
+            "SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRA WHERE ID=ELM_DATA.ID AND ");
+      if (det != null) {
          final Integer detIdx = getDetectorsInt().get(det);
-         if(detIdx != null) {
+         if (detIdx != null) {
             sql.append("DETECTOR = ");
             sql.append(detIdx);
             sql.append(" AND ");
          }
       }
-      if(eBeam != Double.NaN) {
+      if (eBeam != Double.NaN) {
          sql.append("BEAM_ENERGY > ");
          sql.append(Double.toString(0.99 * eBeam));
          sql.append(" AND ");
@@ -1186,9 +1227,9 @@ public class Session {
          sql.append(Double.toString(1.01 * eBeam));
          sql.append(" AND ");
       }
-      if(collectedBy != null) {
+      if (collectedBy != null) {
          final Integer pIdx = getPeople().get(collectedBy);
-         if(pIdx != null) {
+         if (pIdx != null) {
             sql.append("OPERATOR = ");
             sql.append(pIdx);
          }
@@ -1197,7 +1238,7 @@ public class Session {
 
       sql.append("SELECT ID FROM ELM_DATA WHERE COMP_TYPE = ");
       sql.append(ElementDataTypes.MEASURED_COMPOSITION.ordinal());
-      for(final Element elm : comp.getElementSet()) {
+      for (final Element elm : comp.getElementSet()) {
          final double v = comp.weightFraction(elm, false);
          sql.append(" AND ELM_");
          sql.append(elm.toAbbrev());
@@ -1212,8 +1253,9 @@ public class Session {
       final Statement st = mConnection.createStatement();
       st.setMaxRows(maxSpec);
       try (final ResultSet rs = st.executeQuery(sql.toString())) {
-         while(rs.next()) {
-            final SpectrumSummary ss = new SpectrumSummary(rs.getInt(1), rs.getString(2), rs.getTimestamp(3));
+         while (rs.next()) {
+            final SpectrumSummary ss = new SpectrumSummary(rs.getInt(1),
+                  rs.getString(2), rs.getTimestamp(3));
             res.add(ss);
          }
       }
@@ -1231,28 +1273,31 @@ public class Session {
     * <code>where = </code> "ELM_SI&gt;10 AND ELM_SI&lt;20 AND ELM_O&gt;20"
     * </p>
     * 
-    * @param where A SQL string of
-    * @param edt (may be <code>null</code>)
+    * @param where
+    *           A SQL string of
+    * @param edt
+    *           (may be <code>null</code>)
     * @param max
     * @return TreeSet&lt;SpectrumSummary&gt;
     * @throws SQLException
     */
-   public TreeSet<SpectrumSummary> findSpectra(String where, ElementDataTypes edt, int max)
-         throws SQLException {
+   public TreeSet<SpectrumSummary> findSpectra(String where,
+         ElementDataTypes edt, int max) throws SQLException {
       final TreeSet<SpectrumSummary> res = new TreeSet<SpectrumSummary>();
       final Statement st = mConnection.createStatement();
       st.setMaxRows(max);
       final StringBuffer sql = new StringBuffer();
       sql.append("SELECT ID FROM ELEMENT_DATA WHERE ");
-      if(edt != null) {
+      if (edt != null) {
          sql.append("COMP_TYPE = ");
          sql.append(edt.ordinal());
          sql.append(" AND ");
       }
       sql.append(where);
       try (final ResultSet rs = st.executeQuery(sql.toString())) {
-         while(rs.next() && (res.size() < max))
-            res.addAll(getAssociatedSpectra(rs.getInt("ID"), edt, max - res.size()));
+         while (rs.next() && (res.size() < max))
+            res.addAll(
+                  getAssociatedSpectra(rs.getInt("ID"), edt, max - res.size()));
       }
       return res;
    }
@@ -1267,11 +1312,12 @@ public class Session {
     * @param ss
     * @return SwingWorker&lt;ArrayList&lt;ISpectrumData&gt;, ISpectrumData&gt;
     */
-   public SwingWorker<ArrayList<ISpectrumData>, ISpectrumData> initiateLoad(Collection<SpectrumSummary> ss) {
+   public SwingWorker<ArrayList<ISpectrumData>, ISpectrumData> initiateLoad(
+         Collection<SpectrumSummary> ss) {
 
       class LoadSpectra
-         extends
-         SwingWorker<ArrayList<ISpectrumData>, ISpectrumData> {
+            extends
+               SwingWorker<ArrayList<ISpectrumData>, ISpectrumData> {
          private final Collection<SpectrumSummary> mSpectra;
 
          private LoadSpectra(Collection<SpectrumSummary> specs) {
@@ -1281,14 +1327,13 @@ public class Session {
          @Override
          protected ArrayList<ISpectrumData> doInBackground() {
             final ArrayList<ISpectrumData> res = new ArrayList<ISpectrumData>();
-            for(final SpectrumSummary ss : mSpectra)
+            for (final SpectrumSummary ss : mSpectra)
                try {
                   final ISpectrumData spec = ss.load();
-                  if(spec != null)
+                  if (spec != null)
                      res.add(spec);
                   publish(spec);
-               }
-               catch(final Exception e) {
+               } catch (final Exception e) {
                   e.printStackTrace();
                }
             return res;
@@ -1300,30 +1345,33 @@ public class Session {
       return ls;
    }
 
-   public ArrayList<ISpectrumData> loadSpectra(Collection<SpectrumSummary> specIds)
+   public ArrayList<ISpectrumData> loadSpectra(
+         Collection<SpectrumSummary> specIds)
          throws SQLException, IOException, EPQException {
       final ArrayList<ISpectrumData> res = new ArrayList<ISpectrumData>();
-      for(final SpectrumSummary ss : specIds) {
+      for (final SpectrumSummary ss : specIds) {
          final ISpectrumData spec = ss.load();
-         if(spec != null)
+         if (spec != null)
             res.add(spec);
       }
       return res;
    }
 
-   public TreeSet<SpectrumSummary> findStandards(String name, DetectorProperties det, double eBeam, String collectedBy, int maxSpec)
+   public TreeSet<SpectrumSummary> findStandards(String name,
+         DetectorProperties det, double eBeam, String collectedBy, int maxSpec)
          throws SQLException, IOException, EPQException {
       final TreeSet<SpectrumSummary> res = new TreeSet<SpectrumSummary>();
-      final StringBuffer sql = new StringBuffer("SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE ");
-      if(det != null) {
+      final StringBuffer sql = new StringBuffer(
+            "SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE ");
+      if (det != null) {
          final Integer detIdx = getDetectorsInt().get(det);
-         if(detIdx != null) {
+         if (detIdx != null) {
             sql.append("DETECTOR = ");
             sql.append(detIdx);
             sql.append(" AND ");
          }
       }
-      if(eBeam != Double.NaN) {
+      if (eBeam != Double.NaN) {
          sql.append("BEAM_ENERGY > ");
          sql.append(Double.toString(0.99 * eBeam));
          sql.append(" AND ");
@@ -1331,15 +1379,15 @@ public class Session {
          sql.append(Double.toString(1.01 * eBeam));
          sql.append(" AND ");
       }
-      if(collectedBy != null) {
+      if (collectedBy != null) {
          final Integer pIdx = getPeople().get(collectedBy);
-         if(pIdx != null) {
+         if (pIdx != null) {
             sql.append("OPERATOR = ");
             sql.append(pIdx);
          }
       }
       final Integer stdIdx = getStandards().get(name);
-      if(stdIdx != null) {
+      if (stdIdx != null) {
          sql.append(" AND STD_COMP = ");
          sql.append(stdIdx);
       }
@@ -1347,8 +1395,9 @@ public class Session {
       final Statement st = mConnection.createStatement();
       st.setMaxRows(maxSpec);
       try (final ResultSet rs = st.executeQuery(sql.toString())) {
-         while(rs.next())
-            res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2), rs.getTimestamp(3)));
+         while (rs.next())
+            res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2),
+                  rs.getTimestamp(3)));
       }
       return res;
    }
@@ -1364,25 +1413,27 @@ public class Session {
     * @throws IOException
     * @throws EPQException
     */
-   public TreeSet<SpectrumSummary> findStandards(DetectorProperties det, double eBeam, Element elm)
+   public TreeSet<SpectrumSummary> findStandards(DetectorProperties det,
+         double eBeam, Element elm)
          throws SQLException, IOException, EPQException {
       final TreeSet<SpectrumSummary> res = new TreeSet<SpectrumSummary>();
       final Statement st = mConnection.createStatement();
       final StringBuffer sql = new StringBuffer();
-      sql.append("SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE STD_COMP IN (");
+      sql.append(
+            "SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE STD_COMP IN (");
       sql.append("SELECT ID FROM ELEMENT_DATA WHERE COMP_TYPE = ");
       sql.append(ElementDataTypes.STANDARD_COMPOSITION.ordinal());
       sql.append(" AND ELM_");
       sql.append(elm.toAbbrev().toUpperCase());
       sql.append(" > 0.01) ");
-      if(det != null) {
+      if (det != null) {
          final Integer detIdx = getDetectorsInt().get(det);
-         if(detIdx != null) {
+         if (detIdx != null) {
             sql.append("AND DETECTOR = ");
             sql.append(detIdx);
          }
       }
-      if(eBeam != Double.NaN) {
+      if (eBeam != Double.NaN) {
          sql.append("AND BEAM_ENERGY > ");
          sql.append(Double.toString(0.99 * eBeam));
          sql.append(" AND ");
@@ -1390,36 +1441,38 @@ public class Session {
          sql.append(Double.toString(1.01 * eBeam));
       }
       try (final ResultSet rs = st.executeQuery(sql.toString())) {
-         while(rs.next())
-            res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2), rs.getTimestamp(3)));
+         while (rs.next())
+            res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2),
+                  rs.getTimestamp(3)));
       }
       return res;
    }
 
-   public TreeSet<SpectrumSummary> findReferences(DetectorProperties det, double eBeam, Collection<Element> elms)
-         throws SQLException {
+   public TreeSet<SpectrumSummary> findReferences(DetectorProperties det,
+         double eBeam, Collection<Element> elms) throws SQLException {
       final TreeSet<SpectrumSummary> res = new TreeSet<SpectrumSummary>();
       final Statement st = mConnection.createStatement();
       final StringBuffer sql = new StringBuffer();
-      sql.append("SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE STD_COMP IN (");
+      sql.append(
+            "SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE STD_COMP IN (");
       sql.append("SELECT ID FROM ELEMENT_DATA WHERE COMP_TYPE IN (");
       sql.append(ElementDataTypes.STANDARD_COMPOSITION.ordinal());
       sql.append(", ");
       sql.append(ElementDataTypes.MEASURED_COMPOSITION.ordinal());
       sql.append(")");
-      for(final Element elm : elms) {
+      for (final Element elm : elms) {
          sql.append(" AND ELM_");
          sql.append(elm.toAbbrev().toUpperCase());
          sql.append(" > 0.01) ");
       }
-      if(det != null) {
+      if (det != null) {
          final Integer detIdx = getDetectorsInt().get(det);
-         if(detIdx != null) {
+         if (detIdx != null) {
             sql.append("AND DETECTOR = ");
             sql.append(detIdx);
          }
       }
-      if(eBeam != Double.NaN) {
+      if (eBeam != Double.NaN) {
          sql.append("AND BEAM_ENERGY > ");
          sql.append(Double.toString(0.99 * eBeam));
          sql.append(" AND ");
@@ -1427,26 +1480,29 @@ public class Session {
          sql.append(Double.toString(1.01 * eBeam));
       }
       try (final ResultSet rs = st.executeQuery(sql.toString())) {
-         while(rs.next())
-            res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2), rs.getTimestamp(3)));
+         while (rs.next())
+            res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2),
+                  rs.getTimestamp(3)));
       }
       return res;
    }
 
-   private TreeSet<SpectrumSummary> getAssociatedSpectra(int elmDataId, ElementDataTypes edt, int max)
-         throws SQLException {
+   private TreeSet<SpectrumSummary> getAssociatedSpectra(int elmDataId,
+         ElementDataTypes edt, int max) throws SQLException {
       final TreeSet<SpectrumSummary> res = new TreeSet<SpectrumSummary>();
       final DateFormat df = DateFormat.getDateTimeInstance();
-      final PreparedStatement ps = mConnection.prepareStatement("SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE "
-            + edtColumn(edt) + " = ?");
+      final PreparedStatement ps = mConnection.prepareStatement(
+            "SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE "
+                  + edtColumn(edt) + " = ?");
       ps.setInt(1, elmDataId);
       try (final ResultSet specs = ps.executeQuery()) {
-         while(specs.next()) {
+         while (specs.next()) {
             final StringBuffer sb = new StringBuffer();
             sb.append(specs.getString("DISPLAY_NAME"));
             sb.append(" - ");
             sb.append(df.format(specs.getTimestamp("ACQUIRED")));
-            res.add(new SpectrumSummary(specs.getInt(1), specs.getString(2), specs.getTimestamp(3)));
+            res.add(new SpectrumSummary(specs.getInt(1), specs.getString(2),
+                  specs.getTimestamp(3)));
          }
       }
       return res;
@@ -1455,14 +1511,14 @@ public class Session {
    public String findClient(String project) {
       String res = null;
       try {
-         final PreparedStatement ps = mConnection.prepareStatement("SELECT CLIENT FROM PROJECT WHERE NAME = ?");
+         final PreparedStatement ps = mConnection
+               .prepareStatement("SELECT CLIENT FROM PROJECT WHERE NAME = ?");
          ps.setString(1, project);
          try (final ResultSet rs = ps.executeQuery()) {
-            if(rs.next())
+            if (rs.next())
                res = getInvPeople().get(Integer.valueOf(rs.getInt(1)));
          }
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
       return res;
@@ -1498,8 +1554,8 @@ public class Session {
 
    public Set<DetectorProperties> getDetectors(ElectronProbe ep) {
       final HashSet<DetectorProperties> res = new HashSet<DetectorProperties>();
-      for(final DetectorProperties dp : getDetectors())
-         if(dp.getOwner() == ep)
+      for (final DetectorProperties dp : getDetectors())
+         if (dp.getOwner() == ep)
             res.add(dp);
       return res;
    }
@@ -1514,9 +1570,11 @@ public class Session {
     */
    public Set<EDSDetector> getEDSDetectors(boolean activeOnly) {
       final Set<EDSDetector> res = new HashSet<EDSDetector>();
-      for(final DetectorProperties dp : activeOnly ? getDetectors() : getAllDetectors()) {
+      for (final DetectorProperties dp : activeOnly
+            ? getDetectors()
+            : getAllDetectors()) {
          final DetectorCalibration dc = getLatestCalibration(dp);
-         if(dc instanceof EDSCalibration)
+         if (dc instanceof EDSCalibration)
             res.add(EDSDetector.createDetector(dp, (EDSCalibration) dc));
       }
       return res;
@@ -1524,26 +1582,29 @@ public class Session {
 
    public EDSDetector findDetector(String name) {
       final Set<EDSDetector> dets = getEDSDetectors(false);
-      for(final EDSDetector det : dets)
-         if(det.toString().startsWith(name))
+      for (final EDSDetector det : dets)
+         if (det.toString().startsWith(name))
             return det;
       return null;
    }
 
    public DetectorProperties findDetector(int detIdx) {
       getDetectors();
-      for(final Map.Entry<DetectorProperties, Integer> me : mDetectors.entrySet())
-         if(me.getValue().intValue() == detIdx)
+      for (final Map.Entry<DetectorProperties, Integer> me : mDetectors
+            .entrySet())
+         if (me.getValue().intValue() == detIdx)
             return me.getKey();
       return null;
    }
 
    public DetectorProperties findDetectorFromGUID(String guid) {
       getDetectors();
-      for(final Map.Entry<DetectorProperties, Integer> me : mDetectors.entrySet()) {
+      for (final Map.Entry<DetectorProperties, Integer> me : mDetectors
+            .entrySet()) {
          SpectrumProperties sp = me.getKey().getProperties();
-         String detGuid = sp.getTextWithDefault(SpectrumProperties.DetectorGUID, "");
-         if(detGuid.equals(guid))
+         String detGuid = sp.getTextWithDefault(SpectrumProperties.DetectorGUID,
+               "");
+         if (detGuid.equals(guid))
             return me.getKey();
       }
       return null;
@@ -1563,9 +1624,9 @@ public class Session {
 
    public Set<EDSDetector> getCurrentEDSDetectors(ElectronProbe ep) {
       final Set<EDSDetector> res = new HashSet<EDSDetector>();
-      for(final DetectorProperties dp : getDetectors(ep)) {
+      for (final DetectorProperties dp : getDetectors(ep)) {
          final DetectorCalibration dc = getLatestCalibration(dp);
-         if(dc instanceof EDSCalibration)
+         if (dc instanceof EDSCalibration)
             res.add(EDSDetector.createDetector(dp, (EDSCalibration) dc));
       }
       return res;
@@ -1574,7 +1635,7 @@ public class Session {
    public Set<ElectronProbe> getCurrentProbes() {
       final Set<EDSDetector> dets = getEDSDetectors(true);
       final HashSet<ElectronProbe> eps = new HashSet<ElectronProbe>();
-      for(final EDSDetector det : dets)
+      for (final EDSDetector det : dets)
          eps.add(det.getOwner());
       return eps;
    }
@@ -1591,7 +1652,7 @@ public class Session {
     * @return Map&lt;ElectronProbe, Integer&gt;
     */
    public synchronized Map<ElectronProbe, Integer> getElectronProbes() {
-      if(mElectronProbes == null) {
+      if (mElectronProbes == null) {
          mElectronProbes = new HashMap<ElectronProbe, Integer>();
          mActiveDetectors = new HashMap<DetectorProperties, Integer>();
          mDetectors = new HashMap<DetectorProperties, Integer>();
@@ -1600,46 +1661,48 @@ public class Session {
             final EPQXStream xs = EPQXStream.getInstance();
             {
                final Statement st = mConnection.createStatement();
-               try (final ResultSet rs = st.executeQuery("SELECT * FROM ELECTRONPROBE")) {
-                  while(rs.next())
+               try (final ResultSet rs = st
+                     .executeQuery("SELECT * FROM ELECTRONPROBE")) {
+                  while (rs.next())
                      try {
                         final Integer id = Integer.valueOf(rs.getInt("ID"));
                         final String xmlObj = rs.getString("XML_OBJ");
-                        final SpectrumProperties sp = (SpectrumProperties) xs.fromXML(xmlObj);
+                        final SpectrumProperties sp = (SpectrumProperties) xs
+                              .fromXML(xmlObj);
                         final ElectronProbe ep = new ElectronProbe(sp);
                         mElectronProbes.put(ep, id);
                         tmp.put(id, ep);
-                     }
-                     catch(final ConversionException e) {
+                     } catch (final ConversionException e) {
                         e.printStackTrace();
                      }
                }
             }
             {
                final Statement st = mConnection.createStatement();
-               try (final ResultSet rs = st.executeQuery("SELECT * FROM DETECTOR")) {
-                  while(rs.next())
+               try (final ResultSet rs = st
+                     .executeQuery("SELECT * FROM DETECTOR")) {
+                  while (rs.next())
                      try {
                         final Integer id = rs.getInt("ID");
                         final String xml = rs.getString("XML_OBJ");
                         final Timestamp retired = rs.getTimestamp("RETIRED");
                         // System.out.println(xml);
-                        final DetectorProperties det = (DetectorProperties) xs.fromXML(xml);
+                        final DetectorProperties det = (DetectorProperties) xs
+                              .fromXML(xml);
                         // System.out.println("Read "+det.toString());
                         mDetectors.put(det, id);
-                        if(retired == null)
+                        if (retired == null)
                            mActiveDetectors.put(det, id);
-                        final ElectronProbe ep = tmp.get(Integer.valueOf(rs.getInt("INSTRUMENT_KEY")));
-                        if(ep != null)
+                        final ElectronProbe ep = tmp.get(
+                              Integer.valueOf(rs.getInt("INSTRUMENT_KEY")));
+                        if (ep != null)
                            det.setOwner(ep);
-                     }
-                     catch(final ConversionException e) {
+                     } catch (final ConversionException e) {
                         e.printStackTrace();
                      }
                }
             }
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
       }
@@ -1658,30 +1721,31 @@ public class Session {
          final PreparedStatement ps = mConnection.prepareStatement(sql);
          ps.setInt(1, idx);
          try (final ResultSet rs = ps.executeQuery()) {
-            if(rs.next()) {
+            if (rs.next()) {
                final int type = rs.getInt("COMP_TYPE");
-               if((type == ElementDataTypes.MEASURED_COMPOSITION.ordinal())
-                     || (type == ElementDataTypes.STANDARD_COMPOSITION.ordinal())) {
+               if ((type == ElementDataTypes.MEASURED_COMPOSITION.ordinal())
+                     || (type == ElementDataTypes.STANDARD_COMPOSITION
+                           .ordinal())) {
                   final Composition res = new Composition();
-                  for(int z = Element.elmH; z <= Element.elmCf; ++z) {
+                  for (int z = Element.elmH; z <= Element.elmCf; ++z) {
                      final double v = rs.getFloat("ELM_" + Element.toAbbrev(z));
-                     if(v != 0.0)
+                     if (v != 0.0)
                         res.addElement(Element.byAtomicNumber(z), v);
                   }
                   return res;
-               } else if(type == ElementDataTypes.PARTICLE_SIGNATURE.ordinal()) {
+               } else if (type == ElementDataTypes.PARTICLE_SIGNATURE
+                     .ordinal()) {
                   final ParticleSignature sig = new ParticleSignature();
-                  for(int z = Element.elmH; z <= Element.elmCf; ++z) {
+                  for (int z = Element.elmH; z <= Element.elmCf; ++z) {
                      final double v = rs.getFloat("ELM_" + Element.toAbbrev(z));
-                     if(v != 0.0)
+                     if (v != 0.0)
                         sig.add(Element.byAtomicNumber(z), v);
                   }
                   return sig;
                }
             }
          }
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
       return null;
@@ -1694,21 +1758,21 @@ public class Session {
     * @return Map&lt;String, Integer&gt;
     */
    public Map<String, Integer> getPeople() {
-      if(mPeople == null) {
+      if (mPeople == null) {
          mPeople = new TreeMap<String, Integer>();
          mInvPeople = new TreeMap<Integer, String>();
          try {
             final Statement st = mConnection.createStatement();
-            try (final ResultSet rs = st.executeQuery("SELECT ID, NAME FROM PERSON")) {
-               while(rs.next()) {
+            try (final ResultSet rs = st
+                  .executeQuery("SELECT ID, NAME FROM PERSON")) {
+               while (rs.next()) {
                   final int id = rs.getInt("ID");
                   final String name = rs.getString("NAME").trim();
                   mPeople.put(name, Integer.valueOf(id));
                   mInvPeople.put(Integer.valueOf(id), name);
                }
             }
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
       }
@@ -1716,7 +1780,7 @@ public class Session {
    }
 
    public Map<Integer, String> getInvPeople() {
-      if(mPeople == null)
+      if (mPeople == null)
          getPeople();
       return mInvPeople;
    }
@@ -1728,13 +1792,14 @@ public class Session {
     * @return TreeMap&lt;String,Integer&gt;
     */
    public Map<String, Integer> getProjects() {
-      if(mProjects == null) {
+      if (mProjects == null) {
          mProjects = new TreeMap<String, Integer>();
          mInvProjects = new TreeMap<Integer, String>();
          try {
             final Statement st = mConnection.createStatement();
-            try (final ResultSet rs = st.executeQuery("SELECT ID, NAME FROM PROJECT")) {
-               while(rs.next()) {
+            try (final ResultSet rs = st
+                  .executeQuery("SELECT ID, NAME FROM PROJECT")) {
+               while (rs.next()) {
                   final int id = rs.getInt("ID");
                   final String name = rs.getString("NAME").trim();
                   final Integer iv = Integer.valueOf(id);
@@ -1742,8 +1807,7 @@ public class Session {
                   mInvProjects.put(iv, name);
                }
             }
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
       }
@@ -1751,67 +1815,71 @@ public class Session {
    }
 
    public Map<Integer, String> getInvProjects() {
-      if(mProjects == null)
+      if (mProjects == null)
          getProjects();
       return mInvProjects;
    }
 
-   public TreeSet<SpectrumSummary> findSpectra(String project, DetectorProperties detector, DetectorCalibration calibration, String collectedBy, double beamEnergy, int maxSpectra) {
+   public TreeSet<SpectrumSummary> findSpectra(String project,
+         DetectorProperties detector, DetectorCalibration calibration,
+         String collectedBy, double beamEnergy, int maxSpectra) {
       final TreeSet<SpectrumSummary> res = new TreeSet<SpectrumSummary>();
       final Integer pj = getProjects().get(project);
       final Integer det = getDetectorsInt().get(detector);
       final Integer per = getPeople().get(collectedBy);
-      final int cal = calibration != null ? findCalibration(detector, calibration) : -1;
+      final int cal = calibration != null
+            ? findCalibration(detector, calibration)
+            : -1;
       final StringBuffer sql = new StringBuffer();
       sql.append("SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE ");
       boolean addAnd = false;
-      if(pj != null) {
+      if (pj != null) {
          sql.append("PROJECT = ");
          sql.append(pj);
          addAnd = true;
       }
-      if(det != null) {
-         if(addAnd)
+      if (det != null) {
+         if (addAnd)
             sql.append(" AND ");
          sql.append(" DETECTOR = ");
          sql.append(det);
          addAnd = true;
       }
-      if(collectedBy != null) {
-         if(addAnd)
+      if (collectedBy != null) {
+         if (addAnd)
             sql.append(" AND ");
          sql.append(" OPERATOR = ");
          sql.append(per);
          addAnd = true;
       }
-      if(cal != -1) {
-         if(addAnd)
+      if (cal != -1) {
+         if (addAnd)
             sql.append(" AND ");
          sql.append("CALIBRATION = ");
          sql.append(cal);
          addAnd = true;
       }
-      if(!Double.isNaN(beamEnergy)) {
-         if(addAnd)
+      if (!Double.isNaN(beamEnergy)) {
+         if (addAnd)
             sql.append(" AND ");
          sql.append("BEAM_ENERGY = ?");
       }
       try {
-         final PreparedStatement ps = mConnection.prepareStatement(sql.toString());
-         if(!Double.isNaN(beamEnergy))
+         final PreparedStatement ps = mConnection
+               .prepareStatement(sql.toString());
+         if (!Double.isNaN(beamEnergy))
             ps.setFloat(1, (float) beamEnergy);
          try (final ResultSet rs = ps.executeQuery()) {
-            for(int i = 0; rs.next() && (i < maxSpectra);)
+            for (int i = 0; rs.next() && (i < maxSpectra);)
                try {
-                  res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2), rs.getTimestamp(3)));
+                  res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2),
+                        rs.getTimestamp(3)));
                   ++i;
-               }
-               catch(final Exception e) {
+               } catch (final Exception e) {
                   e.printStackTrace();
                }
          }
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
       return res;
@@ -1824,20 +1892,20 @@ public class Session {
     * @return Composition or Material object
     * @throws SQLException
     */
-   public Composition findStandard(String name)
-         throws SQLException {
-      if(name.compareToIgnoreCase("unknown") != 0) {
-         final PreparedStatement st = mConnection.prepareStatement("SELECT ELM_DATA, DENSITY FROM STANDARD WHERE NAME = ?");
+   public Composition findStandard(String name) throws SQLException {
+      if (name.compareToIgnoreCase("unknown") != 0) {
+         final PreparedStatement st = mConnection.prepareStatement(
+               "SELECT ELM_DATA, DENSITY FROM STANDARD WHERE NAME = ?");
          st.setMaxRows(1);
          st.setString(1, name);
          try (final ResultSet rs = st.executeQuery()) {
-            if(rs.next()) {
+            if (rs.next()) {
                final Object res = getElementalDatum(rs.getInt(1));
                assert res instanceof Composition;
                Composition comp = (Composition) res;
                comp.setName(name);
                final double density = rs.getDouble(2);
-               if(density > 0.0)
+               if (density > 0.0)
                   comp = new Material(comp, density);
                return comp;
             }
@@ -1846,18 +1914,18 @@ public class Session {
       return null;
    }
 
-   public TreeSet<Composition> findAllStandards()
-         throws SQLException {
+   public TreeSet<Composition> findAllStandards() throws SQLException {
       final TreeSet<Composition> resSet = new TreeSet<Composition>();
-      final PreparedStatement st = mConnection.prepareStatement("SELECT NAME, ELM_DATA, DENSITY FROM STANDARD");
+      final PreparedStatement st = mConnection
+            .prepareStatement("SELECT NAME, ELM_DATA, DENSITY FROM STANDARD");
       try (final ResultSet rs = st.executeQuery()) {
-         while(rs.next()) {
+         while (rs.next()) {
             final Object res = getElementalDatum(rs.getInt(2));
             assert res instanceof Composition;
             Composition comp = (Composition) res;
             comp.setName(rs.getString(1));
             final double density = rs.getDouble(3);
-            if(density > 0.0)
+            if (density > 0.0)
                comp = new Material(comp, density);
             resSet.add(comp);
          }
@@ -1871,13 +1939,13 @@ public class Session {
     * @return TreeMap&lt;String&gt;
     * @throws SQLException
     */
-   public TreeMap<String, Integer> getStandards()
-         throws SQLException {
+   public TreeMap<String, Integer> getStandards() throws SQLException {
       final TreeMap<String, Integer> res = new TreeMap<String, Integer>();
       final Statement st = mConnection.createStatement();
       st.setMaxRows(0);
-      try (final ResultSet rs = st.executeQuery("SELECT NAME, ELM_DATA FROM STANDARD")) {
-         while(rs.next())
+      try (final ResultSet rs = st
+            .executeQuery("SELECT NAME, ELM_DATA FROM STANDARD")) {
+         while (rs.next())
             res.put(rs.getString(1), Integer.valueOf(rs.getInt(2)));
       }
       return res;
@@ -1905,78 +1973,89 @@ public class Session {
       final Clob extraClob = rs.getClob("EXTRA_PROPERTIES");
       SpectrumProperties diff = null;
       try {
-         if(extraClob != null)
-            diff = (SpectrumProperties) EPQXStream.getInstance().fromXML(extraClob.getCharacterStream());
-      }
-      catch(final Exception e) {
+         if (extraClob != null)
+            diff = (SpectrumProperties) EPQXStream.getInstance()
+                  .fromXML(extraClob.getCharacterStream());
+      } catch (final Exception e) {
          e.printStackTrace();
       }
       {
-         try (final InputStream specBlob = rs.getBlob("SPECTRUM").getBinaryStream()) {
+         try (final InputStream specBlob = rs.getBlob("SPECTRUM")
+               .getBinaryStream()) {
             String ext = ".tmp";
-            if(filename.lastIndexOf(".") > 0)
+            if (filename.lastIndexOf(".") > 0)
                ext = filename.substring(filename.lastIndexOf("."));
             final File tmp = File.createTempFile("dbSpec", ext);
             try {
                {
                   try (final FileOutputStream fos = new FileOutputStream(tmp)) {
                      final byte[] buffer = new byte[1024];
-                     for(int len = specBlob.read(buffer); len > 0; len = specBlob.read(buffer))
+                     for (int len = specBlob
+                           .read(buffer); len > 0; len = specBlob.read(buffer))
                         fos.write(buffer, 0, len);
                   }
                }
                res = SpectrumFile.open(tmp, subIdx);
-            }
-            finally {
+            } finally {
                tmp.delete();
             }
          }
       }
       SpectrumProperties sp = res.getProperties();
       sp.setTextProperty(SpectrumProperties.SourceFile, filename);
-      if(stdCompIdx != -1) {
+      if (stdCompIdx != -1) {
          final Object obj = getElementalDatum(stdCompIdx);
-         if(obj instanceof Composition)
-            sp.setCompositionProperty(SpectrumProperties.StandardComposition, (Composition) obj);
+         if (obj instanceof Composition)
+            sp.setCompositionProperty(SpectrumProperties.StandardComposition,
+                  (Composition) obj);
       }
-      if(uCompIdx != -1) {
+      if (uCompIdx != -1) {
          final Object obj = getElementalDatum(uCompIdx);
-         if(obj instanceof Composition)
-            sp.setCompositionProperty(SpectrumProperties.MicroanalyticalComposition, (Composition) obj);
+         if (obj instanceof Composition)
+            sp.setCompositionProperty(
+                  SpectrumProperties.MicroanalyticalComposition,
+                  (Composition) obj);
       }
-      if(sigIdx != -1) {
+      if (sigIdx != -1) {
          final Object obj = getElementalDatum(sigIdx);
-         if(obj instanceof ParticleSignature)
-            sp.setParticleSignatureProperty(SpectrumProperties.ParticleSignature, (ParticleSignature) obj);
+         if (obj instanceof ParticleSignature)
+            sp.setParticleSignatureProperty(
+                  SpectrumProperties.ParticleSignature,
+                  (ParticleSignature) obj);
       }
       sp.setNumericProperty(SpectrumProperties.BeamEnergy, eBeam);
-      if(operator != -1)
-         sp.setTextProperty(SpectrumProperties.InstrumentOperator, getInvPeople().get(operator));
+      if (operator != -1)
+         sp.setTextProperty(SpectrumProperties.InstrumentOperator,
+               getInvPeople().get(operator));
       // Determine the correct DetectorProperties and DetectorCalibration
       DetectorProperties dp = null;
       DetectorCalibration dc = null;
-      for(final Map.Entry<DetectorProperties, Integer> me : mDetectors.entrySet())
-         if(me.getValue().intValue() == detIdx) {
+      for (final Map.Entry<DetectorProperties, Integer> me : mDetectors
+            .entrySet())
+         if (me.getValue().intValue() == detIdx) {
             dp = me.getKey();
-            for(final Map.Entry<DetectorCalibration, Integer> me2 : getCalibrationsInt(dp).entrySet())
-               if(me2.getValue().intValue() == calIdx) {
+            for (final Map.Entry<DetectorCalibration, Integer> me2 : getCalibrationsInt(
+                  dp).entrySet())
+               if (me2.getValue().intValue() == calIdx) {
                   dc = me2.getKey();
                   break;
                }
             break;
          }
-      if(dc == null)
+      if (dc == null)
          dc = getBestCalibration(dp, acquired);
-      if((dp != null) && (dc instanceof EDSCalibration)) {
-         res = SpectrumUtils.applyEDSDetector(EDSDetector.createDetector(dp, (EDSCalibration) dc), res);
+      if ((dp != null) && (dc instanceof EDSCalibration)) {
+         res = SpectrumUtils.applyEDSDetector(
+               EDSDetector.createDetector(dp, (EDSCalibration) dc), res);
          sp = res.getProperties();
       }
       final String prj = getInvProjects().get(projIdx);
       sp.setTextProperty(SpectrumProperties.ProjectName, prj);
       sp.setTextProperty(SpectrumProperties.ClientName, findClient(prj));
-      sp.setTimestampProperty(SpectrumProperties.AcquisitionTime, new java.util.Date(acquired.getTime()));
+      sp.setTimestampProperty(SpectrumProperties.AcquisitionTime,
+            new java.util.Date(acquired.getTime()));
       sp.setTextProperty(SpectrumProperties.SpectrumDisplayName, dispName);
-      if(diff != null)
+      if (diff != null)
          sp.addAll(diff);
       return res;
    }
@@ -1993,10 +2072,11 @@ public class Session {
    public ISpectrumData readSpectrum(int id)
          throws SQLException, IOException, EPQException {
       ISpectrumData res = null;
-      final PreparedStatement ps = mConnection.prepareStatement("SELECT * FROM SPECTRUM WHERE ID = ?");
+      final PreparedStatement ps = mConnection
+            .prepareStatement("SELECT * FROM SPECTRUM WHERE ID = ?");
       ps.setInt(1, id);
       try (final ResultSet rs = ps.executeQuery()) {
-         if(rs.next())
+         if (rs.next())
             res = loadSpectrumFromResultSet(rs);
       }
       return res;
@@ -2010,25 +2090,25 @@ public class Session {
     * @return TreeSet&lt;SpectrumSummary&lt;
     * @throws SQLException
     */
-   public TreeSet<SpectrumSummary> readSpectra(int[] ids)
-         throws SQLException {
+   public TreeSet<SpectrumSummary> readSpectra(int[] ids) throws SQLException {
       final TreeSet<SpectrumSummary> res = new TreeSet<SpectrumSummary>();
       final Statement st = mConnection.createStatement();
       st.setMaxRows(ids.length);
       final StringBuffer sb = new StringBuffer();
-      sb.append("SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE ID IN (");
-      for(int i = 0; i < ids.length; ++i) {
-         if(i != 0)
+      sb.append(
+            "SELECT ID, DISPLAY_NAME, ACQUIRED FROM SPECTRUM WHERE ID IN (");
+      for (int i = 0; i < ids.length; ++i) {
+         if (i != 0)
             sb.append(", ");
          sb.append(ids[i]);
       }
       sb.append(")");
       try (final ResultSet rs = st.executeQuery(sb.toString())) {
-         while(rs.next())
+         while (rs.next())
             try {
-               res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2), rs.getTimestamp(3)));
-            }
-            catch(final Exception e) {
+               res.add(new SpectrumSummary(rs.getInt(1), rs.getString(2),
+                     rs.getTimestamp(3)));
+            } catch (final Exception e) {
                e.printStackTrace();
             }
       }
@@ -2045,22 +2125,25 @@ public class Session {
    public List<DetectorCalibration> getCalibrations(DetectorProperties dp) {
       final Map<DetectorCalibration, Integer> dcs = getCalibrationsInt(dp);
       ArrayList<DetectorCalibration> cals = new ArrayList<DetectorCalibration>();
-      for(final DetectorCalibration dc : dcs.keySet())
+      for (final DetectorCalibration dc : dcs.keySet())
          cals.add(dc);
       Collections.sort(cals, new Comparator<DetectorCalibration>() {
          @Override
-         public int compare(DetectorCalibration arg0, DetectorCalibration arg1) {
+         public int compare(DetectorCalibration arg0,
+               DetectorCalibration arg1) {
             return arg0.compareTo(arg1);
          }
       });
       return Collections.unmodifiableList(cals);
    }
 
-   public DetectorCalibration getCalibrationFromGUID(DetectorProperties dp, String guid) {
+   public DetectorCalibration getCalibrationFromGUID(DetectorProperties dp,
+         String guid) {
       final Map<DetectorCalibration, Integer> dcs = getCalibrationsInt(dp);
-      for(DetectorCalibration dc : dcs.keySet()) {
-         final String calGuid = dc.getProperties().getTextWithDefault(SpectrumProperties.CalibrationGUID, "");
-         if(calGuid.equals(guid))
+      for (DetectorCalibration dc : dcs.keySet()) {
+         final String calGuid = dc.getProperties()
+               .getTextWithDefault(SpectrumProperties.CalibrationGUID, "");
+         if (calGuid.equals(guid))
             return dc;
       }
       return null;
@@ -2075,8 +2158,9 @@ public class Session {
    public DetectorCalibration getMostRecentCalibration(DetectorProperties dp) {
       DetectorCalibration latest = null;
       final Map<DetectorCalibration, Integer> dcs = getCalibrationsInt(dp);
-      for(final DetectorCalibration dc : dcs.keySet())
-         if((latest == null) || (dc.getActiveDate().after(latest.getActiveDate())))
+      for (final DetectorCalibration dc : dcs.keySet())
+         if ((latest == null)
+               || (dc.getActiveDate().after(latest.getActiveDate())))
             latest = dc;
       return latest;
    }
@@ -2090,18 +2174,21 @@ public class Session {
     * @param date
     * @return DetectorCalibration
     */
-   public DetectorCalibration getSuitableCalibration(DetectorProperties dp, Date date) {
+   public DetectorCalibration getSuitableCalibration(DetectorProperties dp,
+         Date date) {
       DetectorCalibration suitable = null;
       Date best = null;
       DetectorCalibration earliestDC = null;
       Date earliest = null;
-      for(final Map.Entry<DetectorCalibration, Integer> me : getCalibrationsInt(dp).entrySet()) {
+      for (final Map.Entry<DetectorCalibration, Integer> me : getCalibrationsInt(
+            dp).entrySet()) {
          final Date meDate = me.getKey().getActiveDate();
-         if((meDate.before(date)) && ((best == null) || (best.before(meDate)))) {
+         if ((meDate.before(date))
+               && ((best == null) || (best.before(meDate)))) {
             best = meDate;
             suitable = me.getKey();
          }
-         if((earliest == null) || meDate.before(earliest)) {
+         if ((earliest == null) || meDate.before(earliest)) {
             earliest = meDate;
             earliestDC = me.getKey();
          }
@@ -2115,36 +2202,40 @@ public class Session {
     * @param dp
     * @return Map&lt;DetectorCalibration, Integer&gt;
     */
-   private Map<DetectorCalibration, Integer> getCalibrationsInt(DetectorProperties dp) {
-      if(!mCalibrations.containsKey(dp)) {
+   private Map<DetectorCalibration, Integer> getCalibrationsInt(
+         DetectorProperties dp) {
+      if (!mCalibrations.containsKey(dp)) {
          final HashMap<DetectorCalibration, Integer> dcs = new HashMap<DetectorCalibration, Integer>();
          try {
             int detId = findDetector(dp);
-            if(detId == -1) {
+            if (detId == -1) {
                addDetector(dp);
                mConnection.commit();
                detId = findDetector(dp);
             }
             Statement st = mConnection.createStatement();
-            try (final ResultSet rs = st.executeQuery("SELECT ID, XML_OBJ FROM CALIBRATION WHERE DETECTOR="
-                  + Integer.toString(detId))) {
-               while(rs.next()) {
+            try (final ResultSet rs = st.executeQuery(
+                  "SELECT ID, XML_OBJ FROM CALIBRATION WHERE DETECTOR="
+                        + Integer.toString(detId))) {
+               while (rs.next()) {
                   Integer index = Integer.valueOf(rs.getInt(1));
                   // System.out.println(index);
-                  if(!dcs.containsValue(index)) {
+                  if (!dcs.containsValue(index)) {
                      final String xml = rs.getString(2);
-                     final DetectorCalibration dc = (DetectorCalibration) EPQXStream.getInstance().fromXML(xml);
+                     final DetectorCalibration dc = (DetectorCalibration) EPQXStream
+                           .getInstance().fromXML(xml);
                      { // Add the CalibrationHash tag
                         final SpectrumProperties cp = dc.getProperties();
-                        if(!cp.isDefined(SpectrumProperties.CalibrationGUID))
-                           cp.setTextProperty(SpectrumProperties.CalibrationGUID, EPQXStream.generateGUID(dc));
+                        if (!cp.isDefined(SpectrumProperties.CalibrationGUID))
+                           cp.setTextProperty(
+                                 SpectrumProperties.CalibrationGUID,
+                                 EPQXStream.generateGUID(dc));
                      }
                      dcs.put(dc, index);
                   }
                }
             }
-         }
-         catch(final SQLException e) {
+         } catch (final SQLException e) {
             e.printStackTrace();
          }
          mCalibrations.put(dp, dcs);
@@ -2152,7 +2243,8 @@ public class Session {
       return mCalibrations.get(dp);
    }
 
-   private int findCalibration(DetectorProperties dp, DetectorCalibration calib) {
+   private int findCalibration(DetectorProperties dp,
+         DetectorCalibration calib) {
       final Map<DetectorCalibration, Integer> mdci = getCalibrationsInt(dp);
       final Integer calIdx = mdci.get(calib);
       return calIdx != null ? calIdx.intValue() : -1;
@@ -2166,8 +2258,8 @@ public class Session {
     */
    private DetectorCalibration getLatestCalibration(DetectorProperties dp) {
       DetectorCalibration res = null;
-      for(final DetectorCalibration dc : getCalibrations(dp))
-         if((res == null) || (res.getActiveDate().before(dc.getActiveDate())))
+      for (final DetectorCalibration dc : getCalibrations(dp))
+         if ((res == null) || (res.getActiveDate().before(dc.getActiveDate())))
             res = dc;
       return res;
    }
@@ -2180,10 +2272,12 @@ public class Session {
     * @param date
     * @return DetectorCalibration
     */
-   private DetectorCalibration getBestCalibration(DetectorProperties dp, Date date) {
+   private DetectorCalibration getBestCalibration(DetectorProperties dp,
+         Date date) {
       DetectorCalibration res = null;
-      for(final DetectorCalibration dc : getCalibrations(dp))
-         if(((res == null) || res.getActiveDate().after(dc.getActiveDate())) && dc.getActiveDate().before(date))
+      for (final DetectorCalibration dc : getCalibrations(dp))
+         if (((res == null) || res.getActiveDate().after(dc.getActiveDate()))
+               && dc.getActiveDate().before(date))
             res = dc;
       return res;
 
@@ -2200,8 +2294,7 @@ public class Session {
          final PreparedStatement ps = mConnection.prepareStatement(sql);
          ps.setInt(1, id);
          ps.execute();
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
    }
@@ -2220,7 +2313,7 @@ public class Session {
             final PreparedStatement ps = mConnection.prepareStatement(sql);
             ps.setInt(1, id);
             try (final ResultSet rs = ps.executeQuery()) {
-               if(rs.next())
+               if (rs.next())
                   instrument = rs.getInt(1);
             }
          }
@@ -2247,13 +2340,12 @@ public class Session {
             final PreparedStatement ps = mConnection.prepareStatement(sql);
             ps.setInt(1, id);
             try (final ResultSet rs = ps.executeQuery()) {
-               if(rs.next())
-                  if(rs.getInt("NumDets") == 0)
+               if (rs.next())
+                  if (rs.getInt("NumDets") == 0)
                      deleteInstrument(instrument);
             }
          }
-      }
-      catch(final SQLException e) {
+      } catch (final SQLException e) {
          e.printStackTrace();
       }
    }
@@ -2290,9 +2382,7 @@ public class Session {
     * 
     * @author nicholas
     */
-   public class QCProject
-      implements
-      Comparable<QCProject> {
+   public class QCProject implements Comparable<QCProject> {
       final int mIndex;
       final int mDetectorIdx;
       final String mStandard; // "__QC__["+name+"]"
@@ -2306,21 +2396,23 @@ public class Session {
       transient TreeSet<QCEntry> mEntries;
       transient TreeMap<String, Integer> mQCDatumIdx = new TreeMap<String, Integer>();
 
-      private int getQCDatumIdx(String name)
-            throws SQLException {
+      private int getQCDatumIdx(String name) throws SQLException {
          Integer res = mQCDatumIdx.get(name);
-         if(res == null) {
+         if (res == null) {
             {
-               final PreparedStatement ps = mConnection.prepareStatement("SELECT ID FROM QC_DATUM WHERE NAME=? AND PROJECT=?");
+               final PreparedStatement ps = mConnection.prepareStatement(
+                     "SELECT ID FROM QC_DATUM WHERE NAME=? AND PROJECT=?");
                ps.setString(1, name);
                ps.setInt(2, mIndex);
                try (final ResultSet rs = ps.executeQuery()) {
-                  if(rs.next())
+                  if (rs.next())
                      res = Integer.valueOf(rs.getInt(1));
                }
             }
-            if(res == null) {
-               final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO QC_DATUM ( ID, NAME, PROJECT ) VALUES ( DEFAULT, ?, ? )", Statement.RETURN_GENERATED_KEYS);
+            if (res == null) {
+               final PreparedStatement ps = mConnection.prepareStatement(
+                     "INSERT INTO QC_DATUM ( ID, NAME, PROJECT ) VALUES ( DEFAULT, ?, ? )",
+                     Statement.RETURN_GENERATED_KEYS);
                ps.setString(1, name);
                ps.setInt(2, mIndex);
                ps.executeUpdate();
@@ -2334,74 +2426,81 @@ public class Session {
       }
 
       private QCProject(EDSDetector det, String std, double beamE)
-            throws SQLException,
-            EPQException {
+            throws SQLException, EPQException {
          final int detIdx = findDetector(det.getDetectorProperties());
-         if(detIdx == -1)
-            throw new EPQException("Unknown detector: " + det.getDetectorProperties().toString());
-         final PreparedStatement ps = mConnection.prepareStatement("SELECT ID, DETECTOR, STANDARD, BEAM_ENERGY, NORMALIZATION, NOMINAL_WD, NOMINAL_I FROM QC_PROJECT WHERE DETECTOR=? AND STANDARD=? AND BEAM_ENERGY=?");
+         if (detIdx == -1)
+            throw new EPQException("Unknown detector: "
+                  + det.getDetectorProperties().toString());
+         final PreparedStatement ps = mConnection.prepareStatement(
+               "SELECT ID, DETECTOR, STANDARD, BEAM_ENERGY, NORMALIZATION, NOMINAL_WD, NOMINAL_I FROM QC_PROJECT WHERE DETECTOR=? AND STANDARD=? AND BEAM_ENERGY=?");
          ps.setInt(1, detIdx);
          ps.setString(2, toQCName(std));
          ps.setDouble(3, roundBeamEnergy(beamE));
          ps.setFetchSize(1);
          try (final ResultSet rs = ps.executeQuery()) {
-            if(!rs.next())
-               throw new EPQException("No project found for " + det + " " + std + " " + beamE);
+            if (!rs.next())
+               throw new EPQException(
+                     "No project found for " + det + " " + std + " " + beamE);
             mIndex = rs.getInt(1);
             mDetector = det;
             mDetectorIdx = rs.getInt(2);
             mStandard = rs.getString(3);
             mBeamEnergy = rs.getDouble(4);
-            mMode = (rs.getInt(5) == 0 ? QCNormalizeMode.CURRENT : QCNormalizeMode.TOTAL_COUNTS);
+            mMode = (rs.getInt(5) == 0
+                  ? QCNormalizeMode.CURRENT
+                  : QCNormalizeMode.TOTAL_COUNTS);
             mNominalWD = rs.getDouble(6);
             mNominalI = rs.getDouble(7);
          }
       }
 
-      private QCProject(int projectIdx)
-            throws SQLException,
-            EPQException {
-         final PreparedStatement ps = mConnection.prepareStatement("SELECT ID, DETECTOR, STANDARD, BEAM_ENERGY, NORMALIZATION, NOMINAL_WD, NOMINAL_I FROM QC_PROJECT WHERE ID=?");
+      private QCProject(int projectIdx) throws SQLException, EPQException {
+         final PreparedStatement ps = mConnection.prepareStatement(
+               "SELECT ID, DETECTOR, STANDARD, BEAM_ENERGY, NORMALIZATION, NOMINAL_WD, NOMINAL_I FROM QC_PROJECT WHERE ID=?");
          ps.setInt(1, projectIdx);
          try (final ResultSet rs = ps.executeQuery()) {
-            if(!rs.next())
-               throw new EPQException("Project " + projectIdx + " does not exist.");
+            if (!rs.next())
+               throw new EPQException(
+                     "Project " + projectIdx + " does not exist.");
             mIndex = rs.getInt(1);
             mDetectorIdx = rs.getInt(2);
             mStandard = rs.getString(3);
             mBeamEnergy = rs.getDouble(4);
-            mMode = (rs.getInt(5) == 0 ? QCNormalizeMode.CURRENT : QCNormalizeMode.TOTAL_COUNTS);
+            mMode = (rs.getInt(5) == 0
+                  ? QCNormalizeMode.CURRENT
+                  : QCNormalizeMode.TOTAL_COUNTS);
             mNominalWD = rs.getDouble(6);
             mNominalI = rs.getDouble(7);
          }
       }
 
-      private QCProject(ResultSet rs)
-            throws SQLException {
+      private QCProject(ResultSet rs) throws SQLException {
          mIndex = rs.getInt(1);
          mDetectorIdx = rs.getInt(2);
          mStandard = rs.getString(3);
          mBeamEnergy = rs.getDouble(4);
-         mMode = (rs.getInt(5) == 0 ? QCNormalizeMode.CURRENT : QCNormalizeMode.TOTAL_COUNTS);
+         mMode = (rs.getInt(5) == 0
+               ? QCNormalizeMode.CURRENT
+               : QCNormalizeMode.TOTAL_COUNTS);
          mNominalWD = rs.getDouble(6);
          mNominalI = rs.getDouble(7);
       }
 
       public EDSDetector getDetector() {
-         if(mDetector == null) {
+         if (mDetector == null) {
             final DetectorProperties dp = findDetector(mDetectorIdx);
             DetectorCalibration res = null;
-            for(final DetectorCalibration dc : getCalibrations(dp))
-               if((res == null) || res.getActiveDate().after(dc.getActiveDate()))
+            for (final DetectorCalibration dc : getCalibrations(dp))
+               if ((res == null)
+                     || res.getActiveDate().after(dc.getActiveDate()))
                   res = dc;
             mDetector = EDSDetector.createDetector(dp, (EDSCalibration) res);
          }
          return mDetector;
       }
 
-      public Composition getStandard()
-            throws SQLException {
-         if(mComposition == null) {
+      public Composition getStandard() throws SQLException {
+         if (mComposition == null) {
             final Composition comp = findStandard(mStandard);
             comp.setName(fromQCName(mStandard));
             mComposition = comp;
@@ -2437,7 +2536,9 @@ public class Session {
       public String toString() {
          final DetectorProperties dp = getDetector().getDetectorProperties();
          final NumberFormat df = new HalfUpFormat("0.0 keV");
-         return fromQCName(mStandard) + " at " + df.format(mBeamEnergy) + " on " + dp.toString();
+         return "Project=" + mIndex + " - " + fromQCName(mStandard) + " at "
+               + df.format(mBeamEnergy) + " on " + dp.toString() + " - Index = "
+               + mDetectorIdx;
       }
 
       @Override
@@ -2455,12 +2556,13 @@ public class Session {
        */
       public TreeSet<QCEntry> getEntries()
             throws SQLException, IOException, EPQException {
-         if(mEntries == null) {
-            final PreparedStatement ps = mConnection.prepareStatement("SELECT ID, PROJECT, CREATED, SPECTRUM FROM QC_ENTRY WHERE PROJECT=?");
+         if (mEntries == null) {
+            final PreparedStatement ps = mConnection.prepareStatement(
+                  "SELECT ID, PROJECT, CREATED, SPECTRUM FROM QC_ENTRY WHERE PROJECT=?");
             ps.setInt(1, getIndex());
             try (final ResultSet rs = ps.executeQuery()) {
                final TreeSet<QCEntry> res = new TreeSet<QCEntry>();
-               while(rs.next())
+               while (rs.next())
                   res.add(new QCEntry(rs));
                mEntries = res;
             }
@@ -2479,10 +2581,11 @@ public class Session {
       public Set<String> getItemNames()
             throws SQLException, IOException, EPQException {
          final TreeSet<String> res = new TreeSet<String>();
-         final PreparedStatement ps = mConnection.prepareStatement("SELECT NAME FROM QC_DATUM WHERE PROJECT=?");
+         final PreparedStatement ps = mConnection
+               .prepareStatement("SELECT NAME FROM QC_DATUM WHERE PROJECT=?");
          ps.setInt(1, mIndex);
          try (final ResultSet rs = ps.executeQuery()) {
-            while(rs.next())
+            while (rs.next())
                res.add(rs.getString(1));
          }
          return res;
@@ -2500,17 +2603,18 @@ public class Session {
        */
       public QCEntry getEntry(int qce)
             throws SQLException, IOException, EPQException {
-         if(mEntries == null) {
-            final PreparedStatement ps = mConnection.prepareStatement("SELECT ID, PROJECT, CREATED, SPECTRUM FROM QC_ENTRY WHERE PROJECT=? AND ID=?");
+         if (mEntries == null) {
+            final PreparedStatement ps = mConnection.prepareStatement(
+                  "SELECT ID, PROJECT, CREATED, SPECTRUM FROM QC_ENTRY WHERE PROJECT=? AND ID=?");
             ps.setInt(1, getIndex());
             ps.setInt(2, qce);
             try (final ResultSet rs = ps.executeQuery()) {
-               if(rs.next())
+               if (rs.next())
                   return new QCEntry(rs);
             }
          } else
-            for(final QCEntry qe : mEntries)
-               if(qe.getIndex() == qce)
+            for (final QCEntry qe : mEntries)
+               if (qe.getIndex() == qce)
                   return qe;
          return null;
       }
@@ -2520,28 +2624,28 @@ public class Session {
        * EDSDetector, Composition and beam energy. Does not read the entries
        * into memory.
        * 
-       * @param projectIdx - Use getQCProject or findQCProjects to get this
-       *           index
+       * @param projectIdx
+       *           - Use getQCProject or findQCProjects to get this index
        * @return int[] An array of indexes of QC entries
        * @throws SQLException
        */
-      private int[] getEntryIndexes()
-            throws SQLException {
+      private int[] getEntryIndexes() throws SQLException {
          final int[] res;
-         if(mEntries != null) {
+         if (mEntries != null) {
             res = new int[mEntries.size()];
             int i = 0;
-            for(final QCEntry qce : mEntries)
+            for (final QCEntry qce : mEntries)
                res[i++] = qce.getIndex();
          } else {
-            final PreparedStatement ps = mConnection.prepareStatement("SELECT ID FROM QC_ENTRY WHERE PROJECT=? ORDER BY CREATED");
+            final PreparedStatement ps = mConnection.prepareStatement(
+                  "SELECT ID FROM QC_ENTRY WHERE PROJECT=? ORDER BY CREATED");
             ps.setInt(1, getIndex());
             try (final ResultSet rs = ps.executeQuery()) {
                final ArrayList<Integer> tmp = new ArrayList<Integer>();
-               while(rs.next())
+               while (rs.next())
                   tmp.add(Integer.valueOf(rs.getInt(1)));
                res = new int[tmp.size()];
-               for(int i = 0; i < res.length; ++i)
+               for (int i = 0; i < res.length; ++i)
                   res[i] = tmp.get(i).intValue();
             }
          }
@@ -2552,24 +2656,29 @@ public class Session {
        * Computes the DescriptiveStatistics for the last (or first) n QCEntry
        * objects in this QCProject.
        * 
-       * @param n The number of QCEntry objects to include
-       * @param last True for last n entries and false for first n entries
+       * @param n
+       *           The number of QCEntry objects to include
+       * @param last
+       *           True for last n entries and false for first n entries
        * @return TreeMap&lt;String,DescriptiveString&gt;
        * @throws SQLException
        * @throws IOException
        * @throws EPQException
        */
-      public TreeMap<String, DescriptiveStatistics> getEntryStatistics(int n, boolean last)
-            throws SQLException, IOException, EPQException {
-         final Set<QCEntry> ent = last ? getEntries().descendingSet() : getEntries();
+      public TreeMap<String, DescriptiveStatistics> getEntryStatistics(int n,
+            boolean last) throws SQLException, IOException, EPQException {
+         final Set<QCEntry> ent = last
+               ? getEntries().descendingSet()
+               : getEntries();
          final TreeMap<String, DescriptiveStatistics> res = new TreeMap<String, DescriptiveStatistics>();
          int i = 0;
-         for(final QCEntry qc : ent) {
-            if(i == n)
+         for (final QCEntry qc : ent) {
+            if (i == n)
                break;
-            for(final Map.Entry<String, UncertainValue2> me : qc.getData().entrySet()) {
+            for (final Map.Entry<String, UncertainValue2> me : qc.getData()
+                  .entrySet()) {
                DescriptiveStatistics ds = res.get(me.getKey());
-               if(ds == null) {
+               if (ds == null) {
                   ds = new DescriptiveStatistics();
                   res.put(me.getKey(), ds);
                }
@@ -2596,16 +2705,16 @@ public class Session {
          final Set<QCEntry> entries = getEntries();
          final Set<String> columns = new TreeSet<String>();
          QCEntry last = null;
-         for(final QCEntry qc : entries) {
+         for (final QCEntry qc : entries) {
             final Map<String, UncertainValue2> entry = qc.getData();
-            for(final String name : entry.keySet())
+            for (final String name : entry.keySet())
                columns.add(name);
             last = qc;
          }
          final StringBuffer sb = new StringBuffer();
          final TreeMap<String, DescriptiveStatistics> stats = new TreeMap<String, DescriptiveStatistics>();
          sb.append("Timestamp\tIndex");
-         for(final String column : columns) {
+         for (final String column : columns) {
             sb.append("\t");
             sb.append(column);
             sb.append("\td");
@@ -2614,14 +2723,14 @@ public class Session {
          }
          sb.append("\n");
          wr.append(sb.toString());
-         for(final QCEntry qc : entries) {
+         for (final QCEntry qc : entries) {
             sb.setLength(0);
             final Timestamp ts = qc.getTimestamp();
             sb.append(ts);
             sb.append("\t");
             sb.append(qc.getIndex());
             final Map<String, UncertainValue2> entry = qc.getData();
-            for(final String column : columns) {
+            for (final String column : columns) {
                final UncertainValue2 uv = entry.get(column);
                stats.get(column).add(uv.doubleValue());
                sb.append("\t");
@@ -2640,7 +2749,7 @@ public class Session {
          max.append("\tMaximum");
          avg.append("\tAverage");
          std.append("\tStd. Dev.");
-         for(final String column : columns) {
+         for (final String column : columns) {
             final DescriptiveStatistics ds = stats.get(column);
             min.append("\t");
             min.append(ds.minimum());
@@ -2663,12 +2772,12 @@ public class Session {
          wr.append(max);
          wr.append(avg);
          wr.append(std);
-         if(last != null) { // Compare last to avg and stddev
+         if (last != null) { // Compare last to avg and stddev
             final Map<String, UncertainValue2> lastData = last.getData();
             sb.setLength(0);
             sb.append("Last (Delta & N-Sigma)\t");
             sb.append(last.getIndex());
-            for(final String column : columns) {
+            for (final String column : columns) {
                final double val = lastData.get(column).doubleValue();
                final DescriptiveStatistics ds = stats.get(column);
                sb.append("\t");
@@ -2688,40 +2797,52 @@ public class Session {
        * construct the data item.
        * </p>
        * 
-       * @param spec A QC spectrum
-       * @param data The data items associated with spec
+       * @param spec
+       *           A QC spectrum
+       * @param data
+       *           The data items associated with spec
        * @throws SQLException
        * @throws EPQException
        * @throws AlreadyInDatabaseException
        * @throws IOException
        * @throws FileNotFoundException
        */
-      public QCEntry addMeasurement(ISpectrumData spec, Map<String, UncertainValue2> data)
-            throws SQLException, EPQException, FileNotFoundException, IOException, AlreadyInDatabaseException {
+      public QCEntry addMeasurement(ISpectrumData spec,
+            Map<String, UncertainValue2> data)
+            throws SQLException, EPQException, FileNotFoundException,
+            IOException, AlreadyInDatabaseException {
          final SpectrumProperties sp = spec.getProperties();
-         final double beamE = roundBeamEnergy(sp.getNumericWithDefault(SpectrumProperties.BeamEnergy, Double.NaN));
-         if(beamE != mBeamEnergy)
-            throw new EPQException("The beam energy on the measured QC spectrum does not match the QC project.");
+         final double beamE = roundBeamEnergy(sp.getNumericWithDefault(
+               SpectrumProperties.BeamEnergy, Double.NaN));
+         if (beamE != mBeamEnergy)
+            throw new EPQException(
+                  "The beam energy on the measured QC spectrum does not match the QC project.");
          // Find the appropriate
-         final Date dt = sp.getTimestampWithDefault(SpectrumProperties.AcquisitionTime, new Date(System.currentTimeMillis()));
+         final Date dt = sp.getTimestampWithDefault(
+               SpectrumProperties.AcquisitionTime,
+               new Date(System.currentTimeMillis()));
          final Timestamp ts = new Timestamp(dt.getTime());
          int entryIdx = Integer.MAX_VALUE;
          {
             final int specIdx = addSpectrum(spec, true);
-            final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO QC_ENTRY ( ID, CREATED, PROJECT, SPECTRUM, CULL ) VALUES ( DEFAULT, ?, ?, ?, 0 )", Statement.RETURN_GENERATED_KEYS);
+            final PreparedStatement ps = mConnection.prepareStatement(
+                  "INSERT INTO QC_ENTRY ( ID, CREATED, PROJECT, SPECTRUM, CULL ) VALUES ( DEFAULT, ?, ?, ?, 0 )",
+                  Statement.RETURN_GENERATED_KEYS);
             ps.setTimestamp(1, ts);
             ps.setInt(2, getIndex());
             ps.setInt(3, specIdx);
             ps.executeUpdate();
             try (final ResultSet rs = ps.getGeneratedKeys()) {
-               if(rs.next())
+               if (rs.next())
                   entryIdx = rs.getInt(1);
             }
          }
-         if(entryIdx != Integer.MAX_VALUE) {
-         // Update the
-            final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO QC_ITEM ( ID, ENTRY, DATUM, QC_VALUE, QC_UNC ) VALUES ( DEFAULT, ?, ?, ?, ? )");
-            for(final Map.Entry<String, UncertainValue2> me : data.entrySet()) {
+         if (entryIdx != Integer.MAX_VALUE) {
+            // Update the
+            final PreparedStatement ps = mConnection.prepareStatement(
+                  "INSERT INTO QC_ITEM ( ID, ENTRY, DATUM, QC_VALUE, QC_UNC ) VALUES ( DEFAULT, ?, ?, ?, ? )");
+            for (final Map.Entry<String, UncertainValue2> me : data
+                  .entrySet()) {
                final String name = me.getKey();
                final UncertainValue2 uv = me.getValue();
                ps.clearParameters();
@@ -2732,16 +2853,18 @@ public class Session {
                ps.executeUpdate();
             }
             final QCEntry qce = new QCEntry(entryIdx);
-            if(mEntries != null)
+            if (mEntries != null)
                mEntries.add(qce);
             return qce;
-         } else 
-            throw new EPQException("Unable to insert the QC item into the database.");
+         } else
+            throw new EPQException(
+                  "Unable to insert the QC item into the database.");
       }
 
       public void setControlLimit(String name, UncertainValue2 uc)
             throws SQLException {
-         final PreparedStatement ps = mConnection.prepareStatement("UPDATE QC_DATUM SET NOMINAL=?, TOLERANCE=? WHERE NAME=? AND PROJECT=?");
+         final PreparedStatement ps = mConnection.prepareStatement(
+               "UPDATE QC_DATUM SET NOMINAL=?, TOLERANCE=? WHERE NAME=? AND PROJECT=?");
          ps.setDouble(1, uc.doubleValue());
          ps.setDouble(2, uc.uncertainty());
          ps.setString(3, name);
@@ -2749,14 +2872,15 @@ public class Session {
          ps.executeUpdate();
       }
 
-      public UncertainValue2 getControlLimit(String name)
-            throws SQLException {
-         final PreparedStatement ps = mConnection.prepareStatement("SELECT NOMINAL, TOLERANCE FROM QC_DATUM WHERE NAME=? AND PROJECT=?");
+      public UncertainValue2 getControlLimit(String name) throws SQLException {
+         final PreparedStatement ps = mConnection.prepareStatement(
+               "SELECT NOMINAL, TOLERANCE FROM QC_DATUM WHERE NAME=? AND PROJECT=?");
          ps.setString(1, name);
          ps.setInt(1, getIndex());
          try (final ResultSet rs = ps.executeQuery()) {
-            if(rs.next())
-               return new UncertainValue2(rs.getDouble(1), name, rs.getDouble(2));
+            if (rs.next())
+               return new UncertainValue2(rs.getDouble(1), name,
+                     rs.getDouble(2));
          }
          return null;
       }
@@ -2781,25 +2905,34 @@ public class Session {
     * Create a new QCProject associated with the specified detector, standard
     * and beam energy.
     * 
-    * @param det EDSDetector
-    * @param std A material on which the spectra will be collected
-    * @param beamE The beam energy at which the spectra will be collected
-    * @param mode SpectrumFitter7.QCNormalization
-    * @param nominalWD Working distance in mm
-    * @param nominalI Probe current in nA
+    * @param det
+    *           EDSDetector
+    * @param std
+    *           A material on which the spectra will be collected
+    * @param beamE
+    *           The beam energy at which the spectra will be collected
+    * @param mode
+    *           SpectrumFitter7.QCNormalization
+    * @param nominalWD
+    *           Working distance in mm
+    * @param nominalI
+    *           Probe current in nA
     * @return QCProject
     * @throws SQLException
     * @throws EPQException
     */
-   public QCProject createQCProject(DetectorProperties det, Composition std, double beamE, QCNormalizeMode mode, double nominalWD, double nominalI)
+   public QCProject createQCProject(DetectorProperties det, Composition std,
+         double beamE, QCNormalizeMode mode, double nominalWD, double nominalI)
          throws SQLException, EPQException {
       final String qcname = toQCName(std.getName());
-      if(findStandard(qcname) == null) {
+      if (findStandard(qcname) == null) {
          final Composition qcStd = std.clone();
          qcStd.setName(qcname);
          addStandard(qcStd);
       }
-      final PreparedStatement ps = mConnection.prepareStatement("INSERT INTO QC_PROJECT ( ID, DETECTOR, STANDARD, BEAM_ENERGY, NORMALIZATION, NOMINAL_WD, NOMINAL_I ) VALUES ( DEFAULT, ?, ?, ?, ?, ?, ? )", Statement.RETURN_GENERATED_KEYS);
+      final PreparedStatement ps = mConnection.prepareStatement(
+            "INSERT INTO QC_PROJECT ( ID, DETECTOR, STANDARD, BEAM_ENERGY, NORMALIZATION, NOMINAL_WD, NOMINAL_I ) VALUES ( DEFAULT, ?, ?, ?, ?, ?, ? )",
+            Statement.RETURN_GENERATED_KEYS);
       ps.setInt(1, findDetector(det));
       ps.setString(2, qcname);
       ps.setDouble(3, roundBeamEnergy(beamE));
@@ -2808,7 +2941,7 @@ public class Session {
       ps.setDouble(6, nominalI);
       ps.executeUpdate();
       try (final ResultSet rs = ps.getGeneratedKeys()) {
-         if(rs.next()) {
+         if (rs.next()) {
             final int id = rs.getInt(1);
             final QCProject qcp = new QCProject(id);
             mQCProjects.put(id, qcp);
@@ -2828,13 +2961,13 @@ public class Session {
    public Set<DetectorProperties> findDetectorsWithQCProjects()
          throws SQLException {
       final Set<DetectorProperties> res = new HashSet<DetectorProperties>();
-      final PreparedStatement ps = mConnection.prepareStatement("SELECT DISTINCT DETECTOR FROM QC_PROJECT");
+      final PreparedStatement ps = mConnection
+            .prepareStatement("SELECT DISTINCT DETECTOR FROM QC_PROJECT");
       try (final ResultSet rs = ps.executeQuery()) {
-         while(rs.next())
+         while (rs.next())
             try {
                res.add(findDetector(rs.getInt(1)));
-            }
-            catch(final Exception e) {
+            } catch (final Exception e) {
                e.printStackTrace();
             }
       }
@@ -2853,7 +2986,7 @@ public class Session {
    public QCProject getQCProject(int projectIdx)
          throws SQLException, EPQException {
       QCProject res = mQCProjects.get(Integer.valueOf(projectIdx));
-      if(res == null) {
+      if (res == null) {
          res = new QCProject(projectIdx);
          mQCProjects.put(Integer.valueOf(projectIdx), res);
       }
@@ -2865,9 +2998,12 @@ public class Session {
     * EDSDetector, standard and beam energy. If a QCProject does not exist then
     * the method throws an EPQException.
     * 
-    * @param det EDSDetector
-    * @param std The name of the standard
-    * @param beamE The beam energy in keV
+    * @param det
+    *           EDSDetector
+    * @param std
+    *           The name of the standard
+    * @param beamE
+    *           The beam energy in keV
     * @return QCProject
     * @throws SQLException
     * @throws EPQException
@@ -2876,11 +3012,13 @@ public class Session {
          throws SQLException, EPQException {
       final int detIdx = findDetector(det.getDetectorProperties());
       beamE = roundBeamEnergy(beamE);
-      for(final QCProject qcp : mQCProjects.values())
-         if((qcp.mDetectorIdx == detIdx) && qcp.mStandard.equals(toQCName(std)) && (qcp.mBeamEnergy == beamE))
+      for (final QCProject qcp : mQCProjects.values())
+         if ((qcp.mDetectorIdx == detIdx) && qcp.mStandard.equals(toQCName(std))
+               && (qcp.mBeamEnergy == beamE))
             return qcp;
-      for(final QCProject qcp : findQCProjects(det.getDetectorProperties()))
-         if((qcp.mDetectorIdx == detIdx) && qcp.mStandard.equals(toQCName(std)) && (qcp.mBeamEnergy == beamE))
+      for (final QCProject qcp : findQCProjects(det.getDetectorProperties()))
+         if ((qcp.mDetectorIdx == detIdx) && qcp.mStandard.equals(toQCName(std))
+               && (qcp.mBeamEnergy == beamE))
             return qcp;
       final QCProject res = new QCProject(det, std, beamE);
       mQCProjects.put(res.getIndex(), res);
@@ -2899,10 +3037,11 @@ public class Session {
          throws SQLException {
       final TreeSet<QCProject> res = new TreeSet<QCProject>();
       final int detIdx = findDetector(det);
-      final PreparedStatement ps = mConnection.prepareStatement("SELECT ID, DETECTOR, STANDARD, BEAM_ENERGY, NORMALIZATION, NOMINAL_WD, NOMINAL_I FROM QC_PROJECT WHERE DETECTOR=?");
+      final PreparedStatement ps = mConnection.prepareStatement(
+            "SELECT ID, DETECTOR, STANDARD, BEAM_ENERGY, NORMALIZATION, NOMINAL_WD, NOMINAL_I FROM QC_PROJECT WHERE DETECTOR=?");
       ps.setInt(1, detIdx);
       try (final ResultSet rs = ps.executeQuery()) {
-         while(rs.next()) {
+         while (rs.next()) {
             final QCProject qcp = new QCProject(rs);
             res.add(qcp);
             mQCProjects.put(qcp.getIndex(), qcp);
@@ -2921,8 +3060,8 @@ public class Session {
    public EDSDetector getEarliestCalibrated(EDSDetector det) {
       final DetectorProperties dp = det.getDetectorProperties();
       DetectorCalibration res = null;
-      for(final DetectorCalibration dc : getCalibrations(dp))
-         if((res == null) || res.getActiveDate().after(dc.getActiveDate()))
+      for (final DetectorCalibration dc : getCalibrations(dp))
+         if ((res == null) || res.getActiveDate().after(dc.getActiveDate()))
             res = dc;
       return EDSDetector.createDetector(dp, (EDSCalibration) res);
    }
@@ -2933,15 +3072,16 @@ public class Session {
     * @param entryIdx
     * @throws SQLException
     */
-   public void deleteQCEntry(int entryIdx)
-         throws SQLException {
+   public void deleteQCEntry(int entryIdx) throws SQLException {
       {
-         final PreparedStatement ps = mConnection.prepareStatement("DELETE FROM QC_ITEM WHERE ENTRY=?");
+         final PreparedStatement ps = mConnection
+               .prepareStatement("DELETE FROM QC_ITEM WHERE ENTRY=?");
          ps.setInt(1, entryIdx);
          ps.executeUpdate();
       }
       {
-         final PreparedStatement ps = mConnection.prepareStatement("DELETE FROM QC_ENTRY WHERE ID=?");
+         final PreparedStatement ps = mConnection
+               .prepareStatement("DELETE FROM QC_ENTRY WHERE ID=?");
          ps.setInt(1, entryIdx);
          ps.executeUpdate();
       }
@@ -2955,20 +3095,21 @@ public class Session {
     * @throws SQLException
     * @throws EPQException
     */
-   public void deleteQCProject(int projIdx)
-         throws SQLException, EPQException {
-      if(mQCProjects.containsKey(Integer.valueOf(projIdx)))
+   public void deleteQCProject(int projIdx) throws SQLException, EPQException {
+      if (mQCProjects.containsKey(Integer.valueOf(projIdx)))
          mQCProjects.remove(Integer.valueOf(projIdx));
       final int[] es = getQCProject(projIdx).getEntryIndexes();
-      for(final int e : es)
+      for (final int e : es)
          deleteQCEntry(e);
       {
-          final PreparedStatement ps = mConnection.prepareStatement("DELETE FROM QC_DATUM WHERE PROJECT=?");
-          ps.setInt(1, projIdx);
-          ps.executeUpdate();
+         final PreparedStatement ps = mConnection
+               .prepareStatement("DELETE FROM QC_DATUM WHERE PROJECT=?");
+         ps.setInt(1, projIdx);
+         ps.executeUpdate();
       }
       {
-         final PreparedStatement ps = mConnection.prepareStatement("DELETE FROM QC_PROJECT WHERE ID=?");
+         final PreparedStatement ps = mConnection
+               .prepareStatement("DELETE FROM QC_PROJECT WHERE ID=?");
          ps.setInt(1, projIdx);
          ps.executeUpdate();
       }
@@ -2985,11 +3126,13 @@ public class Session {
    private Map<String, UncertainValue2> getQCEntryData(int entryIdx)
          throws SQLException {
       final TreeMap<String, UncertainValue2> res = new TreeMap<String, UncertainValue2>();
-      final PreparedStatement ps = mConnection.prepareStatement("SELECT QC_DATUM.NAME, QC_ITEM.QC_VALUE, QC_ITEM.QC_UNC FROM QC_DATUM, QC_ITEM WHERE QC_DATUM.ID=QC_ITEM.DATUM AND QC_ITEM.ENTRY=?");
+      final PreparedStatement ps = mConnection.prepareStatement(
+            "SELECT QC_DATUM.NAME, QC_ITEM.QC_VALUE, QC_ITEM.QC_UNC FROM QC_DATUM, QC_ITEM WHERE QC_DATUM.ID=QC_ITEM.DATUM AND QC_ITEM.ENTRY=?");
       ps.setInt(1, entryIdx);
       try (final ResultSet rs = ps.executeQuery()) {
-         while(rs.next())
-            res.put(rs.getString(1), new UncertainValue2(rs.getDouble(2), rs.getString(1), rs.getDouble(3)));
+         while (rs.next())
+            res.put(rs.getString(1), new UncertainValue2(rs.getDouble(2),
+                  rs.getString(1), rs.getDouble(3)));
       }
       return Collections.unmodifiableMap(res);
    }
@@ -3000,9 +3143,7 @@ public class Session {
     * 
     * @author nicholas
     */
-   public class QCEntry
-      implements
-      Comparable<QCEntry> {
+   public class QCEntry implements Comparable<QCEntry> {
       private final int mProject;
       private final Timestamp mCreated;
       private final int mId;
@@ -3010,12 +3151,12 @@ public class Session {
       transient ISpectrumData mSpectrum = null;
       transient Map<String, UncertainValue2> mMeasurements = null;
 
-      private QCEntry(int entryIdx)
-            throws SQLException {
-         final PreparedStatement ps = mConnection.prepareStatement("SELECT ID, PROJECT, CREATED, SPECTRUM FROM QC_ENTRY WHERE ID=?");
+      private QCEntry(int entryIdx) throws SQLException {
+         final PreparedStatement ps = mConnection.prepareStatement(
+               "SELECT ID, PROJECT, CREATED, SPECTRUM FROM QC_ENTRY WHERE ID=?");
          ps.setInt(1, entryIdx);
          try (final ResultSet rs = ps.executeQuery()) {
-            if(rs.next()) {
+            if (rs.next()) {
                mId = rs.getInt(1);
                mProject = rs.getInt(2);
                mCreated = rs.getTimestamp(3);
@@ -3029,8 +3170,7 @@ public class Session {
          }
       }
 
-      private QCEntry(ResultSet rs)
-            throws SQLException {
+      private QCEntry(ResultSet rs) throws SQLException {
          mId = rs.getInt(1);
          mProject = rs.getInt(2);
          mCreated = rs.getTimestamp(3);
@@ -3047,9 +3187,10 @@ public class Session {
        */
       public ISpectrumData getSpectrum()
             throws SQLException, IOException, EPQException {
-         if(mSpectrum == null) {
+         if (mSpectrum == null) {
             final ISpectrumData res = readSpectrum(mSpecIdx);
-            SpectrumUtils.rename(res, "QC[" + getQCProject(mProject).toString() + "," + mCreated + "," + mId + "]");
+            SpectrumUtils.rename(res, "QC[" + getQCProject(mProject).toString()
+                  + "," + mCreated + "," + mId + "]");
             mSpectrum = res;
          }
          return mSpectrum;
@@ -3058,9 +3199,9 @@ public class Session {
       @Override
       public String toString() {
          try {
-            return "QC[" + getQCProject(mProject).toString() + "," + mCreated + "," + mId + "]";
-         }
-         catch(final Exception e) {
+            return "QC[" + getQCProject(mProject).toString() + "," + mCreated
+                  + "," + mId + "]";
+         } catch (final Exception e) {
             return "QC[Project[" + mProject + "]," + mCreated + "," + mId + "]";
          }
       }
@@ -3072,8 +3213,7 @@ public class Session {
        * @throws SQLException
        * @throws EPQException
        */
-      public QCProject getProject()
-            throws SQLException, EPQException {
+      public QCProject getProject() throws SQLException, EPQException {
          return getQCProject(mProject);
       }
 
@@ -3096,9 +3236,8 @@ public class Session {
        * @return Map&lt;String,UncertainValue&gt;
        * @throws SQLException
        */
-      public Map<String, UncertainValue2> getData()
-            throws SQLException {
-         if(mMeasurements == null)
+      public Map<String, UncertainValue2> getData() throws SQLException {
+         if (mMeasurements == null)
             mMeasurements = getQCEntryData(mId);
          return mMeasurements;
       }
@@ -3106,7 +3245,7 @@ public class Session {
       @Override
       public int compareTo(QCEntry o) {
          int res = mCreated.compareTo(o.mCreated);
-         if(res == 0)
+         if (res == 0)
             res = mId < o.mId ? -1 : (mId > o.mId ? 1 : 0);
          return res;
       }
@@ -3117,13 +3256,13 @@ public class Session {
       final char[] ca = str.toCharArray();
       final StringBuffer sb = new StringBuffer();
       boolean skip = false;
-      for(int i = 0; i < ca.length; ++i)
-         if(ca[i] == '\"') {
-            if(((i > 0) && (ca[i - 1] == '\"')))
+      for (int i = 0; i < ca.length; ++i)
+         if (ca[i] == '\"') {
+            if (((i > 0) && (ca[i - 1] == '\"')))
                sb.append(ca[i]);
             skip = !skip;
-         } else if(!skip) {
-            if(ca[i] == ',') {
+         } else if (!skip) {
+            if (ca[i] == ',') {
                res.add(sb.toString().trim());
                sb.setLength(0);
             } else
@@ -3133,77 +3272,83 @@ public class Session {
       return res.toArray(new String[res.size()]);
    }
 
-   public void importMaterialCSV(File f)
-         throws EPQException, SQLException {
+   public void importMaterialCSV(File f) throws EPQException, SQLException {
       try {
          try (final FileInputStream fis = new FileInputStream(f)) {
             try (final Reader isr = new InputStreamReader(fis, "US-ASCII")) {
                try (final BufferedReader br = new BufferedReader(isr)) {
                   String str = br.readLine();
-                  if((str == null) || (!str.trim().toLowerCase().startsWith("name,")))
-                     throw new EPQException("This file does not apprear to be a materials CSV database");
-                  for(str = br.readLine(); str != null; str = br.readLine()) {
+                  if ((str == null)
+                        || (!str.trim().toLowerCase().startsWith("name,")))
+                     throw new EPQException(
+                           "This file does not apprear to be a materials CSV database");
+                  for (str = br.readLine(); str != null; str = br.readLine()) {
                      double density = Double.NaN;
                      final String[] items = csvSplitter(str);
-                     if(items[1] != "-")
+                     if (items[1] != "-")
                         try {
                            density = Double.parseDouble(items[1].trim());
-                        }
-                        catch(final NumberFormatException e) {
+                        } catch (final NumberFormatException e) {
                            density = Double.NaN;
                            // Ignore it...
                         }
                      final Composition comp = new Composition();
-                     final String name = (items[0].toUpperCase().replace("NBS GLASS ", "NIST ")).replace("K ", "K");
+                     final String name = (items[0].toUpperCase()
+                           .replace("NBS GLASS ", "NIST ")).replace("K ", "K");
                      comp.setName(name);
-                     for(int i = 2; i < items.length; ++i)
+                     for (int i = 2; i < items.length; ++i)
                         try {
-                           final double wf = Double.parseDouble(items[i].trim());
-                           if(wf > 0.0)
-                              comp.addElement(Element.byAtomicNumber(i - 1), wf);
-                        }
-                        catch(final NumberFormatException e) {
+                           final double wf = Double
+                                 .parseDouble(items[i].trim());
+                           if (wf > 0.0)
+                              comp.addElement(Element.byAtomicNumber(i - 1),
+                                    wf);
+                        } catch (final NumberFormatException e) {
                            // Ignore it...
                         }
-                     if((findStandard(comp.getName()) == null) && (Math.abs(1.0 - comp.sumWeightFraction()) < 0.2))
-                        addStandard(Double.isNaN(density) ? comp : new Material(comp, 1000.0 * density));
+                     if ((findStandard(comp.getName()) == null)
+                           && (Math.abs(1.0 - comp.sumWeightFraction()) < 0.2))
+                        addStandard(Double.isNaN(density)
+                              ? comp
+                              : new Material(comp, 1000.0 * density));
                      else
-                        System.out.println("Not adding: " + comp.descriptiveString(false));
+                        System.out.println(
+                              "Not adding: " + comp.descriptiveString(false));
                   }
                }
             }
          }
-      }
-      catch(final IOException ex) {
+      } catch (final IOException ex) {
          throw new EPQException(ex);
       }
    }
 
-   public void exportMaterialCSV(File f)
-         throws IOException, SQLException {
+   public void exportMaterialCSV(File f) throws IOException, SQLException {
       try (final FileWriter fw = new FileWriter(f)) {
          final Set<String> names = getStandards().keySet();
          final StringBuffer sb = new StringBuffer();
          sb.append("Name, Density");
-         for(int z = Element.elmH; z <= Element.elmPu; ++z) {
+         for (int z = Element.elmH; z <= Element.elmPu; ++z) {
             sb.append(", ");
             sb.append(Element.byAtomicNumber(z).toAbbrev());
          }
          sb.append("\n");
          fw.write(sb.toString());
-         for(final String name : names) {
+         for (final String name : names) {
             final Composition comp = findStandard(name);
-            if(comp != null) {
+            if (comp != null) {
                sb.setLength(0);
                sb.append(name);
                sb.append(", ");
-               if(comp instanceof Material)
-                  sb.append(Double.toString(0.001 * ((Material) comp).getDensity()));
+               if (comp instanceof Material)
+                  sb.append(Double
+                        .toString(0.001 * ((Material) comp).getDensity()));
                else
                   sb.append("\"-\"");
-               for(int z = Element.elmH; z <= Element.elmPu; ++z) {
+               for (int z = Element.elmH; z <= Element.elmPu; ++z) {
                   sb.append(", ");
-                  sb.append(Double.toString(comp.weightFraction(Element.byAtomicNumber(z), false)));
+                  sb.append(Double.toString(
+                        comp.weightFraction(Element.byAtomicNumber(z), false)));
                }
             }
             sb.append("\n");

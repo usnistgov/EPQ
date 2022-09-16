@@ -51,8 +51,11 @@ public class XRayWindowFactory {
 
    public static final String Diamond0_45micron = "Diamond (0.45 \u00B5m)";
    public static final String BoronNitride0_25micron = "Boron Nitride (0.25 \u00B5m)";
-   public static final String AMPTEK_C1 = "Amptek C1 Si\u00B3N\u2074";
-   public static final String AMPTEK_C2 = "Amptek C2 Si\u00B3N\u2074";
+   public static final String AMPTEK_C1 = "Amptek C1 silicon nitride"; // "Amptek C1 Si\u2073N\u2074";
+   public static final String AMPTEK_C2 = "Amptek C2 silicon nitride"; // "Amptek C2 Si\u2073N\u2074";
+   
+   // subscript 2 = \u2082
+         
 
    /**
     * WindowTypes - A list of the known window types.

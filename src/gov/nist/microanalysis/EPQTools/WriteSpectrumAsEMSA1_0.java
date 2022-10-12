@@ -337,6 +337,12 @@ public class WriteSpectrumAsEMSA1_0 {
                   if(cc != null)
                      writeln(pw, "#CONDCOATING", cc.toParsableFormat());
                }
+               if(sp.isDefined(SpectrumProperties.Detector)) {
+                  writeln(pw, "#DET_NAME", sp.getDetector().getName());
+               }
+               if(sp.isDefined(SpectrumProperties.DetectorMode)) {
+                  writeln(pw, "#DET_MODE", sp.getTextWithDefault(SpectrumProperties.DetectorMode, ""));
+               }
             }
             writeln(pw, "SPECTRUM", "");
             for(int n = 0; n < nCh; ++n) {

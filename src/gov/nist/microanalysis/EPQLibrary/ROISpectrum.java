@@ -57,9 +57,8 @@ public class ROISpectrum
          final IXRayDetector det = props.getDetector();
          assert src != null;
          if((comp != null) && (det instanceof EDSDetector)) {
-            // final QuadraticBremsstrahlung qb = new
-            // BremsstrahlungAnalytic.DTSAQuadratic();
-            final QuadraticBremsstrahlung qb = new BremsstrahlungAnalytic.Lifshin1974Model();
+            // final QuadraticBremsstrahlung qb = new BremsstrahlungAnalytic.Lifshin1974Model(); 
+            final BremsstrahlungAnalytic qb = new BremsstrahlungAnalytic.Castellano2004aBremsstrahlung();
             try {
                final ISpectrumData back = qb.fitBackground((EDSDetector) det, src, comp);
                double minSc, maxSc;

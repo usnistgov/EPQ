@@ -27,7 +27,7 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * Computes the ZAF correction for a measurement. The initialize(...) method
  * precomputes the emitted intensity for the standard material and the specified
  * x-ray transition set. The compute method computes the ZAF correction for the
- * unknown. Presumably the standard material changes infrequently and the unknow
+ * unknown. Presumably the standard material changes infrequently and the unknown
  * material changes with each iteration of the iteration algorithm.
  */
 @Deprecated

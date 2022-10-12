@@ -96,7 +96,7 @@ abstract public class LitReference {
    static public final Author KHeinrich = new Author("Kurt", "Heinrich", NIST);
    static public final Author JPouchou = new Author("Jean-Louis", "Pouchou", ONERA);
    static public final Author FPichoir = new Author("Franciose", "Pichoir", ONERA);
-   static public final Author RCastaing = new Author("R", "Castaing", "Universit� de Paris-Sud");
+   static public final Author RCastaing = new Author("R", "Castaing", "Universitï¿½ de Paris-Sud");
    static public final Author RMyklebust = new Author("Robert", "Myklebust", NIST);
    static public final Author DBright = new Author("David", "Bright", NIST);
    static public final Author CFiori = new Author("Chuck", "Fiori", NBS);
@@ -130,7 +130,7 @@ abstract public class LitReference {
    static public final Author RFEdgerton = new Author("R. J.", "Edgerton");
    static public final Author Cullen = new Author("Dermott", "Cullen", "Lawrence Livermore National Laboratory");
    static public final Author CPowell = new Author("Cedric", "Powell", "N.I.S.T.");
-   static public final Author FSalvat = new Author("Francesc", "Salvat", "Facultat de Física (ECM), Universitat de Barcelona, Diagonal 647, 08028 Barcelona, Spain");
+   static public final Author FSalvat = new Author("Francesc", "Salvat", "Facultat de FÃ­sica (ECM), Universitat de Barcelona, Diagonal 647, 08028 Barcelona, Spain");
    static public final Author LSabbatucci = new Author("Sabbatucci", "Lorenzo", "Department of Industrial Engineering (DIN), Laboratory of Montecuccolino, Alma Mater Studiorum University of Bologna, via dei Colli 16, 40136 Bologna, Italy");
    static public final Author AJablonski = new Author("A", "Jablonksi");
    static public final Author BHenke = new Author("B.L.", "Henke");
@@ -139,6 +139,8 @@ abstract public class LitReference {
    static public final Author CSwytThomas = new Author("C.", "Swyt-Thomas", "N.I.H.");
    static public final Author VanGrieken = new Author("Rene", "Van Grieken", "");
    static public final Author Markowicz = new Author("Andrezej", "Markowicz", "");
+   static public final Author Riveros = new Author("Jose", "Riveros","");
+   static public final Author Castellano = new Author("Gustavo", "Castellano","");
 
    /**
     * A class representing a Journal for use in References.
@@ -442,6 +444,10 @@ abstract public class LitReference {
       LitReference.JPouchou,
       LitReference.FPichoir
    });
+   
+   
+   static public JournalArticle Riveros1993 = new JournalArticle("Review of ϕ(ρz) curves in electron probe microanalysis", XRaySpec, "22", "3-10", 1993,
+         new Author[] { Riveros, Castellano });
 
    static public Date createDate(int yr, int month, int day) {
       final Calendar cal = Calendar.getInstance(Locale.US);

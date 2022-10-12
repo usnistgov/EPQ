@@ -103,6 +103,10 @@ public class MLLSQSignature implements Cloneable {
 		mStandards.put(elm, ref);
 		mOptimal = null;
 	}
+	
+	public TreeMap<XRayTransitionSet, Double> getOptimalTransitions(){
+	      return mOptimal;
+	}
 
 	public Set<Element> stripped(){
 		Set<Element> res=new TreeSet<Element>();

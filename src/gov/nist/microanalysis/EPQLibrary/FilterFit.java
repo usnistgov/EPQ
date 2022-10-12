@@ -107,11 +107,11 @@ public class FilterFit extends LinearSpectrumFit {
 
 		public ISpectrumData getROISpectrum(final double modelThresh) {
 			if (mRoiSpectrum == null) {
-				if (!mNaive)
-					mRoiSpectrum = new ROISpectrum(mFiltered.getBaseSpectrum(), mFiltered.getRegionOfInterest(),
-							modelThresh);
+				if (mNaive)
+                   mRoiSpectrum = new ROISpectrumNaive(mFiltered.getBaseSpectrum(), mFiltered.getRegionOfInterest(),
+                         modelThresh);
 				else
-					mRoiSpectrum = new ROISpectrumNaive(mFiltered.getBaseSpectrum(), mFiltered.getRegionOfInterest(),
+					mRoiSpectrum = new ROISpectrum(mFiltered.getBaseSpectrum(), mFiltered.getRegionOfInterest(),
 							modelThresh);
 			}
 			return mRoiSpectrum;

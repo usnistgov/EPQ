@@ -486,6 +486,7 @@ public class QuantifyUsingStandards
       // Fit the unknown using the reference spectra
       final Map<RegionOfInterestSet.RegionOfInterest, ISpectrumData> refs = getReferenceSpectra();
       final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy());
+      FilterFit.setNaiveBackground(false);
       final Set<Element> measured = getMeasuredElements();
       for(final Map.Entry<RegionOfInterestSet.RegionOfInterest, ISpectrumData> me : refs.entrySet()) {
          final RegionOfInterest roi = me.getKey();

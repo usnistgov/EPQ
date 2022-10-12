@@ -927,6 +927,14 @@ public class SpectrumProperties implements Cloneable, Serializable {
 	public static final PropertyId XRFFilter = new PropertyId("XRF Source Filter", String.class);
 	public static final PropertyId XRFSourceVoltage = new PropertyId("XRF Source Voltage", " keV", Number.class);
 	public static final PropertyId XRFTubeCurrent = new PropertyId("XRF Tube Current", " \u00B5A", Number.class);
+	
+    
+    /**
+     * A human friendly name for the resolution mode of EDS detector
+     */
+    public static final PropertyId DetectorMode = new PropertyId("Detector Mode",String.class);
+
+	
 
 	public enum PropertyType {
 		// Nominal Property types
@@ -993,7 +1001,7 @@ public class SpectrumProperties implements Cloneable, Serializable {
 		/**
 		 * A SampleShape object
 		 */
-		SampleShapeType
+		SampleShapeType,
 	};
 
 	private static final Map<String, PropertyId> preDefinedPropertiesMap = createPredefinedPropertyMap();
@@ -1020,7 +1028,7 @@ public class SpectrumProperties implements Cloneable, Serializable {
 				ReducedChiSquare, MacroImage, MicroImage, MicroImage2, AFA_DAvg, BeamSpotX, BeamSpotY, DuaneHunt,
 				SourceFileId, Instrument, Detector, FanoFactor, DetectorDescription, ParticleSignature, SampleShape,
 				SpectrumDB, WindowOpenArea, SupportGridThickness, CalibrationGUID, DetectorGUID, OutputCountRate,
-				XRFAtmosphere, XRFFilter, XRFSourceVoltage, XRFTubeCurrent
+				XRFAtmosphere, XRFFilter, XRFSourceVoltage, XRFTubeCurrent, DetectorMode
 		
 		};
 		for (final PropertyId pid : contents)

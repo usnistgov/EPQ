@@ -106,17 +106,6 @@ public class SpectrumToolBar
       final CellConstraints cc = new CellConstraints();
       removeAll();
       int pos = 1;
-      if((mMode & ZOOM_ALL) != 0) {
-         final JButton btn = createButton("all_sm.png", "Zoom to all");
-         btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-               jSpecDisplay.zoomToAll();
-            }
-         });
-         pb.add(btn, cc.xy(1, pos));
-         pos += 2;
-      }
       if((mMode & ZOOM_IN5) != 0) {
          final JButton btn = createButton("up2_sm.png", "Zoom in by 5 \u00D7");
          btn.addActionListener(new ActionListener() {
@@ -139,12 +128,12 @@ public class SpectrumToolBar
          pb.add(btn, cc.xy(1, pos));
          pos += 2;
       }
-      if((mMode & ZOOM_REGION) != 0) {
-         final JButton btn = createButton("zoom_sm.png", "Zoom to ROI");
+      if((mMode & ZOOM_ALL) != 0) {
+         final JButton btn = createButton("all_sm.png", "Zoom to all");
          btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-               jSpecDisplay.zoomToRegion();
+               jSpecDisplay.zoomToAll();
             }
          });
          pb.add(btn, cc.xy(1, pos));
@@ -167,6 +156,17 @@ public class SpectrumToolBar
             @Override
             public void actionPerformed(ActionEvent arg0) {
                jSpecDisplay.zoomInBy(0.2);
+            }
+         });
+         pb.add(btn, cc.xy(1, pos));
+         pos += 2;
+      }
+      if((mMode & ZOOM_REGION) != 0) {
+         final JButton btn = createButton("zoom_sm.png", "Zoom to ROI");
+         btn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+               jSpecDisplay.zoomToRegion();
             }
          });
          pb.add(btn, cc.xy(1, pos));

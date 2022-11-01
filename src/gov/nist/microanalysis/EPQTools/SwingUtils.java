@@ -30,7 +30,7 @@ public class SwingUtils {
    }
 
    public static TitledBorder createTitledBorder(String name) {
-      return BorderFactory.createTitledBorder(createDefaultBorder(), name);
+      return BorderFactory.createTitledBorder(createEmptyBorder(), name);
    }
 
    public static Border createDefaultBorder() {

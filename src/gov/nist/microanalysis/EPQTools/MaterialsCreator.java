@@ -211,7 +211,7 @@ public class MaterialsCreator
             jTextField_Name_focusLost(e);
          }
       });
-      jButton_Search.setIcon(new ImageIcon(getClass().getResource("ClipArt/MagnifyingGlass.png")));
+      jButton_Search.setIcon(new ImageIcon(getClass().getResource("ClipArt/MagnifyingGlassGrey.png")));
       jButton_Search.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(final ActionEvent e) {

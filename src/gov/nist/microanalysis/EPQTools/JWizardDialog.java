@@ -465,7 +465,7 @@ public class JWizardDialog
    }
 
    private JPanel createIconPanel() {
-      final JPanel header = new JPanel(new FormLayout("pref, 3dlu, default", "pref"));
+      final JPanel header = new JPanel(new FormLayout("pref, 10dlu, default", "pref"));
 
       jLabel_Icon = new JLabel();
       jLabel_Icon.setIcon(new ImageIcon(JWizardDialog.class.getResource("ClipArt/alien_sm.png")));
@@ -489,7 +489,7 @@ public class JWizardDialog
       final JPanel header = createIconPanel();
       {
          final JPanel banner = new JPanel(new FormLayout("320dlu", "12dlu, 1dlu, 20dlu, 1dlu, 12dlu"));
-         jLabel_Banner.setFont(new Font("Dialog", Font.BOLD, 24));
+         jLabel_Banner.setFont(new Font("Dialog", Font.PLAIN, 24));
          jLabel_Banner.setText("Test banner");
          banner.add(jLabel_Banner, CC.xy(1, 3));
          jLabel_PrevLabel.setFont(new Font("Dialog", Font.PLAIN, 12));

@@ -59,6 +59,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
 
 import gov.nist.microanalysis.EPQLibrary.EPQException;
 import gov.nist.microanalysis.EPQLibrary.Element;
@@ -262,11 +263,12 @@ public class SpecDisplay extends JComponent {
 	private boolean mShowImage = false;
 	final static int MAX_IMAGE_SIZE = 256;
 	final static int MIN_IMAGE_SIZE = 128;
-	final static int SVG_SCALE = 4;
+	final static int PNG_SCALE = 4;
 	final static double LOG10_MIN = 100.0;
 	final static double LOG10_RANGE = 1.0e4;
 	private final Color mKLMColor = Color.darkGray;
 	private final Color mAxisColor = Color.darkGray;
+	private final Color mAxisLabelColor = buildAxisLabelColor();
 	private final Color mPlotBackColor = new Color(0xFC, 0xFC, 0xF2);
 	private final Color mMinorGridColor = new Color(0xFF, 0xF0, 0xF0);
 	private final Color mMajorGridColor = new Color(0xFF, 0xE0, 0xE0);
@@ -278,6 +280,11 @@ public class SpecDisplay extends JComponent {
 		mDataColor = colors;
 	}
 
+	static private Color buildAxisLabelColor() {
+	   return UIManager.getLookAndFeelDefaults().getColor("controlText");
+	}
+	
+	
 	/**
 	 * Returns a list of colors as found in the File colors in CSV format "red,
 	 * green, blue" where each index is 0..255.
@@ -532,9 +539,9 @@ public class SpecDisplay extends JComponent {
 				gr.rotate(Math.PI / 2, x, y);
 				gr.translate(0.0, 0.2 * rect.getHeight());
 				drawCallout(gr, x - offset, //
-						(int) Math.round((y - (0.2 * rect.getHeight())) + rect.getY()), //
-						(int) Math.round(rect.getWidth() + (2 * offset)), //
-						(int) Math.round((0.5 * rect.getHeight()) - rect.getY()), offset, offset);
+						(int) Math.round(y - 0.2 * rect.getHeight() + rect.getY()), //
+						(int) Math.round(rect.getWidth() + 2.0 * offset   ), //
+						(int) Math.round(0.5 * rect.getHeight() - rect.getY()), offset, offset);
 				gr.setColor(mKLMColor);
 				gr.drawString(str, x, y);
 			} finally {
@@ -745,9 +752,9 @@ public class SpecDisplay extends JComponent {
 	private Font setLabelFont(Graphics gr, boolean forSvg) {
 		final Font oldFont = gr.getFont();
 		if (mLabelType == LabelType.LARGE_ELEMENT)
-			gr.setFont(new Font(oldFont.getFamily(), Font.PLAIN, forSvg ? 18 * SVG_SCALE : 15));
+			gr.setFont(new Font(oldFont.getFamily(), Font.PLAIN, forSvg ? 18 * PNG_SCALE : 15));
 		else
-			gr.setFont(new Font(oldFont.getFamily(), Font.PLAIN, forSvg ? 16 * SVG_SCALE : 12));
+			gr.setFont(new Font(oldFont.getFamily(), Font.PLAIN, forSvg ? 16 * PNG_SCALE : 12));
 		return oldFont;
 	}
 
@@ -868,20 +875,18 @@ public class SpecDisplay extends JComponent {
 
 	private void drawHiresImage(Graphics2D g, final int wXtra, final int hXtra, final int cWidth, final int cHeight) {
 		g.setBackground(Color.white);
-		// g.setColor(Color.white);
-		// g.fillRect(0, 0, cWidth, cHeight);
 		g.translate(wXtra, hXtra);
 		final Font font = getGraphics().getFont();
-		g.setFont(new Font(font.getFamily(), font.getStyle(), SVG_SCALE * font.getSize()));
-		g.setStroke(new BasicStroke(SVG_SCALE, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
+		g.setFont(new Font(font.getFamily(), font.getStyle(), PNG_SCALE * font.getSize()));
+		g.setStroke(new BasicStroke(PNG_SCALE, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
 		paintComponent(g, true);
 	}
 
 	private Dimension saveAsImage(File outfile, String formatName) throws EPQException {
-		final int wXtra = (SVG_SCALE * getWidth()) / 20;
-		final int hXtra = (SVG_SCALE * getHeight()) / 20;
-		final int cWidth = ((SVG_SCALE * getWidth()) + (2 * wXtra));
-		final int cHeight = ((SVG_SCALE * getHeight()) + (2 * hXtra));
+		final int wXtra = (PNG_SCALE * getWidth()) / 20;
+		final int hXtra = (PNG_SCALE * getHeight()) / 20;
+		final int cWidth = ((PNG_SCALE * getWidth()) + (2 * wXtra));
+		final int cHeight = ((PNG_SCALE * getHeight()) + (2 * hXtra));
 		final BufferedImage bi = new BufferedImage(cWidth, cHeight,
 				formatName.equalsIgnoreCase("BMP") ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = bi.createGraphics();
@@ -910,7 +915,7 @@ public class SpecDisplay extends JComponent {
 		gr.drawRoundRect(x, y, w, h, dx, dy);
 	}
 
-	protected void paintComponent(Graphics g, boolean forSvg) {
+	protected void paintComponent(Graphics g, boolean forPng) {
 		int t0, l0, w0, h0;
 		final Graphics2D dup = (Graphics2D) g;
 		dup.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -923,7 +928,7 @@ public class SpecDisplay extends JComponent {
 				&& (mCurrentScalingMode != SCALING_MODE.NONE))
 			showVAxis &= (data.size() < 2);
 
-		final int scale = (forSvg ? SVG_SCALE : 1);
+		final int scale = (forPng ? PNG_SCALE : 1);
 		final int canvasWidth = scale * getWidth();
 		final int canvasHeight = scale * getHeight();
 		if (showVAxis) {
@@ -952,7 +957,8 @@ public class SpecDisplay extends JComponent {
 		final Color bkg = mPlotBackColor;
 		dup.setColor(bkg);
 		dup.fillRect(l0, t0, w0, h0);
-		dup.setColor(mAxisColor);
+		final Color alc = forPng ? mAxisColor : mAxisLabelColor;
+		dup.setColor(alc);
 		final int MIN_GRID_SCALE = 5;
 		{
 			if (mShowHAxisLabels) {
@@ -1001,7 +1007,7 @@ public class SpecDisplay extends JComponent {
 					dup.drawLine(l0 + scale, pos, (l0 + w0) - scale, pos);
 				if ((i % MIN_GRID_SCALE) == 0) {
 					if (showVAxis) {
-						dup.setColor(mAxisColor);
+						dup.setColor(alc);
 						final String str = formatAxisLabel(m);
 						dup.drawString(str, l0 - fm.stringWidth(str) - (6 * scale), pos + (fm.getHeight() / 3));
 						dup.drawLine(l0 + scale, pos, l0 - (4 * scale), pos);
@@ -1010,7 +1016,7 @@ public class SpecDisplay extends JComponent {
 
 				}
 			}
-			dup.setColor(mAxisColor);
+			dup.setColor(alc);
 			if (showVAxis) {
 				final int x = fm.getHeight(),
 						y = (int) (mPlotRect.y + (0.5 * (mPlotRect.height + fm.stringWidth(COUNTS_AXIS_LABEL))));
@@ -1093,7 +1099,7 @@ public class SpecDisplay extends JComponent {
 				dup.drawString(mScaleText, l0 + fm.charWidth('j'), pp);
 				pp += fm.getHeight();
 			}
-			if (!forSvg)
+			if (!forPng)
 				dup.drawString(Integer.toString(getWidth()) + " \u00D7 " + Integer.toString(getHeight()),
 						l0 + fm.charWidth('j'), pp);
 		}
@@ -1204,12 +1210,12 @@ public class SpecDisplay extends JComponent {
 				final ISpectrumData spec = data.get(j);
 				final DisplayProperties dp = mProperties.get(spec);
 				dup.setColor(mDataColor[dp.mColorIndex]);
-				drawSpectrum(dup, spec, dp.mScale, idx, forSvg);
+				drawSpectrum(dup, spec, dp.mScale, idx, forPng);
 				--idx;
 			}
 		}
-		drawKLMs(dup, true, forSvg);
-		if (!forSvg) {
+		drawKLMs(dup, true, forPng);
+		if (!forPng) {
 			dup.setColor(oldColor);
 			drawTemporaryKLMs(dup);
 			drawCursor(dup);
@@ -2460,14 +2466,18 @@ public class SpecDisplay extends JComponent {
 	 * copyBitmapToClipboard - Copy the control display as a image to the clipboard.
 	 */
 	public void copyBitmapToClipboard() {
-		final int wXtra = (SVG_SCALE * getWidth()) / 20;
-		final int hXtra = (SVG_SCALE * getHeight()) / 20;
-		final int cWidth = ((SVG_SCALE * getWidth()) + (2 * wXtra));
-		final int cHeight = ((SVG_SCALE * getHeight()) + (2 * hXtra));
+		final int wXtra = (PNG_SCALE * getWidth()) / 20;
+		final int hXtra = (PNG_SCALE * getHeight()) / 20;
+		final int cWidth = ((PNG_SCALE * getWidth()) + (2 * wXtra));
+		final int cHeight = ((PNG_SCALE * getHeight()) + (2 * hXtra));
 		final BufferedImage bi = new BufferedImage(cWidth, cHeight, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = bi.createGraphics();
 		drawHiresImage(g, wXtra, hXtra, cWidth, cHeight);
-		getToolkit().getSystemClipboard().setContents(new TransferableImage(bi), null);
+		Clipboard clp = getToolkit().getSystemClipboard();
+		if(clp!=null)
+		   clp.setContents(new TransferableImage(bi), null);
+		else 
+		   System.err.println("The clipboard is not available!");
 	}
 
 	/**

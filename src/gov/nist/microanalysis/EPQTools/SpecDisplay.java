@@ -409,7 +409,7 @@ public class SpecDisplay extends JComponent {
    private final NumberFormat mAxisLabelFormat = new HalfUpFormat("#,##0",
          true);
    private final NumberFormat mFractionalAxisLabelFormat = new HalfUpFormat(
-         "0.0#", true);
+         "0.0##", true);
 
    private String mScaleText = mCurrentScalingMode.toString();
 
@@ -548,12 +548,18 @@ public class SpecDisplay extends JComponent {
       if (str.length() > 0) {
          final AffineTransform oldAt = gr.getTransform();
          try {
-            final Rectangle2D rect = gr.getFontMetrics().getStringBounds(str,
-                  gr);
+            final FontMetrics fm = gr.getFontMetrics();
+            final Rectangle2D rect = fm.getStringBounds(str, gr);
             final int sw = (int) Math.round(rect.getWidth());
-            final int x = xPos, y = Math.max(mPlotRect.y + (2 * offset),
-                  hgt - sw - (2 * offset));
-            gr.rotate(Math.PI / 2, x, y);
+            int x, y;
+            if(mPlotRect.y + sw + offset > hgt - 2*offset) {
+               y = mPlotRect.y + sw + offset;
+               x = xPos - 3*fm.getDescent();
+            } else {
+               y= hgt - 2*offset;
+               x = xPos;
+            }
+            gr.rotate(-Math.PI / 2, x, y);
             gr.translate(0.0, 0.2 * rect.getHeight());
             drawCallout(gr, x - offset, //
                   (int) Math.round(y - 0.2 * rect.getHeight() + rect.getY()), //
@@ -3114,8 +3120,7 @@ public class SpecDisplay extends JComponent {
             return 1.0 / dose;
          }
          case INTEGRAL : {
-            final double tc = SpectrumUtils.totalCounts(sd, true)
-                  * sd.getChannelWidth();
+            final double tc = SpectrumUtils.totalCounts(sd, true);
             return tc > 0.0 ? 100.0 / tc : 1.0;
          }
          case MAX_PEAK : {
@@ -3125,13 +3130,13 @@ public class SpecDisplay extends JComponent {
             return c > 0.0 ? 100.0 / c : 100.0;
          }
          case REGION_INTEGRAL : {
-            if (mScalingRegions != null)
+            if (mScalingRegions != null) {
+               double c= 0.0;
                for (final Region r : mScalingRegions.mList) {
-                  final double c = SpectrumUtils.integrate(sd, r.getLowEnergy(),
-                        r.getHighEnergy() - ENERGY_EPS) * sd.getChannelWidth();
-                  return c > 0.0 ? 100.0 / c : 100.0;
+                  c += SpectrumUtils.integrate(sd, r.getLowEnergy(), r.getHighEnergy());
                }
-            else
+               return c > 0.0 ? 100.0 / c : 100.0;
+            } else
                return 100.0;
          }
          default :

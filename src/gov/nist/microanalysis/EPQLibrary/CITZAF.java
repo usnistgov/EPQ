@@ -1458,7 +1458,7 @@ public class CITZAF {
    private void runCITZAFProgram() {
       try {
          final Runtime rt = Runtime.getRuntime();
-         final Process proc = rt.exec("cmd");
+         final Process proc = rt.exec(new String[] { "cmd"});
          try (final InputStream in = proc.getInputStream()) {
 
             final ConsoleInputReader cir = new ConsoleInputReader(in);
@@ -1471,8 +1471,6 @@ public class CITZAF {
             }
             proc.waitFor();
          }
-         // rt.exec("notepad c:\\" + FileLocation + "dataout");
-
       }
       catch(final InterruptedException ex2) {
          ex2.printStackTrace(System.err);

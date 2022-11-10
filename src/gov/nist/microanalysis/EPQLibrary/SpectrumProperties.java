@@ -634,7 +634,7 @@ public class SpectrumProperties implements Cloneable, Serializable {
 	 * <sup>2</sup>
 	 */
 	public static final PropertyId MassThickness = new PropertyId("Mass-thickness", " µg/cm²", "#,##0.0");
-
+	
 	/**
 	 * XPosition - The x stage coordinate in millimeters.
 	 */
@@ -851,6 +851,11 @@ public class SpectrumProperties implements Cloneable, Serializable {
 	 * BSED and MicroImage is SED
 	 */
 	public static final PropertyId MicroImage2 = new PropertyId("Micro image2", Image.class);
+
+	/**
+	 * Contains the filename to which MicroImage and MicroImage2 properties were saved as a TIFF.
+	 */
+	public static final PropertyId ImageRef = new PropertyId("Image Reference", String.class);
 
 	/**
 	 * AFA_DAvg - The average particle diameter as measured by ASPEX AFA.

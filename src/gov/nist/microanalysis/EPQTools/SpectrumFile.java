@@ -107,13 +107,9 @@ public class SpectrumFile {
             return wrapResult(res, file);
          }
          if(EMSAFile.isInstanceOf(new FileInputStream(file))) {
-            final EMSAFile ef = new EMSAFile();
-            try (final FileInputStream st3 = new FileInputStream(file)) {
-               ef.read(st3);
-               ef.setFilename(file.toString());
-               res = new ISpectrumData[1];
-               res[0] = ef;
-            }
+            final EMSAFile ef = new EMSAFile(file, true);
+            res = new ISpectrumData[1];
+            res[0] = ef;
             return wrapResult(res, file);
          }
          if(EMISPECFile.isInstanceOf(new FileInputStream(file))) {

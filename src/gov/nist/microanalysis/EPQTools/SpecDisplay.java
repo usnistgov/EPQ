@@ -405,7 +405,7 @@ public class SpecDisplay extends JComponent {
     */
    private int mStaggerOffset = 0;
 
-   private KLMLine.LabelType mLabelType = KLMLine.LabelType.IUPAC;
+   private KLMLine.LabelType mLabelType = KLMLine.LabelType.ELEMENT_ABBREV;
    private final NumberFormat mAxisLabelFormat = new HalfUpFormat("#,##0",
          true);
    private final NumberFormat mFractionalAxisLabelFormat = new HalfUpFormat(

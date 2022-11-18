@@ -552,11 +552,11 @@ public class SpecDisplay extends JComponent {
             final Rectangle2D rect = fm.getStringBounds(str, gr);
             final int sw = (int) Math.round(rect.getWidth());
             int x, y;
-            if(mPlotRect.y + sw + offset > hgt - 2*offset) {
+            if (mPlotRect.y + sw + offset > hgt - 2 * offset) {
                y = mPlotRect.y + sw + offset;
-               x = xPos - 3*fm.getDescent();
+               x = xPos - 3 * fm.getDescent();
             } else {
-               y= hgt - 2*offset;
+               y = hgt - 2 * offset;
                x = xPos;
             }
             gr.rotate(-Math.PI / 2, x, y);
@@ -1176,6 +1176,12 @@ public class SpecDisplay extends JComponent {
             break;
       }
       dup.setColor(mBackTextColor);
+      // Draw pixel dimensions on screen but not PNG
+      if (!forPng)
+         dup.drawString(
+               Integer.toString(getWidth()) + " \u00D7 "
+                     + Integer.toString(getHeight()),
+               l0 + fm.charWidth('j'), t0 + fm.getHeight());
       // Set up a clipping rectangle to simplify life...
       dup.clipRect(l0, t0, w0, h0);
       // Draw the selected regions
@@ -3131,9 +3137,10 @@ public class SpecDisplay extends JComponent {
          }
          case REGION_INTEGRAL : {
             if (mScalingRegions != null) {
-               double c= 0.0;
+               double c = 0.0;
                for (final Region r : mScalingRegions.mList) {
-                  c += SpectrumUtils.integrate(sd, r.getLowEnergy(), r.getHighEnergy());
+                  c += SpectrumUtils.integrate(sd, r.getLowEnergy(),
+                        r.getHighEnergy());
                }
                return c > 0.0 ? 100.0 / c : 100.0;
             } else

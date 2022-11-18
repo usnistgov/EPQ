@@ -920,7 +920,7 @@ public class SpectrumProperties implements Cloneable, Serializable {
 	 * The MultiSpectrumMetric value associated with this spectrum. 1.0 is perfect
 	 * agreement. Need to be very close to unity for a good spectrum
 	 */
-	public static final PropertyId MultiSpectruMetric = new PropertyId("Multi-Spectrum Metric", "", Number.class);
+	public static final PropertyId MultiSpectrumMetric = new PropertyId("Multi-Spectrum Metric", "", Number.class);
 
 	/***
 	 * An optional conductive coating on the surface of the sample

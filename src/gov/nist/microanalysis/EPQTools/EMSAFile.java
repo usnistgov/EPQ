@@ -613,11 +613,12 @@ public class EMSAFile extends BaseSpectrum {
             return false;
          else if (prefix.startsWith("#MULTISPEC")) {
             mProperties.setNumericProperty(
-                  SpectrumProperties.MultiSpectruMetric,
+                  SpectrumProperties.MultiSpectrumMetric,
                   Double.parseDouble(value));
          } else if (prefix.startsWith("##IMAGE_REF"))
             mProperties.setTextProperty(SpectrumProperties.ImageRef, value);
-         System.err.println("Unknown tag type in EMSA file - " + prefix);
+         else
+            System.err.println("Unknown tag type in EMSA file - " + prefix);
       } catch (NumberFormatException | ParseException e) {
          e.printStackTrace();
       }

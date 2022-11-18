@@ -391,10 +391,10 @@ public class WriteSpectrumAsEMSA1_0 {
                   writeln(pw, "#MASSTHICK",
                         Double.toString(sp.getNumericWithDefault(
                               SpectrumProperties.MassThickness, 0.0)));
-               if (sp.isDefined(SpectrumProperties.MultiSpectruMetric))
+               if (sp.isDefined(SpectrumProperties.MultiSpectrumMetric))
                   writeln(pw, "#MULTISPEC",
                         Double.toString(sp.getNumericWithDefault(
-                              SpectrumProperties.MultiSpectruMetric, -1.0)));
+                              SpectrumProperties.MultiSpectrumMetric, -1.0)));
                if (sp.isDefined(SpectrumProperties.ConductiveCoating)) {
                   final ConductiveCoating cc = (ConductiveCoating) sp
                         .getObjectWithDefault(

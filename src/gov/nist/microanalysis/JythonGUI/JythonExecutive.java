@@ -16,8 +16,6 @@ import org.python.core.PySystemState;
 import org.python.util.InteractiveConsole;
 import org.python.util.InteractiveInterpreter;
 
-import gov.nist.microanalysis.JythonGUI.JCommandLine;
-
 /**
  * <p>
  * A simple implementation of the JCommandLine.PerformCommand

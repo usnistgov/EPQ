@@ -54,9 +54,9 @@ abstract public class BackscatterCoefficient
    }
 
    public String caveat(Composition comp, double e0) {
-      final String res = CaveatBase.None;
+      String res = CaveatBase.None;
       for(final Element el : comp.getElementSet())
-         CaveatBase.append(res, caveat(el, e0));
+         res = CaveatBase.append(res, caveat(el, e0));
       return res;
    }
 

@@ -257,7 +257,7 @@ public class ASPEXSpectrum extends BaseSpectrum {
 				else if (tag.equals("acquisition_time"))
 					sp.setNumericProperty(SpectrumProperties.RealTime, parseDuration(val));
 				else if (tag.equals("beam_current") || tag.equals("probe_current"))
-					sp.setNumericProperty(SpectrumProperties.FaradayBegin, mParser.parse(val).doubleValue());
+					sp.setNumericProperty(SpectrumProperties.ProbeCurrent, mParser.parse(val).doubleValue());
 				else if (tag.equals("element_percent")) {
 					final int comma = val.indexOf(',');
 					if (comma != -1) {

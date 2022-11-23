@@ -193,7 +193,7 @@ public class QuantificationPlan {
          final NumberFormat nf = new HalfUpFormat("0.0");
          sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(mBeamEnergy));
          sp.setNumericProperty(SpectrumProperties.LiveTime, mDose);
-         sp.setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
+         sp.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
          final ISpectrumData res = SpectrumUtils.addNoiseToSpectrum(ss.generateSpectrum(mComposition, sp, true), 1.0);
          SpectrumUtils.rename(res, "Simulated(" + mComposition.toString() + ", " + nf.format(FromSI.keV(mBeamEnergy)) + " keV, "
                + nf.format(mDose) + " nA\u00B7s, " + getTypeString() + ")");

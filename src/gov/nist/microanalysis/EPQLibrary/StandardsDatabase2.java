@@ -42,7 +42,7 @@ import gov.nist.microanalysis.Utility.TextUtilities;
  * 
  * @author nicholas
  */
-public class StandardsDatabase2 {
+public class StandardsDatabase2 implements Cloneable {
 
 	/**
 	 * Default tolerance for Composition equality
@@ -54,7 +54,7 @@ public class StandardsDatabase2 {
 	 * 
 	 * @author nicholas
 	 */
-	public class StandardBlock2 implements Comparable<StandardBlock2> {
+	public class StandardBlock2 implements Comparable<StandardBlock2>, Cloneable {
 		private final String mName;
 		private final List<String> mStandards;
 		private int mPriority = 3;

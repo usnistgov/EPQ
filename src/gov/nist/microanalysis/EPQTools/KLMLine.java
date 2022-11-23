@@ -586,6 +586,8 @@ abstract public class KLMLine
 
    @Override
    public boolean equals(Object obj) {
+      if(obj==null)
+         return false;
       if(this == obj)
          return true;
       if(obj.getClass() == this.getClass()) {

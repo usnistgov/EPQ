@@ -29,7 +29,7 @@ public class NISTXRayTransitionDB {
    private static String[] mReferences;
    private static TreeMap<XRayTransition, Datum> mData;
 
-   private volatile NumberFormat mFormat = null; // Used by Datum
+   private static NumberFormat mFormat = null; // Used by Datum
 
    public static String THEORY = "theory";
    public static String COMBINED = "combined";
@@ -37,7 +37,7 @@ public class NISTXRayTransitionDB {
    public static String DIRECT = "direct";
    public static String UNAVAILABLE = "unavailable";
 
-   private class Datum {
+   private static class Datum {
       private final XRayTransition mTransition;
       // private double mAtomicWeight;
       private final double mTheory;
@@ -54,7 +54,7 @@ public class NISTXRayTransitionDB {
 
       private String stripQuotes(String str) {
          final int st = str.indexOf('\"');
-         if(st != -1) {
+         if (st != -1) {
             final int end = str.indexOf('\"', st + 1);
             assert (end != -1);
             return str.substring(st + 1, end);
@@ -67,65 +67,48 @@ public class NISTXRayTransitionDB {
          double res;
          try {
             res = mFormat.parse(str).doubleValue();
-         }
-         catch(final ParseException ex) {
+         } catch (final ParseException ex) {
             res = def;
          }
          return res;
       }
 
       private XRayTransition parseTransition(int atomicNumber, String str) {
-         final String[] names = {
-            "K",
-            "L1",
-            "L2",
-            "L3",
-            "M1",
-            "M2",
-            "M3",
-            "M4",
-            "M5",
-            "N1",
-            "N2",
-            "N3",
-            "N4",
-            "N5",
-            "N6",
-            "N7",
-            " edge"
-         };
+         final String[] names = {"K", "L1", "L2", "L3", "M1", "M2", "M3", "M4",
+               "M5", "N1", "N2", "N3", "N4", "N5", "N6", "N7", " edge"};
          int lower = -1, upper = -1;
-         for(int i = 0; i < names.length; ++i)
-            if(str.startsWith(names[i])) {
+         for (int i = 0; i < names.length; ++i)
+            if (str.startsWith(names[i])) {
                lower = i + AtomicShell.K;
                break;
             }
          assert (lower != -1);
          assert (lower != (names.length - 1));
          final String second = str.substring(names[lower].length());
-         for(int i = 0; i < names.length; ++i)
-            if(second.startsWith(names[i])) {
+         for (int i = 0; i < names.length; ++i)
+            if (second.startsWith(names[i])) {
                upper = i + AtomicShell.K;
                break;
             }
          assert (upper != -1);
-         if(upper == (names.length - 1))
+         if (upper == (names.length - 1))
             upper = AtomicShell.Continuum;
-         return new XRayTransition(Element.byAtomicNumber(atomicNumber), upper, lower);
+         return new XRayTransition(Element.byAtomicNumber(atomicNumber), upper,
+               lower);
       }
 
       private String[] parseCSV(String str, int n) {
          final String[] res = new String[n];
          final int l = str.length();
          int st = 0, end = 0, i = 0;
-         while((end < l) && (i < n)) {
+         while ((end < l) && (i < n)) {
             char c = str.charAt(end);
-            if(c == '\"') { // skip quoted blocks
+            if (c == '\"') { // skip quoted blocks
                ++end;
-               while(((c = str.charAt(end)) != '\"') && (end < l))
+               while (((c = str.charAt(end)) != '\"') && (end < l))
                   ++end;
             }
-            if(c == ',') {
+            if (c == ',') {
                res[i] = stripQuotes(str.substring(st, end));
                st = end + 1;
                ++i;
@@ -156,36 +139,42 @@ public class NISTXRayTransitionDB {
          stripQuotes(items[12]); // mReference
       }
    };
+   
+   static private void readData() {
+      if (mData == null) {
+         mData = new TreeMap<XRayTransition, Datum>();
+         mReferences = new String[116];
+         mFormat = NumberFormat.getInstance(Locale.US);
+         try {
+            final BufferedReader br = new BufferedReader(
+                  new InputStreamReader(NISTXRayTransitionDB.class
+                        .getResourceAsStream("NISTXRayDatabase.dat"),
+                        "US-ASCII"));
+            String str = br.readLine();
+            assert (str != null) && (str.startsWith("##References"));
+            for (int i = 0; i < mReferences.length; ++i)
+               mReferences[i] = br.readLine();
+            str = br.readLine();
+            assert (str != null) && str.startsWith("##Data");
+            str = br.readLine();
+            while ((str != null) && (str.length() > 0)) {
+               final Datum d = new Datum(str.trim());
+               mData.put(d.mTransition, d);
+               str = br.readLine();
+            }
+         } catch (final UnsupportedEncodingException ex) {
+            System.err.println(ex);
+         } catch (final IOException ex) {
+            System.err.println(ex);
+         }
+         mFormat = null;
+      }
+   }
 
    public NISTXRayTransitionDB() {
-      if(mData == null) {
-         synchronized(this) {
-            if(mData == null) {
-               mData = new TreeMap<XRayTransition, Datum>();
-               mReferences = new String[116];
-               mFormat = NumberFormat.getInstance(Locale.US);
-               try {
-                  final BufferedReader br = new BufferedReader(new InputStreamReader(NISTXRayTransitionDB.class.getResourceAsStream("NISTXRayDatabase.dat"), "US-ASCII"));
-                  String str = br.readLine();
-                  assert (str.startsWith("##References"));
-                  for(int i = 0; i < mReferences.length; ++i)
-                     mReferences[i] = br.readLine();
-                  assert (br.readLine().startsWith("##Data"));
-                  str = br.readLine();
-                  while((str != null) && (str.length() > 0)) {
-                     final Datum d = new Datum(str.trim());
-                     mData.put(d.mTransition, d);
-                     str = br.readLine();
-                  }
-               }
-               catch(final UnsupportedEncodingException ex) {
-                  System.err.println(ex);
-               }
-               catch(final IOException ex) {
-                  System.err.println(ex);
-               }
-               mFormat = null;
-            }
+      if (mData == null) {
+         synchronized (mData) {
+            readData();
          }
       }
    }
@@ -195,19 +184,20 @@ public class NISTXRayTransitionDB {
     * UNAVAILABLE depending upon which type of value would be returned by the
     * getEnergy(XRayTransition xrt) method.
     * 
-    * @param xrt XRayTransition
+    * @param xrt
+    *           XRayTransition
     * @return String
     */
    public String getDefaultDatumType(XRayTransition xrt) {
       final Datum d = mData.get(xrt);
-      if(d != null)
-         if(!Double.isNaN(d.mTheory))
+      if (d != null)
+         if (!Double.isNaN(d.mTheory))
             return THEORY;
-         else if(!Double.isNaN(d.mDirect))
+         else if (!Double.isNaN(d.mDirect))
             return DIRECT;
-         else if(!Double.isNaN(d.mCombined))
+         else if (!Double.isNaN(d.mCombined))
             return COMBINED;
-         else if(!Double.isNaN(d.mVapor))
+         else if (!Double.isNaN(d.mVapor))
             return VAPOR;
       return UNAVAILABLE;
    }
@@ -217,11 +207,13 @@ public class NISTXRayTransitionDB {
     * UNAVAILABLE depending upon which type of value would be returned by the
     * getEdgeEnergy(AtomicShell shell) method.
     * 
-    * @param shell AtomicShell
+    * @param shell
+    *           AtomicShell
     * @return String
     */
    public String getDefaultDatumType(AtomicShell shell) {
-      return getDefaultDatumType(new XRayTransition(shell, AtomicShell.Continuum));
+      return getDefaultDatumType(
+            new XRayTransition(shell, AtomicShell.Continuum));
    }
 
    /**
@@ -230,19 +222,20 @@ public class NISTXRayTransitionDB {
     * available for each transition is searched in the order THEORY, BLEND,
     * COMBINED, VAPOR for the first valid value. This value is returned.
     * 
-    * @param xrt XRayTransition
+    * @param xrt
+    *           XRayTransition
     * @return double
     */
    public double getEnergy(XRayTransition xrt) {
       final Datum d = mData.get(xrt);
-      if(d != null)
-         if(Double.isNaN(d.mTheory))
+      if (d != null)
+         if (Double.isNaN(d.mTheory))
             return d.mTheory;
-         else if(Double.isNaN(d.mDirect))
+         else if (Double.isNaN(d.mDirect))
             return d.mDirect;
-         else if(Double.isNaN(d.mCombined))
+         else if (Double.isNaN(d.mCombined))
             return d.mCombined;
-         else if(Double.isNaN(d.mVapor))
+         else if (Double.isNaN(d.mVapor))
             return d.mVapor;
       return Double.NaN;
    }
@@ -253,21 +246,23 @@ public class NISTXRayTransitionDB {
     * from THEORY, BLEND, COMBINED and VAPOR. If this value is unavailable this
     * method returns Double.NaN.
     * 
-    * @param xrt XRayTransition
-    * @param type String
+    * @param xrt
+    *           XRayTransition
+    * @param type
+    *           String
     * @return double
     */
 
    public double getEnergy(XRayTransition xrt, String type) {
       final Datum d = mData.get(xrt);
-      if(d != null)
-         if(type.equals(THEORY))
+      if (d != null)
+         if (type.equals(THEORY))
             return d.mTheory;
-         else if(type.equals(DIRECT))
+         else if (type.equals(DIRECT))
             return d.mDirect;
-         else if(type.equals(COMBINED))
+         else if (type.equals(COMBINED))
             return d.mCombined;
-         else if(type.equals(VAPOR))
+         else if (type.equals(VAPOR))
             return d.mVapor;
       return Double.NaN;
    }
@@ -278,8 +273,10 @@ public class NISTXRayTransitionDB {
     * THEORY, BLEND, COMBINED and VAPOR. If this value is unavailable this
     * method returns Double.NaN.
     * 
-    * @param shell AtomicShell
-    * @param type String
+    * @param shell
+    *           AtomicShell
+    * @param type
+    *           String
     * @return double
     */
    public double getEdgeEnergy(AtomicShell shell, String type) {
@@ -290,7 +287,8 @@ public class NISTXRayTransitionDB {
     * getEdgeEnergy - Returns the edge energy for the specified AtomicShell
     * (Element and shell.)
     * 
-    * @param sh AtomicShell
+    * @param sh
+    *           AtomicShell
     * @return double
     */
    public double getEdgeEnergy(AtomicShell sh) {

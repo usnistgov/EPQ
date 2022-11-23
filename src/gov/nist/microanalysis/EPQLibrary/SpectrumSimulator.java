@@ -96,7 +96,7 @@ abstract public class SpectrumSimulator
          {
             // Probe current in amps (coulombs / second)
             final double pc = SpectrumUtils.getAverageFaradayCurrent(props, 1.0) * 1.0e-9;
-            mResultProperties.setNumericProperty(SpectrumProperties.FaradayBegin, pc / 1.0e-9);
+            mResultProperties.setNumericProperty(SpectrumProperties.ProbeCurrent, pc / 1.0e-9);
             // Live time in seconds
             final double lt = props.getNumericWithDefault(SpectrumProperties.LiveTime, 60.0);
             mResultProperties.setNumericProperty(SpectrumProperties.LiveTime, lt);

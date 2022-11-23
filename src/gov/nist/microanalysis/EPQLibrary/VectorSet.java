@@ -44,8 +44,7 @@ public class VectorSet {
 	static public ISpectrumData normalize(final ISpectrumData spec) {
 		final ISpectrumData res = SpectrumUtils.scale(1.0 / computeDose(spec), spec);
 		final SpectrumProperties props = res.getProperties();
-		props.setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
-		props.setNumericProperty(SpectrumProperties.FaradayEnd, 1.0);
+		props.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
 		props.setNumericProperty(SpectrumProperties.LiveTime, 1.0);
 		return res;
 	}

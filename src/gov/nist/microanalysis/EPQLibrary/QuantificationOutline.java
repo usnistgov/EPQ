@@ -1582,7 +1582,7 @@ public class QuantificationOutline {
       final Set<AtomicShell> shells = new TreeSet<AtomicShell>();
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(getBeamEnergy()));
-      sp.setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
+      sp.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
       sp.setNumericProperty(SpectrumProperties.LiveTime, NOMINAL_DOSE);
       sp.setDetector(mDetector);
       for(final XRayTransition xrt : roi.getAllTransitions())

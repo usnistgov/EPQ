@@ -51,12 +51,8 @@ public class NoisySpectrum
       if(sp.isDefined(SpectrumProperties.LiveTime))
          sp.setNumericProperty(SpectrumProperties.LiveTime, sp.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0) * mScale);
       else {
-         if(sp.isDefined(SpectrumProperties.FaradayBegin))
-            sp.setNumericProperty(SpectrumProperties.FaradayBegin, sp.getNumericWithDefault(SpectrumProperties.FaradayBegin, 0.0)
-                  * mScale);
-         if(sp.isDefined(SpectrumProperties.FaradayEnd))
-            sp.setNumericProperty(SpectrumProperties.FaradayEnd, sp.getNumericWithDefault(SpectrumProperties.FaradayEnd, 0.0)
-                  * mScale);
+         final double faraday = SpectrumUtils.getAverageFaradayCurrent(sp, 0.0);
+         sp.setNumericProperty(SpectrumProperties.ProbeCurrent, faraday * mScale);
       }
    }
 

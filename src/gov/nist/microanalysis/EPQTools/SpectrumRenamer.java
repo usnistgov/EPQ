@@ -23,7 +23,7 @@ public class SpectrumRenamer {
 
       Acquired("$ACQ$", SpectrumProperties.AcquisitionTime, "Acquisition time"), //
       BeamEnergy("$E0$", SpectrumProperties.BeamEnergy, "Beam energy (keV)"), //
-      ProbeCurrent("$I0$", SpectrumProperties.FaradayBegin, "Probe current (nA)"), //
+      ProbeCurrent("$I0$", SpectrumProperties.ProbeCurrent, "Probe current (nA)"), //
       Client("$CLIENT$", SpectrumProperties.ClientName, "Client name"), //
       Spot("$SPOT$", SpectrumProperties.SpotSize, "Spot size"), //
       DeadTime("$DT$", SpectrumProperties.DeadPercent, "Dead time (%)"), //

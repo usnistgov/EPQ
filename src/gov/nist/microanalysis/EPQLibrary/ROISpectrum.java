@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import gov.nist.microanalysis.EPQLibrary.BremsstrahlungAnalytic.QuadraticBremsstrahlung;
 import gov.nist.microanalysis.EPQLibrary.Detector.EDSDetector;
 import gov.nist.microanalysis.EPQLibrary.Detector.IXRayDetector;
 import gov.nist.microanalysis.EPQTools.WriteSpectrumAsEMSA1_0;

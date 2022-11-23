@@ -666,15 +666,22 @@ public class SpectrumProperties implements Cloneable, Serializable {
 	// public static final PropertyId StageBank = new PropertyId("Stage bank",
 	// "\u00B0", "0.#");
 	/**
-	 * FaradayBegin - A measurement of the full probe current taken before the
-	 * spectrum was acquired. (nA)
+	 * A measurement of the probe current . (nA)
 	 */
-	public static final PropertyId FaradayBegin = new PropertyId("Probe current", " nA", "0.000###");
+	public static final PropertyId ProbeCurrent = new PropertyId("Probe current", " nA", "0.000###");
 	/**
-	 * FaradayEnd - A measurement of the full probe current taken after the spectrum
-	 * was acquired.","nA)
+	 * Until Nov-2022, the probe current data could be recorded as measured before the spectrum (FaradayBegin)
+	 * or after the spectrum (FaradayEnd).  This lead to some unfortunate bugs and really was
+	 * overkill given that todays instruments are so much more stable.  Now both FaradayBegin and
+	 * FaradayEnd are aliases for ProbeCurrent, the one-and-only one property for recording
+	 * the number of electrons incident on the sample per second.  They are retained as aliases
+	 * to ensure that old Python code continues to work.
 	 */
-	public static final PropertyId FaradayEnd = new PropertyId("Probe current (after)", " nA", "0.000###");
+	@Deprecated
+    public static final PropertyId FaradayBegin = ProbeCurrent;
+    @Deprecated
+    public static final PropertyId FaradayEnd = ProbeCurrent;
+	
 	/**
 	 * SpotSize - The spot size as defined by the ASPEX software.
 	 */
@@ -1025,7 +1032,7 @@ public class SpectrumProperties implements Cloneable, Serializable {
 				SpectrumType, IsTheoreticallyGenerated, IsResidualSpectrum, IsROISpectrum, IsStandard, IsEdited,
 				IsTemporary, IsDerived, BackgroundCorrected, LiveTime, RealTime, DeadPercent, XUnits, YUnits,
 				SignalType, DetectorOrientation, DetectorPosition, StagePosition,
-				FaradayBegin, FaradayEnd, SpotSize, ProbeArea, SlowChannelCounts, MediumChannelCounts,
+				ProbeCurrent, SpotSize, ProbeArea, SlowChannelCounts, MediumChannelCounts,
 				FastChannelCounts, LLD, ZeroPeakDiscriminator, PulseProcessorType, PulseProcessTime,
 				PulseProcessorSetting, BeamEnergy, WorkingDistance, EmissionCurrent, Magnification, MagnificationZoom,
 				ConvergenceAngle, CollectionAngle, OperatingMode, SpecimenThickness, SpecimenDensity,

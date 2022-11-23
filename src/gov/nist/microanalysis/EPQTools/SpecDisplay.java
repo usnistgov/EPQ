@@ -676,15 +676,7 @@ public class SpecDisplay extends JComponent {
        * @return The best estimate energy in eV
        */
       public double getCenter() {
-         KLMLine res = mLines.get(0);
-         double br = res.mAmplitude;
-         for (KLMLine klm : mLines)
-            if (klm.mAmplitude > br) {
-               br = klm.mAmplitude;
-               res = klm;
-            }
-         return FromSI.eV(res.mEnergy);
-         // return FromSI.eV(mWgtAvgCenter / mAmplitude);
+         return FromSI.eV(mWgtAvgCenter / mAmplitude);
       }
 
       private KLMLine.KLMLineType getType() {

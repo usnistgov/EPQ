@@ -80,15 +80,10 @@ public class SpectrumMath extends DerivedSpectrum {
          name = "Sum[" + Integer.toString(mNSpectra + 1) + " spectra]";
       double pcb = Double.NaN, pce = Double.NaN;
       if ((lt0 + lt1) > 0) {
-         if (sp.isDefined(SpectrumProperties.FaradayBegin) && ssp.isDefined(SpectrumProperties.FaradayBegin)) {
-            final double pc0 = sp.getNumericWithDefault(SpectrumProperties.FaradayBegin, -Double.MAX_VALUE);
-            final double pc1 = ssp.getNumericWithDefault(SpectrumProperties.FaradayBegin, -Double.MAX_VALUE);
+         if (sp.isDefined(SpectrumProperties.ProbeCurrent) && ssp.isDefined(SpectrumProperties.ProbeCurrent)) {
+            final double pc0 = sp.getNumericWithDefault(SpectrumProperties.ProbeCurrent, -Double.MAX_VALUE);
+            final double pc1 = ssp.getNumericWithDefault(SpectrumProperties.ProbeCurrent, -Double.MAX_VALUE);
             pcb = ((pc0 * lt0) + (pc1 * lt1)) / (lt0 + lt1);
-         }
-         if (sp.isDefined(SpectrumProperties.FaradayEnd) && ssp.isDefined(SpectrumProperties.FaradayEnd)) {
-            final double pc0 = sp.getNumericWithDefault(SpectrumProperties.FaradayEnd, -Double.MAX_VALUE);
-            final double pc1 = ssp.getNumericWithDefault(SpectrumProperties.FaradayEnd, -Double.MAX_VALUE);
-            pce = ((pc0 * lt0) + (pc1 * lt1)) / (lt0 + lt1);
          }
       }
       final double zo = getZeroOffset(), gain = getChannelWidth();
@@ -100,9 +95,7 @@ public class SpectrumMath extends DerivedSpectrum {
       if ((lt0 + lt1) > 0)
          sp.setNumericProperty(SpectrumProperties.LiveTime, lt0 + lt1);
       if (!Double.isNaN(pcb))
-         sp.setNumericProperty(SpectrumProperties.FaradayBegin, pcb);
-      if (!Double.isNaN(pce))
-         sp.setNumericProperty(SpectrumProperties.FaradayEnd, pce);
+         sp.setNumericProperty(SpectrumProperties.ProbeCurrent, pcb);
       SpectrumUtils.rename(this, name);
       ++mNSpectra;
    }

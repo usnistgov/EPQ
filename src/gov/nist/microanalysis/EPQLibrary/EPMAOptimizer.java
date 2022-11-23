@@ -341,7 +341,7 @@ abstract public class EPMAOptimizer {
          throws EPQException {
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(beamEnergy));
-      sp.setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
+      sp.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
       sp.setNumericProperty(SpectrumProperties.LiveTime, probeDose * 1.0e9);
       sp.setDetector(mDetector);
       final BasicSpectrumSimulator sim = new BasicSpectrumSimulator();
@@ -364,7 +364,8 @@ abstract public class EPMAOptimizer {
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setDetector(mDetector);
       sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(beamEnergy));
-      sp.setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
+      sp.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
+      sp.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
       sp.setNumericProperty(SpectrumProperties.LiveTime, dose / NOMINAL_CURRENT);
       sp.setNumericProperty(SpectrumProperties.TakeOffAngle, SpectrumUtils.getTakeOffAngle(mDetector.getProperties()));
       return getOptimizedStandards(elm, sp);

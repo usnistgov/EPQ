@@ -1,15 +1,5 @@
 package gov.nist.microanalysis.EPQTools;
 
-import gov.nist.microanalysis.EPQLibrary.Composition;
-import gov.nist.microanalysis.EPQLibrary.Element;
-import gov.nist.microanalysis.EPQLibrary.ISpectrumData;
-import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
-import gov.nist.microanalysis.EPQLibrary.SpectrumUtils;
-import gov.nist.microanalysis.EPQLibrary.StageCoordinate;
-import gov.nist.microanalysis.EPQLibrary.StageCoordinate.Axis;
-import gov.nist.microanalysis.EPQTools.TIFFImageFileDir.Field;
-import gov.nist.microanalysis.Utility.HalfUpFormat;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,9 +14,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import gov.nist.microanalysis.EPQLibrary.Composition;
+import gov.nist.microanalysis.EPQLibrary.Element;
+import gov.nist.microanalysis.EPQLibrary.ISpectrumData;
+import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
+import gov.nist.microanalysis.EPQLibrary.SpectrumUtils;
+import gov.nist.microanalysis.EPQLibrary.StageCoordinate;
+import gov.nist.microanalysis.EPQLibrary.StageCoordinate.Axis;
+import gov.nist.microanalysis.EPQTools.TIFFImageFileDir.Field;
+import gov.nist.microanalysis.Utility.HalfUpFormat;
+
 /**
  * Write a spectrum or an image as an ASPEX-style TIFF file.
- * 
+ *
  * @author nicholas
  */
 public class WriteSpectrumAsTIFF {
@@ -57,7 +57,7 @@ public class WriteSpectrumAsTIFF {
    public static void write(ISpectrumData spec, FileOutputStream os)
          throws IOException {
       try {
-         final ArrayList<TIFFImageFileDir> ifds = new ArrayList<TIFFImageFileDir>();
+         final ArrayList<TIFFImageFileDir> ifds = new ArrayList<>();
          final SpectrumProperties sp = spec.getProperties();
          {
             final TIFFImageFileDir ifd = new TIFFImageFileDir();
@@ -114,23 +114,25 @@ public class WriteSpectrumAsTIFF {
          os.close();
       }
    }
-   
-   
+
+
    public static void writeMicroImages(File file, ISpectrumData spec) throws IOException {
       FileOutputStream os = new FileOutputStream(file);
       try {
-         final ArrayList<TIFFImageFileDir> ifds = new ArrayList<TIFFImageFileDir>();
+         final ArrayList<TIFFImageFileDir> ifds = new ArrayList<>();
          final SpectrumProperties sp = spec.getProperties();
+         if(!(sp.isDefined(SpectrumProperties.MicroImage) || sp.isDefined(SpectrumProperties.MicroImage2)))
+            return;
          {
             final TIFFImageFileDir ifd = new TIFFImageFileDir();
             ifd.addField(new Field(ASPEXSpectrum.IMAGE_DESCRIPTION, buildImageDescription(sp)));
             ifd.addField(new Field(ASPEXSpectrum.SOFTWARE, "NIST EPQ Library"));
-            ifds.add(ifd);
             {
                final Object obj = sp.getObjectWithDefault(SpectrumProperties.MicroImage, null);
                if((obj != null) && (obj instanceof BufferedImage))
                   ifd.addBWImage((BufferedImage) obj);
             }
+            ifds.add(ifd);
          }
          {
             Object obj = sp.getObjectWithDefault(SpectrumProperties.MicroImage2, null);
@@ -217,12 +219,12 @@ public class WriteSpectrumAsTIFF {
       addItem(sb, "take_off_angle", sp.getNumericWithDefault(SpectrumProperties.Elevation, Double.NaN), "0.0");
       return sb.toString();
    }
-   
+
 
    public static void write(ScaledImage img, FileOutputStream os, SpectrumProperties sp)
          throws IOException {
       try {
-         final ArrayList<TIFFImageFileDir> ifds = new ArrayList<TIFFImageFileDir>();
+         final ArrayList<TIFFImageFileDir> ifds = new ArrayList<>();
          {
             final TIFFImageFileDir ifd = new TIFFImageFileDir();
             ifd.addBWImage(img);

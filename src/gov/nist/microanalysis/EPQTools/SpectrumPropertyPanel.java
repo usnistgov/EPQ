@@ -80,7 +80,6 @@ public class SpectrumPropertyPanel
 
    private final JTabbedPane mTabs = new JTabbedPane(SwingConstants.TOP);
    private JPanel mConditionsPanel;
-   private JTextField mFaradayEnd;
    private JTextField mFaradayBegin;
    private JTextField mLiveTime;
    private JTextField mBeamEnergy;
@@ -190,7 +189,7 @@ public class SpectrumPropertyPanel
 
    private JPanel initializeConditionsPanel() {
       final CellConstraints cc = new CellConstraints();
-      final FormLayout lo = new FormLayout("right:pref, 3dlu, 50dlu, 3dlu, left:110dlu", repeat("pref, 3dlu", 13) + ", pref");
+      final FormLayout lo = new FormLayout("right:pref, 3dlu, 50dlu, 3dlu, left:110dlu", repeat("pref, 3dlu", 12) + ", pref");
       final PanelBuilder pb = new PanelBuilder(lo);
       pb.addSeparator("Instrument", cc.xyw(1, 1, 5));
       pb.addLabel("Instrument", cc.xy(1, 3));
@@ -247,29 +246,26 @@ public class SpectrumPropertyPanel
       pb.add(mFaradayBegin, cc.xy(3, ip + 5));
       pb.addLabel("nA", cc.xy(5, ip + 5));
       pb.addLabel("Probe current (after)", cc.xy(1, ip + 7));
-      mFaradayEnd = new JTextField();
-      pb.add(mFaradayEnd, cc.xy(3, ip + 7));
-      pb.addLabel("nA", cc.xy(5, ip + 7));
-      pb.addLabel("Live time", cc.xy(1, ip + 9));
+      pb.addLabel("Live time", cc.xy(1, ip + 7));
       mLiveTime = new JTextField();
-      pb.add(mLiveTime, cc.xy(3, ip + 9));
-      pb.addLabel("seconds", cc.xy(5, ip + 9));
+      pb.add(mLiveTime, cc.xy(3, ip + 7));
+      pb.addLabel("seconds", cc.xy(5, ip + 7));
 
-      pb.addLabel("Working distance", cc.xy(1, ip + 11));
+      pb.addLabel("Working distance", cc.xy(1, ip + 9));
       mWorkingDistance = new JTextField();
-      pb.add(mWorkingDistance, cc.xy(3, ip + 11));
-      pb.addLabel("mm", cc.xy(5, ip + 11));
+      pb.add(mWorkingDistance, cc.xy(3, ip + 9));
+      pb.addLabel("mm", cc.xy(5, ip + 9));
 
-      pb.addSeparator("Conductive Coating", cc.xyw(1, ip + 13, 5));
+      pb.addSeparator("Conductive Coating", cc.xyw(1, ip + 11, 5));
 
-      pb.addLabel("Material", cc.xy(1, ip + 15));
+      pb.addLabel("Material", cc.xy(1, ip + 13));
       mCoatingMaterial = new JComboBoxCoating(this, mSession);
-      pb.add(mCoatingMaterial, cc.xy(3, ip + 15));
+      pb.add(mCoatingMaterial, cc.xy(3, ip + 13));
 
-      pb.addLabel("Thickness", cc.xy(1, ip + 17));
+      pb.addLabel("Thickness", cc.xy(1, ip + 15));
       mCoatingThickness = new JTextFieldDouble(10.0, 0.0, 1000.0, "#,##0.0", "None");
-      pb.add(mCoatingThickness, cc.xy(3, ip + 17));
-      pb.addLabel("nm", cc.xy(5, ip + 17));
+      pb.add(mCoatingThickness, cc.xy(3, ip + 15));
+      pb.addLabel("nm", cc.xy(5, ip + 15));
 
       final JPanel res = pb.getPanel();
       res.setName(CONDITIONS_PANEL);
@@ -331,9 +327,7 @@ public class SpectrumPropertyPanel
       mSpectrumIndex.setText(sp.getTextWithDefault(SpectrumProperties.SpectrumIndex, ""));
       mClientName.setText(sp.getTextWithDefault(SpectrumProperties.ClientName, ""));
       mClientName.selectAll();
-      mFaradayEnd.setText(sp.getTextWithDefault_NoUnit(SpectrumProperties.FaradayEnd, ""));
-      mFaradayEnd.selectAll();
-      mFaradayBegin.setText(sp.getTextWithDefault_NoUnit(SpectrumProperties.FaradayBegin, ""));
+      mFaradayBegin.setText(sp.getTextWithDefault_NoUnit(SpectrumProperties.ProbeCurrent, ""));
       mFaradayBegin.selectAll();
       mLiveTime.setText(sp.getTextWithDefault_NoUnit(SpectrumProperties.LiveTime, ""));
       mLiveTime.selectAll();
@@ -422,8 +416,7 @@ public class SpectrumPropertyPanel
       if((mDetector.getSelectedItem() instanceof DetectorProperties)
             && (mCalibration.getSelectedItem() instanceof EDSCalibration))
          sp.setDetector(EDSDetector.createDetector((DetectorProperties) mDetector.getSelectedItem(), (EDSCalibration) mCalibration.getSelectedItem()));
-      addIfDifferentNumber(mFaradayEnd, SpectrumProperties.FaradayEnd, sp);
-      addIfDifferentNumber(mFaradayBegin, SpectrumProperties.FaradayBegin, sp);
+      addIfDifferentNumber(mFaradayBegin, SpectrumProperties.ProbeCurrent, sp);
       addIfDifferentNumber(mLiveTime, SpectrumProperties.LiveTime, sp);
       addIfDifferentNumber(mBeamEnergy, SpectrumProperties.BeamEnergy, sp);
       addIfDifferentNumber(mWorkingDistance, SpectrumProperties.WorkingDistance, sp);
@@ -504,8 +497,7 @@ public class SpectrumPropertyPanel
       updateControl(mInstrumentOperator, SpectrumProperties.InstrumentOperator);
       updateControl(mSpectrumComment, SpectrumProperties.SpectrumComment);
       updateControl(mClientName, SpectrumProperties.ClientName);
-      updateControl(mFaradayEnd, SpectrumProperties.FaradayEnd);
-      updateControl(mFaradayBegin, SpectrumProperties.FaradayBegin);
+      updateControl(mFaradayBegin, SpectrumProperties.ProbeCurrent);
       updateControl(mLiveTime, SpectrumProperties.LiveTime);
       updateControl(mBeamEnergy, SpectrumProperties.BeamEnergy);
       updateControl(mWorkingDistance, SpectrumProperties.WorkingDistance);
@@ -518,8 +510,8 @@ public class SpectrumPropertyPanel
          final SpectrumProperties dup = new SpectrumProperties(mSpectrumProperties);
          dup.addAll(sp);
          for(final SpectrumProperties.PropertyId pid : mRequiredProperties)
-            if((pid == SpectrumProperties.FaradayBegin) || (pid == SpectrumProperties.FaradayEnd))
-               res &= (dup.isDefined(SpectrumProperties.FaradayBegin) || dup.isDefined(SpectrumProperties.FaradayEnd));
+            if(pid == SpectrumProperties.ProbeCurrent)
+               res &= dup.isDefined(SpectrumProperties.ProbeCurrent);
             else
                res &= dup.isDefined(pid);
       }
@@ -599,7 +591,7 @@ public class SpectrumPropertyPanel
                   boolean firstPc = true;
                   for(final SpectrumProperties.PropertyId pid : mPanel.mRequiredProperties) {
                      String app = null;
-                     if((pid == SpectrumProperties.FaradayBegin) || (pid == SpectrumProperties.FaradayEnd)) {
+                     if(pid == SpectrumProperties.ProbeCurrent)  {
                         if(firstPc) {
                            app = "Probe Current";
                            firstPc = false;

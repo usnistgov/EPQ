@@ -68,7 +68,8 @@ public class QuantifyUsingZetaFactors {
       if(!comp.containsElement(elm))
          throw new EPQException("The standard does not contain " + elm.toString() + ".");
       sp.getNumericProperty(SpectrumProperties.LiveTime);
-      sp.getNumericProperty(SpectrumProperties.FaradayBegin);
+      if(Double.isNaN(SpectrumUtils.getAverageFaradayCurrent(sp, Double.NaN)))
+         throw new EPQException("The sample must define the probe current");
       if(Double.isNaN(SpectrumUtils.getMassThickness(sp)))
          throw new EPQException("The sample must define the mass-thickness.");
       final double e0 = ToSI.keV(sp.getNumericWithDefault(SpectrumProperties.BeamEnergy, FromSI.keV(mBeamEnergy)));

@@ -102,7 +102,7 @@ public class QuantificationOptimizer2
       final SpectrumProperties props = new SpectrumProperties();
       props.setDetector(mOutline.getDetector());
       props.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(mOutline.getBeamEnergy()));
-      props.setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
+      props.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
       props.setNumericProperty(SpectrumProperties.LiveTime, PROBE_DOSE);
       return props;
    }

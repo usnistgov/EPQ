@@ -361,11 +361,8 @@ public class QuantifyUsingStandards
    private ISpectrumData makeReference(final ISpectrumData spec) {
       final ISpectrumData refSpec = preProcessSpectrum(spec);
       final SpectrumProperties refSp = refSpec.getProperties();
-      if(refSp.getNumericWithDefault(SpectrumProperties.FaradayBegin, 0.0) <= 0.0)
-         refSp.setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
-      if(refSp.isDefined(SpectrumProperties.FaradayEnd))
-         if(refSp.getNumericWithDefault(SpectrumProperties.FaradayEnd, 0.0) <= 0.0)
-            refSp.setNumericProperty(SpectrumProperties.FaradayEnd, refSp.getNumericWithDefault(SpectrumProperties.FaradayBegin, 1.0));
+      final double faraday=SpectrumUtils.getAverageFaradayCurrent(refSp, 1.0);
+      refSp.setNumericProperty(SpectrumProperties.ProbeCurrent, faraday);
       if(refSp.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0) <= 0.0)
          refSp.setNumericProperty(SpectrumProperties.LiveTime, 60.0);
       return refSpec;

@@ -11,7 +11,7 @@ import gov.nist.microanalysis.Utility.Translate2D;
 /**
  * @author nicholas
  */
-public class StageCoordinate {
+public class StageCoordinate implements Cloneable {
 
    public static enum Axis {
       X("X", " mm", "0.000"), Y("Y", " mm", "0.000"), Z("Z", " mm", "0.000"), R("Rotate", "\u00B0", "0.00"), T("Tilt", "\u00B0",

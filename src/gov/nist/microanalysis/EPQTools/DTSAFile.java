@@ -173,8 +173,7 @@ public class DTSAFile {
             lastChannel = mNumberOfChannels;
          if(firstChannel >= lastChannel)
             firstChannel = 0;
-         setPropertyWhenNotEqual(SpectrumProperties.FaradayBegin, dis.readFloat(), 0.0);
-         setPropertyWhenNotEqual(SpectrumProperties.FaradayEnd, dis.readFloat(), 0.0);
+         setPropertyWhenNotEqual(SpectrumProperties.ProbeCurrent, dis.readFloat(), 0.0);
          dis.readInt(); // mBegin_Time
          dis.readFloat(); // mFirstValue
          dis.readFloat(); // mEndValue

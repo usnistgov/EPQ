@@ -118,7 +118,7 @@ public class FilterFitTest
       // 'Unknown' spectrum
       final EMSAFile k3189 = new EMSAFile();
       k3189.read(FilterFitTest.class.getResourceAsStream("TestData/K3189_1.msa"));
-      k3189.getProperties().setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
+      k3189.getProperties().setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
       k3189.getProperties().setNumericProperty(SpectrumProperties.LiveTime, 60.0);
       final Object[][] refs = {
          {
@@ -168,7 +168,7 @@ public class FilterFitTest
       for(int i = 0; i < refs.length; ++i) {
          final EMSAFile ref = new EMSAFile();
          ref.read(FilterFitTest.class.getResourceAsStream((String) refs[i][1]));
-         ref.getProperties().setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
+         ref.getProperties().setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
          ref.getProperties().setNumericProperty(SpectrumProperties.LiveTime, 60.0);
          refs[i][3] = ref;
       }

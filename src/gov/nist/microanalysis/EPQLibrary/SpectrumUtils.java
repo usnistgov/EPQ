@@ -1119,12 +1119,9 @@ final public class SpectrumUtils {
          sp.setNumericProperty(SpectrumProperties.LiveTime,
                k * sp.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0));
       else {
-         if (sp.isDefined(SpectrumProperties.FaradayBegin))
-            sp.setNumericProperty(SpectrumProperties.FaradayBegin, k * sp
-                  .getNumericWithDefault(SpectrumProperties.FaradayBegin, 0.0));
-         if (sp.isDefined(SpectrumProperties.FaradayEnd))
-            sp.setNumericProperty(SpectrumProperties.FaradayEnd, k * sp
-                  .getNumericWithDefault(SpectrumProperties.FaradayEnd, 0.0));
+         if (sp.isDefined(SpectrumProperties.ProbeCurrent))
+            sp.setNumericProperty(SpectrumProperties.ProbeCurrent, k * sp
+                  .getNumericWithDefault(SpectrumProperties.ProbeCurrent, 0.0));
       }
       rename(res, "Noisy[" + src.toString() + "]");
       return res;
@@ -1929,21 +1926,7 @@ final public class SpectrumUtils {
     */
    static public double getAverageFaradayCurrent(SpectrumProperties props,
          double def) {
-      final double liveTime0 = props
-            .getNumericWithDefault(SpectrumProperties.FaradayBegin, Double.NaN);
-      final double liveTime1 = props
-            .getNumericWithDefault(SpectrumProperties.FaradayEnd, Double.NaN);
-      double res = 0.0;
-      double n = 0;
-      if (!Double.isNaN(liveTime0)) {
-         res += liveTime0;
-         ++n;
-      }
-      if (!Double.isNaN(liveTime1)) {
-         res += liveTime1;
-         ++n;
-      }
-      return n > 0 ? res / n : def;
+      return props.getNumericWithDefault(SpectrumProperties.ProbeCurrent, def);
    }
 
    /**

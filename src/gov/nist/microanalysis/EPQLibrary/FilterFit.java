@@ -41,7 +41,7 @@ public class FilterFit extends LinearSpectrumFit {
 	 * Declares an interface for specifying a mechanism to determine which elements
 	 * should be remove from the fit based on insufficient evidence.
 	 */
-	public interface CullingStrategy {
+	public interface CullingStrategy extends Cloneable {
 		/**
 		 * Takes fit parameters determines whether based on these an element is present.
 		 * If the element is not likely to be present it is added to the
@@ -487,12 +487,9 @@ public class FilterFit extends LinearSpectrumFit {
 		if (unkProps.isDefined(SpectrumProperties.RealTime))
 			props.setNumericProperty(SpectrumProperties.RealTime,
 					unkProps.getNumericWithDefault(SpectrumProperties.RealTime, Double.NaN));
-		if (unkProps.isDefined(SpectrumProperties.FaradayBegin))
-			props.setNumericProperty(SpectrumProperties.FaradayBegin,
-					unkProps.getNumericWithDefault(SpectrumProperties.FaradayBegin, Double.NaN));
-		if (unkProps.isDefined(SpectrumProperties.FaradayEnd))
-			props.setNumericProperty(SpectrumProperties.FaradayEnd,
-					unkProps.getNumericWithDefault(SpectrumProperties.FaradayEnd, Double.NaN));
+		if (unkProps.isDefined(SpectrumProperties.ProbeCurrent))
+			props.setNumericProperty(SpectrumProperties.ProbeCurrent,
+					unkProps.getNumericWithDefault(SpectrumProperties.ProbeCurrent, Double.NaN));
 		props.setTextProperty(SpectrumProperties.SpectrumComment, "Filter = " + mFilter.toString());
 		SpectrumUtils.rename(res, "Residual[" + mFilteredUnknown.getBaseSpectrum().toString() + "]");
 		return res;
@@ -530,12 +527,9 @@ public class FilterFit extends LinearSpectrumFit {
 		if (unkProps.isDefined(SpectrumProperties.RealTime))
 			props.setNumericProperty(SpectrumProperties.RealTime,
 					unkProps.getNumericWithDefault(SpectrumProperties.RealTime, Double.NaN));
-		if (unkProps.isDefined(SpectrumProperties.FaradayBegin))
-			props.setNumericProperty(SpectrumProperties.FaradayBegin,
-					unkProps.getNumericWithDefault(SpectrumProperties.FaradayBegin, Double.NaN));
-		if (unkProps.isDefined(SpectrumProperties.FaradayEnd))
-			props.setNumericProperty(SpectrumProperties.FaradayEnd,
-					unkProps.getNumericWithDefault(SpectrumProperties.FaradayEnd, Double.NaN));
+		if (unkProps.isDefined(SpectrumProperties.ProbeCurrent))
+			props.setNumericProperty(SpectrumProperties.ProbeCurrent,
+					unkProps.getNumericWithDefault(SpectrumProperties.ProbeCurrent, Double.NaN));
 		props.setTextProperty(SpectrumProperties.SpectrumComment, "Filter = " + mFilter.toString());
 		SpectrumUtils.rename(res, "Residual[" + mFilteredUnknown.getBaseSpectrum().toString() + "]");
 		return res;

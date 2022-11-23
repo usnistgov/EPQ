@@ -2,6 +2,7 @@ package gov.nist.microanalysis.EPQLibrary;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Objects;
 
 import gov.nist.microanalysis.NISTMonte.CylindricalShape;
 import gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape;
@@ -642,12 +643,23 @@ abstract public class SampleShape {
       private final double mLength;
 
       @Override
-      public boolean equals(Object ss) {
-         if(ss.getClass().equals(getClass())) {
-            final Fiber tp = (Fiber) ss;
-            return (Double.compare(mRadius, tp.mRadius) == 0) && (Double.compare(mLength, tp.mLength) == 0);
-         }
-         return false;
+      public int hashCode() {
+         return Objects.hash(mLength, mRadius);
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         Fiber other = (Fiber) obj;
+         return Double.doubleToLongBits(mLength) == Double
+               .doubleToLongBits(other.mLength)
+               && Double.doubleToLongBits(mRadius) == Double
+                     .doubleToLongBits(other.mRadius);
       }
 
       public double getRadius() {
@@ -1019,6 +1031,10 @@ abstract public class SampleShape {
 
       public double getThickness() {
          return mThickness;
+      }
+      
+      public int hashCode() {
+         return Double.hashCode(mThickness);
       }
 
       /**

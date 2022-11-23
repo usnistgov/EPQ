@@ -360,12 +360,8 @@ public class EMSAFile extends BaseSpectrum {
                   parseDouble(value));
          else if (prefix.startsWith("#PROBECUR")) {
             final double val = parseDouble(value);
-            if (val > 0.0) {
-               mProperties.setNumericProperty(SpectrumProperties.FaradayBegin,
-                     val);
-               mProperties.setNumericProperty(SpectrumProperties.FaradayEnd,
-                     val);
-            }
+            if (val > 0.0)
+               mProperties.setNumericProperty(SpectrumProperties.ProbeCurrent, val);
          } else if (prefix.startsWith("#BEAMDIA")) {
             final double r = parseDouble(value) / 2.0;
             mProperties.setNumericProperty(SpectrumProperties.ProbeArea,
@@ -607,17 +603,17 @@ public class EMSAFile extends BaseSpectrum {
          } else if (prefix.startsWith("##CONDCOATING")) {
             mProperties.setObjectProperty(SpectrumProperties.ConductiveCoating,
                   ConductiveCoating.parse(value));
+         } else if (prefix.startsWith("##IMAGE_REF")) {
+            mProperties.setTextProperty(SpectrumProperties.ImageRef, value.trim());
          } else if (prefix.startsWith("##")) {
             // ignored special custom tag (ignore)
          } else if (prefix.startsWith("#SPECTRUM"))
             return false;
-         else if (prefix.startsWith("#MULTISPEC")) {
+         else if (prefix.startsWith("##MULTISPEC")) {
             mProperties.setNumericProperty(
                   SpectrumProperties.MultiSpectrumMetric,
                   Double.parseDouble(value));
-         } else if (prefix.startsWith("##IMAGE_REF"))
-            mProperties.setTextProperty(SpectrumProperties.ImageRef, value);
-         else
+         } else
             System.err.println("Unknown tag type in EMSA file - " + prefix);
       } catch (NumberFormatException | ParseException e) {
          e.printStackTrace();
@@ -658,23 +654,24 @@ public class EMSAFile extends BaseSpectrum {
       try (final InputStream is = new FileInputStream(file)) {
          read(is);
          setFilename(file.getCanonicalPath());
-         try {
-            String imgRef = getProperties()
-                  .getTextWithDefault(SpectrumProperties.ImageRef, null);
-            if (imgRef != null) {
-               File fn = new File(file.getParentFile(), imgRef);
-               BufferedImage[] sis = ASPEXImage.read(fn);
-               if (sis.length > 0)
-                  getProperties().setObjectProperty(
-                        SpectrumProperties.MicroImage, sis[0]);
-               if (sis.length > 1)
-                  getProperties().setObjectProperty(
-                        SpectrumProperties.MicroImage2, sis[1]);
+         if (withImgs) {
+            try {
+               final String imgRef = getProperties()
+                     .getTextWithDefault(SpectrumProperties.ImageRef, null);
+               if (imgRef != null) {
+                  final File fn = new File(file.getParentFile(), imgRef);
+                  final BufferedImage[] sis = ASPEXImage.read(fn);
+                  if (sis.length > 0)
+                     getProperties().setObjectProperty(
+                           SpectrumProperties.MicroImage, sis[0]);
+                  if (sis.length > 1)
+                     getProperties().setObjectProperty(
+                           SpectrumProperties.MicroImage2, sis[1]);
+               }
+            } catch (Exception e) {
+               e.printStackTrace();
             }
-         } catch (Exception e) {
-            e.printStackTrace();
          }
-
       }
    }
 

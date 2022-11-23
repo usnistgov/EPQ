@@ -100,7 +100,7 @@ public class Composition
     * 
     * @return this
     */
-   private Object readResolve() {
+   protected Object readResolve() {
       mHashCode = Integer.MAX_VALUE;
       renormalize();
       return this;

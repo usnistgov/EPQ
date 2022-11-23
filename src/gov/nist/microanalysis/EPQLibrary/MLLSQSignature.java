@@ -94,8 +94,8 @@ public class MLLSQSignature implements Cloneable {
 		sp.apply(mDetector.getProperties());
 		if (!sp.isDefined(SpectrumProperties.BeamEnergy))
 			sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(mBeamEnergy));
-		if (!sp.isDefined(SpectrumProperties.FaradayBegin))
-			sp.setNumericProperty(SpectrumProperties.FaradayBegin, 1.0);
+        if (!sp.isDefined(SpectrumProperties.ProbeCurrent))
+           sp.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
 		if (!sp.isDefined(SpectrumProperties.LiveTime))
 			sp.setNumericProperty(SpectrumProperties.LiveTime, 60.0);
 		assert Math.abs(FromSI.eV(mBeamEnergy) - SpectrumUtils.getBeamEnergy(ref))

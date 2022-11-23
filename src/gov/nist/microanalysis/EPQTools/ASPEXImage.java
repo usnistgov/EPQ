@@ -30,12 +30,12 @@ public class ASPEXImage {
       final TIFFImageFileDir.Field field = dir
             .getField(ASPEXSpectrum.IMAGE_DESCRIPTION);
       double macroFov = Double.NaN, microFov = Double.NaN; // meters
-      StageCoordinate stgPos = new StageCoordinate();
+      final StageCoordinate stgPos = new StageCoordinate();
       if (field != null) {
          double mag = Double.NaN, zoom = Double.NaN;
          String[] items = field.getAsString().split("\n");
-         for (String item : items) {
-            String[] kv = item.split("=", 1);
+         for (final String item : items) {
+            final String[] kv = item.split("=", 2);
             if (kv[0].equals("mag"))
                mag = Double.parseDouble(kv[1]);
             else if (kv[0].equals("zoom"))
@@ -69,7 +69,7 @@ public class ASPEXImage {
       try (final FileImageInputStream fiis = new FileImageInputStream(fn)) {
          ir.setInput(fiis);
          final int nImgs = Math.min(2, ir.getNumImages(true));
-         BufferedImage[] res = new BufferedImage[nImgs];
+         final BufferedImage[] res = new BufferedImage[nImgs];
          if (nImgs > 0) {
             res[0] = ir.read(0);
             if (!Double.isNaN(microFov))

@@ -132,7 +132,7 @@ public class EdaxSPCSpectrum
          mProperties.setNumericProperty(SpectrumProperties.TakeOffAngle, dis.readFloat());
          f = dis.readFloat();
          if(f > 0.0)
-            mProperties.setNumericProperty(SpectrumProperties.FaradayBegin, f);
+            mProperties.setNumericProperty(SpectrumProperties.ProbeCurrent, f);
          mProperties.setNumericProperty(SpectrumProperties.Resolution, dis.readFloat());
          final String[] types = {
             "std",

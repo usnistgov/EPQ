@@ -38,7 +38,7 @@ import gov.nist.microanalysis.Utility.Histogram;
  */
 public class ScaledImage
    extends
-   BufferedImage {
+   BufferedImage implements Cloneable {
 
    /**
     * Horizontal field-of-view in meters
@@ -204,6 +204,30 @@ public class ScaledImage
       g.drawLine(x, y - sc, x, y - 4);
       g.drawLine(x, y + 4, x, y + sc);
    }
+   
+   /**
+    * Draw a semi-transparent yellow box of the specified width in the center of the image 
+    * 
+    * @param width in meters
+    */
+   public void applyCenterBox(final double width) {
+      final Object fovProp = getProperty(HOR_FIELD_OF_VIEW);
+      if(fovProp instanceof Double) {
+         final double hfov = ((Double) fovProp).doubleValue(); // meters
+         final double vfov = hfov*getHeight()/getWidth();
+         if(width<hfov) {
+            int left = (int)Math.round((0.5*(hfov-width)/hfov)*getWidth());
+            int top = (int)Math.round((0.5*(vfov-width)/vfov)*getHeight());
+            int w = (int)Math.round((width/hfov)*getWidth());
+            int h = (int)Math.round((width/vfov)*getHeight());
+            final Graphics2D g = createGraphics();
+            g.setColor(new Color(0, 255, 255, 192));
+            g.drawRect(left, top, w, h);
+         }
+      }
+         
+   }
+
 
    public void applyCenterCrossHair() {
       applyCrossHair(getWidth() / 2, getHeight() / 2);

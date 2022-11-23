@@ -19,6 +19,7 @@ import gov.nist.microanalysis.EPQLibrary.Element;
 import gov.nist.microanalysis.EPQLibrary.ISpectrumData;
 import gov.nist.microanalysis.EPQLibrary.SampleShape;
 import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
+import gov.nist.microanalysis.EPQLibrary.SpectrumUtils;
 import gov.nist.microanalysis.EPQLibrary.StageCoordinate;
 import gov.nist.microanalysis.EPQLibrary.StageCoordinate.Axis;
 import gov.nist.microanalysis.EPQLibrary.Detector.DetectorProperties;
@@ -194,13 +195,10 @@ public class WriteSpectrumAsEMSA1_0 {
                writeln(pw, "REALTIME", nf.format(
                      sp.getNumericProperty(SpectrumProperties.RealTime)));
             // Magnification or Camera Length [RN] Mag in x or times, Cl in mm
-            if (sp.isDefined(SpectrumProperties.FaradayBegin)) {
-               double pc = sp
-                     .getNumericProperty(SpectrumProperties.FaradayBegin);
-               pc += sp.getNumericWithDefault(SpectrumProperties.FaradayEnd,
-                     pc);
+            final double faraday = SpectrumUtils.getAverageFaradayCurrent(sp, Double.NaN);
+            if (!Double.isNaN(faraday)) {
                // Probe current in nanoAmps [RN]
-               writeln(pw, "PROBECUR", nf.format(pc / 2.0));
+               writeln(pw, "PROBECUR", nf.format(faraday));
             }
             // Thickness of Au Window/Electrical Contact in cm [RN]
             if (sp.isDefined(SpectrumProperties.GoldLayer))
@@ -410,15 +408,16 @@ public class WriteSpectrumAsEMSA1_0 {
                         SpectrumProperties.DetectorMode, ""));
                }
                if ((path != null)
-                     && (path.getName().toLowerCase().endsWith(".msa"))
-                     && (sp.isDefined(SpectrumProperties.MicroImage)
-                           || sp.isDefined(SpectrumProperties.MicroImage2))) {
+                     && (sp.isDefined(SpectrumProperties.MicroImage) || sp.isDefined(SpectrumProperties.MicroImage2))) {
                   try {
-                     final File imgPath = new File(path.getPath()
-                           .replace("\\.[Mm][Ss][Aa]$", "_msa.tif"));
+                     StringBuffer fn = new StringBuffer(path.getPath());
+                     fn.append(".tif");
+                     final File imgPath = new File(fn.toString());
                      WriteSpectrumAsTIFF.writeMicroImages(imgPath, spec);
                      writeln(pw, "#IMAGE_REF", imgPath.getName());
+                     System.err.println("Images written to "+imgPath.toString());
                   } catch (IOException e) {
+                     e.printStackTrace();
                      // Just ignore it...
                   }
                }

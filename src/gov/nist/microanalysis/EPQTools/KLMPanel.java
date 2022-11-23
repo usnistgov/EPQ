@@ -296,7 +296,7 @@ public class KLMPanel
     * @return true to display this family check box
     */
    private static boolean showFamily(Element elm, int family) {
-      return XRayTransition.familyExists(elm, family)
+      return (XRayTransition.getBrightestTransition(elm, family)!=null)
             && (XRayTransition.getBrightestTransition(elm, family).getEdgeEnergy() < ToSI.keV(25.0))
             && (XRayTransition.getBrightestTransition(elm, family).getEdgeEnergy() > ToSI.keV(0.1));
    }
@@ -501,6 +501,7 @@ public class KLMPanel
       jTextField_Element.addKeyListener(ka);
 
       jScrollBar_Element.setOrientation(Adjustable.HORIZONTAL);
+      jScrollBar_Element.setBlockIncrement(1);
       final DefaultBoundedRangeModel brm = new DefaultBoundedRangeModel();
       brm.setMinimum(Element.elmH);
       brm.setMaximum(Element.elmAm);

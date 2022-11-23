@@ -112,10 +112,10 @@ public class OxfordSPTFile  extends BaseSpectrum {
 			line = br.readLine();
 		}
 		line = br.readLine();
-		if(line.equals("Raw\tCorrected")) {
+		if((line!=null) && line.equals("Raw\tCorrected")) {
 			try {
 				int i = 0;
-				for (String str = br.readLine(); (str.length() > 0)
+				for (String str = br.readLine(); (str!=null) && (str.length() > 0)
 						&& (i < mData.length); str = br.readLine()) {
 					String[] items = str.split("\\t");
 					if (items.length > 1)

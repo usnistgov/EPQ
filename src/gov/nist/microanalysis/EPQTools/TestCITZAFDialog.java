@@ -78,7 +78,8 @@ public class TestCITZAFDialog {
 
                   // Read MACs
                   br.mark(300);
-                  while(!br.readLine().startsWith("Z-LINE"))
+                  String line=br.readLine();
+                  while ((line != null) && !line.startsWith("Z-LINE"))
                      br.mark(300);
                   br.reset();
                   for(int index = 0; index < (2 + (numElements * numElements)); index++)
@@ -88,7 +89,8 @@ public class TestCITZAFDialog {
 
                   // Read ZAF Corrections
                   br.mark(300);
-                  while(!br.readLine().startsWith("ELEMENT"))
+                  line=br.readLine();
+                  while((line!=null) && !line.startsWith("ELEMENT"))
                      br.mark(300);
                   br.reset();
 
@@ -97,7 +99,7 @@ public class TestCITZAFDialog {
 
                   System.out.println("------------------------------------------------");
                   // Read Sample Results
-                  String line = br.readLine();
+                  line = br.readLine();
                   while((line != null) && !line.startsWith("SAMPLE"))
                      line = br.readLine();
 

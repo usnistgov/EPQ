@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
     <jar path="DTSA2/Installer/DTSA-II Build/relocate.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/EPQ/relocate.jardesc" exportErrors="false" exportWarnings="false" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/EPQ/relocate.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
-    <manifest generateManifest="false" mainClassHandleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools{RelocationApp.java[RelocationApp" manifestLocation="/EPQ/relocate_manifest" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+    <manifest generateManifest="false" mainClassHandleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools{RelocationApp.java[RelocationApp" manifestLocation="/EPQ/relocate_manifest" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
         <sealing sealJar="false">
             <packagesToSeal/>
             <packagesToUnSeal/>
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility{StageRelocation.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools{ErrorDialog.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools{RelocationDialog.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.Utility{StageRelocation.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools{ErrorDialog.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools{RelocationDialog.java"/>
         <file path="/EPQ/src/RelocationUtilitySplash.png"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility{Math2.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility{PrintUtilities.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools{SimpleFileFilter.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools{RelocationApp.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility{UtilException.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility{HalfUpFormat.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools{RelocationPanel.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary{EPQFatalException.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility{Translate2D.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools{SwingUtils.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility{Simplex.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility{FindRoot.java"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary{EPQException.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.Utility{Math2.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.Utility{PrintUtilities.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools{SimpleFileFilter.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools{RelocationApp.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.Utility{UtilException.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.Utility{HalfUpFormat.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools{RelocationPanel.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary{EPQFatalException.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.Utility{Translate2D.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools{SwingUtils.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.Utility{Simplex.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.Utility{FindRoot.java"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary{EPQException.java"/>
     </selectedElements>
 </jardesc>

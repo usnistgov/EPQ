@@ -368,7 +368,7 @@ abstract public class CorrectionAlgorithm extends AlgorithmClass implements Comp
 	 * @throws EPQException
 	 */
 	public double computeKRatio(Composition comp, XRayTransition xrt, SpectrumProperties sp) throws EPQException {
-		final Composition elmMat = new Composition(new Element[] { xrt.getElement() }, new double[] { 1.0 });
+		final Composition elmMat = new Composition(xrt.getElement());
 		return computeKRatio(comp, elmMat, xrt, sp);
 	}
 

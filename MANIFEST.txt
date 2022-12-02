@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Class-Path: commons-math-2.2.jar derby-10.16.1.1.jar derbyclient-10.16.1.1.jar derbynet-10.16.1.1.jar derbyshared-10.16.1.1.jar derbytools-10.16.1.1.jar hamcrest-core-1.3.jar jai-imageio-core-1.4.0.jar jama-1.0.3.jar jgoodies-common-1.8.1.jar jgoodies-forms-1.9.0.jar jna-5.12.1.jar junit-4.13.2.jar jython-standalone-2.7.3.jar mxparser-1.2.2.jar xmlpull-1.1.3.1.jar xstream-1.4.19.jar  
+Class-Path: commons-math-2.2.jar derby-10.16.1.1.jar derbyclient-10.16.1.1.jar derbynet-10.16.1.1.jar derbyshared-10.16.1.1.jar derbytools-10.16.1.1.jar hamcrest-core-1.3.jar jai-imageio-core-1.4.0.jar jama-1.0.3.jar jgoodies-common-1.8.0.jar jgoodies-forms-1.8.0.jar jna-5.12.1.jar junit-4.13.2.jar jython-standalone-2.7.3.jar mxparser-1.2.2.jar xmlpull-1.1.3.1.jar xstream-1.4.19.jar  
 Add-Opens: java.base/java.lang java.base/java.util java.desktop/java.awt
 Specification-Title: NIST Electron Probe Quantification library
 Specification-Vendor: National Institute of Standards and Technology

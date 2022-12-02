@@ -28,9 +28,7 @@ import java.util.List;
  * @version 1.0
  */
 
-abstract public class AlgorithmClass
-   extends AlgorithmUser
-   implements Comparable<AlgorithmClass> {
+abstract public class AlgorithmClass extends AlgorithmUser implements Comparable<AlgorithmClass> {
 
    private final String mClass;
    private final String mName;
@@ -62,7 +60,8 @@ abstract public class AlgorithmClass
    /**
     * compareTo - Sort by name
     * 
-    * @param o UncertainValue
+    * @param o
+    *           UncertainValue
     * @return int
     */
    @Override

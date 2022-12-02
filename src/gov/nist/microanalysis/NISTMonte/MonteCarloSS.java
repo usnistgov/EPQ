@@ -194,7 +194,8 @@ final public class MonteCarloSS {
        * Called by MonteCarloSS.setBeamEnergy to modify the acceleration
        * potential.
        * 
-       * @param beamEnergy double - in Joules
+       * @param beamEnergy
+       *           double - in Joules
        */
       void setBeamEnergy(double beamEnergy);
 
@@ -208,7 +209,8 @@ final public class MonteCarloSS {
       /**
        * Called by MonteCarloSS to set the location of the electron source.
        * 
-       * @param center double[]
+       * @param center
+       *           double[]
        */
       void setCenter(double[] center);
 
@@ -243,7 +245,8 @@ final public class MonteCarloSS {
        * point on the interface between two Shapes is considered to be inside
        * both Shapes.
        * 
-       * @param pos double[] - a three item array
+       * @param pos
+       *           double[] - a three item array
        * @return boolean
        */
       boolean contains(double[] pos);
@@ -265,8 +268,10 @@ final public class MonteCarloSS {
        * greater than one and it would require additional computation to
        * discover the true value of u.
        * 
-       * @param pos0 double[] - three element array
-       * @param pos1 double[] - three element array
+       * @param pos0
+       *           double[] - three element array
+       * @param pos1
+       *           double[] - three element array
        * @return double - The fraction of the length from pos0 to pos1 at which
        *         the first intersection occurs. Otherwise Double.MAX_VALUE.
        */
@@ -340,17 +345,17 @@ final public class MonteCarloSS {
 
       public void updateMaterial(Material oldMat, IMaterialScatterModel newMat) {
          // Recursively replace all instances of oldMat with newMat
-         if(mScatterModel.getMaterial() == oldMat)
+         if (mScatterModel.getMaterial() == oldMat)
             mScatterModel = newMat;
-         for(final RegionBase reg : mSubRegions)
+         for (final RegionBase reg : mSubRegions)
             reg.updateMaterial(oldMat, newMat);
       }
 
       public void updateMaterial(IMaterialScatterModel oldMat, IMaterialScatterModel newMat) {
          // Recursively replace all instances of oldMat with newMat
-         if(mScatterModel == oldMat)
+         if (mScatterModel == oldMat)
             mScatterModel = newMat;
-         for(final RegionBase reg : mSubRegions)
+         for (final RegionBase reg : mSubRegions)
             reg.updateMaterial(oldMat, newMat);
       }
 
@@ -385,14 +390,15 @@ final public class MonteCarloSS {
       /**
        * Returns the inner most sub-region that contains the specified point.
        * 
-       * @param pos double[]
+       * @param pos
+       *           double[]
        * @return RegionBase
        */
       protected RegionBase containingSubRegion(double[] pos) {
-         if(mShape.contains(pos)) {
-            for(final RegionBase reg : mSubRegions) {
+         if (mShape.contains(pos)) {
+            for (final RegionBase reg : mSubRegions) {
                final RegionBase csr = reg.containingSubRegion(pos);
-               if(csr != null)
+               if (csr != null)
                   return csr;
             }
             return this;
@@ -404,14 +410,15 @@ final public class MonteCarloSS {
        * Returns a set of Element objects containing all elements in this
        * RegionBase and optionally all contained regions.
        * 
-       * @param recurse boolean - Whether to recurse into sub-regions when
+       * @param recurse
+       *           boolean - Whether to recurse into sub-regions when
        *           determining the element list.
        * @return Set&lt;Element&gt; - A set of Element objects
        */
       protected Set<Element> getElements(boolean recurse) {
          final Set<Element> res = new HashSet<Element>(getMaterial().getElementSet());
-         if(recurse)
-            for(final Object element : mSubRegions)
+         if (recurse)
+            for (final Object element : mSubRegions)
                res.addAll(((RegionBase) element).getElements(true));
          return res;
       }
@@ -427,9 +434,11 @@ final public class MonteCarloSS {
        * intersects a new RegionBase, pos1 will be moved to the border of the
        * new RegionBase.
        * 
-       * @param pos0 double[] - The fixed initial point.
-       * @param pos1 double[] - [In] The candidate end point [Out] The actual
-       *           end point
+       * @param pos0
+       *           double[] - The fixed initial point.
+       * @param pos1
+       *           double[] - [In] The candidate end point [Out] The actual end
+       *           point
        * @return RegionBase - The RegionBase in which the [Out] pos1 is found
        */
       public RegionBase findEndOfStep(double[] pos0, double[] pos1) {
@@ -439,7 +448,7 @@ final public class MonteCarloSS {
 
          double t = mShape.getFirstIntersection(pos0, pos1);
          assert t >= 0.0 : mShape.toString() + " " + Double.toString(t);
-         if((t <= 1.0) && (mParent != null))
+         if ((t <= 1.0) && (mParent != null))
             base = mParent;
          RegionBase res = this;
          /*
@@ -448,16 +457,16 @@ final public class MonteCarloSS {
           * sub Regions, we don't need to check the child region's child regions
           * etc.
           */
-         for(final RegionBase subRegion : mSubRegions) {
+         for (final RegionBase subRegion : mSubRegions) {
             final double candidate = subRegion.mShape.getFirstIntersection(pos0, pos1);
             assert candidate > 0.0 : subRegion.mShape.toString() + " " + Double.toString(candidate);
-            if((candidate <= 1.0) && (candidate < t)) {
+            if ((candidate <= 1.0) && (candidate < t)) {
                t = candidate;
                base = subRegion;
             }
          }
          assert (t >= 0.0);
-         if(t <= 1.0) {
+         if (t <= 1.0) {
             final double[] delta = Math2.minus(pos1, pos0);
             // Put pos1 exactly on the boundary.
             pos1[0] = pos0[0] + (t * delta[0]);
@@ -465,9 +474,9 @@ final public class MonteCarloSS {
             pos1[2] = pos0[2] + (t * delta[2]);
             // Find the region just over the boundary...
             final double[] over = Math2.plus(pos1, Math2.multiply(SMALL_DISP, Math2.normalize(delta)));
-            while(base != null) {
+            while (base != null) {
                res = base.containingSubRegion(over);
-               if(res != null)
+               if (res != null)
                   return res;
                /*
                 * If test point is not in parent region, check grandparents,
@@ -515,13 +524,14 @@ final public class MonteCarloSS {
        * searchTarget region. It contains it if searchTarget is is one of its
        * subregions, or recursively one of their subregions, etc.
        * 
-       * @param searchTarget - The region to search for
+       * @param searchTarget
+       *           - The region to search for
        * @return - True if searchTarget is a subregion of parent, false
        *         otherwise.
        */
       public boolean isContainingRegion(RegionBase searchTarget) {
-         for(final RegionBase sub : mSubRegions)
-            if((sub == searchTarget) || sub.isContainingRegion(searchTarget))
+         for (final RegionBase sub : mSubRegions)
+            if ((sub == searchTarget) || sub.isContainingRegion(searchTarget))
                return true;
          return false;
       }
@@ -549,17 +559,15 @@ final public class MonteCarloSS {
     * @version 1.0
     */
 
-   static abstract public class TransformableRegion
-      extends RegionBase
-      implements ITransform {
+   static abstract public class TransformableRegion extends RegionBase implements ITransform {
 
       // documented in ITransform
       @Override
       public void rotate(double[] pivot, double phi, double theta, double psi) {
          // check whether we can....
-         if(mShape instanceof ITransform)
-            for(final Object obj : mSubRegions) {
-               if(!(obj instanceof ITransform))
+         if (mShape instanceof ITransform)
+            for (final Object obj : mSubRegions) {
+               if (!(obj instanceof ITransform))
                   throw new EPQFatalException(obj.toString() + " does not support transformation.");
             }
          else
@@ -567,7 +575,7 @@ final public class MonteCarloSS {
          // then do it...
          ITransform t = (ITransform) mShape;
          t.rotate(pivot, phi, theta, psi);
-         for(final Object element : mSubRegions) {
+         for (final Object element : mSubRegions) {
             t = (ITransform) element;
             t.rotate(pivot, phi, theta, psi);
          }
@@ -577,9 +585,9 @@ final public class MonteCarloSS {
       @Override
       public void translate(double[] distance) {
          // check whether we can....
-         if(mShape instanceof ITransform)
-            for(final Object obj : mSubRegions) {
-               if(!(obj instanceof ITransform))
+         if (mShape instanceof ITransform)
+            for (final Object obj : mSubRegions) {
+               if (!(obj instanceof ITransform))
                   throw new EPQFatalException(obj.toString() + " does not support transformation.");
             }
          else
@@ -587,7 +595,7 @@ final public class MonteCarloSS {
          // then do it...
          ITransform t = (ITransform) mShape;
          t.translate(distance);
-         for(final Object element : mSubRegions) {
+         for (final Object element : mSubRegions) {
             t = (ITransform) element;
             t.translate(distance);
          }
@@ -610,21 +618,21 @@ final public class MonteCarloSS {
     * @version 1.0
     */
 
-   static public class Region
-      extends TransformableRegion {
+   static public class Region extends TransformableRegion {
 
       public Region(Region parent, IMaterialScatterModel msm, Shape shape) {
          mParent = parent;
          mScatterModel = msm;
          mShape = shape;
-         if(mParent != null)
+         if (mParent != null)
             mParent.mSubRegions.add(this);
       }
 
       /**
        * Remove the specified subregion from this Region.
        * 
-       * @param subRegion TransformableRegion
+       * @param subRegion
+       *           TransformableRegion
        */
       public void removeSubRegion(TransformableRegion subRegion) {
          mSubRegions.remove(subRegion);
@@ -709,8 +717,10 @@ final public class MonteCarloSS {
    /**
     * Computes the Euclidean distance between pos0 and pos1.
     * 
-    * @param pos0 double[]
-    * @param pos1 double[]
+    * @param pos0
+    *           double[]
+    * @param pos1
+    *           double[]
     * @return double
     */
    static double distance(double[] pos0, double[] pos1) {
@@ -722,11 +732,7 @@ final public class MonteCarloSS {
     */
    public MonteCarloSS() {
       // The chamber is a Sphere centered at the origin with 0.10 m radius
-      final double[] center = {
-         0.0,
-         0.0,
-         0.0
-      };
+      final double[] center = {0.0, 0.0, 0.0};
       final Sphere sphere = new Sphere(center, ChamberRadius);
       mGun.setCenter(sphere.getInitialPoint());
       mGun.setBeamEnergy(ToSI.keV(20.0));
@@ -738,14 +744,16 @@ final public class MonteCarloSS {
     * Region. The subregion must be fully enclosed within the parent region.
     * This method does not verify this requirement.
     * 
-    * @param parent TransformableRegion - A non-null parent region
-    * @param mat Material - The material from which the sub-region will be
+    * @param parent
+    *           TransformableRegion - A non-null parent region
+    * @param mat
+    *           Material - The material from which the sub-region will be
     *           constructed.
-    * @param shape Shape - The shape of the sub-region
+    * @param shape
+    *           Shape - The shape of the sub-region
     * @return TransformableRegion - The instance of the new sub-region
     */
-   public Region addSubRegion(Region parent, Material mat, Shape shape)
-         throws EPQException {
+   public Region addSubRegion(Region parent, Material mat, Shape shape) throws EPQException {
       assert (parent != null);
       return new Region(parent, new BasicMaterialModel(mat), shape);
    }
@@ -763,9 +771,11 @@ final public class MonteCarloSS {
     * 
     * @return Map&lt;Material,Double&gt; - the key class is Material and value
     *         class is Double
-    * @param startPt double[] - The start of the x-ray trajectory (usually the
+    * @param startPt
+    *           double[] - The start of the x-ray trajectory (usually the
     *           electron scattering point)
-    * @param endPt double[] - The end of the x-ray trajectory (usually the
+    * @param endPt
+    *           double[] - The end of the x-ray trajectory (usually the
     *           detector)
     */
    public Map<Material, Double> getMaterialMap(double[] startPt, double[] endPt) {
@@ -773,12 +783,12 @@ final public class MonteCarloSS {
       double[] start = startPt;
       RegionBase region = mChamber.containingSubRegion(start);
       final double eps = 1.0e-7;
-      while((region != null) && (distance(start, endPt) > eps)) {
+      while ((region != null) && (distance(start, endPt) > eps)) {
          final double[] end = endPt.clone();
          final RegionBase nextRegion = region.findEndOfStep(start, end);
          double dist = distance(start, end);
-         if(dist > 0.0) {
-            if(traj.containsKey(region.getMaterial()))
+         if (dist > 0.0) {
+            if (traj.containsKey(region.getMaterial()))
                dist += (traj.get(region.getMaterial())).doubleValue();
             traj.put(region.getMaterial(), Double.valueOf(dist));
          }
@@ -792,12 +802,13 @@ final public class MonteCarloSS {
     * Fire one of the events types characteristic of this object. (fireEvent
     * will not fire an event if mDisableEvents is true.)
     * 
-    * @param event - One of ScatterEvent, NonScatterEvent, BackscatterEvent,...
+    * @param event
+    *           - One of ScatterEvent, NonScatterEvent, BackscatterEvent,...
     */
    private void fireEvent(int event) {
-      if(!(mEventListeners.isEmpty() || mDisableEvents)) {
+      if (!(mEventListeners.isEmpty() || mDisableEvents)) {
          final ActionEvent ae = new ActionEvent(this, event, "MonteCarloSS event");
-         for(final ActionListener sel : mEventListeners)
+         for (final ActionListener sel : mEventListeners)
             sel.actionPerformed(ae);
       }
    }
@@ -843,11 +854,11 @@ final public class MonteCarloSS {
       final double[] pos0 = mElectron.getPosition();
 
       RegionBase currentRegion = mElectron.getCurrentRegion();
-      if((currentRegion == null) || !(currentRegion.getShape().contains(pos0))) {
+      if ((currentRegion == null) || !(currentRegion.getShape().contains(pos0))) {
          /* If it's not where we think it is, find it */
          currentRegion = mChamber.containingSubRegion(pos0);
          mElectron.setCurrentRegion(currentRegion);
-         if(currentRegion == null) { // It's not in the chamber
+         if (currentRegion == null) { // It's not in the chamber
             /*
              * This isn't supposed to be able to happen, so the following line
              * is a good place to set a break point and track down the cause if
@@ -875,12 +886,12 @@ final public class MonteCarloSS {
       mElectron.move(pos1, msm.calculateEnergyLoss(distance(pos0, pos1), mElectron));
       final boolean tc = (mElectron.getEnergy() < msm.getMinEforTracking()) || mElectron.isTrajectoryComplete();
       mElectron.setTrajectoryComplete(tc);
-      if(!tc)
+      if (!tc)
          /*
           * The step ended at pos1 for one of 3 reasons: scattering event,
           * boundary intersection, chamber wall intersection.
           */
-         if(nextRegion == currentRegion) {
+         if (nextRegion == currentRegion) {
             assert mChamber != null;
             assert mElectron != null;
             assert currentRegion != null;
@@ -899,14 +910,13 @@ final public class MonteCarloSS {
              * trajectory complete; in the following step we make sure we don't
              * reverse that decision.
              */
-            mElectron.setTrajectoryComplete((mElectron.getEnergy() < msm.getMinEforTracking())
-                  || mElectron.isTrajectoryComplete());
+            mElectron.setTrajectoryComplete((mElectron.getEnergy() < msm.getMinEforTracking()) || mElectron.isTrajectoryComplete());
 
-            if(secondary != null)
+            if (secondary != null)
                trackSecondaryElectron(secondary);
 
             assert mElectron.getCurrentRegion() == currentRegion;
-         } else if(nextRegion != null) { // Hit boundary into another region
+         } else if (nextRegion != null) { // Hit boundary into another region
             fireEvent(NonScatterEvent);
             // Compute barrier scattering.
             final Electron secondary = msm.barrierScatter(mElectron, nextRegion);
@@ -923,7 +933,7 @@ final public class MonteCarloSS {
              * its current region. This leaves the current region inconsistent
              * with its position.
              */
-            if(!(mElectron.getCurrentRegion().getShape().contains(mElectron.getPosition())))
+            if (!(mElectron.getCurrentRegion().getShape().contains(mElectron.getPosition())))
                /* If it's not where we think it is, find it */
                mElectron.setCurrentRegion(mChamber.containingSubRegion(mElectron.getPosition()));
 
@@ -933,9 +943,9 @@ final public class MonteCarloSS {
              * different regions.) We must check for ExitMaterialEvent before
              * replacing the PE by the SE.
              */
-            if(mElectron.getCurrentRegion() != currentRegion)
+            if (mElectron.getCurrentRegion() != currentRegion)
                fireEvent(ExitMaterialEvent);
-            if(secondary != null) { // Replace PE by SE and track it.
+            if (secondary != null) { // Replace PE by SE and track it.
                // Start the secondary a small displacement from the boundary
                secondary.setPosition(secondary.candidatePoint(SMALL_DISP));
                trackSecondaryElectron(secondary);
@@ -964,7 +974,7 @@ final public class MonteCarloSS {
     */
    public void trackSecondaryElectron(Electron newElectron) {
       final double mMinEnergy = newElectron.getCurrentRegion().getScatterModel().getMinEforTracking();
-      if(newElectron.getEnergy() > mMinEnergy) {
+      if (newElectron.getEnergy() > mMinEnergy) {
          // fireEvent(StartSecondaryEvent);
          mElectronStack.add(mElectron);
          mElectron = newElectron;
@@ -1003,7 +1013,8 @@ final public class MonteCarloSS {
     * and MCSS_BremsstrahlungEventListener. Listeners are prepended to the list,
     * so the last added is the first polled when there are events.
     * 
-    * @param sel ActionListener
+    * @param sel
+    *           ActionListener
     */
    public void addActionListener(ActionListener sel) {
       /*
@@ -1016,7 +1027,8 @@ final public class MonteCarloSS {
    /**
     * Remove an event handler that was registered using addActionListener
     * 
-    * @param sel ActionEvent
+    * @param sel
+    *           ActionEvent
     */
    public void removeActionListener(ActionListener sel) {
       mEventListeners.remove(sel);
@@ -1042,7 +1054,7 @@ final public class MonteCarloSS {
        * TrajectoryEndEvent.
        */
       boolean tc = mElectron.isTrajectoryComplete();
-      while(tc && (mElectronStack.size() > 0)) {
+      while (tc && (mElectronStack.size() > 0)) {
          fireEvent(EndSecondaryEvent);
          mElectron = mElectronStack.remove(mElectronStack.size() - 1);
          tc = mElectron.isTrajectoryComplete();
@@ -1060,7 +1072,7 @@ final public class MonteCarloSS {
    public void runTrajectory() {
       initializeTrajectory();
       fireEvent(TrajectoryStartEvent);
-      while(!allElectronsComplete())
+      while (!allElectronsComplete())
          takeStep();
       fireEvent(TrajectoryEndEvent);
    }
@@ -1068,11 +1080,12 @@ final public class MonteCarloSS {
    /**
     * Run n complete electron trajectories.
     * 
-    * @param n int
+    * @param n
+    *           int
     */
    public void runMultipleTrajectories(int n) {
       fireEvent(FirstTrajectoryEvent);
-      for(int i = 0; i < n; ++i)
+      for (int i = 0; i < n; ++i)
          runTrajectory();
       fireEvent(LastTrajectoryEvent);
    }
@@ -1092,7 +1105,8 @@ final public class MonteCarloSS {
     * (Previous versions had also copied the beam center but this anti-feature
     * has been removed.)
     * 
-    * @param gun ElectronGun
+    * @param gun
+    *           ElectronGun
     */
    public void setElectronGun(ElectronGun gun) {
       gun.setBeamEnergy(mGun.getBeamEnergy());
@@ -1106,7 +1120,8 @@ final public class MonteCarloSS {
    /**
     * Set the incident electron beam energy (in Joules)
     * 
-    * @param beamEnergy double
+    * @param beamEnergy
+    *           double
     */
    public void setBeamEnergy(double beamEnergy) {
       mGun.setBeamEnergy(beamEnergy);
@@ -1120,14 +1135,16 @@ final public class MonteCarloSS {
     * take-off angle assuming that the beam starts on the z-axis at a negative
     * z-value heading towards positive z.
     * 
-    * @param elevation double
-    * @param theta double
+    * @param elevation
+    *           double
+    * @param theta
+    *           double
     * @return double[] - A 3D coordinate
     */
    public double[] computeDetectorPosition(double elevation, double theta) {
       final double frac = 0.999;
       double r = frac * ChamberRadius;
-      if(mChamber.mShape instanceof Sphere)
+      if (mChamber.mShape instanceof Sphere)
          r = frac * ((Sphere) mChamber.mShape).getRadius();
       return ElectronProbe.computePosition(0.0, elevation, theta, r);
    }
@@ -1149,16 +1166,15 @@ final public class MonteCarloSS {
     * @return Set - A set of AtomicShell objects.
     * @throws EPQException
     */
-   public Set<AtomicShell> getAtomicShellSet()
-         throws EPQException {
+   public Set<AtomicShell> getAtomicShellSet() throws EPQException {
       final Set<AtomicShell> res = new TreeSet<AtomicShell>();
       final Set<Element> elements = mChamber.getElements(true);
-      for(final Object element : elements) {
+      for (final Object element : elements) {
          final Element el = (Element) element;
-         for(int sh = AtomicShell.K; sh < AtomicShell.NI; ++sh) {
+         for (int sh = AtomicShell.K; sh < AtomicShell.NI; ++sh) {
             final AtomicShell shell = new AtomicShell(el, sh);
             final double ee = shell.getEdgeEnergy();
-            if((ee > 0.0) && (ee < mGun.getBeamEnergy()) && (XRayTransition.getStrongestLine(shell) != null))
+            if ((ee > 0.0) && (ee < mGun.getBeamEnergy()) && (XRayTransition.getStrongestLine(shell) != null))
                res.add(shell);
          }
       }
@@ -1179,25 +1195,27 @@ final public class MonteCarloSS {
     * Estimate the volume that will be occupied by electron paths by running the
     * simulation a number of times and looking for the largest extent.
     * 
-    * @param c0 double[]
-    * @param c1 double[]
+    * @param c0
+    *           double[]
+    * @param c1
+    *           double[]
     */
    public void estimateTrajectoryVolume(double[] c0, double[] c1) {
       c0[0] = (c0[1] = (c0[2] = Double.MAX_VALUE));
       c1[0] = (c1[1] = (c1[2] = -Double.MAX_VALUE));
       final int nTraj = 100;
       mDisableEvents = true;
-      for(int i = 0; i < nTraj; ++i) {
+      for (int i = 0; i < nTraj; ++i) {
          initializeTrajectory();
-         while(!mElectron.isTrajectoryComplete()) {
+         while (!mElectron.isTrajectoryComplete()) {
             takeStep();
             final double[] endPt = mElectron.getPosition();
             final RegionBase endRegion = mChamber.containingSubRegion(endPt);
-            if((endRegion != null) && (endRegion != mChamber))
-               for(int j = 0; j < 3; ++j) {
-                  if(endPt[j] < c0[j])
+            if ((endRegion != null) && (endRegion != mChamber))
+               for (int j = 0; j < 3; ++j) {
+                  if (endPt[j] < c0[j])
                      c0[j] = endPt[j];
-                  if(endPt[j] > c1[j])
+                  if (endPt[j] > c1[j])
                      c1[j] = endPt[j];
                }
          }
@@ -1213,8 +1231,7 @@ final public class MonteCarloSS {
     * @param oldMat
     * @param newMat
     */
-   public void updateMaterial(Material oldMat, Material newMat)
-         throws EPQException {
+   public void updateMaterial(Material oldMat, Material newMat) throws EPQException {
       mChamber.updateMaterial(oldMat, new BasicMaterialModel(newMat));
    }
 
@@ -1224,8 +1241,10 @@ final public class MonteCarloSS {
     * instance. This is useful for running an identical geometry with different
     * materials.
     * 
-    * @param oldMat Material
-    * @param newMsm IMaterialScatterModel
+    * @param oldMat
+    *           Material
+    * @param newMsm
+    *           IMaterialScatterModel
     */
    public void updateMaterial(IMaterialScatterModel oldMat, IMaterialScatterModel newMsm) {
       mChamber.updateMaterial(oldMat, newMsm);
@@ -1237,14 +1256,18 @@ final public class MonteCarloSS {
     * order phi around the z-axis, theta around the y-axis and then psi around
     * the z-axis.
     * 
-    * @param pivot The center of the rotation
-    * @param phi Angle around the z-axis
-    * @param theta Angle around the y-axis
-    * @param psi Angle around the z-axis
+    * @param pivot
+    *           The center of the rotation
+    * @param phi
+    *           Angle around the z-axis
+    * @param theta
+    *           Angle around the y-axis
+    * @param psi
+    *           Angle around the z-axis
     */
    public void rotate(double[] pivot, double phi, double theta, double psi) {
-      for(final RegionBase r : mChamber.getSubRegions())
-         if(r instanceof TransformableRegion)
+      for (final RegionBase r : mChamber.getSubRegions())
+         if (r instanceof TransformableRegion)
             ((TransformableRegion) r).rotate(pivot, phi, theta, psi);
    }
 
@@ -1255,8 +1278,8 @@ final public class MonteCarloSS {
     * @param distance
     */
    public void translate(double[] distance) {
-      for(final RegionBase r : mChamber.getSubRegions())
-         if(r instanceof TransformableRegion)
+      for (final RegionBase r : mChamber.getSubRegions())
+         if (r instanceof TransformableRegion)
             ((TransformableRegion) r).translate(distance);
    }
 

@@ -62,14 +62,14 @@ public abstract class SamplePreparation {
     */
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(!(obj instanceof SamplePreparation))
+      if (!(obj instanceof SamplePreparation))
          return false;
       final SamplePreparation other = (SamplePreparation) obj;
-      if(Double.doubleToLongBits(mScale) != Double.doubleToLongBits(other.mScale))
+      if (Double.doubleToLongBits(mScale) != Double.doubleToLongBits(other.mScale))
          return false;
       return true;
    }
@@ -86,7 +86,8 @@ public abstract class SamplePreparation {
    /**
     * Coat the sample with the specified thickness of 2.0 g/cc carbon.
     * 
-    * @param thickness In meters
+    * @param thickness
+    *           In meters
     * @param parent
     * @return CoatedPreparation
     */
@@ -97,7 +98,8 @@ public abstract class SamplePreparation {
    /**
     * Coat the sample with the specified thickness of 19.3 g/cc gold.
     * 
-    * @param thickness In meters
+    * @param thickness
+    *           In meters
     * @param parent
     * @return CoatedPreparation
     */
@@ -110,7 +112,8 @@ public abstract class SamplePreparation {
    /**
     * Coat the sample with the specified thickness of 22.56 g/cc iridium.
     * 
-    * @param thickness In meters
+    * @param thickness
+    *           In meters
     * @param parent
     * @return CoatedPreparation
     */
@@ -124,8 +127,10 @@ public abstract class SamplePreparation {
     * Flat polish then carbon coat the sample with the specified thickness of
     * 2.0 g/cc carbon.
     * 
-    * @param roughness Polish roughness in meters
-    * @param thickness Coating thickness in meters
+    * @param roughness
+    *           Polish roughness in meters
+    * @param thickness
+    *           Coating thickness in meters
     * @return CoatedPreparation
     */
    public static CoatedPreparation flatPolishAndCarbonCoatSample(double roughness, double thickness) {
@@ -148,8 +153,7 @@ public abstract class SamplePreparation {
     * @author nritchie
     * @version 1.0
     */
-   static public class FlatPolishPreparation
-      extends SamplePreparation {
+   static public class FlatPolishPreparation extends SamplePreparation {
 
       public FlatPolishPreparation(double roughness) {
          super(roughness);
@@ -183,8 +187,7 @@ public abstract class SamplePreparation {
     * @author nritchie
     * @version 1.0
     */
-   static public class CoatedPreparation
-      extends SamplePreparation {
+   static public class CoatedPreparation extends SamplePreparation {
 
       private final SamplePreparation mParent;
       private final double mThickness;
@@ -208,8 +211,7 @@ public abstract class SamplePreparation {
          try {
             k = (mThickness * MassAbsorptionCoefficient.HeinrichDtsa.compute(mMaterial, xrt) * mMaterial.getDensity())
                   / (10.0e-9 * MassAbsorptionCoefficient.HeinrichDtsa.compute(CARBON, xrt) * CARBON.getDensity());
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             e.printStackTrace();
          }
          return Math2.bound(mParent.score() - Math.abs(k - 1.0), 0.0, 10.0);
@@ -244,24 +246,24 @@ public abstract class SamplePreparation {
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(!super.equals(obj))
+         if (!super.equals(obj))
             return false;
-         if(!(obj instanceof CoatedPreparation))
+         if (!(obj instanceof CoatedPreparation))
             return false;
          final CoatedPreparation other = (CoatedPreparation) obj;
-         if(mMaterial == null) {
-            if(other.mMaterial != null)
+         if (mMaterial == null) {
+            if (other.mMaterial != null)
                return false;
-         } else if(!mMaterial.equals(other.mMaterial))
+         } else if (!mMaterial.equals(other.mMaterial))
             return false;
-         if(mParent == null) {
-            if(other.mParent != null)
+         if (mParent == null) {
+            if (other.mParent != null)
                return false;
-         } else if(!mParent.equals(other.mParent))
+         } else if (!mParent.equals(other.mParent))
             return false;
-         if(Double.doubleToLongBits(mThickness) != Double.doubleToLongBits(other.mThickness))
+         if (Double.doubleToLongBits(mThickness) != Double.doubleToLongBits(other.mThickness))
             return false;
          return true;
       }
@@ -283,8 +285,7 @@ public abstract class SamplePreparation {
     * @author nritchie
     * @version 1.0
     */
-   static public class NoSamplePreparation
-      extends SamplePreparation {
+   static public class NoSamplePreparation extends SamplePreparation {
 
       /**
        * Constructs a NoSamplePreparation

@@ -29,8 +29,7 @@ import javax.swing.table.TableCellEditor;
  * @version 1.0
  */
 
-public class EachRowEditor
-   implements TableCellEditor {
+public class EachRowEditor implements TableCellEditor {
    private final Hashtable<Integer, TableCellEditor> mEditors;
    private TableCellEditor mEditor;
    private TableCellEditor mDefaultEditor;
@@ -39,7 +38,8 @@ public class EachRowEditor
    /**
     * Constructs a EachRowEditor. create default editor
     * 
-    * @param table JTable
+    * @param table
+    *           JTable
     * @see TableCellEditor
     * @see DefaultCellEditor
     */
@@ -64,8 +64,10 @@ public class EachRowEditor
    /**
     * Specify which editor to use for which row...
     * 
-    * @param row The index of the table row
-    * @param editor The editor object to use
+    * @param row
+    *           The index of the table row
+    * @param editor
+    *           The editor object to use
     */
    public void setEditorAt(int row, TableCellEditor editor) {
       mEditors.put(Integer.valueOf(row), editor);
@@ -73,7 +75,7 @@ public class EachRowEditor
 
    public TableCellEditor getEditorAt(int row) {
       TableCellEditor res = mEditors.get(Integer.valueOf(row));
-      if(res == null)
+      if (res == null)
          res = mDefaultEditor;
       return res;
    }
@@ -126,9 +128,9 @@ public class EachRowEditor
 
    protected void selectEditor(EventObject e) {
       int row = 0;
-      if(e == null)
+      if (e == null)
          row = mTable.getSelectionModel().getAnchorSelectionIndex();
-      else if(e instanceof MouseEvent)
+      else if (e instanceof MouseEvent)
          row = mTable.rowAtPoint(((MouseEvent) e).getPoint());
       mEditor = getEditorAt(row);
    }

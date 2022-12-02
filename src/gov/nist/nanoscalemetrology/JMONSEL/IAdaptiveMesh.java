@@ -21,8 +21,7 @@ package gov.nist.nanoscalemetrology.JMONSEL;
  * @author John Villarrubia
  * @version 1.0
  */
-public interface IAdaptiveMesh
-   extends IBasicMesh {
+public interface IAdaptiveMesh extends IBasicMesh {
 
    /**
     * Returns an integer revision number such that whenever if the number

@@ -59,22 +59,21 @@ abstract public class LinearLeastSquares {
    protected void perform() throws EPQException {
       performFit();
    }
-   
+
    private void performFit() throws EPQException {
       if (mFitCoefficients == null) {
          synchronized (this) {
             if (mFitCoefficients == null) {
-               if ((mXCoordinate == null) || (mData == null)
-                     || (mSigma == null))
-                  throw new IllegalArgumentException(
-                        "No data specified for the linear least squares fit.");
+               if ((mXCoordinate == null) || (mData == null) || (mSigma == null))
+                  throw new IllegalArgumentException("No data specified for the linear least squares fit.");
                final int nTot = fitFunctionCount();
                mFitCoefficients = new UncertainValue2[nTot];
                Arrays.fill(mFitCoefficients, UncertainValue2.ZERO);
                final int nFit = getNonZeroedCoefficientCount();
                if (nFit == 0)
                   return;
-               // Allocate an array showing the location of non-zeroed coefficients
+               // Allocate an array showing the location of non-zeroed
+               // coefficients
                final int[] nzIndex = new int[nFit];
                for (int j = 0, k = 0; j < nTot; ++j)
                   if (!isZeroFitCoefficient(j)) {
@@ -90,28 +89,20 @@ abstract public class LinearLeastSquares {
                      assert mSigma[i] >= 0.0 : Double.toString(mSigma[i]);
                      fitFunction(mXCoordinate[i], afunc);
                      for (int j = 0; j < nFit; ++j) {
-                        final double val = afunc[nzIndex[j]]
-                              / Math.max(mSigma[i], 1.0e-20);
-                        assert !(Double.isNaN(val) || Double.isInfinite(val))
-                              : val;
+                        final double val = afunc[nzIndex[j]] / Math.max(mSigma[i], 1.0e-20);
+                        assert !(Double.isNaN(val) || Double.isInfinite(val)) : val;
                         a.set(i, j, val);
                      }
                   }
                   mSVD = a.svd();
                   // Check that mSVD really solves the linear equation defined
                   // by a
-                  assert (a
-                        .minus(mSVD.getU().times(
-                              mSVD.getS().times(mSVD.getV().transpose())))
-                        .norm1() / a.norm1()) < 1.0e-6;
+                  assert (a.minus(mSVD.getU().times(mSVD.getS().times(mSVD.getV().transpose()))).norm1() / a.norm1()) < 1.0e-6;
                }
                final Matrix u = mSVD.getU(), s = mSVD.getS(), v = mSVD.getV();
-               assert (u.getRowDimension() == dataLen)
-                     && (u.getColumnDimension() == nFit);
-               assert (s.getRowDimension() == nFit)
-                     && (s.getColumnDimension() == nFit);
-               assert (v.getRowDimension() == nFit)
-                     && (v.getColumnDimension() == nFit);
+               assert (u.getRowDimension() == dataLen) && (u.getColumnDimension() == nFit);
+               assert (s.getRowDimension() == nFit) && (s.getColumnDimension() == nFit);
+               assert (v.getRowDimension() == nFit) && (v.getColumnDimension() == nFit);
                // Edit singular values
                final double[] w = new double[nFit];
                {
@@ -155,11 +146,9 @@ abstract public class LinearLeastSquares {
                      fcs[k] = fc;
                   }
                }
-               final double[] expU = confidenceIntervals(
-                     INTERVAL_MODE.ONE_D_INTERVAL, 0.683, mCovariance);
+               final double[] expU = confidenceIntervals(INTERVAL_MODE.ONE_D_INTERVAL, 0.683, mCovariance);
                for (int j = 0; j < nFit; ++j)
-                  mFitCoefficients[nzIndex[j]] = new UncertainValue2(fcs[j],
-                        "LLS", expU[nzIndex[j]]);
+                  mFitCoefficients[nzIndex[j]] = new UncertainValue2(fcs[j], "LLS", expU[nzIndex[j]]);
             }
          }
       }
@@ -394,8 +383,7 @@ abstract public class LinearLeastSquares {
     * @return An array of double containing the confidence intervals
     * @throws EPQException
     */
-   public double[] confidenceIntervals(INTERVAL_MODE mode, double prob,
-         Matrix cov) throws EPQException {
+   public double[] confidenceIntervals(INTERVAL_MODE mode, double prob, Matrix cov) throws EPQException {
       final double[] res = new double[cov.getRowDimension()];
       switch (mode) {
          case ONE_D_INTERVAL : {
@@ -414,8 +402,7 @@ abstract public class LinearLeastSquares {
             for (int i = 0; i < res.length; ++i) {
                for (int r = 0; r < subDim; ++r)
                   for (int c = 0; c < subDim; ++c)
-                     sub.set(r, c,
-                           ci.get(r < i ? r : r + 1, c < i ? c : c + 1));
+                     sub.set(r, c, ci.get(r < i ? r : r + 1, c < i ? c : c + 1));
                res[i] = Math.sqrt(Math.abs((k * sub.det()) / d));
             }
             break;
@@ -439,10 +426,7 @@ abstract public class LinearLeastSquares {
          res.set(r, r, 1.0);
          for (int c = r + 1; c < res.getColumnDimension(); ++c) {
             final double cv = mCovariance.get(r, c);
-            final double corr = cv != 0.0
-                  ? cv / Math
-                        .sqrt(mCovariance.get(r, r) * mCovariance.get(c, c))
-                  : 0.0;
+            final double corr = cv != 0.0 ? cv / Math.sqrt(mCovariance.get(r, r) * mCovariance.get(c, c)) : 0.0;
             assert corr >= -1.0 : "Correlation is " + Double.toString(corr);
             assert corr <= 1.0 : "Correlation is " + Double.toString(corr);
             res.set(r, c, corr);
@@ -482,8 +466,7 @@ abstract public class LinearLeastSquares {
          if (element != 0.0)
             --dof;
       assert dof > 0;
-      return chiSquared(fp)
-            / Math2.chiSquaredConfidenceLevel(confidenceLevel, dof);
+      return chiSquared(fp) / Math2.chiSquaredConfidenceLevel(confidenceLevel, dof);
    }
 
    /**

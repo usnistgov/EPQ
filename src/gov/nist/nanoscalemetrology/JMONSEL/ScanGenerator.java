@@ -43,12 +43,7 @@ public abstract class ScanGenerator {
 
    private int index = -1;
 
-   private double[] currentPos = new double[] {
-      Double.NaN,
-      Double.NaN,
-      Double.NaN,
-      Double.NaN
-   };
+   private double[] currentPos = new double[]{Double.NaN, Double.NaN, Double.NaN, Double.NaN};
 
    /**
     * Returns the current [x,y,z,t]. When the IScanGenerator is constructed or

@@ -10,8 +10,7 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS.RegionBase;
  * 
  * @author Philippe T. Pinard
  */
-public class BlackBodyMaterialModel
-   implements IMaterialScatterModel {
+public class BlackBodyMaterialModel implements IMaterialScatterModel {
 
    /** Material with infinite density. */
    private static final Material BLACK_BODY_MATERIAL = new Material(Double.POSITIVE_INFINITY);

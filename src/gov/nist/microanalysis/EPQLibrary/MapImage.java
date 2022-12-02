@@ -54,7 +54,7 @@ public class MapImage {
    private DescriptiveStatistics mSumStats;
 
    private static void validateROIS(RegionOfInterest[] rois) {
-      for(final RegionOfInterest roi : rois) {
+      for (final RegionOfInterest roi : rois) {
          assert roi != null;
          assert roi.getElementSet() != null;
          assert roi.getElementSet().size() >= 1;
@@ -103,25 +103,24 @@ public class MapImage {
     * @return MapImage
     */
    public MapImage quantify(CompositionFromKRatios ckr, SpectrumProperties props, boolean normalize) {
-      if(mType == DataType.K_RATIOS) {
+      if (mType == DataType.K_RATIOS) {
          final int width = width(), height = height();
          final MapImage res = new MapImage(width, height, mROIS, "Quantified[" + mDescription + "]", DataType.COMPOSITION);
          final XRayTransitionSet[] xrtss = new XRayTransitionSet[mROIS.length];
-         for(int i = 0; i < xrtss.length; ++i)
+         for (int i = 0; i < xrtss.length; ++i)
             xrtss[i] = new XRayTransitionSet(mROIS[i].getXRayTransitionSet(mROIS[i].getElementSet().first()).getWeighiestTransition());
-         for(int y = 0; y < height; ++y)
-            for(int x = 0; x < width; ++x) {
+         for (int y = 0; y < height; ++y)
+            for (int x = 0; x < width; ++x) {
                final KRatioSet krs = new KRatioSet();
-               for(int i = 0; i < xrtss.length; ++i)
+               for (int i = 0; i < xrtss.length; ++i)
                   krs.addKRatio(xrtss[i], Math.max(0.0, mData[i][x][y]), 0.0);
                Composition comp;
                try {
                   comp = ckr.compute(krs, props);
-                  for(int i = 0; i < xrtss.length; ++i)
+                  for (int i = 0; i < xrtss.length; ++i)
                      res.mData[i][x][y] = Math.max(0.0, comp.weightFraction(xrtss[i].getElement(), normalize));
-               }
-               catch(final EPQException e) {
-                  for(int i = 0; i < xrtss.length; ++i)
+               } catch (final EPQException e) {
+                  for (int i = 0; i < xrtss.length; ++i)
                      res.mData[i][x][y] = 0.0;
                }
             }
@@ -131,17 +130,17 @@ public class MapImage {
    }
 
    private void calculateSumMap() {
-      if(mSum == null) {
+      if (mSum == null) {
          final int width = width(), height = height(), depth = depth();
          mSum = new double[width][height];
          mSumStats = new DescriptiveStatistics();
-         for(int x = 0; x < width; ++x)
-            for(int y = 0; y < height; ++y) {
+         for (int x = 0; x < width; ++x)
+            for (int y = 0; y < height; ++y) {
                double sum = 0.0;
-               for(int idx = 0; idx < depth; ++idx)
+               for (int idx = 0; idx < depth; ++idx)
                   sum += Math.max(mData[idx][x][y], 0.0);
                mSum[x][y] = sum;
-               if(sum > 0.0)
+               if (sum > 0.0)
                   mSumStats.add(sum);
             }
       }
@@ -169,13 +168,11 @@ public class MapImage {
       final byte[] data = db.getData();
       final int width = width(), height = height();
       final double sumThresh = mSumThresh * mSumStats.average();
-      for(int y = 0, off = 0; y < height; ++y)
-         for(int x = 0; x < width; ++x, ++off)
-            if(mSum[x][y] > sumThresh)
-               data[off] = (byte) (mData[index][x][y] >= scaledThresh
-                     ? Math2.bound((int) Math.round(mData[index][x][y] * scale), 0, 256)
-                     : 0x0);
-      if(label)
+      for (int y = 0, off = 0; y < height; ++y)
+         for (int x = 0; x < width; ++x, ++off)
+            if (mSum[x][y] > sumThresh)
+               data[off] = (byte) (mData[index][x][y] >= scaledThresh ? Math2.bound((int) Math.round(mData[index][x][y] * scale), 0, 256) : 0x0);
+      if (label)
          return labelImage(bi, mROIS[index].getElementSet().first().toAbbrev(), Color.YELLOW);
       else
          return bi;
@@ -188,9 +185,9 @@ public class MapImage {
       final double scale = 255.0 / maxI;
       final int width = width(), height = height();
       final double sumThresh = mSumThresh * mSumStats.average();
-      for(int y = 0, off = 0; y < height; ++y)
-         for(int x = 0; x < width; ++x, ++off)
-            if(mSum[x][y] > sumThresh)
+      for (int y = 0, off = 0; y < height; ++y)
+         for (int x = 0; x < width; ++x, ++off)
+            if (mSum[x][y] > sumThresh)
                data[off] = (byte) Math2.bound((int) Math.round(mData[index][x][y] * scale), 0, 256);
       return bi;
    }
@@ -199,15 +196,15 @@ public class MapImage {
       final byte[] red = new byte[256];
       final byte[] green = new byte[256];
       final byte[] blue = new byte[256];
-      for(int i = 1; i <= 86; ++i) {
+      for (int i = 1; i <= 86; ++i) {
          red[i] = green[i] = (byte) ((200 * i) / 86);
          blue[i] = (byte) (60 + ((195 * i) / 86));
       }
-      for(int i = 0; i <= (170 - 87); ++i) {
+      for (int i = 0; i <= (170 - 87); ++i) {
          red[i + 87] = blue[i + 87] = (byte) ((200 * i) / (170 - 87));
          green[i + 87] = (byte) (60 + ((195 * i) / (170 - 87)));
       }
-      for(int i = 0; i <= (254 - 171); ++i) {
+      for (int i = 0; i <= (254 - 171); ++i) {
          red[i + 171] = (byte) (60 + ((195 * i) / (254 - 171)));
          green[i + 171] = blue[i + 171] = (byte) ((200 * i) / (254 - 171));
       }
@@ -234,14 +231,14 @@ public class MapImage {
       final byte[] data = db.getData();
       final int width = width(), height = height();
       final double sumThresh = mSumThresh * mSumStats.average();
-      for(int y = 0, off = 0; y < height; ++y)
-         for(int x = 0; x < width; ++x, ++off)
-            if(mSum[x][y] > sumThresh)
-               data[off] = (byte) (254 + Math2.bound((int) ((254.0 / 3.0)
-                     * Math.log10(Math2.bound(mData[index][x][y] / mSum[x][y], 1.0e-6, 1.0))), -254, 0));
+      for (int y = 0, off = 0; y < height; ++y)
+         for (int x = 0; x < width; ++x, ++off)
+            if (mSum[x][y] > sumThresh)
+               data[off] = (byte) (254
+                     + Math2.bound((int) ((254.0 / 3.0) * Math.log10(Math2.bound(mData[index][x][y] / mSum[x][y], 1.0e-6, 1.0))), -254, 0));
             else
                data[off] = (byte) 0xFF;
-      if(label)
+      if (label)
          return labelImage(bi, mROIS[index].getElementSet().first().toAbbrev(), Color.YELLOW);
       else
          return bi;
@@ -254,14 +251,14 @@ public class MapImage {
       final byte[] data = db.getData();
       final int width = width(), height = height();
       final double sumThresh = mSumThresh * mSumStats.average();
-      for(int y = 0, off = 0; y < height; ++y)
-         for(int x = 0; x < width; ++x, ++off)
-            if(mSum[x][y] > sumThresh)
-               data[off] = (byte) (254 + Math2.bound((int) ((254.0 / 3.0)
-                     * Math.log10(Math2.bound(mData[index][x][y] / mSum[x][y], 1.0e-6, 1.0))), -254, 0));
+      for (int y = 0, off = 0; y < height; ++y)
+         for (int x = 0; x < width; ++x, ++off)
+            if (mSum[x][y] > sumThresh)
+               data[off] = (byte) (254
+                     + Math2.bound((int) ((254.0 / 3.0) * Math.log10(Math2.bound(mData[index][x][y] / mSum[x][y], 1.0e-6, 1.0))), -254, 0));
             else
                data[off] = (byte) 0;
-      if(label)
+      if (label)
          return labelImage(bi, mROIS[index].getElementSet().first().toAbbrev(), Color.YELLOW);
       else
          return bi;
@@ -273,15 +270,15 @@ public class MapImage {
       final DataBufferByte db = (DataBufferByte) bi.getRaster().getDataBuffer();
       final byte[] data = db.getData();
       final int width = width(), height = height();
-      for(int y = 0, off = 0; y < height; ++y)
-         for(int x = 0; x < width; ++x, ++off) {
+      for (int y = 0, off = 0; y < height; ++y)
+         for (int x = 0; x < width; ++x, ++off) {
             final double d = mData[index][x][y] / mSum[x][y];
-            if((!Double.isNaN(d)) && (d >= (1.0 / 255.0)))
+            if ((!Double.isNaN(d)) && (d >= (1.0 / 255.0)))
                data[off] = (byte) Math2.bound((int) Math.round((255.0 * mData[index][x][y]) / mSum[x][y]), 0, 256);
             else
                data[off] = (byte) 0;
          }
-      if(label)
+      if (label)
          return labelImage(bi, mROIS[index].getElementSet().first().toAbbrev(), Color.YELLOW);
       else
          return bi;
@@ -294,8 +291,8 @@ public class MapImage {
       final byte[] data = db.getData();
       final int width = width(), height = height();
       final double scale = 255.0 / Math2.max(mSum);
-      for(int y = 0, off = 0; y < height; ++y)
-         for(int x = 0; x < width; ++x, ++off)
+      for (int y = 0, off = 0; y < height; ++y)
+         for (int x = 0; x < width; ++x, ++off)
             data[off] = (byte) Math2.bound((int) Math.round(mSum[x][y] * scale), 0, 256);
       return bi;
    }
@@ -316,7 +313,7 @@ public class MapImage {
 
    public void inc(int x, int y, double[] inc) {
       assert inc.length == depth();
-      for(int index = 0; index < inc.length; ++index)
+      for (int index = 0; index < inc.length; ++index)
          mData[index][x][y] += inc[index];
       mSum = null;
    }
@@ -326,8 +323,7 @@ public class MapImage {
    }
 
    public ScaledImage getScaledImage(int index, double maxI, double hFov, double rotation, StageCoordinate stgPt) {
-      return new ScaledImage(getImage(index, maxI), hFov, (hFov * height())
-            / width(), rotation, stgPt, Integer.toString(index));
+      return new ScaledImage(getImage(index, maxI), hFov, (hFov * height()) / width(), rotation, stgPt, Integer.toString(index));
    }
 
    /**
@@ -342,7 +338,7 @@ public class MapImage {
     */
    public BufferedImage getKRatioSummaryImage() {
       final byte[] r = new byte[256], g = new byte[256], b = new byte[256];
-      for(int i = 0; i < 128; ++i) {
+      for (int i = 0; i < 128; ++i) {
          r[i] = (byte) ((2 * (128 - i)) - 1);
          b[255 - i] = (byte) (2 * (127 - i));
       }
@@ -360,8 +356,8 @@ public class MapImage {
       final DescriptiveStatistics ds = getKRatioStats();
       final double avg = ds.average();
       final int width = width(), height = height();
-      for(int y = 0, off = 0; y < height; ++y)
-         for(int x = 0; x < width; ++x, ++off) {
+      for (int y = 0, off = 0; y < height; ++y)
+         for (int x = 0; x < width; ++x, ++off) {
             final double v = mSum[x][y] / avg;
             data[off] = (byte) Math2.bound((int) Math.round(128.0 + (k * (v <= 0.0 ? -4 : Math.log(v)))), 0, 256);
          }
@@ -376,20 +372,20 @@ public class MapImage {
    /**
     * Writes the raw MapImage data to a Ripple/Raw file in 8-byte double format.
     *
-    * @param rplFilename The name and path of file into which to save the RPL
-    *           file.
+    * @param rplFilename
+    *           The name and path of file into which to save the RPL file.
     * @throws IOException
     */
-   public void writeToRpl(String rplFilename)
-         throws IOException {
-      if(!rplFilename.toLowerCase().endsWith(".rpl"))
+   public void writeToRpl(String rplFilename) throws IOException {
+      if (!rplFilename.toLowerCase().endsWith(".rpl"))
          rplFilename = rplFilename + ".rpl";
       final String rawFilename = rplFilename.replaceAll(".[rR][pP][lL]$", ".raw");
-      try (final RippleFile rf = new RippleFile(width(), height(), depth(), RippleFile.FLOAT, 8, RippleFile.DONT_CARE_ENDIAN, rplFilename, rawFilename)) {
+      try (final RippleFile rf = new RippleFile(width(), height(), depth(), RippleFile.FLOAT, 8, RippleFile.DONT_CARE_ENDIAN, rplFilename,
+            rawFilename)) {
          final double[] strip = new double[depth()];
-         for(int y = 0; y < height(); ++y)
-            for(int x = 0; x < width(); ++x) {
-               for(int l = 0; l < depth(); ++l)
+         for (int y = 0; y < height(); ++y)
+            for (int x = 0; x < width(); ++x) {
+               for (int l = 0; l < depth(); ++l)
                   strip[l] = mData[l][x][y];
                rf.seek(y, x);
                rf.write(strip);
@@ -397,15 +393,14 @@ public class MapImage {
       }
    }
 
-   public void toCSV(Writer fw, NumberFormat nf, int plane)
-         throws IOException {
+   public void toCSV(Writer fw, NumberFormat nf, int plane) throws IOException {
       fw.write("Plane, ROI, width, height\n");
       fw.write(Integer.toString(plane) + ", " + mROIS[plane].shortName() + "," + //
             Integer.toString(width()) + ", " + Integer.toString(height()) + "\n\n");
       final double sumThresh = mSumThresh * mSumStats.average();
-      for(int y = 0; y < height(); ++y) {
-         for(int x = 0; x < width(); ++x) {
-            if(x > 0)
+      for (int y = 0; y < height(); ++y) {
+         for (int x = 0; x < width(); ++x) {
+            if (x > 0)
                fw.write(", ");
             double val = mSum[x][y] > sumThresh ? mData[plane][x][y] / mSum[x][y] : 0.0;
             fw.write(nf.format(Math.max(0.0, val)));
@@ -414,9 +409,8 @@ public class MapImage {
       }
    }
 
-   public void writeToCSVs(String filename, NumberFormat nf)
-         throws IOException {
-      for(int l = 0; l < depth(); ++l) {
+   public void writeToCSVs(String filename, NumberFormat nf) throws IOException {
+      for (int l = 0; l < depth(); ++l) {
          final String name = mROIS[l].shortName();
          final String fn = filename + "[" + name + "].csv";
          try (BufferedWriter fw = new BufferedWriter(new FileWriter(fn))) {
@@ -426,12 +420,11 @@ public class MapImage {
       }
    }
 
-   public void writeToCSV(String filename, NumberFormat nf)
-         throws IOException {
-      if(!filename.toLowerCase().endsWith(".csv"))
+   public void writeToCSV(String filename, NumberFormat nf) throws IOException {
+      if (!filename.toLowerCase().endsWith(".csv"))
          filename = filename + ".csv";
       try (BufferedWriter fw = new BufferedWriter(new FileWriter(filename))) {
-         for(int l = 0; l < depth(); ++l) {
+         for (int l = 0; l < depth(); ++l) {
             toCSV(fw, nf, l);
             fw.write("\n");
             fw.flush();
@@ -453,7 +446,8 @@ public class MapImage {
     * The threshold is useful for eliminating pixels for which the analytical
     * total is much lower than the average analytical total.
     *
-    * @param sumThresh The value to which to set sumThresh (range 0.0 to 1.0)
+    * @param sumThresh
+    *           The value to which to set sumThresh (range 0.0 to 1.0)
     */
    public void setSumThresh(double sumThresh) {
       mSumThresh = Math2.bound(sumThresh, 0.0, 1.0);
@@ -463,23 +457,25 @@ public class MapImage {
     * Write the MapImage data to a set of PNG files in various different
     * formats.
     *
-    * @param path Directory into which to save images
-    * @param asLog3 As a Bright-style Log-3 band colorized log-scale image
-    * @param asLog As a grey-scale log image
-    * @param asKRatio As a normalized k-ratio linear greyscale image
+    * @param path
+    *           Directory into which to save images
+    * @param asLog3
+    *           As a Bright-style Log-3 band colorized log-scale image
+    * @param asLog
+    *           As a grey-scale log image
+    * @param asKRatio
+    *           As a normalized k-ratio linear greyscale image
     * @throws IOException
     */
-   public void save(String path, String prefix, boolean asLog3, boolean asLog, boolean asKRatio, boolean label)
-         throws IOException {
-      for(int i = 0; i < depth(); ++i) {
+   public void save(String path, String prefix, boolean asLog3, boolean asLog, boolean asKRatio, boolean label) throws IOException {
+      for (int i = 0; i < depth(); ++i) {
          final String roiName = getROI(i).toString();
-         if(asLog3)
+         if (asLog3)
             ImageIO.write(getLog3BandImage(i, label), "png", new File(path, "VecsLog3[" + prefix + "][" + roiName + "].png"));
-         if(asLog)
+         if (asLog)
             ImageIO.write(getLogImage(i, label), "png", new File(path, "VecsLog[" + prefix + "][" + roiName + "].png"));
-         if(asKRatio)
-            ImageIO.write(getNormKRatioImage(i, label), "png", new File(path, "VecsNormK[" + prefix + "][" + roiName
-                  + "].png"));
+         if (asKRatio)
+            ImageIO.write(getNormKRatioImage(i, label), "png", new File(path, "VecsNormK[" + prefix + "][" + roiName + "].png"));
       }
       ImageIO.write(getKRatioSumImage(), "png", new File(path, "Analytic Total[" + prefix + "].png"));
       ImageIO.write(getKRatioSummaryImage(), "png", new File(path, "K-ratio map[" + prefix + "].png"));

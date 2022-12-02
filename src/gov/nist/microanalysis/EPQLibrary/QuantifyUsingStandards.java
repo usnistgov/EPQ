@@ -56,9 +56,7 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @author nicholas
  * @version 1.0
  */
-public class QuantifyUsingStandards
-   extends
-   QuantificationOutline {
+public class QuantifyUsingStandards extends QuantificationOutline {
 
    /**
     * Maps elements into the spectra to be used as standards for this element.
@@ -172,16 +170,20 @@ public class QuantifyUsingStandards
    }
 
    /**
-    * @param det The detector on which the unknown and standards were collected.
-    * @param beamEnergy in Joules
+    * @param det
+    *           The detector on which the unknown and standards were collected.
+    * @param beamEnergy
+    *           in Joules
     */
    public QuantifyUsingStandards(final EDSDetector det, final double beamEnergy) {
       this(det, beamEnergy, false);
    }
 
    /**
-    * @param det The detector on which the unknown and standards were collected.
-    * @param beamEnergy in Joules
+    * @param det
+    *           The detector on which the unknown and standards were collected.
+    * @param beamEnergy
+    *           in Joules
     */
    public QuantifyUsingStandards(final EDSDetector det, final double beamEnergy, final boolean kRatiosOnly) {
       super(det, beamEnergy);
@@ -199,9 +201,9 @@ public class QuantifyUsingStandards
    public Map<RegionOfInterestSet.RegionOfInterest, ISpectrumData> getReferenceSpectra() {
       final Map<RegionOfInterestSet.RegionOfInterest, ReferenceMaterial> rc = super.getAssignedReferences();
       final Map<RegionOfInterestSet.RegionOfInterest, ISpectrumData> res = new HashMap<RegionOfInterestSet.RegionOfInterest, ISpectrumData>();
-      for(final Map.Entry<RegionOfInterest, ReferenceMaterial> me : rc.entrySet()) {
+      for (final Map.Entry<RegionOfInterest, ReferenceMaterial> me : rc.entrySet()) {
          final ISpectrumData spec = getReferenceSpectrum(me.getKey());
-         if(spec != null)
+         if (spec != null)
             res.put(me.getKey(), spec);
       }
       return res;
@@ -218,17 +220,17 @@ public class QuantifyUsingStandards
    public ISpectrumData getReferenceSpectrum(final RegionOfInterest roi) {
       assert roi.getElementSet().size() == 1;
       ISpectrumData res = null;
-      if(mRefSpectra.containsKey(roi))
+      if (mRefSpectra.containsKey(roi))
          res = mRefSpectra.get(roi);
       else {
-         if(!mStdsAsRef.containsKey(roi))
-            for(final Element elm : getMeasuredElements()) {
+         if (!mStdsAsRef.containsKey(roi))
+            for (final Element elm : getMeasuredElements()) {
                final ReferenceMaterial rm = super.getReference(roi);
                assert rm != null : roi.toString() + "\t" + elm.toAbbrev();
                final Composition std = getStandard(elm);
                assert std != null : roi.toString() + "\t" + elm.toAbbrev();
                assert rm.getComposition() != null : roi.toString() + "\t" + elm.toAbbrev();
-               if(std.equals(rm.getComposition())) {
+               if (std.equals(rm.getComposition())) {
                   mReferenceScale.put(roi, UncertainValue2.ONE);
                   mStdsAsRef.put(roi, makeReference(mStdSpectra.get(elm)));
                   break;
@@ -242,13 +244,13 @@ public class QuantifyUsingStandards
    public Set<RegionOfInterestSet.RegionOfInterest> getROISWithAssignedReferences() {
       final Map<RegionOfInterestSet.RegionOfInterest, ReferenceMaterial> rc = super.getAssignedReferences();
       final Set<RegionOfInterestSet.RegionOfInterest> res = new HashSet<RegionOfInterestSet.RegionOfInterest>();
-      for(final Map.Entry<RegionOfInterest, ReferenceMaterial> me : rc.entrySet()) {
+      for (final Map.Entry<RegionOfInterest, ReferenceMaterial> me : rc.entrySet()) {
          final RegionOfInterest roi = me.getKey();
-         if(mRefSpectra.containsKey(roi)) {
+         if (mRefSpectra.containsKey(roi)) {
             final ISpectrumData ref = mRefSpectra.get(roi);
             final Element elm = roi.getElementSet().first();
             final ISpectrumData std = getStandardSpectrum(elm);
-            if((std == null) || (!ref.equals(std)))
+            if ((std == null) || (!ref.equals(std)))
                res.add(roi);
          }
       }
@@ -265,15 +267,18 @@ public class QuantifyUsingStandards
     * adding a standard some but not necessarily all associated references are
     * also assigned.
     *
-    * @param elm The element
-    * @param comp The composition of the standard material
-    * @param stripElms A set of Element objects representing elements to strip
-    *           from the standard.
-    * @param std The spectrum
+    * @param elm
+    *           The element
+    * @param comp
+    *           The composition of the standard material
+    * @param stripElms
+    *           A set of Element objects representing elements to strip from the
+    *           standard.
+    * @param std
+    *           The spectrum
     * @throws EPQException
     */
-   public void addStandard(final Element elm, final Composition comp, final Set<Element> stripElms, final ISpectrumData std)
-         throws EPQException {
+   public void addStandard(final Element elm, final Composition comp, final Set<Element> stripElms, final ISpectrumData std) throws EPQException {
       assert std != null;
       // assert spec2.getProperties().getDetector() != null;
       super.addStandard(elm, comp, stripElms);
@@ -292,23 +297,24 @@ public class QuantifyUsingStandards
     * used as a reference. This may mean that after adding a standard some but
     * not necessarily all associated references are also assigned.
     *
-    * @param elm The element
-    * @param comp The composition of the standard material
-    * @param std The spectrum
+    * @param elm
+    *           The element
+    * @param comp
+    *           The composition of the standard material
+    * @param std
+    *           The spectrum
     * @throws EPQException
     */
-   public void addStandard(final Element elm, final Composition comp, final ISpectrumData std)
-         throws EPQException {
+   public void addStandard(final Element elm, final Composition comp, final ISpectrumData std) throws EPQException {
       addStandard(elm, comp, Collections.emptySet(), std);
    }
 
-   public void addStandard(final StandardBundle bundle)
-         throws EPQException {
+   public void addStandard(final StandardBundle bundle) throws EPQException {
       final ISpectrumData std = bundle.getStandard();
       final Composition comp = std.getProperties().getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
       assert comp != null;
       addStandard(bundle.getElement(), comp, bundle.getStrippedElements(), std);
-      for(final Map.Entry<RegionOfInterest, ISpectrumData> me : bundle.getReferences().entrySet())
+      for (final Map.Entry<RegionOfInterest, ISpectrumData> me : bundle.getReferences().entrySet())
          addReference(me.getKey(), me.getValue(), me.getValue().getProperties().getElements());
    }
 
@@ -321,7 +327,8 @@ public class QuantifyUsingStandards
     * @param xrt
     * @param kratio
     * @param stdMat
-    * @param props - Beam energy, take-off angle minimum
+    * @param props
+    *           - Beam energy, take-off angle minimum
     */
    public void addExtraKRatio(final XRayTransition xrt, final Number kratio, final Composition stdMat, final SpectrumProperties props) {
       addExtraKRatio(new XRayTransitionSet(xrt), kratio, stdMat, props);
@@ -336,7 +343,8 @@ public class QuantifyUsingStandards
     * @param xrts
     * @param kratio
     * @param stdMat
-    * @param props - Beam energy, take-off angle minimum
+    * @param props
+    *           - Beam energy, take-off angle minimum
     */
    public void addExtraKRatio(final XRayTransitionSet xrts, final Number kratio, final Composition stdMat, final SpectrumProperties props) {
       mExtraKRatios.put(xrts.getElement(), new ExtraKRatio(xrts, kratio, stdMat, props));
@@ -361,9 +369,9 @@ public class QuantifyUsingStandards
    private ISpectrumData makeReference(final ISpectrumData spec) {
       final ISpectrumData refSpec = preProcessSpectrum(spec);
       final SpectrumProperties refSp = refSpec.getProperties();
-      final double faraday=SpectrumUtils.getAverageFaradayCurrent(refSp, 1.0);
+      final double faraday = SpectrumUtils.getAverageFaradayCurrent(refSp, 1.0);
       refSp.setNumericProperty(SpectrumProperties.ProbeCurrent, faraday);
-      if(refSp.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0) <= 0.0)
+      if (refSp.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0) <= 0.0)
          refSp.setNumericProperty(SpectrumProperties.LiveTime, 60.0);
       return refSpec;
    }
@@ -375,13 +383,15 @@ public class QuantifyUsingStandards
    /**
     * Assign a spectrum to serve as a reference for the specific ROI.
     *
-    * @param roi These roi must be a member of the ROIS returned by
+    * @param roi
+    *           These roi must be a member of the ROIS returned by
     *           <code>getRegionOfInterestSet(Element ...)</code>.
-    * @param ref The spectrum
-    * @param comp The composition
+    * @param ref
+    *           The spectrum
+    * @param comp
+    *           The composition
     */
-   public void addReference(final RegionOfInterest roi, final ISpectrumData ref, final Composition comp)
-         throws EPQException {
+   public void addReference(final RegionOfInterest roi, final ISpectrumData ref, final Composition comp) throws EPQException {
       assert roi.getElementSet().size() == 1;
       final Element elm = roi.getElementSet().first();
       assert getStandardROIS(elm).contains(roi);
@@ -395,13 +405,15 @@ public class QuantifyUsingStandards
    /**
     * Assign a spectrum to serve as a reference for the specific ROI.
     *
-    * @param roi These roi must be a member of the ROIS returned by
+    * @param roi
+    *           These roi must be a member of the ROIS returned by
     *           <code>getRegionOfInterestSet(Element ...)</code>.
-    * @param ref The spectrum
-    * @param elms A non-empty set of Element
+    * @param ref
+    *           The spectrum
+    * @param elms
+    *           A non-empty set of Element
     */
-   public void addReference(final RegionOfInterest roi, final ISpectrumData ref, final Set<Element> elms)
-         throws EPQException {
+   public void addReference(final RegionOfInterest roi, final ISpectrumData ref, final Set<Element> elms) throws EPQException {
       assert roi.getElementSet().size() == 1;
       final Element elm = roi.getElementSet().first();
       assert getStandardROIS(elm).contains(roi);
@@ -425,27 +437,26 @@ public class QuantifyUsingStandards
     * @return UncertainValue2
     * @throws EPQException
     */
-   public UncertainValue2 getReferenceCalibration(final RegionOfInterestSet.RegionOfInterest roi)
-         throws EPQException {
+   public UncertainValue2 getReferenceCalibration(final RegionOfInterestSet.RegionOfInterest roi) throws EPQException {
       assert roi.getElementSet().size() == 1;
-      if(roi.getElementSet().size() != 1)
+      if (roi.getElementSet().size() != 1)
          throw new EPQException("The ROI in calibrate reference must associated with one and only one element. " + roi);
-      if(!mReferenceScale.containsKey(roi)) {
+      if (!mReferenceScale.containsKey(roi)) {
          final Element elm = roi.getElementSet().first();
          final Set<RegionOfInterest> refReq = new TreeSet<RegionOfInterest>(getReferenceRequirements(elm, roi));
          final ISpectrumData refSpec = mRefSpectra.get(roi);
          final ISpectrumData stdSpec = mStdSpectra.get(elm);
-         if(!SpectrumUtils.equalData(refSpec, stdSpec))
+         if (!SpectrumUtils.equalData(refSpec, stdSpec))
             refReq.add(roi);
-         if(refReq.size() == 0) {
+         if (refReq.size() == 0) {
             final double sToN = SpectrumUtils.computeSignalToNoise(roi, getStandardSpectrum(elm));
             mReferenceScale.put(roi, new UncertainValue2(1.0, "I[std," + elm.toAbbrev() + "]", sToN > 0.0 ? 1.0 / sToN : 0.0));
          } else {
             final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy());
             ff.setStripUnlikely(false);
-            for(final RegionOfInterest roi2 : refReq) {
+            for (final RegionOfInterest roi2 : refReq) {
                final ISpectrumData ref = getReferenceSpectrum(roi2);
-               if(ref == null)
+               if (ref == null)
                   throw new EPQException("A reference for " + roi2.getElementSet().first().toAbbrev()
                         + " which is required to compute the scale for the " + elm + " standard is missing.");
                assert ref != null;
@@ -453,7 +464,7 @@ public class QuantifyUsingStandards
             }
             final KRatioSet krs = ff.getKRatios(stdSpec);
             final UncertainValue2 tmp = krs.getKRatioU(roi.getXRayTransitionSet(elm));
-            if(INCLUDE_REF_U) {
+            if (INCLUDE_REF_U) {
                final double uRef = tmp.doubleValue() / SpectrumUtils.computeSignalToNoise(roi, getReferenceSpectrum(roi));
                tmp.assignComponent("I[ref," + elm.toAbbrev() + "]", uRef);
             }
@@ -476,8 +487,7 @@ public class QuantifyUsingStandards
     * @return Composition
     * @throws EPQException
     */
-   public Result compute(final ISpectrumData unk)
-         throws EPQException {
+   public Result compute(final ISpectrumData unk) throws EPQException {
       final ISpectrumData spec = preProcessSpectrum(unk);
       final Result res = new Result(unk);
       // Fit the unknown using the reference spectra
@@ -485,21 +495,21 @@ public class QuantifyUsingStandards
       final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy());
       FilterFit.setNaiveBackground(false);
       final Set<Element> measured = getMeasuredElements();
-      for(final Map.Entry<RegionOfInterestSet.RegionOfInterest, ISpectrumData> me : refs.entrySet()) {
+      for (final Map.Entry<RegionOfInterestSet.RegionOfInterest, ISpectrumData> me : refs.entrySet()) {
          final RegionOfInterest roi = me.getKey();
          final Element elm = roi.getElementSet().first();
-         if(measured.contains(elm) || isUnmeasuredElementRule(elm) || isStripped(elm))
+         if (measured.contains(elm) || isUnmeasuredElementRule(elm) || isStripped(elm))
             ff.addReference(roi, me.getValue());
       }
       CullingStrategy strat = mCullingStrategy;
       // Don't cull elements for which there is an explicit perferred transition
       final Set<XRayTransitionSet> user = new HashSet<XRayTransitionSet>();
-      for(final StandardPacket sp : getStandards().values()) {
+      for (final StandardPacket sp : getStandards().values()) {
          final RegionOfInterest prefRoi = sp.getPreferredROI();
-         if(prefRoi != null)
+         if (prefRoi != null)
             user.add(prefRoi.getAllTransitions());
       }
-      if(!user.isEmpty())
+      if (!user.isEmpty())
          strat = new FilterFit.DontCull(strat, user);
       ff.setCullingStrategy(strat);
       ff.setStripUnlikely(false);
@@ -507,52 +517,51 @@ public class QuantifyUsingStandards
       // Compute the k-ratios wrt the standards from the k-ratios wrt
       // references
       final KRatioSet krs = new KRatioSet(), fullKrs = new KRatioSet();
-      for(final Element elm : measured) {
+      for (final Element elm : measured) {
          assert !isUnmeasuredElementRule(elm);
          assert !isStripped(elm);
          final RegionOfInterest prefRoi = getPreferredROI(elm);
-         for(final RegionOfInterestSet.RegionOfInterest roi : getStandardROIS(elm)) {
+         for (final RegionOfInterestSet.RegionOfInterest roi : getStandardROIS(elm)) {
             assert roi.getElementSet().first().equals(elm);
-            if(refs.containsKey(roi))
+            if (refs.containsKey(roi))
                try {
                   final UncertainValue2 sc = getReferenceCalibration(roi);
-                  if((sc != null) && (sc.doubleValue() > 0.0)) {
+                  if ((sc != null) && (sc.doubleValue() > 0.0)) {
                      final XRayTransitionSet xrts = roi.getXRayTransitionSet(elm);
                      final UncertainValue2 kr = krsAgainstRefs.getRawKRatio(xrts);
                      kr.renameComponent("K", "I[unk," + elm.toAbbrev() + "]");
-                     if(INCLUDE_REF_U)
-                        kr.assignComponent("I[ref," + elm.toAbbrev() + "]", kr.doubleValue()
-                              / SpectrumUtils.computeSignalToNoise(roi, getReferenceSpectrum(roi)));
+                     if (INCLUDE_REF_U)
+                        kr.assignComponent("I[ref," + elm.toAbbrev() + "]",
+                              kr.doubleValue() / SpectrumUtils.computeSignalToNoise(roi, getReferenceSpectrum(roi)));
                      final UncertainValue2 kStd = UncertainValue2.divide(kr, sc);
                      fullKrs.addKRatio(xrts, kStd);
-                     if((prefRoi == null) || roi.equals(prefRoi))
+                     if ((prefRoi == null) || roi.equals(prefRoi))
                         krs.addKRatio(xrts, kStd);
                   }
-               }
-               catch(final Exception e) {
+               } catch (final Exception e) {
                   System.out.println(e.getMessage());
                   e.printStackTrace();
                }
          }
       }
       final KRatioSet withStripped = new KRatioSet();
-      for(final XRayTransitionSet xrts : krsAgainstRefs.getTransitions())
-         if(fullKrs.isAvailable(xrts))
+      for (final XRayTransitionSet xrts : krsAgainstRefs.getTransitions())
+         if (fullKrs.isAvailable(xrts))
             withStripped.addKRatio(xrts, fullKrs.getKRatioU(xrts));
          else
             withStripped.addKRatio(xrts, krsAgainstRefs.getKRatioU(xrts));
       unk.getProperties().setKRatioProperty(SpectrumProperties.KRatios, withStripped);
-      for(final Map.Entry<Element, ExtraKRatio> me : mExtraKRatios.entrySet())
+      for (final Map.Entry<Element, ExtraKRatio> me : mExtraKRatios.entrySet())
          withStripped.addKRatio(me.getValue().mXRTS, me.getValue().mKRatio);
-      if(!mKRatiosOnly) {
-          final KRatioSet withExtra = new KRatioSet();
-         for(final Element elm : krs.getElementSet())
-            if(mExtraKRatios.containsKey(elm)) {
+      if (!mKRatiosOnly) {
+         final KRatioSet withExtra = new KRatioSet();
+         for (final Element elm : krs.getElementSet())
+            if (mExtraKRatios.containsKey(elm)) {
                final ExtraKRatio xtra = mExtraKRatios.get(elm);
                withExtra.addKRatio(xtra.mXRTS, xtra.mKRatio);
                mCfKR.addExtraStandard(xtra.mXRTS, xtra.mComposition, xtra.mProperties);
             } else
-               for(final XRayTransitionSet xrts2 : krs.getTransitions(elm)) {
+               for (final XRayTransitionSet xrts2 : krs.getTransitions(elm)) {
                   withExtra.addKRatio(xrts2, krs.getKRatioU(xrts2));
                   final SpectrumProperties rsProps = mStdSpectra.get(elm).getProperties();
                   mCfKR.addStandard(xrts2, rsProps.getCompositionProperty(SpectrumProperties.StandardComposition), rsProps);
@@ -561,14 +570,14 @@ public class QuantifyUsingStandards
          mCfKR.setUnknownCoating(ccu);
          // Specify unmeasured element rules
          mCfKR.clearUnmeasuredElementRules();
-         for(final UnmeasuredElementRule uer : getUnmeasuredElementRules())
+         for (final UnmeasuredElementRule uer : getUnmeasuredElementRules())
             mCfKR.addUnmeasuredElementRule(uer);
          // Specify user selected transitions
-         for(final Map.Entry<Element, StandardPacket> me : getStandards().entrySet()) {
+         for (final Map.Entry<Element, StandardPacket> me : getStandards().entrySet()) {
             final Element elm = me.getKey();
             final StandardPacket sp = me.getValue();
             final RegionOfInterest roi = sp.getPreferredROI();
-            if((roi != null) && (!mExtraKRatios.containsKey(elm)))
+            if ((roi != null) && (!mExtraKRatios.containsKey(elm)))
                mCfKR.addUserSelectedTransition(elm, roi.getXRayTransitionSet(elm));
          }
          // Initialize element-by-difference and element-by-stoiciometry
@@ -600,26 +609,26 @@ public class QuantifyUsingStandards
       final RegionOfInterestSet rois = getStandardROIS(elm);
       // Find the weightiest lines for each family
       final Map<Integer, RegionOfInterest> candidates = new TreeMap<Integer, RegionOfInterest>();
-      for(final RegionOfInterest roi : rois) {
+      for (final RegionOfInterest roi : rois) {
          final XRayTransitionSet xrts = roi.getXRayTransitionSet(elm);
          final int fam = xrts.getWeighiestTransition().getFamily();
-         if(candidates.containsKey(fam)) {
+         if (candidates.containsKey(fam)) {
             final RegionOfInterest cand = candidates.get(fam);
-            if(cand.getXRayTransitionSet(elm).getSumWeight() < xrts.getSumWeight())
+            if (cand.getXRayTransitionSet(elm).getSumWeight() < xrts.getSumWeight())
                candidates.put(fam, roi);
          } else
             candidates.put(fam, roi);
       }
       RegionOfInterest best = candidates.values().iterator().next();
-      if(candidates.size() == 1)
+      if (candidates.size() == 1)
          return best;
       // Choose the highest energy one with a U>MIN_U
       final double e0 = getBeamEnergy();
       final double MIN_U = 2.0;
       double bestU = e0 / best.getXRayTransitionSet(elm).getWeighiestTransition().getEdgeEnergy();
-      for(final RegionOfInterest roi : candidates.values()) {
+      for (final RegionOfInterest roi : candidates.values()) {
          final double u = e0 / roi.getXRayTransitionSet(elm).getWeighiestTransition().getEdgeEnergy();
-         if(bestU < MIN_U ? u > bestU : u < bestU) {
+         if (bestU < MIN_U ? u > bestU : u < bestU) {
             best = roi;
             bestU = u;
          }
@@ -636,8 +645,8 @@ public class QuantifyUsingStandards
     */
    public Set<ISpectrumData> findReferences(final Element elm) {
       final Set<ISpectrumData> res = new HashSet<ISpectrumData>();
-      for(final Map.Entry<RegionOfInterestSet.RegionOfInterest, ISpectrumData> me : getReferenceSpectra().entrySet())
-         if(me.getKey().getElementSet().contains(elm))
+      for (final Map.Entry<RegionOfInterestSet.RegionOfInterest, ISpectrumData> me : getReferenceSpectra().entrySet())
+         if (me.getKey().getElementSet().contains(elm))
             res.add(me.getValue());
       return res;
    }
@@ -710,7 +719,7 @@ public class QuantifyUsingStandards
       // Header row
       final Set<Element> elms = getUnknownElements();
       pw.print("<tr><th>Spectrum</th><th>Quantity</th>");
-      for(final Element el : elms) {
+      for (final Element el : elms) {
          pw.print("<TH COLSPAN=3 ALIGN=CENTER>");
          pw.print(el.toAbbrev());
          pw.print("</TH>");
@@ -718,14 +727,14 @@ public class QuantifyUsingStandards
       pw.print("<th>Sum</th>");
       pw.print("</tr>");
       boolean first = true;
-      for(final ISpectrumData spec : quantifiedSpectra) {
+      for (final ISpectrumData spec : quantifiedSpectra) {
          // Separator line between spectra
          final SpectrumProperties specProps = spec.getProperties();
          final Composition comp = specProps.getCompositionWithDefault(SpectrumProperties.MicroanalyticalComposition, null);
-         if(comp == null)
+         if (comp == null)
             continue;
          boolean boldNorm = false;
-         if(!first) {
+         if (!first) {
             pw.print("<tr><td colspan = ");
             pw.print(2 + (3 * elms.size()) + 1);
             pw.print("</td></tr>");
@@ -737,7 +746,7 @@ public class QuantifyUsingStandards
          pw.print(specProps.asURL(spec));
          {
             final SampleShape ss = specProps.getSampleShapeWithDefault(SpectrumProperties.SampleShape, null);
-            if(ss != null) {
+            if (ss != null) {
                pw.print("<br>");
                pw.print(ss.toString());
                boldNorm = !(ss instanceof SampleShape.Bulk);
@@ -746,16 +755,16 @@ public class QuantifyUsingStandards
          pw.print("</th>");
          // Characteristic line family
          pw.print("<td>Line</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             final XRayTransitionSet xrts = optKrs != null ? optKrs.optimalDatum(elm) : null;
-            if(xrts != null) {
+            if (xrts != null) {
                pw.print("<TD COLSPAN = 3 ALIGN=CENTER>");
                pw.print(xrts);
                pw.print("</TD>");
             } else {
                pw.print("<TD COLSPAN = 3 ALIGN=CENTER>");
                final UnmeasuredElementRule uer = getUnmeasuredElementRule(elm);
-               if(uer != null)
+               if (uer != null)
                   pw.print(uer.toString());
                pw.print("</TD>");
             }
@@ -763,16 +772,15 @@ public class QuantifyUsingStandards
          pw.println("<TD></TD></TR>");
          // ZAF correction
          pw.print("<tr><td>Z &#183; A &#183; F</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             final XRayTransitionSet xrts = optKrs != null ? optKrs.optimalDatum(elm) : null;
             double[] zaf = null;
-            if(xrts != null)
+            if (xrts != null)
                try {
                   zaf = zaf(comp, xrts, specProps);
+               } catch (final EPQException e) {
                }
-               catch(final EPQException e) {
-               }
-            if(zaf != null) {
+            if (zaf != null) {
                pw.print("<TD ALIGN=CENTER>");
                pw.print(Double.isNaN(zaf[0]) ? "-" : nf3.format(zaf[0]));
                pw.print("</TD><TD ALIGN=CENTER>");
@@ -786,9 +794,9 @@ public class QuantifyUsingStandards
          pw.println("<TD></TD></TR>");
          // k-ratios
          pw.print("<TR><TD>k-ratios</TD>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             final XRayTransitionSet xrts = optKrs != null ? optKrs.optimalDatum(elm) : null;
-            if(xrts != null) {
+            if (xrts != null) {
                pw.print("<TD ALIGN=RIGHT>");
                pw.print(nf4.format(measKrs.getRawKRatio(xrts)));
                pw.print("</TD><TD align=center>\u00B1</TD><TD ALIGN=LEFT>");
@@ -799,23 +807,23 @@ public class QuantifyUsingStandards
          }
          pw.println("<TD></TD></TR>");
          // MACs
-         if(System.getProperty("user.name").equalsIgnoreCase("nritchie")) {
+         if (System.getProperty("user.name").equalsIgnoreCase("nritchie")) {
             pw.print("<tr><th>&nbsp;</th><td>MAC</td>");
             CorrectionAlgorithm ca = (CorrectionAlgorithm) CorrectionAlgorithm.NullCorrection.getAlgorithm(CorrectionAlgorithm.class);
-            if(ca == null)
+            if (ca == null)
                ca = AlgorithmUser.getDefaultCorrectionAlgorithm();
             assert ca != null;
             final MassAbsorptionCoefficient macAlg = (MassAbsorptionCoefficient) ca.getAlgorithm(MassAbsorptionCoefficient.class);
-            for(final Element elm : elms) {
+            for (final Element elm : elms) {
                final XRayTransitionSet xrts = optKrs != null ? optKrs.optimalDatum(elm) : null;
-               if(xrts != null)
+               if (xrts != null)
                   try {
                      UncertainValue2 netMac = UncertainValue2.ZERO;
                      {
                         double netW = 0.0;
-                        for(final XRayTransition xrt : xrts.getTransitions()) {
+                        for (final XRayTransition xrt : xrts.getTransitions()) {
                            final double w = xrt.getWeight(XRayTransition.NormalizeDefault);
-                           if(w > 0.01) {
+                           if (w > 0.01) {
                               netMac = UncertainValue2.add(netMac, UncertainValue2.multiply(w, macAlg.computeWithUncertaintyEstimate(comp, xrt)));
                               netW += w;
                            }
@@ -827,8 +835,7 @@ public class QuantifyUsingStandards
                      pw.print("</TD><TD align=center>\u00B1</TD><TD ALIGN=LEFT>");
                      pw.print(nf4.format(netMac.uncertainty()));
                      pw.print("</TD>");
-                  }
-                  catch(final EPQException e) {
+                  } catch (final EPQException e) {
                      pw.print("<TD>-</TD><TD>-</TD><TD>-</TD>");
                   }
                else
@@ -841,15 +848,15 @@ public class QuantifyUsingStandards
          final double dh = specProps.getNumericWithDefault(SpectrumProperties.DuaneHunt, Double.NaN);
          pw.print("<td>D-H = " + (Double.isNaN(dh) ? "?" : nf3.format(dh)) + " keV</td>");
          pw.print("<td>mass fraction</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             pw.print(((!boldNorm) ? "<TH" : "<TD") + " ALIGN=RIGHT>");
             final UncertainValue2 wf = comp.weightFractionU(elm, false);
             pw.print(nf2.format(wf.doubleValue()));
             pw.print((!boldNorm) ? "</TH>" : "</TD>");
             pw.print("<TD align=center>\u00B1</TD><TD ALIGN=LEFT>");
             boolean first2 = true;
-            for(final String name : wf.getComponentNames()) {
-               if(!first2)
+            for (final String name : wf.getComponentNames()) {
+               if (!first2)
                   pw.print("<br/>");
                pw.print("<nobr>");
                pw.print(wf.formatComponent(name, 5));
@@ -866,16 +873,15 @@ public class QuantifyUsingStandards
 
          // norm(wgt%)
          pw.print("<TR>");
-         pw.print("<TD align=\"right\">I = " + nf3.format(SpectrumUtils.getAverageFaradayCurrent(specProps, Double.NaN))
-               + " nA</TD>");
+         pw.print("<TD align=\"right\">I = " + nf3.format(SpectrumUtils.getAverageFaradayCurrent(specProps, Double.NaN)) + " nA</TD>");
          pw.print("<td>norm(mass<br/>fraction)</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             final UncertainValue2 nwf = comp.weightFractionU(elm, true);
             pw.print((boldNorm ? "<TH" : "<TD") + " ALIGN=RIGHT>");
             pw.print(nf2.format(nwf.doubleValue()));
             pw.print(boldNorm ? "</TH>" : "</TD>");
             pw.print("<TD align=center>\u00B1</TD><TD ALIGN=LEFT>");
-            if(nwf.uncertainty() > 0.0)
+            if (nwf.uncertainty() > 0.0)
                pw.print(nf2.format(nwf.uncertainty()));
             pw.print("</TD>");
          }
@@ -883,16 +889,15 @@ public class QuantifyUsingStandards
          pw.println("</TR>");
          // atomic %
          pw.print("<TR>");
-         pw.print("<TD align=\"right\">LT = "
-               + nf1.format(specProps.getNumericWithDefault(SpectrumProperties.LiveTime, Double.NaN)) + " s</TD>");
+         pw.print("<TD align=\"right\">LT = " + nf1.format(specProps.getNumericWithDefault(SpectrumProperties.LiveTime, Double.NaN)) + " s</TD>");
          pw.print("<td>atomic<br/>fraction</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             final UncertainValue2 ap = comp.atomicPercentU(elm);
             pw.print((boldNorm ? "<TH" : "<TD") + " ALIGN=RIGHT>");
             pw.print(nf2.format(ap.doubleValue()));
             pw.print(boldNorm ? "</TH>" : "</TD>");
             pw.print("<TD align=center>\u00B1</TD><TD ALIGN=LEFT>");
-            if(ap.uncertainty() > 0.0)
+            if (ap.uncertainty() > 0.0)
                pw.print(nf2.format(ap.uncertainty()));
             pw.print("</TD>");
          }
@@ -905,15 +910,15 @@ public class QuantifyUsingStandards
             pw.print(cc != null ? cc.toString() : "None");
             pw.print("</TD>");
          }
-         if(extResults != null) {
+         if (extResults != null) {
             ISpectrumData res = null;
-            for(final ISpectrumData rs : extResults)
-               if(rs instanceof DerivedSpectrum)
-                  if(rs.toString().equals("Residual[" + spec.toString() + "]")) {
+            for (final ISpectrumData rs : extResults)
+               if (rs instanceof DerivedSpectrum)
+                  if (rs.toString().equals("Residual[" + spec.toString() + "]")) {
                      res = rs;
                      break;
                   }
-            if(res != null) {
+            if (res != null) {
                pw.print("<TR>");
                pw.print("<TD align=\"right\">Residual</TD>");
                pw.print("<TD COLSPAN=" + Integer.toString(2 + (3 * elms.size())) + " ALIGN=LEFT>");
@@ -927,8 +932,7 @@ public class QuantifyUsingStandards
                   pw.print("\">");
                   pw.print(f.toString());
                   pw.print("</A>");
-               }
-               catch(final Exception e) {
+               } catch (final Exception e) {
                   pw.print("Error writing the residual");
                }
                pw.println("</TD>");
@@ -939,17 +943,18 @@ public class QuantifyUsingStandards
       pw.print("<TR>");
       pw.print("<TD align=\"right\">Notes</TD>");
       pw.print("<TD COLSPAN=" + Integer.toString(2 + (3 * elms.size())) + " ALIGN=LEFT>");
-      pw.print("Uncertainties are 1 &sigma; and labeled by source. (I[std|unk]: Count statistics[standard|unknown], [&mu;/&rho]: Absorption correction, &eta;: Backscatter correction, []: combined)");
+      pw.print(
+            "Uncertainties are 1 &sigma; and labeled by source. (I[std|unk]: Count statistics[standard|unknown], [&mu;/&rho]: Absorption correction, &eta;: Backscatter correction, []: combined)");
       pw.println("</TD>");
       pw.println("</TR>");
       pw.println("</TABLE>");
       final UnmeasuredElementRule uer = getUnmeasuredElementRule(Element.O);
-      if(uer instanceof OxygenByStoichiometry) {
+      if (uer instanceof OxygenByStoichiometry) {
          pw.print("<H3>Quantitative Results Expressed As Oxide Fractions</H3>");
          final List<Composition> comps = new ArrayList<Composition>();
-         for(final ISpectrumData spec : quantifiedSpectra) {
+         for (final ISpectrumData spec : quantifiedSpectra) {
             final Composition comp = spec.getProperties().getCompositionWithDefault(SpectrumProperties.MicroanalyticalComposition, null);
-            if(comp != null)
+            if (comp != null)
                comps.add(comp);
          }
          final OxygenByStoichiometry obs = (OxygenByStoichiometry) uer;
@@ -966,8 +971,8 @@ public class QuantifyUsingStandards
 
    private String writeSpectrum(final File path, final ISpectrumData spec, final String label) {
       // Check it the spectrum has already been written.
-      for(final Pair<ISpectrumData, String> pr : mWrittenSpectra)
-         if(pr.first == spec)
+      for (final Pair<ISpectrumData, String> pr : mWrittenSpectra)
+         if (pr.first == spec)
             return pr.second;
       final StringBuffer sb = new StringBuffer();
       boolean written = false;
@@ -982,11 +987,10 @@ public class QuantifyUsingStandards
             sb.append("</A>");
             written = true;
          }
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          // Ignore it...
       }
-      if(!written)
+      if (!written)
          sb.append(spec.toString());
       mWrittenSpectra.add(new Pair<>(spec, sb.toString()));
       return sb.toString();
@@ -1020,11 +1024,11 @@ public class QuantifyUsingStandards
          pw.print(mac.getName());
          pw.println("</td></tr>");
          final Set<Element> stripped = getStrippedElements();
-         if(stripped.size() > 0) {
+         if (stripped.size() > 0) {
             pw.print("<tr><td>Stripped elements</td><td>");
             boolean first = true;
-            for(final Element elm : stripped) {
-               if(!first)
+            for (final Element elm : stripped) {
+               if (!first)
                   pw.print(", ");
                pw.print(elm.toAbbrev());
                first = false;
@@ -1037,7 +1041,7 @@ public class QuantifyUsingStandards
          pw.println("<h3>Standards</h3>");
          pw.println("<table>");
          pw.println("<tr><th>Element</th><th>Material</th><th>Req. References</th><th>Preferred ROI</th><th>Beam Energy</th><th>Spectrum</th></tr>");
-         for(final Map.Entry<Element, StandardPacket> me : getStandards().entrySet()) {
+         for (final Map.Entry<Element, StandardPacket> me : getStandards().entrySet()) {
             final StandardPacket sp = me.getValue();
             final Composition comp = sp.getComposition();
             pw.print("<tr><td>");
@@ -1047,14 +1051,14 @@ public class QuantifyUsingStandards
             pw.print(comp.toHTMLTable());
             pw.println("</td><td>");
             boolean firstRoi = true;
-            for(final RegionOfInterest roi : sp.getElementROIS()) {
+            for (final RegionOfInterest roi : sp.getElementROIS()) {
                final Set<RegionOfInterest> rr = sp.getRequiredReferences(roi);
-               if(!firstRoi)
+               if (!firstRoi)
                   pw.print("<br/>");
                pw.print(roi);
                pw.print(":");
-               if(rr.size() > 0)
-                  for(final RegionOfInterest req : rr) {
+               if (rr.size() > 0)
+                  for (final RegionOfInterest req : rr) {
                      pw.print("<br/>&nbsp;&nbsp;&nbsp;");
                      pw.print(req);
                   }
@@ -1063,9 +1067,9 @@ public class QuantifyUsingStandards
                firstRoi = false;
             }
             pw.print("</td><td>");
-            if(sp.getPreferredROI() != null)
+            if (sp.getPreferredROI() != null)
                pw.print(sp.getPreferredROI());
-            else if(sp.getElementROIS().size() == 1)
+            else if (sp.getElementROIS().size() == 1)
                pw.print("N/A");
             else
                pw.print("--None specified--");
@@ -1087,8 +1091,7 @@ public class QuantifyUsingStandards
                final ConductiveCoating cc = (ConductiveCoating) props.getObjectWithDefault(SpectrumProperties.ConductiveCoating, null);
                pw.println("<br/>Conductive coating = ");
                pw.println(cc != null ? "<br/>" + cc.toString() : "None");
-            }
-            catch(final Throwable e) {
+            } catch (final Throwable e) {
                pw.print("<font color=red>ERROR:</font> N/A");
             }
             pw.print("</td></tr>");
@@ -1098,17 +1101,17 @@ public class QuantifyUsingStandards
       }
       {
          final Set<RegionOfInterest> reqRefs = getROISWithAssignedReferences();
-         if(reqRefs.size() > 0) {
+         if (reqRefs.size() > 0) {
             pw.println("<h3>References</h3>");
             pw.println("<table>");
             pw.print("<tr><th>Element/Lines</th><th>Material</th><th>Spectrum</th><th>Use</th></tr>");
-            for(final RegionOfInterest reqRef : reqRefs) {
+            for (final RegionOfInterest reqRef : reqRefs) {
                pw.print("<tr><td>");
                pw.print(reqRef);
                pw.print("</td><td>");
                final ReferenceMaterial rm = getReference(reqRef);
-               if(rm != null) {
-                  if(rm.compositionIsAvailable())
+               if (rm != null) {
+                  if (rm.compositionIsAvailable())
                      pw.print(rm.getComposition().toHTMLTable());
                   else
                      pw.print(rm.toString());
@@ -1118,9 +1121,9 @@ public class QuantifyUsingStandards
                pw.print(writeSpectrum(path, this.getReferenceSpectrum(reqRef), reqRef.shortName() + " ref"));
                pw.print("</td><td>");
                final Element elm = reqRef.getElementSet().first();
-               if(getStrippedElements().contains(elm))
+               if (getStrippedElements().contains(elm))
                   pw.print("Strip");
-               else if(isUnmeasuredElementRule(elm))
+               else if (isUnmeasuredElementRule(elm))
                   pw.print("Fit but<br/>not measured.");
                else
                   pw.print("Reference");
@@ -1130,13 +1133,13 @@ public class QuantifyUsingStandards
          } else
             pw.print("<p>No reference spectra required.</p>");
       }
-      if(mExtraKRatios.size() > 0) {
+      if (mExtraKRatios.size() > 0) {
          final NumberFormat nf4 = new HalfUpFormat("0.00000");
          pw.println("<h3>Elements by User-Specified K-ratio</h>");
          pw.println("<p>The elements listed here are quantified using the specified k-ratios rather than fit k-ratios.</p>");
          pw.println("<table>");
          pw.println("<tr><th>Element</th><th>Material</th><th>X-Ray Transitions</th><th>Beam Energy</th><th>K-ratio</th></tr>");
-         for(final Map.Entry<Element, ExtraKRatio> me : mExtraKRatios.entrySet()) {
+         for (final Map.Entry<Element, ExtraKRatio> me : mExtraKRatios.entrySet()) {
             final Element elm = me.getKey();
             final ExtraKRatio extra = me.getValue();
             pw.print("<tr><th>");
@@ -1154,9 +1157,9 @@ public class QuantifyUsingStandards
          pw.println("</table>");
       }
       final List<UnmeasuredElementRule> luer = getUnmeasuredElementRules();
-      if(luer.size() > 0) {
+      if (luer.size() > 0) {
          pw.append("<h3>Other elements</h3>\n");
-         for(final UnmeasuredElementRule uer : luer) {
+         for (final UnmeasuredElementRule uer : luer) {
             pw.append("<li>");
             pw.append(uer.toHTML());
             pw.append("</li>");

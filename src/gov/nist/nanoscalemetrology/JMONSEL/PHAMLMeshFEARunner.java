@@ -57,14 +57,9 @@ import gov.nist.microanalysis.NISTMonte.MeshedRegion.NeumannConstraint;
  * @author John Villarrubia
  * @version 1.0
  */
-public class PHAMLMeshFEARunner
-   implements
-   IAdaptiveMesh,
-   IFEArunner {
+public class PHAMLMeshFEARunner implements IAdaptiveMesh, IFEArunner {
 
-   interface PHAML
-      extends
-      com.sun.jna.Library {
+   interface PHAML extends com.sun.jna.Library {
 
       PHAML lib = (PHAML) Native.loadLibrary("PHAML_lib.dll", PHAML.class);
 
@@ -87,7 +82,7 @@ public class PHAMLMeshFEARunner
       int getElementType(int handle, int elementIndex, IntByReference errcode);
 
       int getElementTypeTable(int handle, int[] elementType, IntByReference errcode);
-      
+
       double getErrorEstimate(int handle, IntByReference errcode);
 
       void getFileName(int handle, byte[] chars, IntByReference errcode);
@@ -130,13 +125,15 @@ public class PHAMLMeshFEARunner
 
       int isVolumeType(int handle, int index, IntByReference errcode);
 
-      void meshConstructor(IntByReference handle, String meshFileName, int len, String outputPath, int pathlen, boolean doGraphics, IntByReference errcode);
+      void meshConstructor(IntByReference handle, String meshFileName, int len, String outputPath, int pathlen, boolean doGraphics,
+            IntByReference errcode);
 
       void meshDestructor(int handle, IntByReference errcode);
 
       void meshDestructorAll(IntByReference errcode);
 
-      void runFEA(int handle, boolean verbose, double tolerance, int max_tet, double min_tet_size, double refinetol, int solver, int errind, IntByReference errcode);
+      void runFEA(int handle, boolean verbose, double tolerance, int max_tet, double min_tet_size, double refinetol, int solver, int errind,
+            IntByReference errcode);
 
       void saveMesh(int handle, String meshFileName, int namelen, int meshType, IntByReference errcode);
 
@@ -155,8 +152,8 @@ public class PHAMLMeshFEARunner
       void setNodeCoordinates(int handle, int nodeIndex, double[] coords, IntByReference errcode);
 
       void setNodePotential(int handle, int nodeIndex, double potential, IntByReference errcode);
-      
-      //TODO: Implement capability to use this
+
+      // TODO: Implement capability to use this
       void setPointCharges(int handle, int numCharge, double[] xCharge, double[] yCharge, double[] zCharge, IntByReference errcode);
 
       void tetFaceNodeIndices(int handle, int tetIndex, int faceIndex, int[] nodeIndices, IntByReference errcode);
@@ -166,10 +163,9 @@ public class PHAMLMeshFEARunner
       try {
          System.load("C:\\my_executables\\libquadmath-0.dll");
          System.load("C:\\my_executables\\libgfortran-3.dll");
-         //System.load("libquadmath-0.dll");
-         //System.load("libgfortran-3.dll");
-      }
-      finally {
+         // System.load("libquadmath-0.dll");
+         // System.load("libgfortran-3.dll");
+      } finally {
 
       }
    }
@@ -177,7 +173,7 @@ public class PHAMLMeshFEARunner
    private static String b2s(byte b[]) {
       // Converts C string to Java String
       int len = 0;
-      while(b[len] != 0)
+      while (b[len] != 0)
          ++len;
       return new String(b, 0, len);
    }
@@ -227,10 +223,12 @@ public class PHAMLMeshFEARunner
     * former is preferred because it contains boundary information that can be
     * used if mesh elements are refined along a curved boundary.
     *
-    * @param feaFolder -- the name of a folder that can be used for scratch
-    *           space and to write PHAML finite element analysis output
-    *           (out.txt) and error messages (err.txt).
-    * @param meshFileName -- an initial GMSH .geo (preferred) or .msh file.
+    * @param feaFolder
+    *           -- the name of a folder that can be used for scratch space and
+    *           to write PHAML finite element analysis output (out.txt) and
+    *           error messages (err.txt).
+    * @param meshFileName
+    *           -- an initial GMSH .geo (preferred) or .msh file.
     */
    public PHAMLMeshFEARunner(String feaFolder, String meshFileName) {
       final int namelen = meshFileName.length();
@@ -242,20 +240,20 @@ public class PHAMLMeshFEARunner
       final boolean doGraphics = false; // Change to false after debug
       PHAML.lib.meshConstructor(handleRef, meshFileName, namelen, feaFolder, feaFolderLen, doGraphics, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             handle = handleRef.getValue();
             break;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Allocation failed in PHAMLMeshFEARunner call to meshConstructor.");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("File " + meshFileName + " does not exist.");
-         case 3:
+         case 3 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Could not open file in " + feaFolder);
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in PHAMLMeshFEARunner");
       }
@@ -279,18 +277,18 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.decrementChargeNumber(handle, index, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index out of range in decrementChargeNumber.");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index is not a volume element in decrementChargeNumber.");
-         case 3:
+         case 3 :
             throw new EPQFatalException("Invalid handle in decrementChargeNumber.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in decrementChargeNumber");
       }
@@ -309,52 +307,54 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int n = PHAML.lib.extendedNumberAdjacentVolumeArray(handle, tetIndex, faceIndex, errcode);
       int err = errcode.getValue();
-      if(err < 0) {
+      if (err < 0) {
          PHAML.lib.meshDestructorAll(errcode);
          throw new EPQFatalException("PHAML errorcode = " + err + " in extendedNumberAdjacentVolumeArray.");
       } else
-         switch(err) {
-            case 0:
+         switch (err) {
+            case 0 :
                break; // No error, so continue
-            case 1:
+            case 1 :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("tetIndex out of range in extendedNumberAdjacentVolumeArray.");
-            case 2:
+            case 2 :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("faceIndex is out of range in extendedNumberAdjacentVolumeArray.");
-            case 3:
+            case 3 :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("tetIndex is not a tetrahedron element in extendedNumberAdjacentVolumeArray.");
-            case 4:
+            case 4 :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("Memory allocation failed in extendedNumberAdjacentVolumeArray.");
-            case 5:
+            case 5 :
                throw new EPQFatalException("Invalid handle in extendedNumberAdjacentVolumeArray.");
-            default:
+            default :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("Unknown nonzero error code in extendedNumberAdjacentVolumeArray");
          }
       final int adjV[] = new int[n];
       PHAML.lib.extendedAdjacentVolumeArray(handle, tetIndex, faceIndex, adjV, errcode);
       err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return adjV;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("tetIndex out of range in extendedAdjacentVolumeArray");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Face index is out of range in extendedAdjacentVolumeArray");
-         case 3:
+         case 3 :
             PHAML.lib.meshDestructorAll(errcode);
-            throw new EPQFatalException("tetIndex does not agree with last call to extendedNumberAdjacentVolumeArray in extendedAdjacentVolumeArray.");
-         case 4:
+            throw new EPQFatalException(
+                  "tetIndex does not agree with last call to extendedNumberAdjacentVolumeArray in extendedAdjacentVolumeArray.");
+         case 4 :
             PHAML.lib.meshDestructorAll(errcode);
-            throw new EPQFatalException("faceIndex does not agree with last call to extendedNumberAdjacentVolumeArray in extendedAdjacentVolumeArray.");
-         case 5:
+            throw new EPQFatalException(
+                  "faceIndex does not agree with last call to extendedNumberAdjacentVolumeArray in extendedAdjacentVolumeArray.");
+         case 5 :
             throw new EPQFatalException("Invalid handle in extendedAdjacentVolumeArray.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in extendedAdjacentVolumeArray");
       }
@@ -365,12 +365,12 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.meshDestructorAll(errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in finalize.");
-         default:
+         default :
             throw new EPQFatalException("Unknown nonzero error code in finalize.");
       }
    }
@@ -405,22 +405,22 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int adjacentVolumeIndex = PHAML.lib.getAdjacentVolumeIndex(handle, elementIndex, faceIndex, errcode);
       final int err = errcode.getValue();
-      if(err < 0) {
+      if (err < 0) {
          PHAML.lib.meshDestructorAll(errcode);
          throw new EPQFatalException("PHAML errorcode = " + err + " in getAdjacentVolumeIndex.");
       } else
-         switch(err) {
-            case 0:
+         switch (err) {
+            case 0 :
                return adjacentVolumeIndex;
-            case 1:
+            case 1 :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("Element index (" + elementIndex + ") out of range in getAdjacentVolumeIndex.");
-            case 2:
+            case 2 :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("Element " + elementIndex + " is not a volume element in getAdjacentVolumeIndex.");
-            case 3:
+            case 3 :
                throw new EPQFatalException("Invalid handle in getAdjacentVolumeIndex.");
-            default:
+            default :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("Unknown nonzero error code in getAdjacentVolumeIndex");
          }
@@ -437,15 +437,15 @@ public class PHAMLMeshFEARunner
       final int nbf = PHAML.lib.getNumberBoundaryFaces(handle, errcode);
       int err = errcode.getValue();
 
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             break;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Memory allocation failed in getNumberBoundaryFaces in getBoundaryFaces");
-         case 2:
+         case 2 :
             throw new EPQFatalException("Invalid handle in getNumberBoundaryFaces in getBoundaryFaces.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getNumberBoundaryFaces in getBoundaryFaces");
       }
@@ -453,18 +453,18 @@ public class PHAMLMeshFEARunner
       final int[] bF = new int[nbf * 2];
       PHAML.lib.getBoundaryFaces(handle, bF, errcode);
       err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             /* Repack to 2-d as required by IBasicMesh */
             final int[][] bF2D = new int[nbf][2];
-            for(int bf2Dindex = 0, bFindex = 0; bf2Dindex < nbf; bf2Dindex++, bFindex += 2) {
+            for (int bf2Dindex = 0, bFindex = 0; bf2Dindex < nbf; bf2Dindex++, bFindex += 2) {
                bF2D[bf2Dindex][0] = bF[bFindex];
                bF2D[bf2Dindex][1] = bF[bFindex + 1];
             }
             return bF2D;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in getBoundaryFaces().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getBoundaryFaces.");
       }
@@ -503,15 +503,15 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int nc = PHAML.lib.getChargeNumber(handle, index, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return nc;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("elementIndex (" + index + ") out of range in getChargeNumber.");
-         case 2:
+         case 2 :
             throw new EPQFatalException("Invalid handle in getChargeNumber.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getElementType");
       }
@@ -539,20 +539,20 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int type = PHAML.lib.getElementType(handle, elementIndex, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return type;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index out of range in getElementType");
-         case 2:
+         case 2 :
             throw new EPQFatalException("Invalid handle in getElementType.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getElementType");
       }
    }
-   
+
    /**
     * @return The error estimate
     */
@@ -560,16 +560,16 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final double errEst = PHAML.lib.getErrorEstimate(handle, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return errEst;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("runFEA has not been called with handle " + handle + " in getErrorEstimate.");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in getErrorEstimate.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getVolume");
       }
@@ -595,13 +595,13 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.getFileName(handle, chars, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             final String name = b2s(chars);
             return name;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in getFileName().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getFileName().");
       }
@@ -621,12 +621,12 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int rev = PHAML.lib.getMeshRevision(handle, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return rev;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in getMeshRevision().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getMeshRevision().");
       }
@@ -652,41 +652,40 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int n = PHAML.lib.getNumberNodeAdjacentVolumes(handle, nodeIndex, errcode);
       int err = errcode.getValue();
-      if(err < 0) {
+      if (err < 0) {
          PHAML.lib.meshDestructorAll(errcode);
-         throw new EPQFatalException("PHAML error code = " + err
-               + " in getNumberNodeAdjacentVolumes in getNodeAdjacentVolumes.");
+         throw new EPQFatalException("PHAML error code = " + err + " in getNumberNodeAdjacentVolumes in getNodeAdjacentVolumes.");
       } else
-         switch(err) {
-            case 0:
+         switch (err) {
+            case 0 :
                break;
-            case 1:
+            case 1 :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("Node index out of range in getNumberNodeAdjacentVolumes in getNodeAdjacentVolumes.");
-            case 2:
+            case 2 :
                throw new EPQFatalException("Invalid handle in getNumberNodeAdjacentVolumes in getNodeAdjacentVolumes.");
-            default:
+            default :
                PHAML.lib.meshDestructorAll(errcode);
                throw new EPQFatalException("Unknown nonzero error code in getNumberNodeAdjacentVolumes in getNodeAdjacentVolumes.");
          }
       final int[] nodeAV = new int[n];
       PHAML.lib.getNodeAdjacentVolumes(handle, nodeIndex, nodeAV, errcode);
       err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return nodeAV;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Node index out of range in getNodeAdjacentVolumes");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Node index does not agree with last call to getNumberNodeAdjacentVolumes in getNodeAdjacentVolumes");
-         case 3:
+         case 3 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Allocation failed: adjacencies are returned but not sorted in getNodeAdjacentVolumes");
-         case 4:
+         case 4 :
             throw new EPQFatalException("Invalid handle in getNodeAdjacentVolumes.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getNodeAdjacentVolumes");
       }
@@ -714,15 +713,15 @@ public class PHAMLMeshFEARunner
       final double[] nodeCoordinates = new double[3];
       PHAML.lib.getNodeCoordinates(handle, nodeIndex, nodeCoordinates, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return nodeCoordinates;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Node index out of range in getNodeCoordinates");
-         case 2:
+         case 2 :
             throw new EPQFatalException("Invalid handle in getNodeCoordinates");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getNodeIndices");
       }
@@ -751,22 +750,22 @@ public class PHAMLMeshFEARunner
       final int maxIndices[] = new int[20];
       PHAML.lib.getNodeIndices(handle, elementIndex, maxIndices, numNode, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             final int numNodeVal = numNode.getValue();
             final int indices[] = new int[numNodeVal];
-            for(int i = 0; i < numNodeVal; i++)
+            for (int i = 0; i < numNodeVal; i++)
                indices[i] = maxIndices[i];
             return indices;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index out of range in getNodeIndices");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index is a point element in getNodeIndices");
-         case 3:
+         case 3 :
             throw new EPQFatalException("Invalid handle in getNodeIndices");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getNodeIndices");
       }
@@ -790,15 +789,15 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final double v = PHAML.lib.getNodePotential(handle, nodeIndex, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return v;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Node index out of range in getNodePotential");
-         case 2:
+         case 2 :
             throw new EPQFatalException("Invalid handle in getNodePotential");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getNodeIndices");
       }
@@ -811,7 +810,7 @@ public class PHAMLMeshFEARunner
    // TODO Test this routine
    @Override
    public int getNumberOfElements() {
-      if(nElem > 0)
+      if (nElem > 0)
          return nElem; // Return cached value
       else
          return nElem = getNumberOfElementsPHAMLdirect(); // No cached value, so
@@ -828,12 +827,12 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int numElem = PHAML.lib.getNumberOfElements(handle, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return numElem;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in getNumberOfElements.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getNumberOfElements");
       }
@@ -845,7 +844,7 @@ public class PHAMLMeshFEARunner
     */
    @Override
    public int getNumberOfNodes() {
-      if(nNodes > 0)
+      if (nNodes > 0)
          return nNodes; // Return cached value
       else
          return nNodes = getNumberOfNodesPHAMLdirect(); // No cached value, so
@@ -862,12 +861,12 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int nn = PHAML.lib.getNumberOfNodes(handle, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return nn;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in getNumberOfNodes.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getNumberOfNodes");
       }
@@ -883,13 +882,13 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int nTags = PHAML.lib.getNumberOfTags(handle, elementIndex, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return nTags;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in getNumberOfTags.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getNumberOfTags");
       }
@@ -905,13 +904,13 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int nve = PHAML.lib.getNumberOfVolumeElements(handle, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return nve;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in getNumberOfVolumeElements.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getNumberOfVolumeElements");
       }
@@ -969,20 +968,20 @@ public class PHAMLMeshFEARunner
       final long[] tags = new long[ntags];
       PHAML.lib.getTags(handle, elementIndex, tagsInt, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
-            for(int i = 0; i < ntags; i++)
+      switch (err) {
+         case 0 :
+            for (int i = 0; i < ntags; i++)
                tags[i] = tagsInt[i];
             @SuppressWarnings("unused")
             final int dummy = 0;
             return tags;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index out of range in getTags");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in getTags");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getTags");
       }
@@ -998,16 +997,16 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final double v = PHAML.lib.getVolume(handle, index, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return v;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index (" + index + ") out of range in getVolume.");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in getVolume.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in getVolume");
       }
@@ -1026,19 +1025,19 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.incrementChargeNumber(handle, index, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index (" + index + ") out of range in incrementChargeNumber.");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element " + index + " is not a volume element in incrementChargeNumber.");
-         case 3:
+         case 3 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in incrementChargeNumber.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in incrementChargeNumber");
       }
@@ -1064,25 +1063,27 @@ public class PHAMLMeshFEARunner
       final int[] adj = new int[(nElem + 1) * maxFaces];
       PHAML.lib.getAdjacentVolumeTable(handle, adj, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             /* Repack to 2-d */
             elementAdjacentVolumes = new int[nElem + 1][maxFaces];
-            for(int adjIndex = 0, elemIndex = 0; elemIndex <= nElem; elemIndex++, adjIndex += maxFaces)
-               for(int i = 0; i < maxFaces; i++)
+            for (int adjIndex = 0, elemIndex = 0; elemIndex <= nElem; elemIndex++, adjIndex += maxFaces)
+               for (int i = 0; i < maxFaces; i++)
                   elementAdjacentVolumes[elemIndex][i] = adj[adjIndex + i];
             break;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in initializeAdjacentVolumesTable().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in initializeAdjacentVolumesTable.");
       }
    }
 
    private void initializeAllCache() {
-      /* TODO: In cases where PHAML generates its own mesh from a .geo file the mesh elements (and maybe
-       * other things) are not getting properly copied to the JMONSEL side of the interface.
+      /*
+       * TODO: In cases where PHAML generates its own mesh from a .geo file the
+       * mesh elements (and maybe other things) are not getting properly copied
+       * to the JMONSEL side of the interface.
        */
       initializeAdjacentVolumesTable(); // re-cache adjacent volumes
       initializeNodeCoordinatesTable(); // re-cache node coordinates
@@ -1109,12 +1110,12 @@ public class PHAMLMeshFEARunner
 
       PHAML.lib.getChargeNumberTable(handle, nCharges, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             break;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in initializeChargeNumberTable().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in initializeChargeNumberTable.");
       }
@@ -1136,12 +1137,12 @@ public class PHAMLMeshFEARunner
 
       PHAML.lib.getElementTypeTable(handle, elementTypes, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             break;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in initializeElementTypeTable().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in initializeElementTypeTable.");
       }
@@ -1165,17 +1166,17 @@ public class PHAMLMeshFEARunner
       final double[] coords = new double[(nNodes + 1) * 3];
       PHAML.lib.getNodeCoordinatesTable(handle, coords, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             /* Repack to 2-d */
             nodeCoordinates = new double[nNodes + 1][3];
-            for(int n = 0, cIndex = 0; n <= nNodes; n++, cIndex += 3)
-               for(int i = 0; i < 3; i++)
+            for (int n = 0, cIndex = 0; n <= nNodes; n++, cIndex += 3)
+               for (int i = 0; i < 3; i++)
                   nodeCoordinates[n][i] = coords[cIndex + i];
             break;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in initializeNodeCoordinatesTable().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in initializeNodeCoordinatesTable.");
       }
@@ -1204,20 +1205,20 @@ public class PHAMLMeshFEARunner
 
       PHAML.lib.getNodeIndicesTable(handle, indices, numNodes, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             /* Repack to 2-d */
             nodeIndices = new int[nElem + 1][];
-            for(int indicesIndex = 0, elemIndex = 0; elemIndex <= nElem; elemIndex++, indicesIndex += maxNodes) {
+            for (int indicesIndex = 0, elemIndex = 0; elemIndex <= nElem; elemIndex++, indicesIndex += maxNodes) {
                final int len = numNodes[elemIndex];
                nodeIndices[elemIndex] = new int[len];
-               for(int i = 0; i < len; i++)
+               for (int i = 0; i < len; i++)
                   nodeIndices[elemIndex][i] = indices[indicesIndex + i];
             }
             break;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in initializeNodeIndicesTable().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in initializeNodeIndicesTable.");
       }
@@ -1239,12 +1240,12 @@ public class PHAMLMeshFEARunner
 
       PHAML.lib.getNodePotentialTable(handle, nodePotentials, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             break;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in initializeNodePotentialTable().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in initializeNodePotentialTable.");
       }
@@ -1268,17 +1269,17 @@ public class PHAMLMeshFEARunner
 
       PHAML.lib.getTagsTable(handle, t, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             /* Repack to 2-d */
             tags = new long[nElem + 1][nTags];
-            for(int tIndex = 0, elemIndex = 0; elemIndex <= nElem; elemIndex++, tIndex += nTags)
-               for(int i = 0; i < nTags; i++)
+            for (int tIndex = 0, elemIndex = 0; elemIndex <= nElem; elemIndex++, tIndex += nTags)
+               for (int i = 0; i < nTags; i++)
                   tags[elemIndex][i] = t[tIndex + i];
             break;
-         case 1:
+         case 1 :
             throw new EPQFatalException("Invalid handle in initializeNodeIndicesTable().");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in initializeNodeIndicesTable.");
       }
@@ -1306,7 +1307,7 @@ public class PHAMLMeshFEARunner
    // TODO Test this routine
    @Override
    public boolean isVolumeType(int elementIndex) {
-      if(getElementType(elementIndex) == 4)
+      if (getElementType(elementIndex) == 4)
          return true;
       return false;
    }
@@ -1322,19 +1323,19 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       final int isVt = PHAML.lib.isVolumeType(handle, elementIndex, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
-            if(isVt != 0)
+      switch (err) {
+         case 0 :
+            if (isVt != 0)
                return true;
             else
                return false;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index (" + elementIndex + ") out of range in isVolumeType.");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in isVolumeType.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in isVolumeType");
       }
@@ -1353,11 +1354,11 @@ public class PHAMLMeshFEARunner
       final int[] tags = new int[numRegion];
       final double[] epsvals = new double[numRegion];
       final Iterator<Map.Entry<Long, IMaterialScatterModel>> setIt = msmSet.iterator();
-      for(int i = 0; i < numRegion; i++) {
+      for (int i = 0; i < numRegion; i++) {
          final Map.Entry<Long, IMaterialScatterModel> msmSetEntry = setIt.next();
          tags[i] = msmSetEntry.getKey().intValue();
          final Material mat = msmSetEntry.getValue().getMaterial();
-         if(mat instanceof SEmaterial)
+         if (mat instanceof SEmaterial)
             epsvals[i] = PhysicalConstants.PermittivityOfFreeSpace * ((SEmaterial) mat).getEpsr();
          else
             throw new EPQFatalException("Illegal non-SEmaterial in the mesh: " + mat);
@@ -1365,28 +1366,28 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.setDielectricConstants(handle, numRegion, tags, epsvals, errcode);
       int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             break;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Allocation failed in setDielectricConstants.");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in setDielectricConstants.");
-         case 3:
+         case 3 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Duplicate tag in setDielectricConstants.");
-         case 4:
+         case 4 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("A volume element has a tag not in tags in setDielectricConstants.");
-         case 5:
+         case 5 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("numRegion is not positive in setDielectricConstants.");
-         case 6:
+         case 6 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Inconsistent constants for duplicate elements in setDielectricConstants.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in setDielectricConstants");
       }
@@ -1398,17 +1399,17 @@ public class PHAMLMeshFEARunner
       final int[] types = new int[numConstraint];
       final double[] constants = new double[numConstraint];
       final int[] int_constants = new int[numConstraint];
-      for(int i = 0; i < numConstraint; i++) {
+      for (int i = 0; i < numConstraint; i++) {
          final MeshedRegion.IConstraint thisConstraint = constraints[i];
-         if(thisConstraint instanceof DirichletConstraint) {
+         if (thisConstraint instanceof DirichletConstraint) {
             types[i] = 1;
             ctags[i] = (int) thisConstraint.getAssociatedRegionTag();
             constants[i] = ((DirichletConstraint) thisConstraint).getPotential();
-         } else if(thisConstraint instanceof NeumannConstraint) {
+         } else if (thisConstraint instanceof NeumannConstraint) {
             types[i] = 2;
             ctags[i] = (int) thisConstraint.getAssociatedRegionTag();
             constants[i] = ((NeumannConstraint) thisConstraint).getNormalE();
-         } else if(thisConstraint instanceof FloatingConstraint) {
+         } else if (thisConstraint instanceof FloatingConstraint) {
             types[i] = 3;
             ctags[i] = (int) thisConstraint.getAssociatedRegionTag();
             int_constants[i] = (int) ((FloatingConstraint) thisConstraint).getVolumeTag();
@@ -1419,37 +1420,37 @@ public class PHAMLMeshFEARunner
       errcode.setValue(0);
       PHAML.lib.setConstraints(handle, numConstraint, ctags, types, constants, int_constants, errcode);
       err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             break;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Allocation failed in setConstraints.");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in setConstraints.");
-         case 3:
+         case 3 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Duplicate tag in setConstraints.");
-         case 4:
+         case 4 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Inconsistent constraints for duplicate elements in setConstraints.");
-         case 5:
+         case 5 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("numConstraint is not positive in setConstraints.");
-         case 6:
+         case 6 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid type in setConstraints.");
-         case 7:
+         case 7 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("The constraint type for some region has changed in setConstraints.");
-         case 8:
+         case 8 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("The tag for the interior of a floating region has changed in setConstraints.");
-         case 9:
+         case 9 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("There is a tag that was not present in a previous call in setConstraints.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in setConstraints");
       }
@@ -1461,48 +1462,48 @@ public class PHAMLMeshFEARunner
       final int rev0 = getMeshRevision();
       PHAML.lib.runFEA(handle, verbose, tolerance, maxtet, min_tet_size, refinetol, solver, errind, errcode);
       err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             break;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Allocation failed in set_index_tables within runFEA.");
-         case 2:
+         case 2 :
             throw new EPQFatalException("Invalid handle in runFEA.");
-         case 3:
+         case 3 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid input value for solver within runFEA.");
-         case 4:
+         case 4 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid input value for errind within runFEA.");
-         case 5:
+         case 5 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Dielectric constants have not been set in runFEA.");
-         case 6:
+         case 6 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Constraints have not been set in runFEA.");
-         case 7:
-         case 8:
+         case 7 :
+         case 8 :
             /*
              * These are informational return codes, indicating that a tolerance
-             * was not met. Code 7 means termination was due to reaching max_tet volume
-             * elements. Code 8 means termination was due to an apparent stalled refinement.
-             * I have nothing good to do with this message, so I
-             * currently just ignore it.
+             * was not met. Code 7 means termination was due to reaching max_tet
+             * volume elements. Code 8 means termination was due to an apparent
+             * stalled refinement. I have nothing good to do with this message,
+             * so I currently just ignore it.
              */
             break;
-         case 9:
+         case 9 :
             /*
              * TODO: This code means "could not refresh output file". I'm not
              * sure what this means so I don't know whether to ignore it or
              * throw an exception.
              */
             break;
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in setConstraints");
       }
-      if(rev0 != getMeshRevision())
+      if (rev0 != getMeshRevision())
          initializeAllCache(); // Re-cache the table if Mesh was changed
       else
          initializeNodePotentialTable(); // Re-cache the potentials to include
@@ -1526,16 +1527,16 @@ public class PHAMLMeshFEARunner
       final int meshType = 1; // GMSH format
       PHAML.lib.saveMesh(handle, meshFileName, len, meshType, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Could not open " + meshFileName + ".");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in saveMesh.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in saveMesh");
       }
@@ -1553,14 +1554,14 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.setAdaptivityEnabled(handle, doAdapt, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             adaptivityEnabled = doAdapt;
             return;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in setAdaptivityEnabled.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in setAdaptivityEnabled");
       }
@@ -1577,13 +1578,13 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.setChargeUnit(handle, chargeUnit, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in setChargeUnit.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in setChargeUnit");
       }
@@ -1611,20 +1612,20 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.setChargeNumber(handle, index, n, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             setChargeNumber(index, n); // Also update the local cache.
             return;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element index (" + index + ") out of range in setChargeNumber.");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Element " + index + " is not a volume element in setChargeNumber.");
-         case 3:
+         case 3 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in setChargeNumber.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in setChargeNumber.");
       }
@@ -1640,13 +1641,13 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.setChargeNumberTable(handle, nCharges, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in setChargeNumberTable.");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in setChargeNumberTable");
       }
@@ -1693,7 +1694,7 @@ public class PHAMLMeshFEARunner
     * @param maxtet
     */
    public void setMaxTet(int maxtet) {
-      if(maxtet > 0)
+      if (maxtet > 0)
          this.maxtet = maxtet;
       else
          throw new EPQFatalException("Illegal maxtet");
@@ -1705,10 +1706,11 @@ public class PHAMLMeshFEARunner
     * unless it is necessary for compatibility (e.g., with an adjacent element
     * that is refined).
     *
-    * @param min_tet_size in meters.
+    * @param min_tet_size
+    *           in meters.
     */
    public void setMin_tet_size(double min_tet_size) {
-      if(min_tet_size > 0)
+      if (min_tet_size > 0)
          this.min_tet_size = min_tet_size;
       else
          this.min_tet_size = -min_tet_size;
@@ -1728,16 +1730,16 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.setNodeCoordinates(handle, nodeIndex, coords, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Node index out of range in setNodeCoordinates");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Invalid handle in setNodeCoordinates");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in setNodeCoordinates");
       }
@@ -1765,14 +1767,14 @@ public class PHAMLMeshFEARunner
       final IntByReference errcode = new IntByReference(0);
       PHAML.lib.setNodePotential(handle, nodeIndex, potVal, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             setNodePotential(nodeIndex, potVal); // Also update local cache
             return;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Node index out of range in setNodePotential");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in setNodePotential");
       }
@@ -1796,7 +1798,8 @@ public class PHAMLMeshFEARunner
     * unrefine previously refined tets. This may be important if an adaptive
     * calculation is saved and later resumed
     * 
-    * @param saveMeshType - int
+    * @param saveMeshType
+    *           - int
     */
    public void setSaveMeshType(int saveMeshType) {
       this.saveMeshType = saveMeshType;
@@ -1844,7 +1847,7 @@ public class PHAMLMeshFEARunner
     * @param tolerance
     */
    public void setTolerance(double tolerance) {
-      if((tolerance > 0) && (tolerance < 1))
+      if ((tolerance > 0) && (tolerance < 1))
          this.tolerance = tolerance;
       else
          throw new EPQFatalException("Illegal tolerance");
@@ -1858,7 +1861,7 @@ public class PHAMLMeshFEARunner
     * @param verbose
     */
    public void setVerbose(boolean verbose) {
-      if(this.verbose != verbose)
+      if (this.verbose != verbose)
          this.verbose = verbose;
    }
 
@@ -1872,32 +1875,16 @@ public class PHAMLMeshFEARunner
    // TODO Test this routine
    @Override
    public int[] tetFaceNodeIndices(int tetIndex, int faceIndex) {
-      switch(faceIndex) {
-         case 0:
-            return new int[] {
-               nodeIndices[tetIndex][1],
-               nodeIndices[tetIndex][2],
-               nodeIndices[tetIndex][3]
-            };
-         case 1:
-            return new int[] {
-               nodeIndices[tetIndex][0],
-               nodeIndices[tetIndex][3],
-               nodeIndices[tetIndex][2]
-            };
-         case 2:
-            return new int[] {
-               nodeIndices[tetIndex][0],
-               nodeIndices[tetIndex][1],
-               nodeIndices[tetIndex][3]
-            };
-         case 3:
-            return new int[] {
-               nodeIndices[tetIndex][0],
-               nodeIndices[tetIndex][2],
-               nodeIndices[tetIndex][1]
-            };
-         default:
+      switch (faceIndex) {
+         case 0 :
+            return new int[]{nodeIndices[tetIndex][1], nodeIndices[tetIndex][2], nodeIndices[tetIndex][3]};
+         case 1 :
+            return new int[]{nodeIndices[tetIndex][0], nodeIndices[tetIndex][3], nodeIndices[tetIndex][2]};
+         case 2 :
+            return new int[]{nodeIndices[tetIndex][0], nodeIndices[tetIndex][1], nodeIndices[tetIndex][3]};
+         case 3 :
+            return new int[]{nodeIndices[tetIndex][0], nodeIndices[tetIndex][2], nodeIndices[tetIndex][1]};
+         default :
             throw new EPQFatalException("tetFaceNodeIndices: called with illegal value of face index");
       }
    }
@@ -1912,21 +1899,21 @@ public class PHAMLMeshFEARunner
       final int nodeIndices[] = new int[3];
       PHAML.lib.tetFaceNodeIndices(handle, tetIndex, faceIndex, nodeIndices, errcode);
       final int err = errcode.getValue();
-      switch(err) {
-         case 0:
+      switch (err) {
+         case 0 :
             return nodeIndices;
-         case 1:
+         case 1 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("tetIndex index out of range in tetFaceNodeIndices");
-         case 2:
+         case 2 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("faceIndex is out of range in tetFaceNodeIndices");
-         case 3:
+         case 3 :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("tetIndex is not a volume element in tetFaceNodeIndices");
-         case 4:
+         case 4 :
             throw new EPQFatalException("Invalid handle in tetFaceNodeIndices");
-         default:
+         default :
             PHAML.lib.meshDestructorAll(errcode);
             throw new EPQFatalException("Unknown nonzero error code in tetFaceNodeIndices");
       }

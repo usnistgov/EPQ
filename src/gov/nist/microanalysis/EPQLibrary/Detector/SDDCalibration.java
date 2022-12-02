@@ -25,9 +25,7 @@ import gov.nist.microanalysis.EPQLibrary.XRayTransition;
  * @author nritchie
  * @version 1.0
  */
-public class SDDCalibration
-   extends
-   SiLiCalibration {
+public class SDDCalibration extends SiLiCalibration {
 
    private int mFirstNElement = Element.elmAm;
 
@@ -47,17 +45,17 @@ public class SDDCalibration
    @Override
    public Element getFirstVisible(int family) {
       Element res = null;
-      switch(family) {
-         case AtomicShell.KFamily:
-         case AtomicShell.LFamily:
-         case AtomicShell.MFamily:
+      switch (family) {
+         case AtomicShell.KFamily :
+         case AtomicShell.LFamily :
+         case AtomicShell.MFamily :
             return super.getFirstVisible(family);
-         case AtomicShell.NFamily:
+         case AtomicShell.NFamily :
             res = Element.byAtomicNumber(mFirstNElement);
-            if(res.equals(Element.None))
+            if (res.equals(Element.None))
                res = Element.Am;
             break;
-         default:
+         default :
             res = Element.Uub;
       }
       return res;
@@ -66,42 +64,42 @@ public class SDDCalibration
 
    @Override
    public void setFirstVisible(int family, Element elm) {
-      switch(family) {
-         case AtomicShell.KFamily:
-         case AtomicShell.LFamily:
-         case AtomicShell.MFamily:
+      switch (family) {
+         case AtomicShell.KFamily :
+         case AtomicShell.LFamily :
+         case AtomicShell.MFamily :
             super.setFirstVisible(family, elm);
-         case AtomicShell.NFamily:
+         case AtomicShell.NFamily :
             mFirstNElement = elm.getAtomicNumber();
             break;
-         default:
+         default :
             assert false;
       }
    }
 
    @Override
    public boolean isVisible(XRayTransition xrt, double eBeam) {
-      switch(xrt.getFamily()) {
-         case AtomicShell.KFamily:
-         case AtomicShell.LFamily:
-         case AtomicShell.MFamily:
+      switch (xrt.getFamily()) {
+         case AtomicShell.KFamily :
+         case AtomicShell.LFamily :
+         case AtomicShell.MFamily :
             return super.isVisible(xrt, eBeam);
-         case AtomicShell.NFamily:
+         case AtomicShell.NFamily :
             return (xrt.getElement().getAtomicNumber() >= mFirstNElement) && (xrt.getEdgeEnergy() < (eBeam / MIN_OVERVOLTAGE));
-         default:
+         default :
             return false;
       }
    }
 
    private Object readResolve() {
-      if(mFirstNElement < Element.elmW)
+      if (mFirstNElement < Element.elmW)
          mFirstNElement = Element.elmW;
       return this;
    }
 
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE)
+      if (mHash == Integer.MAX_VALUE)
          mHash = Objects.hash(super.hashCode(), mFirstNElement);
       // System.out.println("SiLi.hashCode()=" + Integer.toString(mHash));
       return mHash;
@@ -112,11 +110,11 @@ public class SDDCalibration
     */
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
-      if(!super.equals(obj))
+      if (!super.equals(obj))
          return false;
       final SDDCalibration other = (SDDCalibration) obj;
       return super.equals(obj) && Objects.equals(mFirstNElement, other.mFirstNElement);

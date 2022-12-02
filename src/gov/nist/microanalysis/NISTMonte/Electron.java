@@ -31,7 +31,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @version 1.0
  */
 public class Electron {
-   
+
    // The x,y & z coordinates of the electron
    private final transient double[] mPosition;
 
@@ -65,8 +65,10 @@ public class Electron {
     * Construct an electron with the specified initial position and kinetic
     * energy. The initial direction is along the z-axis (theta=0, phi=0)
     * 
-    * @param initialPos double[]
-    * @param kE double - Electron kinetic energy in Joules
+    * @param initialPos
+    *           double[]
+    * @param kE
+    *           double - Electron kinetic energy in Joules
     */
    public Electron(double[] initialPos, double kE) {
       this(initialPos, 0., 0., kE);
@@ -121,8 +123,10 @@ public class Electron {
     * Permits changing the current direction of the electron to any direction as
     * defined by the provided spherical polar coordinates.
     * 
-    * @param theta double - In radians
-    * @param phi double - In radians
+    * @param theta
+    *           double - In radians
+    * @param phi
+    *           double - In radians
     */
    public void setDirection(double theta, double phi) {
       mTheta = theta;
@@ -160,10 +164,11 @@ public class Electron {
     * position (as for example when adjusting an electron position a tiny
     * distance off of a boundary to avoid round-off ambiguities).
     * 
-    * @param newpos double[] - An array of 3 values specifying new x, y, z
+    * @param newpos
+    *           double[] - An array of 3 values specifying new x, y, z
     */
    public void setPosition(double[] newpos) {
-      for(int i = 0; i < 3; i++)
+      for (int i = 0; i < 3; i++)
          mPosition[i] = newpos[i];
    }
 
@@ -240,25 +245,25 @@ public class Electron {
     * foreshortened at the interface between the two materials.. (The
     * foreshortening is handled by the RegionBase class.)
     * 
-    * @param dS double
+    * @param dS
+    *           double
     * @return double []
     */
    public double[] candidatePoint(double dS) {
       final double st = Math.sin(mTheta);
       // Calculate the new point as dS distance from mPosition
-      return new double[] {
-         mPosition[0] + (dS * Math.cos(mPhi) * st),
-         mPosition[1] + (dS * Math.sin(mPhi) * st),
-         mPosition[2] + (dS * Math.cos(mTheta))
-      };
+      return new double[]{mPosition[0] + (dS * Math.cos(mPhi) * st), mPosition[1] + (dS * Math.sin(mPhi) * st),
+            mPosition[2] + (dS * Math.cos(mTheta))};
    }
 
    /**
     * Updates the electron trajectory angles, given the deflection angles
     * dTheta, dPhi from its current direction.
     * 
-    * @param dTheta double - The deflection polar angle (0 = no deflection)
-    * @param dPhi double - The deflection azimuthal angle
+    * @param dTheta
+    *           double - The deflection polar angle (0 = no deflection)
+    * @param dPhi
+    *           double - The deflection azimuthal angle
     */
    public void updateDirection(double dTheta, double dPhi) {
       // The candidate point is computed by rotating the current trajectory back
@@ -291,8 +296,10 @@ public class Electron {
     * incremented by the amount dE. (dE&lt;0 is the typical energy loss
     * situation.)
     * 
-    * @param newPoint double[]
-    * @param dE double - in Joules
+    * @param newPoint
+    *           double[]
+    * @param dE
+    *           double - in Joules
     */
    public void move(double[] newPoint, double dE) {
       // Update mPrevPosition and then mPosition
@@ -341,7 +348,8 @@ public class Electron {
    /**
     * Records the last element off of which this electron scattered.
     * 
-    * @param scatteringElement The value to which to set scatteringElement.
+    * @param scatteringElement
+    *           The value to which to set scatteringElement.
     */
    public void setScatteringElement(Element scatteringElement) {
       mScatteringElement = scatteringElement;
@@ -377,7 +385,8 @@ public class Electron {
    /**
     * Sets the value assigned to trajectoryComplete.
     * 
-    * @param trajectoryComplete The value to which to set trajectoryComplete.
+    * @param trajectoryComplete
+    *           The value to which to set trajectoryComplete.
     */
    public void setTrajectoryComplete(boolean trajectoryComplete) {
       mTrajectoryComplete = trajectoryComplete;

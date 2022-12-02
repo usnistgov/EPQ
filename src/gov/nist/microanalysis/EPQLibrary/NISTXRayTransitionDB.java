@@ -74,8 +74,7 @@ public class NISTXRayTransitionDB {
       }
 
       private XRayTransition parseTransition(int atomicNumber, String str) {
-         final String[] names = {"K", "L1", "L2", "L3", "M1", "M2", "M3", "M4",
-               "M5", "N1", "N2", "N3", "N4", "N5", "N6", "N7", " edge"};
+         final String[] names = {"K", "L1", "L2", "L3", "M1", "M2", "M3", "M4", "M5", "N1", "N2", "N3", "N4", "N5", "N6", "N7", " edge"};
          int lower = -1, upper = -1;
          for (int i = 0; i < names.length; ++i)
             if (str.startsWith(names[i])) {
@@ -93,8 +92,7 @@ public class NISTXRayTransitionDB {
          assert (upper != -1);
          if (upper == (names.length - 1))
             upper = AtomicShell.Continuum;
-         return new XRayTransition(Element.byAtomicNumber(atomicNumber), upper,
-               lower);
+         return new XRayTransition(Element.byAtomicNumber(atomicNumber), upper, lower);
       }
 
       private String[] parseCSV(String str, int n) {
@@ -139,7 +137,7 @@ public class NISTXRayTransitionDB {
          stripQuotes(items[12]); // mReference
       }
    };
-   
+
    static private void readData() {
       if (mData == null) {
          mData = new TreeMap<XRayTransition, Datum>();
@@ -147,9 +145,7 @@ public class NISTXRayTransitionDB {
          mFormat = NumberFormat.getInstance(Locale.US);
          try {
             final BufferedReader br = new BufferedReader(
-                  new InputStreamReader(NISTXRayTransitionDB.class
-                        .getResourceAsStream("NISTXRayDatabase.dat"),
-                        "US-ASCII"));
+                  new InputStreamReader(NISTXRayTransitionDB.class.getResourceAsStream("NISTXRayDatabase.dat"), "US-ASCII"));
             String str = br.readLine();
             assert (str != null) && (str.startsWith("##References"));
             for (int i = 0; i < mReferences.length; ++i)
@@ -212,8 +208,7 @@ public class NISTXRayTransitionDB {
     * @return String
     */
    public String getDefaultDatumType(AtomicShell shell) {
-      return getDefaultDatumType(
-            new XRayTransition(shell, AtomicShell.Continuum));
+      return getDefaultDatumType(new XRayTransition(shell, AtomicShell.Continuum));
    }
 
    /**

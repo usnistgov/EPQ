@@ -55,8 +55,7 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS;
  * @author Nicholas W. M. Ritchie, John Villarrubia
  * @version 1.0
  */
-public class TrajectoryLoggingListener
-   implements ActionListener {
+public class TrajectoryLoggingListener implements ActionListener {
    private int linecount = 0;
    private final MonteCarloSS mMonte;
    private final PrintWriter mWriter;
@@ -80,13 +79,11 @@ public class TrajectoryLoggingListener
       mWriter.println("Energy\tDescriptor");
    }
 
-   public TrajectoryLoggingListener(MonteCarloSS mcss, File f)
-         throws FileNotFoundException {
+   public TrajectoryLoggingListener(MonteCarloSS mcss, File f) throws FileNotFoundException {
       this(mcss, new FileOutputStream(f));
    }
 
-   public TrajectoryLoggingListener(MonteCarloSS mcss, String filename)
-         throws FileNotFoundException {
+   public TrajectoryLoggingListener(MonteCarloSS mcss, String filename) throws FileNotFoundException {
       this(mcss, new FileOutputStream(filename));
    }
 
@@ -106,67 +103,68 @@ public class TrajectoryLoggingListener
    /**
     * actionPerformed
     *
-    * @param arg0 (non-Javadoc)
+    * @param arg0
+    *           (non-Javadoc)
     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
     */
    @Override
    public void actionPerformed(ActionEvent arg0) {
-      if((trajectoryCount <= maxTrajectories) && (suspended == false)) {
+      if ((trajectoryCount <= maxTrajectories) && (suspended == false)) {
          assert arg0.getSource() == mMonte;
          final int event = arg0.getID();
          boolean output = true;
          String name = "";
-         switch(event) {
-            case MonteCarloSS.ScatterEvent:
+         switch (event) {
+            case MonteCarloSS.ScatterEvent :
                name = "Scatter";
                break;
-            case MonteCarloSS.NonScatterEvent:
+            case MonteCarloSS.NonScatterEvent :
                name = "Non-scatter";
                break;
-            case MonteCarloSS.BackscatterEvent:
+            case MonteCarloSS.BackscatterEvent :
                name = "Backscatter";
                break;
-            case MonteCarloSS.ExitMaterialEvent:
+            case MonteCarloSS.ExitMaterialEvent :
                name = mMonte.getElectron().getPreviousRegion().getMaterial().toString() + " to "
                      + mMonte.getElectron().getCurrentRegion().getMaterial().toString();
                break;
-            case MonteCarloSS.TrajectoryStartEvent:
+            case MonteCarloSS.TrajectoryStartEvent :
                trajectoryCount++;
-               if(trajectoryCount > maxTrajectories)
+               if (trajectoryCount > maxTrajectories)
                   output = false;
                else
                   name = "Start Trajectory";
                break;
-            case MonteCarloSS.TrajectoryEndEvent:
+            case MonteCarloSS.TrajectoryEndEvent :
                output = true;
                name = "End Trajectory";
                break;
-            case MonteCarloSS.LastTrajectoryEvent:
+            case MonteCarloSS.LastTrajectoryEvent :
                name = "End Last Trajectory";
                break;
-            case MonteCarloSS.FirstTrajectoryEvent:
+            case MonteCarloSS.FirstTrajectoryEvent :
                // trajectoryCount = 0;
                output = false;
                break;
-            case MonteCarloSS.StartSecondaryEvent:
+            case MonteCarloSS.StartSecondaryEvent :
                ++mDepth;
                name = "Start SE";
                break;
-            case MonteCarloSS.EndSecondaryEvent:
+            case MonteCarloSS.EndSecondaryEvent :
                --mDepth;
                name = "End SE";
                break;
-            case MonteCarloSS.PostScatterEvent:
+            case MonteCarloSS.PostScatterEvent :
                name = "PostScatter";
                break;
-            case MonteCarloSS.BeamEnergyChanged:
+            case MonteCarloSS.BeamEnergyChanged :
                mWriter.print("\"Beam energy changed to\"\t");
                mWriter.print(FromSI.keV(mMonte.getBeamEnergy()));
                mWriter.println(" keV");
                output = false;
                break;
          }
-         if(output) {
+         if (output) {
             final StringBuffer sb = new StringBuffer();
             final Electron e = mMonte.getElectron();
             sb.append(trajectoryCount);
@@ -194,7 +192,7 @@ public class TrajectoryLoggingListener
             sb.append(name);
             mWriter.println(sb.toString());
             linecount++;
-            if((linecount % 10) == 0)
+            if ((linecount % 10) == 0)
                mWriter.flush();
          }
       }
@@ -203,7 +201,8 @@ public class TrajectoryLoggingListener
    /**
     * setMaxTrajectories - Sets the maximum number of trajectories to log.
     *
-    * @param max int
+    * @param max
+    *           int
     */
    public void setMaxTrajectories(int max) {
       maxTrajectories = max;
@@ -225,7 +224,7 @@ public class TrajectoryLoggingListener
     * @param suspended
     */
    public void setSuspended(boolean suspended) {
-      if(this.suspended != suspended)
+      if (this.suspended != suspended)
          this.suspended = suspended;
    }
 

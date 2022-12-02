@@ -23,8 +23,7 @@ import junit.textui.TestRunner;
  * @author Nicholas
  * @version 1.0
  */
-public class EPQTestSuite
-   extends TestSuite {
+public class EPQTestSuite extends TestSuite {
 
    public EPQTestSuite() {
       super();

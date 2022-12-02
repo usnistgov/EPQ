@@ -22,7 +22,8 @@ public interface ISpectrumTransformation {
     * This method may defined in any reasonable way that transforms one spectrum
     * into another.
     * 
-    * @param spec A ISpectrumData object
+    * @param spec
+    *           A ISpectrumData object
     * @return A new ISpectrumData object
     */
    ISpectrumData compute(ISpectrumData spec);

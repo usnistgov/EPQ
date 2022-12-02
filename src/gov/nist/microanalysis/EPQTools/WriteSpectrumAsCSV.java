@@ -25,8 +25,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
  */
 
 public class WriteSpectrumAsCSV {
-   public static void write(ISpectrumData spec, OutputStream os)
-         throws EPQException {
+   public static void write(ISpectrumData spec, OutputStream os) throws EPQException {
       try (final PrintWriter pw = new PrintWriter(os)) {
          final SpectrumProperties sp = spec.getProperties();
          final int nCh = spec.getChannelCount();
@@ -38,7 +37,7 @@ public class WriteSpectrumAsCSV {
          pw.print('"');
          pw.print(sp.getTextWithDefault(SpectrumProperties.SpecimenDesc, "Uncommented specimen"));
          pw.println('"');
-         for(int i = 0; i < nCh; ++i) {
+         for (int i = 0; i < nCh; ++i) {
             pw.print((i * wCh) + offset);
             pw.print(", ");
             pw.println(spec.getCounts(i));

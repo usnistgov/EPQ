@@ -41,7 +41,8 @@ public class Bremsstrahlung {
     * beta - Calculate beta=v/c for an electron of the specified energy in
     * Joules.
     * 
-    * @param energy double - in Joules
+    * @param energy
+    *           double - in Joules
     * @return double - Unitless
     */
    public final static double beta(double energy) {
@@ -52,7 +53,8 @@ public class Bremsstrahlung {
    /**
     * parse - To account for the screwy + sign in the exponent.
     * 
-    * @param s String
+    * @param s
+    *           String
     * @return double
     */
    private static double parse(String s) {
@@ -63,7 +65,7 @@ public class Bremsstrahlung {
    // energyIndex(energy) is the index of the mEnergy at or below energy
    final private int energyIndex(double energy) {
       int ie = Arrays.binarySearch(mEnergy, energy);
-      if(ie < 0)
+      if (ie < 0)
          ie = Math.max(-(ie + 2), 0);
       assert ie >= 0 : Integer.toString(ie);
       assert ie < mEnergy.length : Integer.toString(ie);
@@ -75,7 +77,7 @@ public class Bremsstrahlung {
    // kIndex(k) is the index of the mKoT at or below k
    final private int kIndex(double k) {
       int ik = Math.abs(Arrays.binarySearch(mKoT, k));
-      if(ik < 0)
+      if (ik < 0)
          ik = Math.max(-(ik + 2), 0);
       assert ik >= 0 : Integer.toString(ik);
       assert ik < mKoT.length : Integer.toString(ik);
@@ -84,8 +86,7 @@ public class Bremsstrahlung {
       return ik;
    }
 
-   private static final double REST_MASS_E = PhysicalConstants.ElectronMass * PhysicalConstants.SpeedOfLight
-         * PhysicalConstants.SpeedOfLight;
+   private static final double REST_MASS_E = PhysicalConstants.ElectronMass * PhysicalConstants.SpeedOfLight * PhysicalConstants.SpeedOfLight;
    private static final double milliBARN = ToSI.barn(1.0e-3);
    private static final int NUM_ENERGIES = 25; // Up to 1.0 MeV
    private static final int NUM_DCS = 32;
@@ -97,40 +98,10 @@ public class Bremsstrahlung {
 
    // Note: the mKoT[0] was changed from 0.00000 to 0.001 to eliminate a the
    // integral divergence at 0.0
-   private static final double[] mKoT = {
-      0.001000, // 1.0e-6,
-      0.05000,
-      0.07500,
-      0.10000,
-      0.12500,
-      0.15000,
-      0.20000,
-      0.25000,
-      0.30000,
-      0.35000,
-      0.40000,
-      0.45000,
-      0.50000,
-      0.55000,
-      0.60000,
-      0.65000,
-      0.70000,
-      0.75000,
-      0.80000,
-      0.85000,
-      0.90000,
-      0.92500,
-      0.95000,
-      0.97000,
-      0.99000,
-      0.99500,
-      0.99900,
-      0.99950,
-      0.99990,
-      0.99995,
-      0.99999,
-      1.00000
-   };
+   private static final double[] mKoT = {0.001000, // 1.0e-6,
+         0.05000, 0.07500, 0.10000, 0.12500, 0.15000, 0.20000, 0.25000, 0.30000, 0.35000, 0.40000, 0.45000, 0.50000, 0.55000, 0.60000, 0.65000,
+         0.70000, 0.75000, 0.80000, 0.85000, 0.90000, 0.92500, 0.95000, 0.97000, 0.99000, 0.99500, 0.99900, 0.99950, 0.99990, 0.99995, 0.99999,
+         1.00000};
 
    private final void readTable() {
       try {
@@ -138,28 +109,27 @@ public class Bremsstrahlung {
          final String name = "BergerSeltzerBrem/pdebr" + (z < 10 ? '0' + Integer.toString(z) : Integer.toString(z)) + ".tab";
          try (final BufferedReader br = new BufferedReader(new InputStreamReader(Bremsstrahlung.class.getResourceAsStream(name), "US-ASCII"))) {
             final String zz = br.readLine();
-            if((zz == null) || (Integer.parseInt(zz.trim()) != z))
+            if ((zz == null) || (Integer.parseInt(zz.trim()) != z))
                throw new Exception();
             final double[] xSec = new double[NUM_DCS];
             final double[] intXSec = new double[NUM_DCS];
-            for(int e = 0; e < NUM_ENERGIES; ++e) {
-               for(int r = 0; r < 7; ++r) {
+            for (int e = 0; e < NUM_ENERGIES; ++e) {
+               for (int r = 0; r < 7; ++r) {
                   final String s = br.readLine();
-                  if(s != null) {
-                     if(r == 0)
+                  if (s != null) {
+                     if (r == 0)
                         mEnergy[e] = ToSI.eV(parse(s.substring(1, 9)));
                      final int off = 5 * r;
                      xSec[off] = parse(s.substring(10, 21));
                      xSec[off + 1] = parse(s.substring(22, 33));
-                     if(r < 6) {
+                     if (r < 6) {
                         xSec[off + 2] = parse(s.substring(34, 45));
                         xSec[off + 3] = parse(s.substring(46, 57));
                         xSec[off + 4] = parse(s.substring(58, 69));
                      } else {
                         final double phiRad = parse(s.substring(70, 79)); // dimensionless
                         // (see Eq 5 of B&S 1986) Scaled to SI units
-                        mEnergyLoss[e] = phiRad * PhysicalConstants.FineStructure
-                              * Math2.sqr(PhysicalConstants.ClassicalElectronRadius * z)
+                        mEnergyLoss[e] = phiRad * PhysicalConstants.FineStructure * Math2.sqr(PhysicalConstants.ClassicalElectronRadius * z)
                               * (mEnergy[e] + PhysicalConstants.ElectronRestMass);
                      }
                   }
@@ -169,7 +139,7 @@ public class Bremsstrahlung {
                // it...
                double total = 0.0;
                // Note: The integrals dependence on T (in k/T) cancels
-               for(int j = 0; j < (NUM_DCS - 1); ++j) {
+               for (int j = 0; j < (NUM_DCS - 1); ++j) {
                   final double dk = mKoT[j + 1] - mKoT[j];
                   final double dx = xSec[j + 1] - xSec[j];
                   final double ss = dx / dk;
@@ -179,14 +149,12 @@ public class Bremsstrahlung {
                }
                // accumulate starting at the highest k
                mIntXSec[e][NUM_DCS - 1] = 0.0; // Highest energy
-               for(int i = NUM_DCS - 2; i >= 0; --i)
+               for (int i = NUM_DCS - 2; i >= 0; --i)
                   mIntXSec[e][i] = mIntXSec[e][i + 1] + intXSec[i];
-               assert Math.abs(mIntXSec[e][0] - total) < (1.0e-8 * total) : Double.toString(mIntXSec[e][0]) + "\t"
-                     + Double.toString(total);
+               assert Math.abs(mIntXSec[e][0] - total) < (1.0e-8 * total) : Double.toString(mIntXSec[e][0]) + "\t" + Double.toString(total);
             }
          }
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
          throw new EPQFatalException("Bremsstrahlung data unavailable for " + mElement + ".");
       }
@@ -203,8 +171,10 @@ public class Bremsstrahlung {
     * Interpolate (or occasionally extrapolate) from the integrated Berger and
     * Seltzer scaled Differential Cross Section.
     * 
-    * @param energy double - The kinetic energy of the electron energy
-    * @param w double - The energy of the photon (e&lt;=energy)
+    * @param energy
+    *           double - The kinetic energy of the electron energy
+    * @param w
+    *           double - The energy of the photon (e&lt;=energy)
     * @return double - in square meters
     */
    public double partialSigma(double energy, double w) {
@@ -218,7 +188,7 @@ public class Bremsstrahlung {
       assert (ie == 0) || (energy >= mEnergy[ie]);
       assert energy < mEnergy[ie + 1];
       final double de = (energy - mEnergy[ie]) / (mEnergy[ie + 1] - mEnergy[ie]);
-      if(k <= mKoT[MIN_PHOTON_K])
+      if (k <= mKoT[MIN_PHOTON_K])
          return mIntXSec[ie][MIN_PHOTON_K] + (de * (mIntXSec[ie + 1][MIN_PHOTON_K] - mIntXSec[ie][MIN_PHOTON_K]));
       else {
          // ik is the index of the mKoT at or above k
@@ -238,7 +208,8 @@ public class Bremsstrahlung {
     * sigma - The full cross section for bremsstrahlung emission from the
     * electron energy down to 0.05*energy
     * 
-    * @param energy double
+    * @param energy
+    *           double
     * @return The total Bremsstrahlung cross section per atom for an electron of
     *         the specified energy traveling one meter.
     */
@@ -255,7 +226,8 @@ public class Bremsstrahlung {
     * select a minimum energy then the integral will converge. getMinK returns
     * the selected minimum photon energy for the specified electron energy.
     * 
-    * @param energy double
+    * @param energy
+    *           double
     * @return double
     */
    public double getMinXRayEnergy(double energy) {
@@ -268,12 +240,12 @@ public class Bremsstrahlung {
       assert (r < 1.0);
       final double[] xSec = mIntXSec[ie];
       final double intXSec = r * xSec[MIN_PHOTON_K]; // Goal
-      for(int i = 1; i < NUM_DCS; ++i)
-         if(intXSec > xSec[i]) {
+      for (int i = 1; i < NUM_DCS; ++i)
+         if (intXSec > xSec[i]) {
             assert intXSec <= xSec[i - 1] : Double.toString(intXSec) + "\t" + Double.toString(xSec[i - 1]);
             // Interpolate in log(k) space
-            final double k = Math.exp(Math.log(mKoT[i - 1])
-                  + (((intXSec - xSec[i - 1]) / (xSec[i] - xSec[i - 1])) * Math.log(mKoT[i] / mKoT[i - 1])));
+            final double k = Math
+                  .exp(Math.log(mKoT[i - 1]) + (((intXSec - xSec[i - 1]) / (xSec[i] - xSec[i - 1])) * Math.log(mKoT[i] / mKoT[i - 1])));
             assert k >= mKoT[i - 1] : Double.toString(k) + " not >= " + Double.toString(mKoT[i - 1]);
             assert k < mKoT[i] : Double.toString(k) + " not < " + Double.toString(mKoT[i]);
             return k;
@@ -286,8 +258,10 @@ public class Bremsstrahlung {
     * generates a photon energy in a distribution such that the events will be
     * distributed like Bremsstrahlung.
     * 
-    * @param energy double - In Joules
-    * @param r double - A number on the interval [0,1)
+    * @param energy
+    *           double - In Joules
+    * @param r
+    *           double - A number on the interval [0,1)
     * @return double
     */
    public double getRandomizedEvent(double energy, double r) {
@@ -304,7 +278,8 @@ public class Bremsstrahlung {
     * totalEnergyLossCrossSection - The total integrated radiative energy-loss
     * cross section
     * 
-    * @param energy double - The electron energy in Joules
+    * @param energy
+    *           double - The electron energy in Joules
     * @return double - (Joule)(square meters)/(atom)
     */
    public double totalEnergyLossCrossSection(double energy) {

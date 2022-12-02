@@ -72,7 +72,8 @@ final public class FromSI {
    /**
     * keV - Converts an energy in Joules into keV.
     * 
-    * @param e double - The energy in Joules
+    * @param e
+    *           double - The energy in Joules
     * @return double
     */
    public static double keV(double e) {
@@ -82,7 +83,8 @@ final public class FromSI {
    /**
     * eV - Converts an energy in Joules into eV.
     * 
-    * @param e double - The energy in Joules
+    * @param e
+    *           double - The energy in Joules
     * @return double - The energy in eV
     */
    public static double eV(double e) {
@@ -92,7 +94,8 @@ final public class FromSI {
    /**
     * AMU - Converts a mass in kilograms into AMU.
     * 
-    * @param kg double - The mass in kg
+    * @param kg
+    *           double - The mass in kg
     * @return double - The mass in AMU
     */
    public static double AMU(double kg) {
@@ -102,7 +105,8 @@ final public class FromSI {
    /**
     * dyne - Converts a force in Newtons into Dynes.
     * 
-    * @param f double - The force in Newtons
+    * @param f
+    *           double - The force in Newtons
     * @return double - The force in Dynes.
     */
    public static double dyne(double f) {
@@ -112,7 +116,8 @@ final public class FromSI {
    /**
     * gPerCC - Converts kg per cubic meter into grams per cubic centimeter.
     * 
-    * @param d double
+    * @param d
+    *           double
     * @return double
     */
    public static double gPerCC(double d) {
@@ -122,7 +127,8 @@ final public class FromSI {
    /**
     * angstrom - Converts from meters to angstroms.
     * 
-    * @param a double
+    * @param a
+    *           double
     * @return double
     */
    public static double angstrom(double a) {
@@ -132,7 +138,8 @@ final public class FromSI {
    /**
     * sqrAngstrom - Converts from square meters to square angstroms.
     * 
-    * @param a2 double
+    * @param a2
+    *           double
     * @return double
     */
    public static double sqrAngstrom(double a2) {
@@ -142,7 +149,8 @@ final public class FromSI {
    /**
     * cmSqrPerg - Converts mass absorption coefficients from SI.
     * 
-    * @param x double
+    * @param x
+    *           double
     * @return double
     */
    public static double cmSqrPerg(double x) {

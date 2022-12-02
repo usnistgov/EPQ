@@ -23,14 +23,12 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class TransitionEnergyTest
-   extends TestCase {
+public class TransitionEnergyTest extends TestCase {
    public TransitionEnergyTest(String test) {
       super(test);
    }
 
-   public void testOne()
-         throws EPQException {
+   public void testOne() throws EPQException {
       final XRayTransition xrt = new XRayTransition(Element.Cu, AtomicShell.MV, AtomicShell.LIII);
       assertEquals(TransitionEnergy.DTSA.compute(xrt), TransitionEnergy.Chantler2005.compute(xrt), ToSI.eV(100.0));
    }

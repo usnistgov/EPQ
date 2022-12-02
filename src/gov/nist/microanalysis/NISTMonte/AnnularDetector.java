@@ -29,8 +29,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author Nicholas W. M. Ritchie
  * @version 1.0
  */
-final public class AnnularDetector
-   implements ActionListener {
+final public class AnnularDetector implements ActionListener {
    // Define the detector
    private final double mRadius;
    private final int mNRings;
@@ -52,19 +51,17 @@ final public class AnnularDetector
       assert (p2.length == 3);
       // double den = Math2.dot(Math2.minus(p2,p1),mNormal);
       final double den = ((p2[0] - p1[0]) * mNormal[0]) + ((p2[1] - p1[1]) * mNormal[1]) + ((p2[2] - p1[2]) * mNormal[2]);
-      if(mTopOnly && (den > 0))
+      if (mTopOnly && (den > 0))
          return -1;
-      if(den != 0.0) {
+      if (den != 0.0) {
          // double res = Math2.dot(Math2.minus(mCenter,p1),mNormal)/den;
-         final double res = (((mCenter[0] - p1[0]) * mNormal[0]) + ((mCenter[1] - p1[1]) * mNormal[1]) + ((mCenter[2] - p1[2]) * mNormal[2]))
-               / den;
-         if((res >= 0.0) && (res <= 1.0)) {
+         final double res = (((mCenter[0] - p1[0]) * mNormal[0]) + ((mCenter[1] - p1[1]) * mNormal[1]) + ((mCenter[2] - p1[2]) * mNormal[2])) / den;
+         if ((res >= 0.0) && (res <= 1.0)) {
             // double[] pt =
             // Math2.plus(p1,Math2.multiply(res,Math2.minus(p2,p1)));
             // double dist = Math2.magnitude(Math2.minus(pt,mCenter));
             final double dist = Math.sqrt(Math2.sqr((p1[0] + (res * (p2[0] - p1[0]))) - mCenter[0])
-                  + Math2.sqr((p1[1] + (res * (p2[1] - p1[1]))) - mCenter[1])
-                  + Math2.sqr((p1[2] + (res * (p2[2] - p1[2]))) - mCenter[2]));
+                  + Math2.sqr((p1[1] + (res * (p2[1] - p1[1]))) - mCenter[1]) + Math2.sqr((p1[2] + (res * (p2[2] - p1[2]))) - mCenter[2]));
             return dist <= mRadius ? (int) (mNRings * (dist / mRadius)) : -1;
          }
       }
@@ -75,11 +72,15 @@ final public class AnnularDetector
     * AnnularDetector - Construct an annular detector of the specified total
     * radius which is subdivided into nRing equal width rings detectors.
     * 
-    * @param radius double - Outer radius (in meters)
-    * @param nRings int - The number of equal width rings into which the
-    *           detector is subdivided.
-    * @param center double[] - A point defining the center of the detector
-    * @param normal double[] - A vector defining the orientation of the detector
+    * @param radius
+    *           double - Outer radius (in meters)
+    * @param nRings
+    *           int - The number of equal width rings into which the detector is
+    *           subdivided.
+    * @param center
+    *           double[] - A point defining the center of the detector
+    * @param normal
+    *           double[] - A vector defining the orientation of the detector
     *           (oriented towards the incoming electrons)
     */
    public AnnularDetector(double radius, int nRings, double[] center, double[] normal) {
@@ -96,24 +97,24 @@ final public class AnnularDetector
    @Override
    public void actionPerformed(ActionEvent ae) {
       assert (ae.getSource() instanceof MonteCarloSS);
-      switch(ae.getID()) {
-         case MonteCarloSS.ScatterEvent:
-         case MonteCarloSS.NonScatterEvent:
-         case MonteCarloSS.BackscatterEvent: {
+      switch (ae.getID()) {
+         case MonteCarloSS.ScatterEvent :
+         case MonteCarloSS.NonScatterEvent :
+         case MonteCarloSS.BackscatterEvent : {
             final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
             final Electron el = mcss.getElectron();
             final double[] pp = el.getPrevPosition();
             final double[] p = el.getPosition();
             final int ring = intersectingRing(pp, p);
             final double ee = el.getEnergy();
-            if((ring >= 0) && (ee >= mMinEnergy) && (ee < mMaxEnergy))
-               synchronized(mDetected) {
+            if ((ring >= 0) && (ee >= mMinEnergy) && (ee < mMaxEnergy))
+               synchronized (mDetected) {
                   ++mDetected[ring];
                }
             break;
          }
-         case MonteCarloSS.TrajectoryStartEvent:
-            synchronized(mDetected) {
+         case MonteCarloSS.TrajectoryStartEvent :
+            synchronized (mDetected) {
                ++mTotal;
             }
             break;
@@ -162,15 +163,17 @@ final public class AnnularDetector
     * range of rings [ring0, ring1) (inclusive of ring0, excluding ring1). This
     * method is a little redundant.
     * 
-    * @param lowerRing - index of lower ring
-    * @param upperRing - index of upper most ring
+    * @param lowerRing
+    *           - index of lower ring
+    * @param upperRing
+    *           - index of upper most ring
     * @return The sum of detectedElectronCount(i) for i from lowerRing to
     *         upperRing-1
     */
    public int sumElectronCount(int lowerRing, int upperRing) {
       assert (lowerRing < upperRing);
       int res = 0;
-      for(int ring = lowerRing; ring < upperRing; ++ring)
+      for (int ring = lowerRing; ring < upperRing; ++ring)
          res += mDetected[ring];
       return res;
    }
@@ -178,7 +181,8 @@ final public class AnnularDetector
    /**
     * innerRadius - The inner radius of the specified ring.
     * 
-    * @param ring int
+    * @param ring
+    *           int
     * @return double
     */
    public double innerRadius(int ring) {
@@ -188,7 +192,8 @@ final public class AnnularDetector
    /**
     * outerRadius - The outer radius of the specified ring.
     * 
-    * @param ring int
+    * @param ring
+    *           int
     * @return double
     */
    public double outerRadius(int ring) {
@@ -198,7 +203,8 @@ final public class AnnularDetector
    /**
     * ringArea - The area of the specified ring.
     * 
-    * @param ring int
+    * @param ring
+    *           int
     * @return double
     */
    public double ringArea(int ring) {
@@ -211,12 +217,11 @@ final public class AnnularDetector
     * @param wr
     * @throws IOException
     */
-   public void dump(Writer wr)
-         throws IOException {
+   public void dump(Writer wr) throws IOException {
       final NumberFormat df = new HalfUpFormat("0.000E0");
       wr.append("Annular Detector - " + Integer.toString(totalElectronCount()) + "\n");
       wr.append("Index\tinner\touter\tarea\tdetected\tfraction\tN[area]\n");
-      for(int i = 0; i < mNRings; ++i) {
+      for (int i = 0; i < mNRings; ++i) {
          wr.append(Integer.toString(i) + "\t");
          wr.append(df.format(innerRadius(i)) + "\t");
          wr.append(df.format(outerRadius(i)) + "\t");
@@ -241,7 +246,8 @@ final public class AnnularDetector
     * Determines whether the detector accepts electrons only anti-parallel to
     * the normal (front of the detector) or also parallel (back of the detector)
     * 
-    * @param topOnly true for top only (default is true)
+    * @param topOnly
+    *           true for top only (default is true)
     */
    public void setTopOnly(boolean topOnly) {
       mTopOnly = topOnly;
@@ -250,7 +256,8 @@ final public class AnnularDetector
    /**
     * Set the minimum electron energy which will be detected in Joules
     * 
-    * @param ee Electron kinetic energy in eV
+    * @param ee
+    *           Electron kinetic energy in eV
     */
    public void setMinEnergy(double ee) {
       mMinEnergy = Math.max(0.0, ee);
@@ -266,7 +273,8 @@ final public class AnnularDetector
    /**
     * Set the maximum electron energy which will be detected in Joules
     * 
-    * @param ee Electron kinetic energy in eV
+    * @param ee
+    *           Electron kinetic energy in eV
     */
    public void setMaxEnergy(double ee) {
       mMaxEnergy = Math.max(mMinEnergy + ToSI.eV(1.0), ee);

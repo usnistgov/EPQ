@@ -23,219 +23,225 @@ import gov.nist.microanalysis.Utility.Math2;
 
 public class FilteredSpectrum extends DerivedSpectrum {
 
-	// Local member data
-	private transient double[] mFilteredData;
-	private transient double[] mErrors;
-	private transient Interval mNonZero;
-	// When mROI and mElement are null the full spectrum is filtered
-	private final RegionOfInterestSet.RegionOfInterest mROI;
-	private final Element mElement;
-	private final FittingFilter mFilter;
-	private final double mNormalization;
+   // Local member data
+   private transient double[] mFilteredData;
+   private transient double[] mErrors;
+   private transient Interval mNonZero;
+   // When mROI and mElement are null the full spectrum is filtered
+   private final RegionOfInterestSet.RegionOfInterest mROI;
+   private final Element mElement;
+   private final FittingFilter mFilter;
+   private final double mNormalization;
 
-	private void compute(ISpectrumData spec, RegionOfInterest roi) {
-		final int lld = SpectrumUtils.getZeroStrobeDiscriminatorChannel(spec);
-		final int lowCh = SpectrumUtils.bound(spec,
-				Math.max(lld, SpectrumUtils.channelForEnergy(spec, FromSI.eV(roi.lowEnergy()))));
-		final int highCh = SpectrumUtils.bound(spec, SpectrumUtils.channelForEnergy(spec, FromSI.eV(roi.highEnergy())));
-		compute(SpectrumUtils.slice(spec, lowCh, highCh - lowCh), lowCh, spec.getChannelCount());
-	}
+   private void compute(ISpectrumData spec, RegionOfInterest roi) {
+      final int lld = SpectrumUtils.getZeroStrobeDiscriminatorChannel(spec);
+      final int lowCh = SpectrumUtils.bound(spec, Math.max(lld, SpectrumUtils.channelForEnergy(spec, FromSI.eV(roi.lowEnergy()))));
+      final int highCh = SpectrumUtils.bound(spec, SpectrumUtils.channelForEnergy(spec, FromSI.eV(roi.highEnergy())));
+      compute(SpectrumUtils.slice(spec, lowCh, highCh - lowCh), lowCh, spec.getChannelCount());
+   }
 
-	private void compute(ISpectrumData spec) {
-		final int lld = SpectrumUtils.getZeroStrobeDiscriminatorChannel(spec);
-		final double[] data = SpectrumUtils.toDoubleArray(spec);
-		Arrays.fill(data, 0, lld, data[lld]);
-		compute(data, 0, spec.getChannelCount());
-	}
-	
-	public Interval getNonZeroInterval() {
-		if (mFilteredData == null)
-			computeFilteredSpectrum();
-		return mNonZero;
-	}
+   private void compute(ISpectrumData spec) {
+      final int lld = SpectrumUtils.getZeroStrobeDiscriminatorChannel(spec);
+      final double[] data = SpectrumUtils.toDoubleArray(spec);
+      Arrays.fill(data, 0, lld, data[lld]);
+      compute(data, 0, spec.getChannelCount());
+   }
 
-	/**
-	 * Computes the filtered spectrum region.
-	 * 
-	 * @param roiData The raw spectrum data (determines the length of the data)
-	 * @param lowCh   Specifies the low channel
-	 * @param chCount Total number of channels in the spectrum
-	 */
-	private void compute(double[] roiData, int lowCh, int chCount) {
-		final double[] tmp = new double[chCount];
-		final double[] err = new double[chCount];
-		Arrays.fill(err, 0.0);
-		assert mFilter.zeroSum();
-		final double[] filter = mFilter.getFilter();
-		// Perform filter
-		final int hl = filter.length / 2, ol = filter.length - hl;
-		for (int si = -hl; si < (roiData.length + ol); ++si) {
-			final int ch = si + lowCh;
-			if ((ch >= 0) && (ch < chCount)) {
-				double sum = 0.0, errs = 0.0;
-				for (int fi = 0; fi < filter.length; ++fi) {
-					final double fr = filter[fi] * roiData[Math2.bound((si - hl) + fi, 0, roiData.length)];
-					sum += fr;
-					errs += filter[fi] * fr;
-				}
-				tmp[ch] = mNormalization * sum;
-				err[ch] = errs > 0.0 ? mNormalization * Math.sqrt(errs) : Double.MAX_VALUE;
-			}
-		}
-		mFilteredData = tmp;
-		mErrors = err;
-		mNonZero = Interval.nonZeroInterval(mFilteredData);
-	}
+   public Interval getNonZeroInterval() {
+      if (mFilteredData == null)
+         computeFilteredSpectrum();
+      return mNonZero;
+   }
 
-	private void computeFilteredSpectrum() {
-		assert mFilter.zeroSum();
-		final ISpectrumData src = getBaseSpectrum();
-		String specDesc;
-		if (mROI != null) {
-			compute(src, mROI);
-			specDesc = "Filtered[" + getElement().toAbbrev() + "," + (mROI != null ? mROI.toString() : "No ROI") + ","
-					+ mSource.toString() + "]";
-		} else {
-			compute(src);
-			specDesc = "Filtered[" + mSource.toString() + "]";
-		}
-		getProperties().setTextProperty(SpectrumProperties.SpecimenDesc, specDesc);
-	}
+   /**
+    * Computes the filtered spectrum region.
+    * 
+    * @param roiData
+    *           The raw spectrum data (determines the length of the data)
+    * @param lowCh
+    *           Specifies the low channel
+    * @param chCount
+    *           Total number of channels in the spectrum
+    */
+   private void compute(double[] roiData, int lowCh, int chCount) {
+      final double[] tmp = new double[chCount];
+      final double[] err = new double[chCount];
+      Arrays.fill(err, 0.0);
+      assert mFilter.zeroSum();
+      final double[] filter = mFilter.getFilter();
+      // Perform filter
+      final int hl = filter.length / 2, ol = filter.length - hl;
+      for (int si = -hl; si < (roiData.length + ol); ++si) {
+         final int ch = si + lowCh;
+         if ((ch >= 0) && (ch < chCount)) {
+            double sum = 0.0, errs = 0.0;
+            for (int fi = 0; fi < filter.length; ++fi) {
+               final double fr = filter[fi] * roiData[Math2.bound((si - hl) + fi, 0, roiData.length)];
+               sum += fr;
+               errs += filter[fi] * fr;
+            }
+            tmp[ch] = mNormalization * sum;
+            err[ch] = errs > 0.0 ? mNormalization * Math.sqrt(errs) : Double.MAX_VALUE;
+         }
+      }
+      mFilteredData = tmp;
+      mErrors = err;
+      mNonZero = Interval.nonZeroInterval(mFilteredData);
+   }
 
-	/**
-	 * Creates a filtered spectrum that corresponds to the filtered version of the
-	 * source spectrum. The ISpectrumData is filtered about the specified
-	 * RegionOfInterest
-	 * 
-	 * @param src ISpectrumData
-	 * @param elm Element
-	 * @param roi RegionOfInterestSet.RegionOfInterest
-	 * @param ff  FittingFilter
-	 */
-	public FilteredSpectrum(ISpectrumData src, Element elm, RegionOfInterestSet.RegionOfInterest roi, FittingFilter ff)
-			throws EPQException {
-		super(src);
-		mNormalization = 1.0 / SpectrumUtils.getDose(mSource.getProperties());
-		mFilter = ff;
-		mROI = roi;
-		mElement = elm;
-		assert (roi == null) || roi.getElementSet().contains(elm);
-	}
+   private void computeFilteredSpectrum() {
+      assert mFilter.zeroSum();
+      final ISpectrumData src = getBaseSpectrum();
+      String specDesc;
+      if (mROI != null) {
+         compute(src, mROI);
+         specDesc = "Filtered[" + getElement().toAbbrev() + "," + (mROI != null ? mROI.toString() : "No ROI") + "," + mSource.toString() + "]";
+      } else {
+         compute(src);
+         specDesc = "Filtered[" + mSource.toString() + "]";
+      }
+      getProperties().setTextProperty(SpectrumProperties.SpecimenDesc, specDesc);
+   }
 
-	/**
-	 * Constructs a FilteredSpectrum from a source ISpectrumData.
-	 * 
-	 * @param src ISpectrumData
-	 * @param ff  FittingFilter
-	 */
-	public FilteredSpectrum(ISpectrumData src, FittingFilter ff) throws EPQException {
-		this(src, null, null, ff);
-	}
+   /**
+    * Creates a filtered spectrum that corresponds to the filtered version of
+    * the source spectrum. The ISpectrumData is filtered about the specified
+    * RegionOfInterest
+    * 
+    * @param src
+    *           ISpectrumData
+    * @param elm
+    *           Element
+    * @param roi
+    *           RegionOfInterestSet.RegionOfInterest
+    * @param ff
+    *           FittingFilter
+    */
+   public FilteredSpectrum(ISpectrumData src, Element elm, RegionOfInterestSet.RegionOfInterest roi, FittingFilter ff) throws EPQException {
+      super(src);
+      mNormalization = 1.0 / SpectrumUtils.getDose(mSource.getProperties());
+      mFilter = ff;
+      mROI = roi;
+      mElement = elm;
+      assert (roi == null) || roi.getElementSet().contains(elm);
+   }
 
-	/**
-	 * Does this FilteredSpectrum represent the same region of interest as the
-	 * arguments.
-	 * 
-	 * @param el
-	 * @param roi
-	 * @return boolean
-	 */
-	public boolean sameRegionOfInterest(Element el, RegionOfInterestSet.RegionOfInterest roi) {
-		return el.equals(getElement()) && roi.equals(mROI);
-	}
+   /**
+    * Constructs a FilteredSpectrum from a source ISpectrumData.
+    * 
+    * @param src
+    *           ISpectrumData
+    * @param ff
+    *           FittingFilter
+    */
+   public FilteredSpectrum(ISpectrumData src, FittingFilter ff) throws EPQException {
+      this(src, null, null, ff);
+   }
 
-	/**
-	 * getElement - If this spectrum is a reference then getElement returns the
-	 * element associated with this FilteredSpectrum. Otherwise getElement returns
-	 * null.
-	 * 
-	 * @return Element
-	 */
-	public Element getElement() {
-		return mElement;
-	}
+   /**
+    * Does this FilteredSpectrum represent the same region of interest as the
+    * arguments.
+    * 
+    * @param el
+    * @param roi
+    * @return boolean
+    */
+   public boolean sameRegionOfInterest(Element el, RegionOfInterestSet.RegionOfInterest roi) {
+      return el.equals(getElement()) && roi.equals(mROI);
+   }
 
-	/**
-	 * getXRayTransitionSet - Returns the XRayTransitionSet which was filtered for
-	 * fitting.
-	 * 
-	 * @return XRayTransitionSet
-	 */
-	public XRayTransitionSet getXRayTransitionSet() {
-		return mROI != null ? mROI.getXRayTransitionSet(mElement) : new XRayTransitionSet();
-	}
+   /**
+    * getElement - If this spectrum is a reference then getElement returns the
+    * element associated with this FilteredSpectrum. Otherwise getElement
+    * returns null.
+    * 
+    * @return Element
+    */
+   public Element getElement() {
+      return mElement;
+   }
 
-	/**
-	 * isReference - Does this FilteredSpectrum represent a reference for a single
-	 * element and line?
-	 * 
-	 * @return boolean
-	 */
-	public boolean isReference() {
-		assert ((mROI == null) && (mElement != null)) || ((mElement != null) && (mROI != null));
-		return mROI != null;
-	}
+   /**
+    * getXRayTransitionSet - Returns the XRayTransitionSet which was filtered
+    * for fitting.
+    * 
+    * @return XRayTransitionSet
+    */
+   public XRayTransitionSet getXRayTransitionSet() {
+      return mROI != null ? mROI.getXRayTransitionSet(mElement) : new XRayTransitionSet();
+   }
 
-	/**
-	 * Returns an array of sqrt(n) estimated measurement errors.
-	 * 
-	 * @return double[]
-	 */
-	public double[] getErrors() {
-		if (mFilteredData == null)
-			computeFilteredSpectrum();
-		return mErrors;
-	}
+   /**
+    * isReference - Does this FilteredSpectrum represent a reference for a
+    * single element and line?
+    * 
+    * @return boolean
+    */
+   public boolean isReference() {
+      assert ((mROI == null) && (mElement != null)) || ((mElement != null) && (mROI != null));
+      return mROI != null;
+   }
 
-	/**
-	 * Returns the filtered data as a double array
-	 * 
-	 * @return double[]
-	 */
-	public double[] getFilteredData() {
-		if (mFilteredData == null)
-			computeFilteredSpectrum();
-		return mFilteredData;
-	}
+   /**
+    * Returns an array of sqrt(n) estimated measurement errors.
+    * 
+    * @return double[]
+    */
+   public double[] getErrors() {
+      if (mFilteredData == null)
+         computeFilteredSpectrum();
+      return mErrors;
+   }
 
-	public FittingFilter getFilter() {
-		return mFilter;
-	}
+   /**
+    * Returns the filtered data as a double array
+    * 
+    * @return double[]
+    */
+   public double[] getFilteredData() {
+      if (mFilteredData == null)
+         computeFilteredSpectrum();
+      return mFilteredData;
+   }
 
-	@Override
-	public double getCounts(int i) {
-		if (mFilteredData == null)
-			computeFilteredSpectrum();
-		return i < mFilteredData.length ? mFilteredData[i] : 0.0;
-	}
+   public FittingFilter getFilter() {
+      return mFilter;
+   }
 
-	@Override
-	public int compareTo(ISpectrumData obj) {
-		if (obj instanceof FilteredSpectrum) {
-			final FilteredSpectrum fs = (FilteredSpectrum) obj;
-			final Element el = getElement();
-			if ((el == null) && (fs.getElement() == null))
-				return 0;
-			if (el != null) {
-				int res = el.compareTo(fs.getElement());
-				if (res == 0)
-					res = mROI.compareTo(fs.mROI);
-				return res;
-			}
-		}
-		return -1;
-	}
+   @Override
+   public double getCounts(int i) {
+      if (mFilteredData == null)
+         computeFilteredSpectrum();
+      return i < mFilteredData.length ? mFilteredData[i] : 0.0;
+   }
 
-	public double getNormalization() {
-		return mNormalization;
-	}
+   @Override
+   public int compareTo(ISpectrumData obj) {
+      if (obj instanceof FilteredSpectrum) {
+         final FilteredSpectrum fs = (FilteredSpectrum) obj;
+         final Element el = getElement();
+         if ((el == null) && (fs.getElement() == null))
+            return 0;
+         if (el != null) {
+            int res = el.compareTo(fs.getElement());
+            if (res == 0)
+               res = mROI.compareTo(fs.mROI);
+            return res;
+         }
+      }
+      return -1;
+   }
 
-	/**
-	 * Returns the RegionOfInterest associated with this FilteredSpectrum
-	 * 
-	 * @return RegionOfInterestSet.RegionOfInterest or null
-	 */
-	public RegionOfInterestSet.RegionOfInterest getRegionOfInterest() {
-		return mROI;
-	}
+   public double getNormalization() {
+      return mNormalization;
+   }
+
+   /**
+    * Returns the RegionOfInterest associated with this FilteredSpectrum
+    * 
+    * @return RegionOfInterestSet.RegionOfInterest or null
+    */
+   public RegionOfInterestSet.RegionOfInterest getRegionOfInterest() {
+      return mROI;
+   }
 }

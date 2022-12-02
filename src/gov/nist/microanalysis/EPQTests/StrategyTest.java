@@ -21,8 +21,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class StrategyTest
-   extends TestCase {
+public class StrategyTest extends TestCase {
 
    /**
     * Constructs a StrategyTest
@@ -42,8 +41,7 @@ public class StrategyTest
       try {
          st.addAlgorithm(ProportionalIonizationCrossSection.class, MassAbsorptionCoefficient.Chantler2005);
          assertTrue(false);
-      }
-      catch(final IllegalArgumentException iae) {
+      } catch (final IllegalArgumentException iae) {
          assertTrue(true);
       }
    }

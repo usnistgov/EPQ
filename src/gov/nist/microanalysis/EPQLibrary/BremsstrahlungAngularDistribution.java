@@ -24,9 +24,7 @@ import flanagan.interpolation.TriCubicSpline;
  * @author nritchie
  * @version 1.0
  */
-abstract public class BremsstrahlungAngularDistribution
-   extends
-   AlgorithmClass {
+abstract public class BremsstrahlungAngularDistribution extends AlgorithmClass {
 
    /**
     * <p>
@@ -47,42 +45,21 @@ abstract public class BremsstrahlungAngularDistribution
     * @author nritchie
     * @version 1.0
     */
-   abstract static class AcostaBase
-      extends
-      BremsstrahlungAngularDistribution {
+   abstract static class AcostaBase extends BremsstrahlungAngularDistribution {
 
       protected AcostaBase(String name) {
-         super("Acosta 2002 (" + name
-               + ")", new LitReference.JournalArticle("Monte Carlo simulation of bremsstrahlung emission by electrons", LitReference.ApplPhysLett, "80", "3228-3230", 2002, new LitReference.Author[] {
-                  new LitReference.Author("E.", "Acosta", "Universidad Nacional de Cordoba"),
-                  new LitReference.Author("X.", "Llovet", "Universitat de Barcelona"),
-                  LitReference.FSalvat
-         }));
+         super("Acosta 2002 (" + name + ")",
+               new LitReference.JournalArticle("Monte Carlo simulation of bremsstrahlung emission by electrons", LitReference.ApplPhysLett, "80",
+                     "3228-3230", 2002, new LitReference.Author[]{new LitReference.Author("E.", "Acosta", "Universidad Nacional de Cordoba"),
+                           new LitReference.Author("X.", "Llovet", "Universitat de Barcelona"), LitReference.FSalvat}));
          readAcosta();
       }
 
-      protected static final double[] ACOSTA_BETA = {
-         Bremsstrahlung.beta(ToSI.keV(1.0)),
-         Bremsstrahlung.beta(ToSI.keV(5.0)),
-         Bremsstrahlung.beta(ToSI.keV(10.0)),
-         Bremsstrahlung.beta(ToSI.keV(50.0)),
-         Bremsstrahlung.beta(ToSI.keV(100.0)),
-         Bremsstrahlung.beta(ToSI.keV(500.0)),
-      };
-      protected static final double[] ACOSTA_Z = {
-         2.0,
-         8.0,
-         13.0,
-         47.0,
-         79.0,
-         92.0
-      };
-      protected static final double[] ACOSTA_KoT = {
-         0.0,
-         0.6,
-         0.8,
-         0.95
-      };
+      protected static final double[] ACOSTA_BETA = {Bremsstrahlung.beta(ToSI.keV(1.0)), Bremsstrahlung.beta(ToSI.keV(5.0)),
+            Bremsstrahlung.beta(ToSI.keV(10.0)), Bremsstrahlung.beta(ToSI.keV(50.0)), Bremsstrahlung.beta(ToSI.keV(100.0)),
+            Bremsstrahlung.beta(ToSI.keV(500.0)),};
+      protected static final double[] ACOSTA_Z = {2.0, 8.0, 13.0, 47.0, 79.0, 92.0};
+      protected static final double[] ACOSTA_KoT = {0.0, 0.6, 0.8, 0.95};
 
       protected double[][][] mACoeff;
       protected double[][][] mBCoeff;
@@ -94,12 +71,11 @@ abstract public class BremsstrahlungAngularDistribution
          final double[][] tmp = reader.getResource(this.getClass());
          assert tmp.length == (mACoeff.length * mACoeff[0].length * mACoeff[0][0].length);
          int i = 0;
-         for(int kev = 0; kev < ACOSTA_BETA.length; ++kev)
-            for(int z = 0; z < ACOSTA_Z.length; ++z)
-               for(int kot = 0; kot < ACOSTA_KoT.length; ++kot, ++i) {
+         for (int kev = 0; kev < ACOSTA_BETA.length; ++kev)
+            for (int z = 0; z < ACOSTA_Z.length; ++z)
+               for (int kot = 0; kot < ACOSTA_KoT.length; ++kot, ++i) {
                   final double[] data = tmp[i];
-                  assert Math.abs(data[0] - ACOSTA_BETA[kev]) < 1.0e-5 : data[0] + "  " + i + "  " + kev + "  " + z + "  "
-                        + kot;
+                  assert Math.abs(data[0] - ACOSTA_BETA[kev]) < 1.0e-5 : data[0] + "  " + i + "  " + kev + "  " + z + "  " + kot;
                   assert Math.abs(data[1] - ACOSTA_Z[z]) < 1.0e-5 : data[1] + "  " + i + "  " + kev + "  " + z + "  " + kot;
                   assert Math.abs(data[2] - ACOSTA_KoT[kot]) < 1.0e-5 : data[2] + "  " + i + "  " + kev + "  " + z + "  " + kot;
                   mACoeff[kev][z][kot] = Math.log(data[3] * ACOSTA_Z[z] * ACOSTA_BETA[kev]);
@@ -117,9 +93,7 @@ abstract public class BremsstrahlungAngularDistribution
          return (x2 * (0.375 * a * (1.0 + x1) + (4.0 / 3.0) * (1 - a) * (1.0 - x1))) / norm;
       }
    }
-   public static class AcostaAngularDistribution
-      extends
-      AcostaBase {
+   public static class AcostaAngularDistribution extends AcostaBase {
 
       private static TriCubicSpline mSplineA;
       private static TriCubicSpline mSplineB;
@@ -132,22 +106,25 @@ abstract public class BremsstrahlungAngularDistribution
        * The Lorentz transformed angular distribution for Bremsstrahlung
        * radiation from an energetic electron in the Coulombic field of an atom.
        * 
-       * @param theta double - The emission angle
-       * @param energy double - The energy of the incident electron in Joules
-       * @param bremE double - The energy of the bremsstrahlung photon in Joules
+       * @param theta
+       *           double - The emission angle
+       * @param energy
+       *           double - The energy of the incident electron in Joules
+       * @param bremE
+       *           double - The energy of the bremsstrahlung photon in Joules
        * @return double
        */
       @Override
       public double compute(Element elm, double theta, double energy, double bremE) {
-         if(mSplineA == null)
-            synchronized(Bremsstrahlung.class) {
-               if(mSplineA == null) {
+         if (mSplineA == null)
+            synchronized (Bremsstrahlung.class) {
+               if (mSplineA == null) {
                   assert mACoeff != null;
                   mSplineA = new TriCubicSpline(ACOSTA_BETA, ACOSTA_Z, ACOSTA_KoT, mACoeff);
                   mSplineB = new TriCubicSpline(ACOSTA_BETA, ACOSTA_Z, ACOSTA_KoT, mBCoeff);
                }
             }
-         if(energy > ToSI.keV(500.0))
+         if (energy > ToSI.keV(500.0))
             energy = ToSI.keV(500.0);
          final double beta = Math.max(Bremsstrahlung.beta(energy), ACOSTA_BETA[0]);
          final double kot = Math.min(bremE / energy, 0.95);
@@ -157,9 +134,7 @@ abstract public class BremsstrahlungAngularDistribution
          return acostaAngular(theta, beta, a, b);
       }
    }
-   public static class AcostaAngularDistributionL
-      extends
-      AcostaBase {
+   public static class AcostaAngularDistributionL extends AcostaBase {
 
       /**
        * Returns the index i such that beta is between ACOSTA_BETA[i] and
@@ -169,23 +144,23 @@ abstract public class BremsstrahlungAngularDistribution
        * @return int
        */
       private final int betaIndex(double beta) {
-         for(int i = 1; i < ACOSTA_BETA.length; ++i)
-            if(beta <= ACOSTA_BETA[i])
+         for (int i = 1; i < ACOSTA_BETA.length; ++i)
+            if (beta <= ACOSTA_BETA[i])
                return i - 1;
          return ACOSTA_BETA.length - 2;
       }
 
       private final int zIndex(Element elm) {
          final double z = elm.getAtomicNumber();
-         for(int i = 1; i < ACOSTA_Z.length; ++i)
-            if(z <= ACOSTA_Z[i])
+         for (int i = 1; i < ACOSTA_Z.length; ++i)
+            if (z <= ACOSTA_Z[i])
                return i - 1;
          return ACOSTA_Z.length - 2;
       }
 
       private final int kotIndex(double kot) {
-         for(int i = 1; i < ACOSTA_KoT.length; ++i)
-            if(kot <= ACOSTA_KoT[i])
+         for (int i = 1; i < ACOSTA_KoT.length; ++i)
+            if (kot <= ACOSTA_KoT[i])
                return i - 1;
          return ACOSTA_KoT.length - 2;
       }
@@ -206,9 +181,12 @@ abstract public class BremsstrahlungAngularDistribution
        * The Lorentz transformed angular distribution for Bremsstrahlung
        * radiation from an energetic electron in the Coulombic field of an atom.
        * 
-       * @param theta double - The emission angle
-       * @param energy double - The energy of the incident electron in Joules
-       * @param bremE double - The energy of the bremsstrahlung photon in Joules
+       * @param theta
+       *           double - The emission angle
+       * @param energy
+       *           double - The energy of the incident electron in Joules
+       * @param bremE
+       *           double - The energy of the bremsstrahlung photon in Joules
        * @return double
        */
       @Override
@@ -223,8 +201,8 @@ abstract public class BremsstrahlungAngularDistribution
          final double betaD = (beta - ACOSTA_BETA[betaI]) / (ACOSTA_BETA[betaI + 1] - ACOSTA_BETA[betaI]);
          assert (betaD >= 0.0) && (betaD <= 1.0) : Double.toString(betaD);
          final double kotD = (kot - ACOSTA_KoT[kotI]) / (ACOSTA_KoT[kotI + 1] - ACOSTA_KoT[kotI]);
-         assert (kotD >= 0.0) && (kotD <= 1.33334) : Double.toString(kotD) + ", Ee = " + Double.toString(FromSI.keV(energy))
-               + ", Eb = " + Double.toString(FromSI.keV(bremE));
+         assert (kotD >= 0.0) && (kotD <= 1.33334)
+               : Double.toString(kotD) + ", Ee = " + Double.toString(FromSI.keV(energy)) + ", Eb = " + Double.toString(FromSI.keV(bremE));
          final double zD = (z - ACOSTA_Z[zI]) / (ACOSTA_Z[zI + 1] - ACOSTA_BETA[zI]);
          // assert (zD >= 0.0) && (zD <= 1.0) : elm + ", " +
          // Double.toString(zD);
@@ -267,10 +245,7 @@ abstract public class BremsstrahlungAngularDistribution
     */
    @Override
    public List<AlgorithmClass> getAllImplementations() {
-      return Arrays.asList(new AlgorithmClass[] {
-         Acosta2002,
-         Acosta2002L
-      });
+      return Arrays.asList(new AlgorithmClass[]{Acosta2002, Acosta2002L});
    }
 
    /**

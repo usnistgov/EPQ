@@ -86,8 +86,8 @@ import Jama.Matrix;
  * of the constructor for which this is the default setting.
  * </p>
  * <p>
- * ChargingListener can be set to log the charge &amp; potential state of the mesh
- * to a file each cycle. The user calls setCPlog(), supplying the path to a
+ * ChargingListener can be set to log the charge &amp; potential state of the
+ * mesh to a file each cycle. The user calls setCPlog(), supplying the path to a
  * destination folder. Log files are generated internally using the
  * mesh.exportChargeAndPotentials method (see this method documentation for
  * details). The files are called cp[n].dat, with n starting with 1 and
@@ -131,8 +131,7 @@ import Jama.Matrix;
  * @author John Villarrubia
  * @version 1.0
  */
-public class ChargingListener
-   implements ActionListener {
+public class ChargingListener implements ActionListener {
 
    /**
     * <p>
@@ -182,8 +181,7 @@ public class ChargingListener
     * @version 1.0
     */
    /* My notes on the derivation of this class are in DischargeModel.nb */
-   private class ConnectionCurrentsODE
-      implements FirstOrderDifferentialEquations {
+   private class ConnectionCurrentsODE implements FirstOrderDifferentialEquations {
 
       // private MeshedRegion r;
       private final RCConnection[] connectionList;
@@ -218,7 +216,8 @@ public class ChargingListener
        * Constructs a ConnectionCurrentsODE with equilibration from the
        * connections defined for the supplied MeshedRegion.
        *
-       * @param r - the meshed region associated with this
+       * @param r
+       *           - the meshed region associated with this
        *           ConnectionCurrentsODE.
        */
       public ConnectionCurrentsODE(MeshedRegion r) {
@@ -238,12 +237,14 @@ public class ChargingListener
        * compared to the relaxation times on all the connections.
        * </p>
        *
-       * @param r - the meshed region associated with this
+       * @param r
+       *           - the meshed region associated with this
        *           ConnectionCurrentsODE.
-       * @param equilibrate - if true, enough charge is flowed in each
-       *           connection to make its initial voltage drop = 0. Otherwise,
-       *           the charge is left as given and the connections may start in
-       *           nonequilibrium states.
+       * @param equilibrate
+       *           - if true, enough charge is flowed in each connection to make
+       *           its initial voltage drop = 0. Otherwise, the charge is left
+       *           as given and the connections may start in nonequilibrium
+       *           states.
        */
       public ConnectionCurrentsODE(MeshedRegion r, boolean equilibrate) {
          // this.r = r;
@@ -260,12 +261,12 @@ public class ChargingListener
          Matrix drainMatrix = new Matrix(dim, 2 * dim);
          int constraintIndex = 0;
 
-         for(int connectionIndex = 0; connectionIndex < dim; connectionIndex++) {
+         for (int connectionIndex = 0; connectionIndex < dim; connectionIndex++) {
             final RCConnection c = connectionList[connectionIndex];
             final IConstraint source = c.getSourceConstraint();
-            if(source instanceof FloatingConstraint) {
+            if (source instanceof FloatingConstraint) {
                final FloatingConstraint src = (FloatingConstraint) source;
-               if(floatSet.add(src)) {
+               if (floatSet.add(src)) {
                   /*
                    * src was not already in our set. Its index is just the
                    * current constraintIndex.
@@ -277,8 +278,8 @@ public class ChargingListener
                    * src was already in our set. We have to ascertain its index.
                    */
                   int srcIndex = 0;
-                  for(final FloatingConstraint s : floatSet)
-                     if(s != src)
+                  for (final FloatingConstraint s : floatSet)
+                     if (s != src)
                         srcIndex++;
                      else
                         break;
@@ -286,14 +287,14 @@ public class ChargingListener
                }
             }
             final IConstraint drain = c.getDrainConstraint();
-            if(drain instanceof FloatingConstraint) {
+            if (drain instanceof FloatingConstraint) {
                final FloatingConstraint drn = (FloatingConstraint) drain;
                /*
                 * In my notes drainMatrix always appears with - sign. Here, in
                 * contrast to the notes, I include the sign in the definition so
                 * I can add it instead of subtract it.
                 */
-               if(floatSet.add(drn)) {
+               if (floatSet.add(drn)) {
                   /*
                    * drn was not already in our set. Its index is just the
                    * current constraintIndex.
@@ -305,8 +306,8 @@ public class ChargingListener
                    * drn was already in our set. We have to ascertain its index.
                    */
                   int drnIndex = 0;
-                  for(final FloatingConstraint d : floatSet)
-                     if(d != drn)
+                  for (final FloatingConstraint d : floatSet)
+                     if (d != drn)
                         drnIndex++;
                      else
                         break;
@@ -326,12 +327,12 @@ public class ChargingListener
           * flows)
           */
          final FloatingConstraint[] floatsArray = floatSet.toArray(new FloatingConstraint[0]);
-         for(int i = 0; i < floatCount; i++) {
+         for (int i = 0; i < floatCount; i++) {
             final FloatingConstraint f = floatsArray[i];
             f.incrementCharge(1); // Add 1 charge
             feaRunner.runFEA(r);
             f.incrementCharge(-1); // Remove the 1 charge
-            for(int j = 0; j < floatCount; j++)
+            for (int j = 0; j < floatCount; j++)
                coefficientsPotential.set(i, j, floatsArray[j].getPotential());
          }
          /* Compute initial potentials (before charge flows) */
@@ -340,9 +341,9 @@ public class ChargingListener
           * Subtract initial potentials from final ones to obtain changes caused
           * by unit charge changes
           */
-         for(int j = 0; j < floatCount; j++) {
+         for (int j = 0; j < floatCount; j++) {
             final double V0j = floatsArray[j].getPotential();
-            for(int i = 0; i < floatCount; i++)
+            for (int i = 0; i < floatCount; i++)
                coefficientsPotential.set(j, i, coefficientsPotential.get(j, i) - V0j);
          }
 
@@ -355,19 +356,19 @@ public class ChargingListener
          coefficientsChargesFromCurrent = coefficientsChargesFromBeam.times(transDiff);
 
          /* Flow charges to establish equilibrium if requested */
-         if(equilibrate) {
+         if (equilibrate) {
             boolean connectionFlows = false;
             setV0(new double[floatsArray.length]);
             final Matrix soln = coefficientsChargesFromCurrent.solve(v0.times(-1.));
-            for(int i = 0; i < dim; i++) {
+            for (int i = 0; i < dim; i++) {
                final double q = soln.get(i, 0);
-               if(q != 0) {
+               if (q != 0) {
                   final boolean newFlow = connectionList[i].flowCharge(q);
                   connectionFlows = connectionFlows || newFlow;
                }
             }
             /* If the above moved any charges, run FEA to take account of it */
-            if(connectionFlows)
+            if (connectionFlows)
                feaRunner.runFEA(r);
          }
       }
@@ -380,7 +381,7 @@ public class ChargingListener
       public void computeDerivatives(double t, double[] q, double[] qdot) {
          final Matrix qMatrix = new Matrix(q, dim);
          final Matrix connectionDeltaV = v(qMatrix); // initialize to numerator
-         for(int i = 0; i < dim; i++) {
+         for (int i = 0; i < dim; i++) {
             /*
              * In the following lines, deltaV is the voltage drop across
              * connection i. recipC is effectively 1/capacitance for this
@@ -414,12 +415,12 @@ public class ChargingListener
        * each connection in the interval deltat, then updates the connections to
        * move this much charge.
        *
-       * @param deltat - time interval
+       * @param deltat
+       *           - time interval
        * @throws MathException
        * @throws MathException
        */
-      public void integrate(double deltat)
-            throws MathException, MathException {
+      public void integrate(double deltat) throws MathException, MathException {
          /*
           * The following lines set these parameters for the integrator: Min
           * step size = 1.e-5*deltat, Max step size = deltat, Abs tolerance =
@@ -444,7 +445,7 @@ public class ChargingListener
          dp54.integrate(this, 0., q, deltat, q);
 
          /* Flow the computed number of charges in each connection */
-         for(int i = 0; i < dim; i++)
+         for (int i = 0; i < dim; i++)
             connectionList[i].flowCharge(q[i]);
 
       }
@@ -458,19 +459,19 @@ public class ChargingListener
        * array of these charges (in units of e). This method computes and
        * includes the effect of those charges on the potentials.
        *
-       * @param beamQ - an array of new charges on the regions subject to
+       * @param beamQ
+       *           - an array of new charges on the regions subject to
        *           FloatingConstraint. I.e., beamQ[i] is the additional charge
        *           on the region corresponding to the i'th constraint in the
        *           list that can be obtained by calling getFloatSet().
        */
       public void setV0(double[] beamQ) {
          final int numFloats = floatSet.size();
-         if(beamQ.length != numFloats)
-            throw new EPQFatalException("beamQ (argument of setV0) was length " + beamQ.length + " but must be length "
-                  + numFloats);
+         if (beamQ.length != numFloats)
+            throw new EPQFatalException("beamQ (argument of setV0) was length " + beamQ.length + " but must be length " + numFloats);
          final Matrix beamQvector = new Matrix(beamQ, numFloats);
          v0 = coefficientsChargesFromBeam.times(beamQvector);
-         for(int i = 0; i < dim; i++)
+         for (int i = 0; i < dim; i++)
             v0.set(i, 0, v0.get(i, 0) + connectionList[i].getDeltaV());
       }
 
@@ -531,9 +532,11 @@ public class ChargingListener
     * without conduction. * @param mcss - The MonteCarloSS instance to which
     * this listener is attached.
     *
-    * @param solnInterval - The number of trajectories between FEA solutions.
-    * @param feaRunner - An IFEArunner that provides a method to run FEA and
-    *           (usually) methods to specify FEA parameters.
+    * @param solnInterval
+    *           - The number of trajectories between FEA solutions.
+    * @param feaRunner
+    *           - An IFEArunner that provides a method to run FEA and (usually)
+    *           methods to specify FEA parameters.
     */
    public ChargingListener(MonteCarloSS mcss, int solnInterval, IFEArunner feaRunner) {
       this(mcss, solnInterval, feaRunner, false);
@@ -542,13 +545,16 @@ public class ChargingListener
    /**
     * Constructs a ChargingListener without conduction.
     *
-    * @param mcss - The MonteCarloSS instance to which this listener is
-    *           attached.
-    * @param solnInterval - The number of trajectories between FEA solutions.
-    * @param feaRunner - An IFEArunner that provides a method to run FEA and
-    *           (usually) methods to specify FEA parameters.
-    * @param feaInitializationRequired - true if the first FEA should be run at
-    *           n = 0, false if the first one should be run at n = solnInterval.
+    * @param mcss
+    *           - The MonteCarloSS instance to which this listener is attached.
+    * @param solnInterval
+    *           - The number of trajectories between FEA solutions.
+    * @param feaRunner
+    *           - An IFEArunner that provides a method to run FEA and (usually)
+    *           methods to specify FEA parameters.
+    * @param feaInitializationRequired
+    *           - true if the first FEA should be run at n = 0, false if the
+    *           first one should be run at n = solnInterval.
     */
    public ChargingListener(MonteCarloSS mcss, int solnInterval, IFEArunner feaRunner, boolean feaInitializationRequired) {
       this(mcss, solnInterval, feaRunner, feaInitializationRequired, NULL_ConductionModel);
@@ -557,22 +563,26 @@ public class ChargingListener
    /**
     * Constructs a ChargingListener.
     *
-    * @param mcss - The MonteCarloSS instance to which this listener is
-    *           attached.
-    * @param solnInterval - The number of trajectories between FEA solutions.
-    * @param feaRunner - An IFEArunner that provides a method to run FEA and
-    *           (usually) methods to specify FEA parameters.
-    * @param feaInitializationRequired - true if the first FEA should be run at
-    *           n = 0, false if the first one should be run at n = solnInterval.
-    * @param conductionModel - an IConductionModel if there is to be conduction,
-    *           null if not.
+    * @param mcss
+    *           - The MonteCarloSS instance to which this listener is attached.
+    * @param solnInterval
+    *           - The number of trajectories between FEA solutions.
+    * @param feaRunner
+    *           - An IFEArunner that provides a method to run FEA and (usually)
+    *           methods to specify FEA parameters.
+    * @param feaInitializationRequired
+    *           - true if the first FEA should be run at n = 0, false if the
+    *           first one should be run at n = solnInterval.
+    * @param conductionModel
+    *           - an IConductionModel if there is to be conduction, null if not.
     */
 
-   public ChargingListener(MonteCarloSS mcss, int solnInterval, IFEArunner feaRunner, boolean feaInitializationRequired, IConductionModel conductionModel) {
+   public ChargingListener(MonteCarloSS mcss, int solnInterval, IFEArunner feaRunner, boolean feaInitializationRequired,
+         IConductionModel conductionModel) {
       mMonte = mcss;
       this.solnInterval = solnInterval;
       this.feaInitializationRequired = feaInitializationRequired;
-      if(conductionModel == null)
+      if (conductionModel == null)
          this.conductionModel = NULL_ConductionModel;
       else
          this.conductionModel = conductionModel;
@@ -606,13 +616,16 @@ public class ChargingListener
     * worthwhile to experiment.
     * </p>
     *
-    * @param mcss - The MonteCarloSS instance to which this listener is
-    *           attached.
-    * @param solnInterval - The number of trajectories between FEA solutions.
-    * @param feaFolder - The name of the scratch folder the default feaRunner
-    *           should use for communication with the solver.
-    * @param feaInitializationRequired - true if the first FEA should be run at
-    *           n = 0, false if the first one should be run at n = solnInterval.
+    * @param mcss
+    *           - The MonteCarloSS instance to which this listener is attached.
+    * @param solnInterval
+    *           - The number of trajectories between FEA solutions.
+    * @param feaFolder
+    *           - The name of the scratch folder the default feaRunner should
+    *           use for communication with the solver.
+    * @param feaInitializationRequired
+    *           - true if the first FEA should be run at n = 0, false if the
+    *           first one should be run at n = solnInterval.
     */
    public ChargingListener(MonteCarloSS mcss, int solnInterval, String feaFolder, boolean feaInitializationRequired) {
       this(mcss, solnInterval, null);
@@ -635,7 +648,7 @@ public class ChargingListener
        * electron. We don't do anything on these events anyway, so if the
        * electron is null, we just return.
        */
-      if(el == null)
+      if (el == null)
          return;
 
       final RegionBase cr = el.getCurrentRegion();
@@ -645,39 +658,39 @@ public class ChargingListener
        * not in the mesh, region = null.
        */
       MeshElementRegion region = null;
-      if(cr instanceof MeshElementRegion)
+      if (cr instanceof MeshElementRegion)
          region = (MeshElementRegion) cr;
 
       final ArrayList<MeshedRegion> regionList = getMeshedRegions(mMonte.getChamber());
       final int numRegions = regionList.size();
 
-      if(firstCall) {
+      if (firstCall) {
          previousFEAtime = tk.getTime();
-         if(feaRunner == null)
+         if (feaRunner == null)
             feaRunner = defaultFEARunner(feaFolder);
          firstCall = false;
 
          /* Initializations of each MeshedRegion if necessary */
          connectionODEArray = new ConnectionCurrentsODE[regionList.size()];
-         for(int i = 0; i < numRegions; i++) {
+         for (int i = 0; i < numRegions; i++) {
             final MeshedRegion r = regionList.get(i);
             final IConstraint[] constraints = r.getConstraintList();
-            for(final IConstraint c : constraints)
-               if(c instanceof FloatingConstraint)
+            for (final IConstraint c : constraints)
+               if (c instanceof FloatingConstraint)
                   ((FloatingConstraint) c).computeCharge();
-            if(r.getConnectionList().length > 0)
+            if (r.getConnectionList().length > 0)
                connectionODEArray[i] = new ConnectionCurrentsODE(r);
-            else if(feaInitializationRequired) {
+            else if (feaInitializationRequired) {
                feaRunner.runFEA(r);
                final boolean meshRefined = reInitAfterFEA(r, el, region);
-               if(meshRefined && (region != null))
+               if (meshRefined && (region != null))
                   // Update region to possibly altered region due to refinement
                   region = (MeshElementRegion) el.getCurrentRegion();
-               if(logCP) {
+               if (logCP) {
                   final String outname = cpDestFolder + File.separator + "cp0.dat";
                   try {
                      r.getMesh().exportChargeAndPotentials(outname);
-                     if(meshRefined) {
+                     if (meshRefined) {
                         /*
                          * It's an adaptive mesh and it has changed. We need to
                          * log the new mesh too, in order to be able to
@@ -687,8 +700,7 @@ public class ChargingListener
                         final String meshFileName = cpDestFolder + File.separator + "mesh0.msh";
                         ((IAdaptiveMesh) r.getMesh().getBasicMesh()).saveMesh(meshFileName);
                      }
-                  }
-                  catch(final Exception e) {
+                  } catch (final Exception e) {
                      throw new EPQFatalException(e.getMessage());
                   }
 
@@ -702,57 +714,55 @@ public class ChargingListener
        * Keep count of how many trajectories we've run. Every solnInterval
        * trajectories, we get a new FEA resolution.
        */
-      if(eventID == MonteCarloSS.TrajectoryStartEvent) {
-         if(chargesAccumulate)
+      if (eventID == MonteCarloSS.TrajectoryStartEvent) {
+         if (chargesAccumulate)
             trajCount++;
          /*
           * If the user hasn't defined maxCascade, initialize it to permit 1
           * eV/electron
           */
-         if(maxCascade == 0)
+         if (maxCascade == 0)
             maxCascade = (long) (el.getEnergy() / (1. * PhysicalConstants.ElectronCharge));
          final long cascadeSize = el.getIdent() - previousElectronID;
          previousElectronID = el.getIdent();
-         if((trajCount == solnInterval) || (cascadeSize > maxCascade)) {
+         if ((trajCount == solnInterval) || (cascadeSize > maxCascade)) {
             trajCount = 0; /* reset it for the next count */
             final double timenow = tk.getTime();
-            for(int i = 0; i < numRegions; i++) {
+            for (int i = 0; i < numRegions; i++) {
                final MeshedRegion r = regionList.get(i);
                /* Do an FEA for new charge distribution */
                boolean meshRefined;
                try {
                   doFEAwithConnectionFlows(r, connectionODEArray[i], timenow - previousFEAtime);
                   meshRefined = reInitAfterFEA(r, el, region);
-                  if(meshRefined && (region != null))
+                  if (meshRefined && (region != null))
                      // Update region to possibly altered region due to
                      // refinement
                      region = (MeshElementRegion) el.getCurrentRegion();
-               }
-               catch(final Exception e) {
+               } catch (final Exception e) {
                   throw new EPQFatalException(e.getMessage());
                }
 
                /* Flow charges if conductionModel so dictates */
                final boolean feaNeeded = conductionModel.conductCharges(r, timenow - previousFEAtime, feaRunner);
                /* redo FEA if charges were moved */
-               if(feaNeeded)
+               if (feaNeeded)
                   try {
                      feaRunner.runFEA(r);
                      meshRefined = meshRefined || reInitAfterFEA(r, el, region);
-                     if(meshRefined && (region != null))
+                     if (meshRefined && (region != null))
                         // Update region to possibly altered region due to
                         // refinement
                         region = (MeshElementRegion) el.getCurrentRegion();
-                  }
-                  catch(final Exception e) {
+                  } catch (final Exception e) {
                      throw new EPQFatalException(e.getMessage());
                   }
 
-               if(logCP) {
+               if (logCP) {
                   final String outname = cpDestFolder + File.separator + "cp" + logCPcount + ".dat";
                   try {
                      r.getMesh().exportChargeAndPotentials(outname);
-                     if(meshRefined) {
+                     if (meshRefined) {
                         /*
                          * It's an adaptive mesh and it has changed. We need to
                          * log the new mesh too, in order to be able to
@@ -762,8 +772,7 @@ public class ChargingListener
                         final String meshFileName = cpDestFolder + File.separator + "mesh" + logCPcount + ".msh";
                         ((IAdaptiveMesh) r.getMesh().getBasicMesh()).saveMesh(meshFileName);
                      }
-                  }
-                  catch(final Exception e) {
+                  } catch (final Exception e) {
                      throw new EPQFatalException(e.getMessage());
                   }
                   logCPcount++;
@@ -778,21 +787,21 @@ public class ChargingListener
        * Check whether the electron is in a MeshElementRegion. If not, no action
        * is performed. Unmeshed volumes are assumed to be field free.
        */
-      if(region == null)
+      if (region == null)
          return; // Electron is not in the mesh
 
-      switch(eventID) {
+      switch (eventID) {
          /*
           * When an electron comes to rest (TrajectoryEnd or EndSecondary) in a
           * region where the potential is not constrained, decrement the total
           * charge in its region by e.
           */
-         case MonteCarloSS.TrajectoryEndEvent:
-         case MonteCarloSS.EndSecondaryEvent:
-            if(chargesAccumulate) {
+         case MonteCarloSS.TrajectoryEndEvent :
+         case MonteCarloSS.EndSecondaryEvent :
+            if (chargesAccumulate) {
                region = conductionModel.stopRegion(region);
                // region can be null if electron leaves the mesh
-               if((region != null) && !region.isConstrained()) {
+               if ((region != null) && !region.isConstrained()) {
                   /*
                    * Note that the logic here relies on the fact, currently
                    * true, that the only constraint that can be applied to a
@@ -817,9 +826,9 @@ public class ChargingListener
           * When a SE starts in a region with unconstrained potential, increment
           * that region's total charge by e.
           */
-         case MonteCarloSS.StartSecondaryEvent:
-            if(chargesAccumulate)
-               if(!region.isConstrained()) {
+         case MonteCarloSS.StartSecondaryEvent :
+            if (chargesAccumulate)
+               if (!region.isConstrained()) {
                   final Tetrahedron shape = (Tetrahedron) region.getShape();
                   shape.incrementChargeNumber();
                   assert region.getMaterial().getElementCount() != 0 : "Electron emission in vacuum!";
@@ -830,8 +839,8 @@ public class ChargingListener
           * Each step ends with a scatter or nonscatter event. At these, make
           * corrections to account for E-fields due to charging.
           */
-         case MonteCarloSS.ScatterEvent:
-         case MonteCarloSS.NonScatterEvent:
+         case MonteCarloSS.ScatterEvent :
+         case MonteCarloSS.NonScatterEvent :
             /*
              * Check whether the electron is in a MeshElementRegion. If not, no
              * action is performed. Unmeshed volumes are assumed to be field
@@ -852,8 +861,10 @@ public class ChargingListener
     * altered (although of course the change in velocity alters its future
     * positions).
     *
-    * @param el - the electron
-    * @param shape - the shape of the MeshElementRegion it occupies
+    * @param el
+    *           - the electron
+    * @param shape
+    *           - the shape of the MeshElementRegion it occupies
     */
    private void correctTrajectory(Electron el, Tetrahedron shape) {
       /*
@@ -872,29 +883,25 @@ public class ChargingListener
        * Tiny steps can cause numerical problems in the next line, but
        * corrections are correspondingly tiny. We can just skip them.
        */
-      if(stepLen < 1.e-11)
+      if (stepLen < 1.e-11)
          return;
       final double scaledT;
       /*
        * For kE <= 0. scaleT = 0. This means the new electron direction is
        * determined solely by the electric field lines.
        */
-      if(kE > 0.)
+      if (kE > 0.)
          scaledT = (2. * kE) / (PhysicalConstants.ElectronCharge * stepLen);
       else
          scaledT = 0.;
       final double theta = el.getTheta();
       final double sintheta = Math.sin(theta);
       final double phi = el.getPhi();
-      final double[] direction = new double[] {
-         Math.cos(phi) * sintheta,
-         Math.sin(phi) * sintheta,
-         Math.cos(theta)
-      };
+      final double[] direction = new double[]{Math.cos(phi) * sintheta, Math.sin(phi) * sintheta, Math.cos(theta)};
       final double[] scaledFinalVel = new double[3];
       final double[] eField = shape.getEField();
       double mag = 0.; // magnitude of scaledFinalVel
-      for(int i = 0; i < 3; i++) {
+      for (int i = 0; i < 3; i++) {
          scaledFinalVel[i] = (scaledT * direction[i]) - eField[i];
          mag += scaledFinalVel[i] * scaledFinalVel[i];
       }
@@ -914,35 +921,31 @@ public class ChargingListener
        * contain turning points), large electron step count, and the material is
        * vacuum. In such cases we give the electron a little boost.
        */
-      if((kE < 0.) && (el.getStepCount() > 1000) && (el.getCurrentRegion().getMaterial().getElementCount() == 0))
+      if ((kE < 0.) && (el.getStepCount() > 1000) && (el.getCurrentRegion().getMaterial().getElementCount() == 0))
          finalE += 0.1 * PhysicalConstants.ElectronCharge;
       el.setEnergy(finalE);
    }
 
    private IFEArunner defaultFEARunner(String feaFolder) {
       final ArrayList<MeshedRegion> regionList = getMeshedRegions(mMonte.getChamber());
-      final int[] constraintCount = {
-         0,
-         0,
-         0
-      };
-      for(final MeshedRegion r : regionList) {
+      final int[] constraintCount = {0, 0, 0};
+      for (final MeshedRegion r : regionList) {
          final HashMap<Long, IConstraint> constraintmap = r.getConstraintMap();
          final Collection<IConstraint> constraintList = constraintmap.values();
-         for(final IConstraint c : constraintList)
-            if(c instanceof DirichletConstraint)
+         for (final IConstraint c : constraintList)
+            if (c instanceof DirichletConstraint)
                constraintCount[0]++;
-            else if(c instanceof NeumannConstraint)
+            else if (c instanceof NeumannConstraint)
                constraintCount[1]++;
-            else if(c instanceof FloatingConstraint)
+            else if (c instanceof FloatingConstraint)
                constraintCount[2]++;
       }
 
-      if(constraintCount[2] > 0) {
+      if (constraintCount[2] > 0) {
          final PETScFEArunner runner = new PETScFEArunner(feaFolder);
          runner.setChargeMultiplier(chargeMultiplier);
          return runner;
-      } else if(constraintCount[1] > 0) {
+      } else if (constraintCount[1] > 0) {
          final SparskitFEArunner runner = new SparskitFEArunner(feaFolder);
          runner.setChargeMultiplier(chargeMultiplier);
          return runner;
@@ -955,13 +958,13 @@ public class ChargingListener
    }
 
    private void doFEAwithConnectionFlows(MeshedRegion r, ConnectionCurrentsODE connectionODE, double deltat) {
-      if(connectionODE != null) {
+      if (connectionODE != null) {
          /* Get the list of floating regions in these connections */
          final Set<FloatingConstraint> fset = connectionODE.getFloatSet();
          /* Find how much new charge from the beam on each one */
          final double[] newCharge = new double[fset.size()];
          int i = 0;
-         for(final FloatingConstraint f : fset) {
+         for (final FloatingConstraint f : fset) {
             final int qold = f.getCharge();
             f.computeCharge();
             /*
@@ -976,14 +979,13 @@ public class ChargingListener
          connectionODE.setV0(newCharge);
          try {
             connectionODE.integrate(deltat);
-         }
-         catch(final MathException e) {
+         } catch (final MathException e) {
             throw new EPQFatalException("MathException " + e.getMessage());
          }
       } else {
          final IConstraint[] constraints = r.getConstraintList();
-         for(final IConstraint c : constraints)
-            if(c instanceof FloatingConstraint)
+         for (final IConstraint c : constraints)
+            if (c instanceof FloatingConstraint)
                ((FloatingConstraint) c).computeCharge();
       }
       feaRunner.runFEA(r);
@@ -1026,11 +1028,11 @@ public class ChargingListener
     */
    private ArrayList<MeshedRegion> getMeshedRegions(RegionBase startRegion) {
       final ArrayList<MeshedRegion> result = new ArrayList<MeshedRegion>();
-      if(startRegion instanceof MeshedRegion)
+      if (startRegion instanceof MeshedRegion)
          result.add((MeshedRegion) startRegion);
       else {
          final List<RegionBase> subRegions = startRegion.getSubRegions();
-         for(final RegionBase r : subRegions)
+         for (final RegionBase r : subRegions)
             result.addAll(getMeshedRegions(r));
       }
       return result;
@@ -1089,8 +1091,8 @@ public class ChargingListener
     */
    private boolean reInitAfterFEA(MeshedRegion r, Electron el, MeshElementRegion electronRegionInMesh) {
       final boolean meshRefined = r.initializeIfNeeded();
-      if(electronRegionInMesh != null)
-         if(meshRefined)
+      if (electronRegionInMesh != null)
+         if (meshRefined)
             // Re-find the electron's region in case the tet it was in got
             // refined
             r.resetElectronRegion(el);
@@ -1113,31 +1115,34 @@ public class ChargingListener
     * in fields. The multiplier only affects how the sources of the field are
     * dealt with.
     *
-    * @param chargeMultiplier The value to which to set chargeMultiplier.
+    * @param chargeMultiplier
+    *           The value to which to set chargeMultiplier.
     */
    public void setChargeMultiplier(double chargeMultiplier) {
       this.chargeMultiplier = chargeMultiplier;
-      if(feaRunner != null)
+      if (feaRunner != null)
          feaRunner.setChargeMultiplier(chargeMultiplier);
    }
 
    /**
     * Sets the value assigned to chargesAccumulate.
     *
-    * @param chargesAccumulate The value to which to set chargesAccumulate.
+    * @param chargesAccumulate
+    *           The value to which to set chargesAccumulate.
     */
    public void setChargesAccumulate(boolean chargesAccumulate) {
-      if(this.chargesAccumulate != chargesAccumulate)
+      if (this.chargesAccumulate != chargesAccumulate)
          this.chargesAccumulate = chargesAccumulate;
    }
 
    /**
     * Sets the value assigned to conductionModel.
     *
-    * @param conductionModel The value to which to set conductionModel.
+    * @param conductionModel
+    *           The value to which to set conductionModel.
     */
    public void setConductionModel(IConductionModel conductionModel) {
-      if(this.conductionModel != conductionModel)
+      if (this.conductionModel != conductionModel)
          this.conductionModel = conductionModel;
    }
 
@@ -1163,12 +1168,12 @@ public class ChargingListener
       cpDestFolder = destFolder;
       /* Create the destination folder if necessary. */
       final File dest = new File(destFolder);
-      if(!dest.exists())
+      if (!dest.exists())
          dest.mkdirs();
    }
 
    public void setCPlog(String destFolder, int n0) {
-      if(n0 < 0)
+      if (n0 < 0)
          throw new EPQFatalException("Illegal negative n0 in setCPlog.");
       setCPlog(destFolder);
       logCPcount = n0;
@@ -1177,21 +1182,22 @@ public class ChargingListener
    /**
     * Sets the value assigned to feaInitializationRequired.
     *
-    * @param feaInitializationRequired The value to which to set
-    *           feaInitializationRequired.
+    * @param feaInitializationRequired
+    *           The value to which to set feaInitializationRequired.
     */
    public void setFeaInitializationRequired(boolean feaInitializationRequired) {
-      if(this.feaInitializationRequired != feaInitializationRequired)
+      if (this.feaInitializationRequired != feaInitializationRequired)
          this.feaInitializationRequired = feaInitializationRequired;
    }
 
    /**
     * Sets the value assigned to feaRunner.
     *
-    * @param feaRunner The value to which to set feaRunner.
+    * @param feaRunner
+    *           The value to which to set feaRunner.
     */
    public void setFEARunner(IFEArunner feaRunner) {
-      if(this.feaRunner != feaRunner)
+      if (this.feaRunner != feaRunner)
          this.feaRunner = feaRunner;
    }
 

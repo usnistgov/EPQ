@@ -40,8 +40,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author nritchie
  * @version 1.0
  */
-public class JElementPanel
-   extends JPanel {
+public class JElementPanel extends JPanel {
    private static final long serialVersionUID = -1527706801448720328L;
 
    private final JTextField jTextField_Elements = new JTextField();
@@ -55,8 +54,8 @@ public class JElementPanel
    private void updateElementField() {
       StringBuffer sb = new StringBuffer();
       boolean first = true;
-      for(Element elm : mSelected) {
-         if(!first)
+      for (Element elm : mSelected) {
+         if (!first)
             sb.append(", ");
          first = false;
          sb.append(elm.toAbbrev());
@@ -68,8 +67,8 @@ public class JElementPanel
       mElements.clear();
       mElements.addAll(elms);
       Set<Element> sel = new TreeSet<Element>();
-      for(Element elm : mSelected)
-         if(mElements.contains(elm))
+      for (Element elm : mSelected)
+         if (mElements.contains(elm))
             sel.add(elm);
       mSelected.clear();
       mSelected.addAll(sel);
@@ -78,8 +77,8 @@ public class JElementPanel
 
    private Window getParentWindow() {
       Container c = getParent();
-      while(c != null) {
-         if(c instanceof Window)
+      while (c != null) {
+         if (c instanceof Window)
             break;
          c = c.getParent();
       }
@@ -88,17 +87,16 @@ public class JElementPanel
 
    private Element idElement(String val) {
       Locale locale = Locale.getDefault();
-      for(Element elm : mElements) {
-         if(elm.toAbbrev().equals(val))
+      for (Element elm : mElements) {
+         if (elm.toAbbrev().equals(val))
             return elm;
-         if(val.toLowerCase(locale).equals(elm.toString().toLowerCase(locale)))
+         if (val.toLowerCase(locale).equals(elm.toString().toLowerCase(locale)))
             return elm;
          try {
-            if(val.matches("\\d+"))
-               if(Integer.parseInt(val) == elm.getAtomicNumber())
+            if (val.matches("\\d+"))
+               if (Integer.parseInt(val) == elm.getAtomicNumber())
                   return elm;
-         }
-         catch(NumberFormatException e) {
+         } catch (NumberFormatException e) {
             // Ignore
          }
       }
@@ -110,9 +108,9 @@ public class JElementPanel
       Set<Element> res = new TreeSet<Element>();
       String str = jTextField_Elements.getText();
       String[] vals = str.split("[,\\h]");
-      for(String val : vals) {
+      for (String val : vals) {
          Element elm = idElement(val);
-         if(elm != null)
+         if (elm != null)
             res.add(elm);
       }
       return res;
@@ -163,7 +161,7 @@ public class JElementPanel
    private void fireElementChange() {
       ActionEvent ae = new ActionEvent(JElementPanel.this, 0, "ElementChange", System.currentTimeMillis(), 0);
       ArrayList<ActionListener> dup = new ArrayList<ActionListener>(mElementChange);
-      for(ActionListener al : dup)
+      for (ActionListener al : dup)
          al.actionPerformed(ae);
    }
 

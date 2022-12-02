@@ -41,8 +41,7 @@ import Jama.Matrix;
  * @author Bin Ming, John Villarrubia
  * @version 1.0
  */
-public interface IAffineTransform
-   extends ITransform {
+public interface IAffineTransform extends ITransform {
 
    /**
     * The user specifies a general affine transformation by supplying a 3 x 4
@@ -58,7 +57,8 @@ public interface IAffineTransform
     * matrix is supplied by the user, who is responsible for insuring that the
     * linear part (the 3x3 A matrix) is invertible.
     * 
-    * @param m - a 3x4 matrix representing the upper 3 rows of the affine
+    * @param m
+    *           - a 3x4 matrix representing the upper 3 rows of the affine
     *           transformation matrix.
     */
    public void customAffineTransform(Matrix m);
@@ -70,9 +70,12 @@ public interface IAffineTransform
     * stretch the shape, less than 1 contract it. Negative scale factors invert
     * the shape.
     * 
-    * @param alpha - scale factor for x axis
-    * @param beta - scale factor for y axis
-    * @param gamma - scale factor for z axis
+    * @param alpha
+    *           - scale factor for x axis
+    * @param beta
+    *           - scale factor for y axis
+    * @param gamma
+    *           - scale factor for z axis
     */
    public void scale(double alpha, double beta, double gamma);
 
@@ -86,17 +89,21 @@ public interface IAffineTransform
     * adding an amount proportional to z (because shj = 2) and the
     * proportionality is given by the value of shear.
     * 
-    * @param shi - row index for the shear value
-    * @param shj - column index for the shear value
-    * @param shear - the amount of shear
+    * @param shi
+    *           - row index for the shear value
+    * @param shj
+    *           - column index for the shear value
+    * @param shear
+    *           - the amount of shear
     */
    public void shear(int shi, int shj, double shear);
 
    /**
     * Reflects the shape along the specified axis.
     * 
-    * @param axis - index of the axis along which to reflect, 0 for x, 1 for y,
-    *           2 for z
+    * @param axis
+    *           - index of the axis along which to reflect, 0 for x, 1 for y, 2
+    *           for z
     */
    public void reflect(int axis);
 
@@ -108,10 +115,14 @@ public interface IAffineTransform
     * 321 sequence. We assume that the positive rotation angle is
     * counterclockwise.
     * 
-    * @param p0 - Coordinates of the center of rotation (the "pivot")
-    * @param phi - rotation angle (radians) of first rotation about z
-    * @param theta - rotation angle (radians) about x
-    * @param psi - rotation angle (radians) of second rotation about z
+    * @param p0
+    *           - Coordinates of the center of rotation (the "pivot")
+    * @param phi
+    *           - rotation angle (radians) of first rotation about z
+    * @param theta
+    *           - rotation angle (radians) about x
+    * @param psi
+    *           - rotation angle (radians) of second rotation about z
     */
    public void rotateZXZ(double p0[], double phi, double theta, double psi);
 
@@ -123,34 +134,44 @@ public interface IAffineTransform
     * the default method called by various shape classes, unless specified
     * otherwise.
     * 
-    * @param p0 - Coordinates of the center of rotation (the "pivot")
-    * @param phi - rotation angle (radians) of first rotation about z
-    * @param theta - rotation angle (radians) about y
-    * @param psi - rotation angle (radians) of second rotation about z
+    * @param p0
+    *           - Coordinates of the center of rotation (the "pivot")
+    * @param phi
+    *           - rotation angle (radians) of first rotation about z
+    * @param theta
+    *           - rotation angle (radians) about y
+    * @param psi
+    *           - rotation angle (radians) of second rotation about z
     */
    public void rotateZYZ(double p0[], double phi, double theta, double psi);
 
    /**
     * Z-axis ("yaw") rotation about a pivot.
     * 
-    * @param p0 - Coordinates of the center of rotation (the "pivot")
-    * @param phi - angle (radians) of the rotation
+    * @param p0
+    *           - Coordinates of the center of rotation (the "pivot")
+    * @param phi
+    *           - angle (radians) of the rotation
     */
    public void rotateZ(double p0[], double phi);
 
    /**
     * X-axis ("roll") rotation about a pivot.
     * 
-    * @param p0 - Coordinates of the center of rotation (the "pivot")
-    * @param theta - angle (radians) of the rotation
+    * @param p0
+    *           - Coordinates of the center of rotation (the "pivot")
+    * @param theta
+    *           - angle (radians) of the rotation
     */
    public void rotateX(double p0[], double theta);
 
    /**
     * Y-axis ("pitch") rotation about a pivot.
     * 
-    * @param p0 - Coordinates of the center of rotation (the "pivot")
-    * @param theta - angle (radians) of the rotation
+    * @param p0
+    *           - Coordinates of the center of rotation (the "pivot")
+    * @param theta
+    *           - angle (radians) of the rotation
     */
    public void rotateY(double p0[], double theta);
 

@@ -25,8 +25,7 @@ package gov.nist.nanoscalemetrology.JMONSELutils;
  * @author John Villarrubia
  * @version 1.0
  */
-public class FrequencyCounter
-   implements Comparable<FrequencyCounter> {
+public class FrequencyCounter implements Comparable<FrequencyCounter> {
 
    private final Object id; // The object to be counted
    private int count; // Current count value
@@ -94,9 +93,9 @@ public class FrequencyCounter
 
    @Override
    public int compareTo(FrequencyCounter b) {
-      if(count > b.count)
+      if (count > b.count)
          return -1;
-      else if(count < b.count)
+      else if (count < b.count)
          return 1;
       return 0;
    }

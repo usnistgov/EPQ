@@ -38,8 +38,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author nicholas
  * @version 1.0
  */
-public class ProjectEditor
-   extends JDialog {
+public class ProjectEditor extends JDialog {
 
    private static final long serialVersionUID = -1516387854025417775L;
 
@@ -67,7 +66,7 @@ public class ProjectEditor
       bbb.addGlue();
       bbb.addButton(jButton_Ok, jButton_Cancel);
       add(bbb.build(), cc.xyw(1, 7, 3));
-      if(getContentPane() instanceof JPanel) {
+      if (getContentPane() instanceof JPanel) {
          final JPanel p = (JPanel) getContentPane();
          p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       }
@@ -77,10 +76,10 @@ public class ProjectEditor
          public void actionPerformed(ActionEvent e) {
             final PersonEditor pe = new PersonEditor(ProjectEditor.this);
             pe.setLocationRelativeTo(ProjectEditor.this);
-            if(pe.execute()) {
+            if (pe.execute()) {
                mSession.addPerson(pe.getName(), pe.getDetails());
                jComboBox_Client.removeAllItems();
-               for(final String person : mSession.getPeople().keySet())
+               for (final String person : mSession.getPeople().keySet())
                   jComboBox_Client.addItem(person);
                jComboBox_Client.setSelectedItem(pe.getName());
             }
@@ -101,7 +100,7 @@ public class ProjectEditor
             setVisible(false);
          }
       });
-      for(final String person : mSession.getPeople().keySet())
+      for (final String person : mSession.getPeople().keySet())
          jComboBox_Client.addItem(person);
       jComboBox_Client.setSelectedIndex(0);
       pack();
@@ -148,8 +147,7 @@ public class ProjectEditor
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -164,8 +162,7 @@ public class ProjectEditor
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }

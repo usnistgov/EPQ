@@ -45,8 +45,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author nritchie
  * @version 1.0
  */
-final public class EnergyLossListener
-   implements ActionListener {
+final public class EnergyLossListener implements ActionListener {
 
    private final int[] mDims;
    private final double[][][] mVoxel;
@@ -62,26 +61,21 @@ final public class EnergyLossListener
     * representing the smallest Z point in the volume. This is typically the
     * same point at which the electron enter the material.
     * 
-    * @param point A point which specifies the center of the top face of the
+    * @param point
+    *           A point which specifies the center of the top face of the
     *           volume.
-    * @param size The width of the volume in the x, y and z dimensions
-    * @param n The number of bins in each dimension
+    * @param size
+    *           The width of the volume in the x, y and z dimensions
+    * @param n
+    *           The number of bins in each dimension
     */
    public EnergyLossListener(double[] point, double size, int n) {
-      mDims = new int[] {
-         n,
-         n,
-         n
-      };
+      mDims = new int[]{n, n, n};
       mVoxel = new double[n][n][n];
       final double[] pt = point.clone();
       pt[0] -= (0.5 * size);
       pt[1] -= (0.5 * size);
-      mSize = new double[] {
-         size,
-         size,
-         size
-      };
+      mSize = new double[]{size, size, size};
       mPoint = pt;
       reset();
    }
@@ -101,8 +95,8 @@ final public class EnergyLossListener
     * Reset the accumulators.
     */
    public void reset() {
-      for(int i = 0; i < mDims[0]; ++i)
-         for(int j = 0; j < mDims[1]; ++j)
+      for (int i = 0; i < mDims[0]; ++i)
+         for (int j = 0; j < mDims[1]; ++j)
             Arrays.fill(mVoxel[i][j], 0.0);
       mElectronCount = 0;
       mTotalEnergyLoss = 0.0;
@@ -111,23 +105,22 @@ final public class EnergyLossListener
    /**
     * Returns the voxel index associated with the specified position.
     * 
-    * @param pos A double[3]
+    * @param pos
+    *           A double[3]
     * @return An int[3]
     */
    public int[] indexOf(double[] pos) {
       final double[] ii = Math2.ebeDivide(Math2.minus(pos, mPoint), mSize);
-      return new int[] {
-         (int) ii[0],
-         (int) ii[1],
-         (int) ii[2]
-      };
+      return new int[]{(int) ii[0], (int) ii[1], (int) ii[2]};
    }
 
    /**
     * Do these two voxel coordinates represent the same voxel?
     * 
-    * @param ii0 An int[3]
-    * @param ii1 An int[3]
+    * @param ii0
+    *           An int[3]
+    * @param ii1
+    *           An int[3]
     * @return true->same voxel, false otherwise.
     */
    private static boolean sameVoxel(int[] ii0, int[] ii1) {
@@ -137,7 +130,8 @@ final public class EnergyLossListener
    /**
     * Returns the number of bins along the specified axis
     * 
-    * @param axis int in [0,3)
+    * @param axis
+    *           int in [0,3)
     * @return int
     */
    public int getDimension(int axis) {
@@ -147,8 +141,10 @@ final public class EnergyLossListener
    /**
     * Coordinate of the low side of the bin-th bin for the axis-th axis.
     * 
-    * @param axis int in [0,3) for x,y,z respectively.
-    * @param bin int in [0, getDimension(axis))
+    * @param axis
+    *           int in [0,3) for x,y,z respectively.
+    * @param bin
+    *           int in [0, getDimension(axis))
     * @return The coordinate
     */
    public double lowSidePosition(int axis, int bin) {
@@ -158,8 +154,10 @@ final public class EnergyLossListener
    /**
     * Coordinate of the high side of the bin-th bin for the axis-th axis.
     * 
-    * @param axis int in [0,3) for x,y,z respectively.
-    * @param bin int in [0, getDimension(axis))
+    * @param axis
+    *           int in [0,3) for x,y,z respectively.
+    * @param bin
+    *           int in [0, getDimension(axis))
     * @return The coordinate
     */
    public double highSidePosition(int axis, int bin) {
@@ -170,9 +168,12 @@ final public class EnergyLossListener
    /**
     * Returns the energy deposited in eV/electron in this voxel
     * 
-    * @param x Bin index
-    * @param y Bin index
-    * @param z Bin index
+    * @param x
+    *           Bin index
+    * @param y
+    *           Bin index
+    * @param z
+    *           Bin index
     * @return double eV per electron
     */
    public double get(int x, int y, int z) {
@@ -183,21 +184,22 @@ final public class EnergyLossListener
     * Dumps the sliced defined by x=n. Energy deposition is reported as
     * eV/electron.
     * 
-    * @param wr A Writer determining where to write the results
-    * @param n The slice index (x-axis)
+    * @param wr
+    *           A Writer determining where to write the results
+    * @param n
+    *           The slice index (x-axis)
     * @throws IOException
     */
-   public void dumpXSlice(Writer wr, int n)
-         throws IOException {
+   public void dumpXSlice(Writer wr, int n) throws IOException {
       final double norm = FromSI.eV(1.0) / mElectronCount;
-      for(int y = 0; y < mDims[1]; ++y) {
+      for (int y = 0; y < mDims[1]; ++y) {
          wr.append(", ");
          wr.append(Double.toString(mPoint[1] + (mSize[1] * y)));
       }
       wr.append("\n");
-      for(int z = 0; z < mDims[2]; ++z) {
+      for (int z = 0; z < mDims[2]; ++z) {
          wr.append(Double.toString(mPoint[2] + (mSize[2] * z)));
-         for(int y = 0; y < mDims[1]; ++y) {
+         for (int y = 0; y < mDims[1]; ++y) {
             wr.append(", ");
             wr.append(Double.toString(mVoxel[n][y][z] * norm));
          }
@@ -209,21 +211,22 @@ final public class EnergyLossListener
     * Dumps the sliced defined by y=n. Energy deposition is reported as
     * eV/electron.
     * 
-    * @param wr A Writer determining where to write the results
-    * @param n The slice index (y-axis)
+    * @param wr
+    *           A Writer determining where to write the results
+    * @param n
+    *           The slice index (y-axis)
     * @throws IOException
     */
-   public void dumpYSlice(Writer wr, int n)
-         throws IOException {
+   public void dumpYSlice(Writer wr, int n) throws IOException {
       final double norm = FromSI.eV(1.0) / mElectronCount;
-      for(int x = 0; x < mDims[0]; ++x) {
+      for (int x = 0; x < mDims[0]; ++x) {
          wr.append(", ");
          wr.append(Double.toString(mPoint[0] + (mSize[0] * x)));
       }
       wr.append("\n");
-      for(int z = 0; z < mDims[2]; ++z) {
+      for (int z = 0; z < mDims[2]; ++z) {
          wr.append(Double.toString(mPoint[2] + (mSize[2] * z)));
-         for(int x = 0; x < mDims[0]; ++x) {
+         for (int x = 0; x < mDims[0]; ++x) {
             wr.append(", ");
             wr.append(Double.toString(mVoxel[x][n][z] * norm));
          }
@@ -235,21 +238,22 @@ final public class EnergyLossListener
     * Dumps the sliced defined by z=n. Energy deposition is reported as
     * eV/electron.
     * 
-    * @param wr A Writer determining where to write the results
-    * @param n The slice index (z-axis)
+    * @param wr
+    *           A Writer determining where to write the results
+    * @param n
+    *           The slice index (z-axis)
     * @throws IOException
     */
-   public void dumpZSlice(Writer wr, int n)
-         throws IOException {
+   public void dumpZSlice(Writer wr, int n) throws IOException {
       final double norm = FromSI.eV(1.0) / mElectronCount;
-      for(int x = 0; x < mDims[0]; ++x) {
+      for (int x = 0; x < mDims[0]; ++x) {
          wr.append(", ");
          wr.append(Double.toString(mPoint[0] + (mSize[0] * x)));
       }
       wr.append("\n");
-      for(int y = 0; y < mDims[1]; ++y) {
+      for (int y = 0; y < mDims[1]; ++y) {
          wr.append(Double.toString(mPoint[1] + (mSize[1] * y)));
-         for(int x = 0; x < mDims[1]; ++x) {
+         for (int x = 0; x < mDims[1]; ++x) {
             wr.append(", ");
             wr.append(Double.toString(mVoxel[x][y][n] * norm));
          }
@@ -261,22 +265,22 @@ final public class EnergyLossListener
     * Dumps the sum over the Z axis projected onto the XY plane of the energy
     * dumped into the volume. Energy deposition is reported as eV/electron.
     * 
-    * @param wr A Writer defining the output device
+    * @param wr
+    *           A Writer defining the output device
     * @throws IOException
     */
-   public void dumpXYProjection(Writer wr)
-         throws IOException {
+   public void dumpXYProjection(Writer wr) throws IOException {
       final double norm = FromSI.eV(1.0) / mElectronCount;
-      for(int x = 0; x < mDims[0]; ++x) {
+      for (int x = 0; x < mDims[0]; ++x) {
          wr.append(", ");
          wr.append(Double.toString(mPoint[0] + (mSize[0] * x)));
       }
       wr.append("\n");
-      for(int y = 0; y < mDims[1]; ++y) {
+      for (int y = 0; y < mDims[1]; ++y) {
          wr.append(Double.toString(mPoint[1] + (mSize[1] * y)));
-         for(int x = 0; x < mDims[0]; ++x) {
+         for (int x = 0; x < mDims[0]; ++x) {
             double sum = 0.0;
-            for(int z = 0; z < mDims[2]; ++z)
+            for (int z = 0; z < mDims[2]; ++z)
                sum += mVoxel[x][y][z];
             wr.append(", ");
             wr.append(Double.toString(sum * norm));
@@ -289,22 +293,22 @@ final public class EnergyLossListener
     * Dumps the sum over the Y axis projected onto the XZ plane of the energy
     * dumped into the volume. Energy deposition is reported as eV/electron.
     * 
-    * @param wr A Writer defining the output device
+    * @param wr
+    *           A Writer defining the output device
     * @throws IOException
     */
-   public void dumpXZProjection(Writer wr)
-         throws IOException {
+   public void dumpXZProjection(Writer wr) throws IOException {
       final double norm = FromSI.eV(1.0) / mElectronCount;
-      for(int x = 0; x < mDims[0]; ++x) {
+      for (int x = 0; x < mDims[0]; ++x) {
          wr.append(", ");
          wr.append(Double.toString(mPoint[0] + (mSize[0] * x)));
       }
       wr.append("\n");
-      for(int z = 0; z < mDims[2]; ++z) {
+      for (int z = 0; z < mDims[2]; ++z) {
          wr.append(Double.toString(mPoint[2] + (mSize[2] * z)));
-         for(int x = 0; x < mDims[0]; ++x) {
+         for (int x = 0; x < mDims[0]; ++x) {
             double sum = 0.0;
-            for(int y = 0; y < mDims[1]; ++y)
+            for (int y = 0; y < mDims[1]; ++y)
                sum += mVoxel[x][y][z];
             wr.append(", ");
             wr.append(Double.toString(sum * norm));
@@ -323,12 +327,13 @@ final public class EnergyLossListener
     * /e<sup>-</sup>
     * </p>
     * 
-    * @param wr Writer
-    * @param withZeros If false zero values are not written.
+    * @param wr
+    *           Writer
+    * @param withZeros
+    *           If false zero values are not written.
     * @throws IOException
     */
-   public void dumpVoxels(Writer wr, boolean withZeros)
-         throws IOException {
+   public void dumpVoxels(Writer wr, boolean withZeros) throws IOException {
       wr.append("\"Corner[0]\", ");
       wr.append(Double.toString(mPoint[0]));
       wr.append(", ");
@@ -346,10 +351,10 @@ final public class EnergyLossListener
       wr.append("\n");
       wr.append("x,y,z,energy\n");
       final double norm = normalization();
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int y = 0; y < mDims[0]; ++y)
-            for(int z = 0; z < mDims[2]; ++z)
-               if(withZeros || (mVoxel[x][y][z] != 0.0)) {
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int y = 0; y < mDims[0]; ++y)
+            for (int z = 0; z < mDims[2]; ++z)
+               if (withZeros || (mVoxel[x][y][z] != 0.0)) {
                   wr.append(Integer.toString(x));
                   wr.append(", ");
                   wr.append(Integer.toString(y));
@@ -368,22 +373,22 @@ final public class EnergyLossListener
     * Dumps the sum over the X axis projected onto the YZ plane of the energy
     * dumped into the volume.
     * 
-    * @param wr A Writer defining the output device
+    * @param wr
+    *           A Writer defining the output device
     * @throws IOException
     */
-   public void dumpYZProjection(Writer wr)
-         throws IOException {
+   public void dumpYZProjection(Writer wr) throws IOException {
       final double norm = FromSI.eV(1.0) / mElectronCount;
-      for(int x = 0; x < mDims[0]; ++x) {
+      for (int x = 0; x < mDims[0]; ++x) {
          wr.append(", ");
          wr.append(Double.toString(mPoint[0] + (mSize[0] * x)));
       }
       wr.append("\n");
-      for(int z = 0; z < mDims[2]; ++z) {
+      for (int z = 0; z < mDims[2]; ++z) {
          wr.append(Double.toString(mPoint[2] + (mSize[2] * z)));
-         for(int y = 0; y < mDims[0]; ++y) {
+         for (int y = 0; y < mDims[0]; ++y) {
             double sum = 0.0;
-            for(int x = 0; x < mDims[1]; ++x)
+            for (int x = 0; x < mDims[1]; ++x)
                sum += mVoxel[x][y][z];
             wr.append(", ");
             wr.append(Double.toString(sum * norm));
@@ -393,32 +398,30 @@ final public class EnergyLossListener
    }
 
    private boolean isInside(int[] vox) {
-      return (vox[0] >= 0) && (vox[1] >= 0) && (vox[2] >= 0) && (vox[0] < mDims[0]) && (vox[1] < mDims[1])
-            && (vox[2] < mDims[2]);
+      return (vox[0] >= 0) && (vox[1] >= 0) && (vox[2] >= 0) && (vox[0] < mDims[0]) && (vox[1] < mDims[1]) && (vox[2] < mDims[2]);
 
    }
 
    private boolean isInsideOrEdge(int[] vox) {
-      return (vox[0] >= 0) && (vox[1] >= 0) && (vox[2] >= 0) && (vox[0] <= mDims[0]) && (vox[1] <= mDims[1])
-            && (vox[2] <= mDims[2]);
+      return (vox[0] >= 0) && (vox[1] >= 0) && (vox[2] >= 0) && (vox[0] <= mDims[0]) && (vox[1] <= mDims[1]) && (vox[2] <= mDims[2]);
 
    }
 
    private double[] endBounded(double[] start, double[] end) {
       double[] res = end;
-      for(int ax = 0; ax < 3; ax++) {
+      for (int ax = 0; ax < 3; ax++) {
          final double low = lowSidePosition(ax, 0);
          final double high = lowSidePosition(ax, mDims[ax]);
-         if(res[ax] < low) {
+         if (res[ax] < low) {
             final double t = (low - start[ax]) / (res[ax] - start[ax]);
-            if((t >= 0) && (t <= 1.0)) {
+            if ((t >= 0) && (t <= 1.0)) {
                res = Math2.plus(start, Math2.multiply(t, Math2.minus(res, start)));
                assert Math.abs(res[ax] - low) < 1.0e-15;
             } else
                return null;
-         } else if(res[ax] > high) {
+         } else if (res[ax] > high) {
             final double t = (high - start[ax]) / (res[ax] - start[ax]);
-            if((t >= 0) && (t <= 1.0)) {
+            if ((t >= 0) && (t <= 1.0)) {
                res = Math2.plus(start, Math2.multiply(t, Math2.minus(res, start)));
                assert Math.abs(res[ax] - high) < 1.0e-15;
             } else
@@ -439,26 +442,26 @@ final public class EnergyLossListener
    public void actionPerformed(ActionEvent arg0) {
       assert arg0.getSource() instanceof MonteCarloSS;
       final MonteCarloSS mcss = (MonteCarloSS) arg0.getSource();
-      switch(arg0.getID()) {
-         case MonteCarloSS.ScatterEvent:
-         case MonteCarloSS.NonScatterEvent: {
+      switch (arg0.getID()) {
+         case MonteCarloSS.ScatterEvent :
+         case MonteCarloSS.NonScatterEvent : {
             final Electron ee = mcss.getElectron();
             final double[] prevPos = ee.getPrevPosition();
             final double[] thisPos = ee.getPosition();
             // end constrained to instrumented region
             final double[] endPos = endBounded(prevPos, thisPos);
-            if(endPos == null)
+            if (endPos == null)
                return;
             final int[] endVoxel = indexOf(endPos);
             assert isInsideOrEdge(endVoxel) : Arrays.toString(endVoxel);
             // start constrained to instrumented region
             final double[] startPos = startBounded(prevPos, thisPos);
-            if(startPos == null)
+            if (startPos == null)
                return;
             final int[] startVoxel = indexOf(startPos);
             assert isInsideOrEdge(startVoxel) : Arrays.toString(startVoxel);
             double dE = ee.getPreviousEnergy() - ee.getEnergy();
-            if(dE == 0.0)
+            if (dE == 0.0)
                return;
             final double dEperM = dE / Math2.distance(prevPos, thisPos);
             final double fullLength = Math2.distance(startPos, endPos);
@@ -466,18 +469,18 @@ final public class EnergyLossListener
             int[] currVoxel = startVoxel;
             double[] currPos = startPos;
             double remLength = fullLength;
-            while(isInside(currVoxel)) {
+            while (isInside(currVoxel)) {
                // default to the endPos
                double[] nextPos = endPos;
                int[] nextVoxel = endVoxel;
                double currDist = remLength;
                assert Math.abs(Math2.distance(currPos, endPos) - currDist) < 1.0e-15;
                // Unless we leave the current voxel
-               for(int i = 0; i < 3; ++i) {
-                  if(currVoxel[i] != endVoxel[i]) {
+               for (int i = 0; i < 3; ++i) {
+                  if (currVoxel[i] != endVoxel[i]) {
                      final int[] ppVox = Arrays.copyOf(currVoxel, 3);
                      double pp_i;
-                     if(currVoxel[i] < endVoxel[i]) {
+                     if (currVoxel[i] < endVoxel[i]) {
                         ppVox[i] = currVoxel[i] + 1;
                         pp_i = lowSidePosition(i, ppVox[i]);
                         assert pp_i == highSidePosition(i, currVoxel[i]);
@@ -487,14 +490,14 @@ final public class EnergyLossListener
                         assert pp_i == lowSidePosition(i, currVoxel[i]);
                      }
                      final double t = (pp_i - currPos[i]) / (endPos[i] - currPos[i]);
-                     if((t >= 0.0) && (t < 1.0)) {
+                     if ((t >= 0.0) && (t < 1.0)) {
                         // Calculate the start of the next segment
                         final double[] pp = Math2.plus(currPos, Math2.multiply(t, Math2.minus(endPos, currPos)));
                         assert Math.abs(pp[i] - pp_i) < 1.0e-15;
                         final double dd = Math2.distance(currPos, pp);
                         // Select the smallest possible step
                         assert dd < remLength + 1.0e-15;
-                        if(dd < currDist) {
+                        if (dd < currDist) {
                            nextPos = pp;
                            nextVoxel = ppVox;
                            currDist = dd;
@@ -511,23 +514,23 @@ final public class EnergyLossListener
                assert dE >= -ToSI.eV(1.0e-3) : dE;
                remLength -= currDist;
                assert remLength >= -1.0e-15 : remLength;
-               if(sameVoxel(currVoxel, endVoxel))
+               if (sameVoxel(currVoxel, endVoxel))
                   break;
                currVoxel = nextVoxel;
                currPos = nextPos;
             }
          }
             break;
-         case MonteCarloSS.TrajectoryStartEvent:
+         case MonteCarloSS.TrajectoryStartEvent :
             ++mElectronCount;
             break;
-         case MonteCarloSS.BackscatterEvent:
-         case MonteCarloSS.TrajectoryEndEvent:
-         case MonteCarloSS.LastTrajectoryEvent:
-         case MonteCarloSS.FirstTrajectoryEvent:
-         case MonteCarloSS.StartSecondaryEvent:
-         case MonteCarloSS.EndSecondaryEvent:
-         case MonteCarloSS.BeamEnergyChanged:
+         case MonteCarloSS.BackscatterEvent :
+         case MonteCarloSS.TrajectoryEndEvent :
+         case MonteCarloSS.LastTrajectoryEvent :
+         case MonteCarloSS.FirstTrajectoryEvent :
+         case MonteCarloSS.StartSecondaryEvent :
+         case MonteCarloSS.EndSecondaryEvent :
+         case MonteCarloSS.BeamEnergyChanged :
             break;
       }
    }
@@ -536,12 +539,13 @@ final public class EnergyLossListener
     * Add red coordinate axes of the specified length to the VRML file. These
     * axes serve as both orientation and length scale markers.
     * 
-    * @param wr A Writer containing VRML
-    * @param length The length of the axes in meters
+    * @param wr
+    *           A Writer containing VRML
+    * @param length
+    *           The length of the axes in meters
     * @throws IOException
     */
-   public void addAxesToVRML(Writer wr, double length)
-         throws IOException {
+   public void addAxesToVRML(Writer wr, double length) throws IOException {
       final NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
       nf.setMaximumFractionDigits(3);
       nf.setGroupingUsed(false);
@@ -592,8 +596,7 @@ final public class EnergyLossListener
     * @param wr
     * @throws IOException
     */
-   public void writeAsVRML(Writer wr)
-         throws IOException {
+   public void writeAsVRML(Writer wr) throws IOException {
       final double max = maxVoxelValue();
       final NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
       nf.setMaximumFractionDigits(3);
@@ -665,15 +668,11 @@ final public class EnergyLossListener
       wr.append(" }\n");
       wr.append("}\n");
 
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int y = 0; y < mDims[0]; ++y)
-            for(int z = 0; z < mDims[2]; ++z)
-               if(mVoxel[x][y][z] != 0.0) {
-                  final double[] c0 = Math2.ebeDivide(new double[] {
-                     lowSidePosition(0, x),
-                     lowSidePosition(1, y),
-                     lowSidePosition(2, z),
-                  }, mSize);
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int y = 0; y < mDims[0]; ++y)
+            for (int z = 0; z < mDims[2]; ++z)
+               if (mVoxel[x][y][z] != 0.0) {
+                  final double[] c0 = Math2.ebeDivide(new double[]{lowSidePosition(0, x), lowSidePosition(1, y), lowSidePosition(2, z),}, mSize);
                   // tr -> 0.75 to 0
                   final String trStr = nf.format(0.99 * (1.00 - (mVoxel[x][y][z] / max)));
                   wr.append("\nVoxel {");
@@ -690,13 +689,13 @@ final public class EnergyLossListener
     * X-axis bins. The images are labeled 'planeX.png' and stored in the
     * directory specified.
     * 
-    * @param dir A directory as a String
-    * @param scale The size of the pixels to represent each voxel (scale x
-    *           scale)
+    * @param dir
+    *           A directory as a String
+    * @param scale
+    *           The size of the pixels to represent each voxel (scale x scale)
     * @throws IOException
     */
-   public void writeAsImageSet(String dir, int scale)
-         throws IOException {
+   public void writeAsImageSet(String dir, int scale) throws IOException {
       writeAsImageSet(new File(dir), scale);
    }
 
@@ -705,30 +704,30 @@ final public class EnergyLossListener
     * X-axis bins. The images are labeled 'planeX.png' and stored in the
     * directory specified. Only writes non-zero planes.
     * 
-    * @param dir A directory as a File
-    * @param scale The size of the pixels to represent each voxel (scale x
-    *           scale)
+    * @param dir
+    *           A directory as a File
+    * @param scale
+    *           The size of the pixels to represent each voxel (scale x scale)
     * @throws IOException
     */
-   public void writeAsImageSet(File dir, int scale)
-         throws IOException {
+   public void writeAsImageSet(File dir, int scale) throws IOException {
       final Color[] cc = buildPalette(0.04F);
       final double max = maxVoxelValue();
-      for(int x = 0; x < mDims[0]; ++x) {
+      for (int x = 0; x < mDims[0]; ++x) {
          final BufferedImage img = new BufferedImage(mDims[1] * scale, mDims[2] * scale, BufferedImage.TYPE_3BYTE_BGR);
          final Graphics2D gr = (Graphics2D) img.getGraphics();
          boolean nonZero = false;
-         for(int y = 0; y < mDims[1]; ++y)
-            for(int z = 0; z < mDims[2]; ++z) {
+         for (int y = 0; y < mDims[1]; ++y)
+            for (int z = 0; z < mDims[2]; ++z) {
                nonZero |= (mVoxel[x][y][z] > 0.0);
                gr.setColor(cc[(int) (0.999999 + ((255.0 * mVoxel[x][y][z]) / max))]);
                gr.fillRect(y * scale, z * scale, scale, scale);
             }
          final File ff = new File(dir, "plane" + Integer.toString(x) + ".png");
-         if(nonZero) {
+         if (nonZero) {
             drawMicronMarker(scale, gr, 0, 1);
             ImageIO.write(img, "png", ff);
-         } else if(ff.exists())
+         } else if (ff.exists())
             ff.delete();
 
       }
@@ -738,29 +737,29 @@ final public class EnergyLossListener
     * Integrates along the y-axis to project the energy deposited onto the X-Y
     * plane and constructs an image.
     * 
-    * @param file A path as a File
-    * @param scale The size of the pixels to represent each voxel (scale x
-    *           scale)
+    * @param file
+    *           A path as a File
+    * @param scale
+    *           The size of the pixels to represent each voxel (scale x scale)
     * @throws IOException
     */
-   public void imageXZProjection(File file, int scale)
-         throws IOException {
+   public void imageXZProjection(File file, int scale) throws IOException {
       final Color[] cc = buildPalette(0.04F);
       final double[][] proj = new double[mDims[0]][mDims[2]];
       double max = -Double.MAX_VALUE;
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int z = 0; z < mDims[2]; ++z) {
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int z = 0; z < mDims[2]; ++z) {
             double tmp = 0.0;
-            for(int y = 0; y < mDims[1]; ++y)
+            for (int y = 0; y < mDims[1]; ++y)
                tmp += mVoxel[x][y][z];
-            if(tmp > max)
+            if (tmp > max)
                max = tmp;
             proj[x][z] = tmp;
          }
       final BufferedImage img = new BufferedImage(mDims[0] * scale, mDims[2] * scale, BufferedImage.TYPE_3BYTE_BGR);
       final Graphics2D gr = (Graphics2D) img.getGraphics();
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int z = 0; z < mDims[2]; ++z) {
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int z = 0; z < mDims[2]; ++z) {
             gr.setColor(cc[(int) (0.999999 + ((255.0 * proj[x][z]) / max))]);
             gr.fillRect(x * scale, z * scale, scale, scale);
          }
@@ -772,29 +771,29 @@ final public class EnergyLossListener
     * Integrates along the z-axis to project the energy deposited onto the X-Z
     * plane and constructs an image.
     * 
-    * @param file A path as a File
-    * @param scale The size of the pixels to represent each voxel (scale x
-    *           scale)
+    * @param file
+    *           A path as a File
+    * @param scale
+    *           The size of the pixels to represent each voxel (scale x scale)
     * @throws IOException
     */
-   public void imageXYProjection(File file, int scale)
-         throws IOException {
+   public void imageXYProjection(File file, int scale) throws IOException {
       final Color[] cc = buildPalette(0.04F);
       final double[][] proj = new double[mDims[0]][mDims[1]];
       double max = -Double.MAX_VALUE;
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int y = 0; y < mDims[1]; ++y) {
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int y = 0; y < mDims[1]; ++y) {
             double tmp = 0.0;
-            for(int z = 0; z < mDims[2]; ++z)
+            for (int z = 0; z < mDims[2]; ++z)
                tmp += mVoxel[x][y][z];
-            if(tmp > max)
+            if (tmp > max)
                max = tmp;
             proj[x][y] = tmp;
          }
       final BufferedImage img = new BufferedImage(mDims[0] * scale, mDims[1] * scale, BufferedImage.TYPE_3BYTE_BGR);
       final Graphics2D gr = (Graphics2D) img.getGraphics();
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int y = 0; y < mDims[1]; ++y) {
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int y = 0; y < mDims[1]; ++y) {
             gr.setColor(cc[(int) (0.999999 + ((255.0 * proj[x][y]) / max))]);
             gr.fillRect(x * scale, y * scale, scale, scale);
          }
@@ -807,24 +806,25 @@ final public class EnergyLossListener
     * plane and constructs an image consisting of nRings at 1/nRings,
     * 2/nRings,... fractions of the total energy deposited.
     * 
-    * @param file A path as a File
-    * @param scale The size of the pixels to represent each voxel (scale x
-    *           scale)
-    * @param nRings The number of fractional intervals into which to divide the
+    * @param file
+    *           A path as a File
+    * @param scale
+    *           The size of the pixels to represent each voxel (scale x scale)
+    * @param nRings
+    *           The number of fractional intervals into which to divide the
     *           total energy deposition.
     * @throws IOException
     */
-   public void imageXYRings(File file, int scale, int nRings)
-         throws IOException {
+   public void imageXYRings(File file, int scale, int nRings) throws IOException {
       final Color[] cc = buildPalette(0.0F);
       final double[][] proj = new double[mDims[0]][mDims[1]];
       double max = -Double.MAX_VALUE, sum = 0.0;
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int y = 0; y < mDims[1]; ++y) {
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int y = 0; y < mDims[1]; ++y) {
             double tmp = 0.0;
-            for(int z = 0; z < mDims[2]; ++z)
+            for (int z = 0; z < mDims[2]; ++z)
                tmp += mVoxel[x][y][z];
-            if(tmp > max)
+            if (tmp > max)
                max = tmp;
             proj[x][y] = tmp;
             sum += tmp;
@@ -832,17 +832,17 @@ final public class EnergyLossListener
       final BufferedImage img = new BufferedImage(mDims[0] * scale, mDims[1] * scale, BufferedImage.TYPE_3BYTE_BGR);
       final Graphics2D gr = (Graphics2D) img.getGraphics();
       double remains = sum;
-      for(int i = nRings - 1; i >= 0; --i) {
+      for (int i = nRings - 1; i >= 0; --i) {
          gr.setColor(cc[(int) ((255.0 * (nRings - i)) / nRings)]);
          final double thresh = (double) i / (double) nRings;
          boolean done = false;
-         while((remains > (thresh * sum)) && (!done)) {
+         while ((remains > (thresh * sum)) && (!done)) {
             done = true;
             double min = Double.MAX_VALUE;
             int xMin = 0, yMin = 0;
-            for(int x = 0; x < mDims[0]; ++x)
-               for(int y = 0; y < mDims[1]; ++y)
-                  if((proj[x][y] > 0.0) && (proj[x][y] < min)) {
+            for (int x = 0; x < mDims[0]; ++x)
+               for (int y = 0; y < mDims[1]; ++y)
+                  if ((proj[x][y] > 0.0) && (proj[x][y] < min)) {
                      min = proj[x][y];
                      xMin = x;
                      yMin = y;
@@ -862,24 +862,25 @@ final public class EnergyLossListener
     * plane and constructs an image consisting of nRings at 1/nRings,
     * 2/nRings,... fractions of the total energy deposited.
     * 
-    * @param file A path as a File
-    * @param scale The size of the pixels to represent each voxel (scale x
-    *           scale)
-    * @param nRings The number of fractional intervals into which to divide the
+    * @param file
+    *           A path as a File
+    * @param scale
+    *           The size of the pixels to represent each voxel (scale x scale)
+    * @param nRings
+    *           The number of fractional intervals into which to divide the
     *           total energy deposition.
     * @throws IOException
     */
-   public void imageXZRings(File file, int scale, int nRings)
-         throws IOException {
+   public void imageXZRings(File file, int scale, int nRings) throws IOException {
       final Color[] cc = buildPalette(0.0F);
       final double[][] proj = new double[mDims[0]][mDims[2]];
       double max = -Double.MAX_VALUE, sum = 0.0;
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int z = 0; z < mDims[2]; ++z) {
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int z = 0; z < mDims[2]; ++z) {
             double tmp = 0.0;
-            for(int y = 0; y < mDims[1]; ++y)
+            for (int y = 0; y < mDims[1]; ++y)
                tmp += mVoxel[x][y][z];
-            if(tmp > max)
+            if (tmp > max)
                max = tmp;
             proj[x][z] = tmp;
             sum += tmp;
@@ -887,17 +888,17 @@ final public class EnergyLossListener
       final BufferedImage img = new BufferedImage(mDims[0] * scale, mDims[2] * scale, BufferedImage.TYPE_3BYTE_BGR);
       final Graphics2D gr = (Graphics2D) img.getGraphics();
       double remains = sum;
-      for(int i = nRings - 1; i >= 0; --i) {
+      for (int i = nRings - 1; i >= 0; --i) {
          gr.setColor(cc[(int) ((255.0 * (nRings - i)) / nRings)]);
          final double thresh = (double) i / (double) nRings;
          boolean done = false;
-         while((remains > (thresh * sum)) && (!done)) {
+         while ((remains > (thresh * sum)) && (!done)) {
             done = true;
             double min = Double.MAX_VALUE;
             int xMin = 0, zMin = 0;
-            for(int x = 0; x < mDims[0]; ++x)
-               for(int z = 0; z < mDims[2]; ++z)
-                  if((proj[x][z] > 0.0) && (proj[x][z] < min)) {
+            for (int x = 0; x < mDims[0]; ++x)
+               for (int z = 0; z < mDims[2]; ++z)
+                  if ((proj[x][z] > 0.0) && (proj[x][z] < min)) {
                      min = proj[x][z];
                      xMin = x;
                      zMin = z;
@@ -915,7 +916,7 @@ final public class EnergyLossListener
    private void drawMicronMarker(int scale, final Graphics2D gr, int dim1, int dim2) {
       double markerLen = 100.0e-6;
       int width = (int) Math.round((markerLen * scale) / mSize[0]);
-      while(width > ((7 * mDims[dim1] * scale) / 10)) {
+      while (width > ((7 * mDims[dim1] * scale) / 10)) {
          markerLen /= 10.0;
          width = (int) Math.round((markerLen * scale) / mSize[0]);
       }
@@ -929,8 +930,7 @@ final public class EnergyLossListener
          final NumberFormat df = new HalfUpFormat("0.0## \u03BCm");
          final String tmp = df.format(markerLen / 1.0e-6);
          gr.drawString(tmp, left + ((width - gr.getFontMetrics().stringWidth(tmp)) / 2), top - (2 * scale));
-      }
-      finally {
+      } finally {
          gr.setFont(oldFont);
       }
    }
@@ -942,13 +942,11 @@ final public class EnergyLossListener
       assert cs.getNumComponents() == 1;
       final float minV = cs.getMinValue(0);
       final float maxV = cs.getMaxValue(0);
-      for(int i = 1; i < 255; i++) {
+      for (int i = 1; i < 255; i++) {
          float h = minV + ((offset + (((1.0F - offset) * i) / 255.0F)) * (maxV - minV));
-         if(h > 1.0F)
+         if (h > 1.0F)
             h = 1.0F;
-         cc[i] = new Color(cs, new float[] {
-            h
-         }, 1.0F);
+         cc[i] = new Color(cs, new float[]{h}, 1.0F);
       }
       return cc;
    }
@@ -961,10 +959,10 @@ final public class EnergyLossListener
     */
    public double maxVoxelValue() {
       double max = -Double.MAX_VALUE;
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int y = 0; y < mDims[1]; ++y)
-            for(int z = 0; z < mDims[2]; ++z)
-               if(mVoxel[x][y][z] > max)
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int y = 0; y < mDims[1]; ++y)
+            for (int z = 0; z < mDims[2]; ++z)
+               if (mVoxel[x][y][z] > max)
                   max = mVoxel[x][y][z];
       return max;
    }
@@ -997,12 +995,13 @@ final public class EnergyLossListener
     * energy is dumped. This is written to a text file. This implementation uses
     * a lot of memory when the bin count is large.
     * 
-    * @param wr Writer
-    * @param nBins 100 for 1% bins
+    * @param wr
+    *           Writer
+    * @param nBins
+    *           100 for 1% bins
     * @throws IOException
     */
-   public void writeDepositionVolume(Writer wr, int nBins)
-         throws IOException {
+   public void writeDepositionVolume(Writer wr, int nBins) throws IOException {
       final TreeMap<Double, Integer> bins = new TreeMap<Double, Integer>(new Comparator<Double>() {
          @Override
          public int compare(Double o1, Double o2) {
@@ -1011,11 +1010,11 @@ final public class EnergyLossListener
       });
       double sum = 0.0;
       final double voxArea = mSize[0] * mSize[1] * mSize[2] / 1.0e-18;
-      for(int x = 0; x < mDims[0]; ++x)
-         for(int y = 0; y < mDims[1]; ++y)
-            for(int z = 0; z < mDims[0]; ++z) {
+      for (int x = 0; x < mDims[0]; ++x)
+         for (int y = 0; y < mDims[1]; ++y)
+            for (int z = 0; z < mDims[0]; ++z) {
                final double tmp = mVoxel[x][y][z] / mElectronCount;
-               if(tmp > 0.0) {
+               if (tmp > 0.0) {
                   sum += tmp;
                   final Double v = Double.valueOf(tmp);
                   final Integer i = bins.get(v);
@@ -1023,16 +1022,16 @@ final public class EnergyLossListener
                }
             }
       wr.append("\"Bin\", \"Pct\", \"Min (keV)\", \"Max (keV)\", \"Volume (\u03BCm\u00B3)\"\n");
-      for(int i = 0; i < nBins; ++i) {
+      for (int i = 0; i < nBins; ++i) {
          final double min = (i * sum) / nBins;
          final double max = ((i + 1) * sum) / nBins;
          wr.append(Integer.toString(i) + ", ");
          wr.append(Double.toString((100.0 * max) / sum) + ", " + Double.toString(FromSI.keV(min)));
          wr.append(", " + Double.toString(FromSI.keV(max)));
          double acc = 0.0, count = 0.0;
-         for(final Map.Entry<Double, Integer> me : bins.entrySet()) {
+         for (final Map.Entry<Double, Integer> me : bins.entrySet()) {
             final double all = me.getKey().doubleValue() * me.getValue().intValue();
-            if((acc + all) >= max) {
+            if ((acc + all) >= max) {
                count += (max - acc) / me.getKey().doubleValue();
                acc = max;
                break;

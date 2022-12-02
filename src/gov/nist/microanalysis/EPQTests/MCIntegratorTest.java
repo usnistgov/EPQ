@@ -3,25 +3,16 @@ package gov.nist.microanalysis.EPQTests;
 import gov.nist.microanalysis.Utility.MCIntegrator;
 import junit.framework.TestCase;
 
-public class MCIntegratorTest
-   extends TestCase {
+public class MCIntegratorTest extends TestCase {
 
    public void testIntegrate1() {
-      final double[] pt1 = new double[] {
-         1.0,
-         1.0
-      };
-      final double[] pt2 = new double[] {
-         -1.0,
-         -1.0
-      };
+      final double[] pt1 = new double[]{1.0, 1.0};
+      final double[] pt2 = new double[]{-1.0, -1.0};
       final MCIntegrator integrator = new MCIntegrator(pt1, pt2) {
 
          @Override
          public double[] function(double[] args) {
-            return new double[] {
-               1.0
-            };
+            return new double[]{1.0};
          }
 
          @Override
@@ -34,21 +25,13 @@ public class MCIntegratorTest
 
    public void testIntegrate2() {
       final double radius = 4.0;
-      final double[] pt1 = new double[] {
-         radius,
-         radius
-      };
-      final double[] pt2 = new double[] {
-         -radius,
-         -radius
-      };
+      final double[] pt1 = new double[]{radius, radius};
+      final double[] pt2 = new double[]{-radius, -radius};
       final MCIntegrator integrator = new MCIntegrator(pt1, pt2) {
 
          @Override
          public double[] function(double[] args) {
-            return new double[] {
-               2.0 * Math.sqrt((radius * radius) - (args[0] * args[0]) - (args[1] * args[1]))
-            };
+            return new double[]{2.0 * Math.sqrt((radius * radius) - (args[0] * args[0]) - (args[1] * args[1]))};
          }
 
          @Override

@@ -48,9 +48,7 @@ public class MicrocalSpectrumFitter {
 
    private static final double SQRT_2PI = Math.sqrt(2.0 * Math.PI);
 
-   private static class PeakData
-      implements
-      Comparable<PeakData> {
+   private static class PeakData implements Comparable<PeakData> {
       /**
        * Estimated position of the peak in channels
        */
@@ -107,22 +105,21 @@ public class MicrocalSpectrumFitter {
     */
    private UncertainValue2[] mEnergyFit1;
 
-   public double[] performEnergyFit0()
-         throws EPQException {
-      if(mEnergyFit0 == null) {
+   public double[] performEnergyFit0() throws EPQException {
+      if (mEnergyFit0 == null) {
          int count = 0;
-         for(final PeakData pd : mPeaks)
-            if(pd.mFitEnergy)
+         for (final PeakData pd : mPeaks)
+            if (pd.mFitEnergy)
                ++count;
-         if(count < 3)
+         if (count < 3)
             throw new EPQException("Too few peaks (" + Integer.toString(count) + "<3) identified for the energy fit.");
          final double[] x = new double[count];
          final double[] y = new double[count];
          final double[] sig = new double[count];
          {
             int i = 0;
-            for(final PeakData pd : mPeaks)
-               if(pd.mFitEnergy) {
+            for (final PeakData pd : mPeaks)
+               if (pd.mFitEnergy) {
                   x[i] = pd.mEstChannel;
                   y[i] = FromSI.eV(mEnergy.compute(pd.mROI.getXRayTransitionSet(pd.mROI.getElementSet().first()).getWeighiestTransition()));
                   sig[i] = 1.0;
@@ -138,7 +135,7 @@ public class MicrocalSpectrumFitter {
             @Override
             protected void fitFunction(double xi, double[] afunc) {
                double v = 1.0;
-               for(int i = 0; i < afunc.length; ++i) {
+               for (int i = 0; i < afunc.length; ++i) {
                   afunc[i] = v;
                   v *= xi;
                }
@@ -147,37 +144,36 @@ public class MicrocalSpectrumFitter {
          mEnergyFit0 = llsq.getResults();
       }
       final double[] res = new double[mEnergyFit0.length];
-      for(int i = 0; i < mEnergyFit0.length; ++i)
+      for (int i = 0; i < mEnergyFit0.length; ++i)
          res[i] = mEnergyFit0[i].doubleValue();
       return res;
    }
 
    public void setInitialEneryCalibration(double[] poly) {
       mEnergyFit0 = new UncertainValue2[poly.length];
-      for(int i = 0; i < poly.length; ++i)
+      for (int i = 0; i < poly.length; ++i)
          mEnergyFit0[i] = new UncertainValue2(poly[i], "E[" + i + "]", poly[i] * 0.01);
    }
 
-   public double[] performEnergyFit1()
-         throws EPQException {
-      if(mEnergyFit1 == null) {
+   public double[] performEnergyFit1() throws EPQException {
+      if (mEnergyFit1 == null) {
          int count = 0;
-         for(final PeakData pd : mPeaks)
-            if(pd.mFitEnergy)
+         for (final PeakData pd : mPeaks)
+            if (pd.mFitEnergy)
                ++count;
-         if(count < 3)
+         if (count < 3)
             throw new EPQException("Too few peaks (" + Integer.toString(count) + "<3) identified for the energy fit.");
          final double[] x = new double[count];
          final double[] y = new double[count];
          final double[] sig = new double[count];
          {
             int i = 0;
-            for(final PeakData pd : mPeaks) {
+            for (final PeakData pd : mPeaks) {
                final RegionOfInterestSet.RegionOfInterest roi = pd.mROI;
                final MicrocalLineFitter mlf = mFitResults.get(roi);
                final XRayTransition weightiest = mlf.mTransitions.getWeighiestTransition();
                final UncertainValue2 channelPos = mlf.getChannelPosition(weightiest);
-               if(pd.mFitEnergy) {
+               if (pd.mFitEnergy) {
                   y[i] = FromSI.eV(mEnergy.compute(weightiest));
                   x[i] = channelPos.doubleValue();
                   sig[i] = Math.max(channelPos.uncertainty(), 1.0);
@@ -194,7 +190,7 @@ public class MicrocalSpectrumFitter {
             @Override
             protected void fitFunction(double xi, double[] afunc) {
                double v = 1.0;
-               for(int i = 0; i < afunc.length; ++i) {
+               for (int i = 0; i < afunc.length; ++i) {
                   afunc[i] = v;
                   v *= xi;
                }
@@ -203,7 +199,7 @@ public class MicrocalSpectrumFitter {
          mEnergyFit1 = llsq.getResults();
       }
       final double[] res = new double[mEnergyFit1.length];
-      for(int i = 0; i < mEnergyFit1.length; ++i)
+      for (int i = 0; i < mEnergyFit1.length; ++i)
          res[i] = mEnergyFit1[i].doubleValue();
       return res;
    }
@@ -216,8 +212,7 @@ public class MicrocalSpectrumFitter {
     * @return Channel index as a double
     */
    private double channelForEnergy(double e) {
-      final double[] res = Math2.quadraticSolver(mEnergyFit0[2].doubleValue(), mEnergyFit0[1].doubleValue(), mEnergyFit0[0].doubleValue()
-            - e);
+      final double[] res = Math2.quadraticSolver(mEnergyFit0[2].doubleValue(), mEnergyFit0[1].doubleValue(), mEnergyFit0[0].doubleValue() - e);
       return res != null ? (res[0] == Math2.bound(res[0], 0.0, 8096) ? res[0] : res[1]) : 0;
    }
 
@@ -230,7 +225,7 @@ public class MicrocalSpectrumFitter {
     */
    private UncertainValue2 energyForChannel(UncertainValue2 ch) {
       UncertainValue2 res = mEnergyFit1[mEnergyFit1.length - 1];
-      for(int i = mEnergyFit1.length - 2; i >= 0; --i)
+      for (int i = mEnergyFit1.length - 2; i >= 0; --i)
          res = UncertainValue2.add(mEnergyFit1[i], UncertainValue2.multiply(ch, res));
       return res;
    }
@@ -250,8 +245,7 @@ public class MicrocalSpectrumFitter {
       private final double[] mOffsets;
       private transient LevenbergMarquardt2.FitResult mFitResult;
 
-      private MicrocalLineFitter(RegionOfInterestSet.RegionOfInterest roi, double channel, double width)
-            throws EPQException {
+      private MicrocalLineFitter(RegionOfInterestSet.RegionOfInterest roi, double channel, double width) throws EPQException {
          mROI = roi;
          mWidth = width;
          mMinCh = (int) channelForEnergy(FromSI.eV(mROI.lowEnergy()));
@@ -262,40 +256,38 @@ public class MicrocalSpectrumFitter {
          assert mMaxCh < mSpectrum.getChannelCount() : mMaxCh;
          final Element elm = mROI.getElementSet().first();
          mTransitions = new XRayTransitionSet();
-         for(final XRayTransition xrt0 : mROI.getXRayTransitionSet(elm)) {
+         for (final XRayTransition xrt0 : mROI.getXRayTransitionSet(elm)) {
             boolean add = true;
             XRayTransition remove = null;
-            for(final XRayTransition xrt1 : mTransitions)
-               if(xrt0.getEnergy() == xrt1.getEnergy()) {
+            for (final XRayTransition xrt1 : mTransitions)
+               if (xrt0.getEnergy() == xrt1.getEnergy()) {
                   add = (xrt0.getWeight(XRayTransition.NormalizeDestination) > xrt1.getWeight(XRayTransition.NormalizeDestination));
-                  if(add)
+                  if (add)
                      remove = xrt1;
                }
-            if(remove != null) {
+            if (remove != null) {
                mTransitions.remove(remove);
                assert add;
             }
-            if(add)
+            if (add)
                mTransitions.add(xrt0);
          }
          final double[] peakInt = SpectrumUtils.backgroundCorrectedIntegral(mSpectrum, FromSI.eV(mROI.lowEnergy()), FromSI.eV(mROI.highEnergy()));
          mOffsets = new double[mTransitions.size()];
          mConstraints = new Constraint[END_OF_FIXED + mTransitions.size()];
-         mConstraints[BACKGROUND] = new Constraint.Positive((0.05 * mSpectrum.getChannelWidth() * peakInt[2])
-               / (FromSI.eV(mROI.highEnergy() - mROI.lowEnergy())));
+         mConstraints[BACKGROUND] = new Constraint.Positive(
+               (0.05 * mSpectrum.getChannelWidth() * peakInt[2]) / (FromSI.eV(mROI.highEnergy() - mROI.lowEnergy())));
          mConstraints[WIDTH] = new Constraint.Bounded(mWidth, 0.99 * mWidth);
          mConstraints[OFFSET] = new Constraint.Bounded(0.0, 40.0);
          int i = 0;
-         for(final XRayTransition xrt : mTransitions) {
+         for (final XRayTransition xrt : mTransitions) {
             mOffsets[i] = channelForEnergy(FromSI.eV(mEnergy.compute(xrt)));
-            mConstraints[i + END_OF_FIXED] = new Constraint.Positive(peakInt[2]
-                  * Math.min(xrt.getWeight(XRayTransition.NormalizeDestination), 0.01));
+            mConstraints[i + END_OF_FIXED] = new Constraint.Positive(peakInt[2] * Math.min(xrt.getWeight(XRayTransition.NormalizeDestination), 0.01));
             ++i;
          }
       }
 
-      public LevenbergMarquardt2.FitResult compute()
-            throws EPQException {
+      public LevenbergMarquardt2.FitResult compute() throws EPQException {
 
          final LevenbergMarquardt2.FitFunction ff = new LevenbergMarquardt2.FitFunction() {
 
@@ -303,8 +295,8 @@ public class MicrocalSpectrumFitter {
              * Computes the partial derivative matrix (the Jacobian) associated
              * with the fit function and the fit parameters.
              * 
-             * @param params A m x 1 Matrix containing the fit function
-             *           parameters
+             * @param params
+             *           A m x 1 Matrix containing the fit function parameters
              * @return Matrix An n x m Matrix containing the Jacobian (partials)
              */
             @Override
@@ -312,8 +304,8 @@ public class MicrocalSpectrumFitter {
                assert mMaxCh > mMinCh;
                final Matrix res = new Matrix((mMaxCh - mMinCh) + 1, params.getRowDimension());
                assert params.getRowDimension() == res.getColumnDimension();
-               for(int i = 0; i < res.getRowDimension(); ++i)
-                  for(int j = 0; j < res.getColumnDimension(); ++j)
+               for (int i = 0; i < res.getRowDimension(); ++i)
+                  for (int j = 0; j < res.getColumnDimension(); ++j)
                      res.set(i, j, fitPartial(mMinCh + i, params, j));
                return res;
             }
@@ -321,30 +313,30 @@ public class MicrocalSpectrumFitter {
             /**
              * Computes the fit function as a function of the fit parameters.
              * 
-             * @param params A m x 1 Matrix containing the fit function
-             *           parameters
+             * @param params
+             *           A m x 1 Matrix containing the fit function parameters
              * @return Matrix
              */
             @Override
             public Matrix compute(Matrix params) {
                final Matrix res = new Matrix((mMaxCh - mMinCh) + 1, 1);
-               for(int ch = mMinCh; ch < mMaxCh; ++ch)
+               for (int ch = mMinCh; ch < mMaxCh; ++ch)
                   res.set(ch - mMinCh, 0, fitFunction(ch, params));
                return res;
             }
          };
-         if(mFitResult == null) {
+         if (mFitResult == null) {
             final LevenbergMarquardt2 fitter = new LevenbergMarquardt2();
             final int chDim = (1 + mMaxCh) - mMinCh;
             final Matrix yy = new Matrix(chDim, 1);
             final Matrix dy = new Matrix(chDim, 1);
-            for(int i = 0; i < chDim; ++i) {
+            for (int i = 0; i < chDim; ++i) {
                final double cc = mSpectrum.getCounts(i + mMinCh);
                yy.set(i, 0, cc);
                dy.set(i, 0, Math.sqrt(Math.max(cc, 1.0)));
             }
             final Matrix p0 = new Matrix(mConstraints.length, 1);
-            for(int i = 0; i < mConstraints.length; ++i)
+            for (int i = 0; i < mConstraints.length; ++i)
                p0.set(i, 0, 0.0);
             mFitResult = fitter.compute(ff, yy, dy, p0);
          }
@@ -365,8 +357,8 @@ public class MicrocalSpectrumFitter {
 
       public UncertainValue2 getAmplitude(XRayTransition xrt) {
          int i = END_OF_FIXED;
-         for(final XRayTransition xrt0 : mTransitions) {
-            if(xrt.equals(xrt0))
+         for (final XRayTransition xrt0 : mTransitions) {
+            if (xrt.equals(xrt0))
                return mConstraints[i].getResult(mFitResult.getBestParametersU()[i]);
             ++i;
          }
@@ -384,8 +376,8 @@ public class MicrocalSpectrumFitter {
          final UncertainValue2 offset = getOffset();
          int i = 0;
          assert (mTransitions.size() + END_OF_FIXED) == mConstraints.length;
-         for(final XRayTransition xrt0 : mTransitions) {
-            if(xrt.equals(xrt0))
+         for (final XRayTransition xrt0 : mTransitions) {
+            if (xrt.equals(xrt0))
                return UncertainValue2.add(mOffsets[i], offset);
             ++i;
          }
@@ -403,7 +395,7 @@ public class MicrocalSpectrumFitter {
          final double offset = mConstraints[OFFSET].realToConstrained(params.get(OFFSET, 0));
          double res = 0.0;
          final double k = 1.0 / (width * SQRT_2PI);
-         for(int i = END_OF_FIXED; i < params.getRowDimension(); ++i) {
+         for (int i = END_OF_FIXED; i < params.getRowDimension(); ++i) {
             final double height = mConstraints[i].realToConstrained(params.get(i, 0));
             final double x = (offset + mOffsets[i - END_OF_FIXED]) - channel;
             res += height * Math.exp(-0.5 * Math2.sqr(x / width));
@@ -416,18 +408,18 @@ public class MicrocalSpectrumFitter {
          final double width = mConstraints[WIDTH].realToConstrained(params.get(WIDTH, 0));
          final double offset = mConstraints[OFFSET].realToConstrained(params.get(OFFSET, 0));
          double res = Double.NaN;
-         switch(idx) {
-            case BACKGROUND:
+         switch (idx) {
+            case BACKGROUND :
                // Background
                res = 1.0;
                break;
-            case WIDTH: {
+            case WIDTH : {
                // Width
                res = 0.0;
                final double w2 = width * width;
                assert params.getRowDimension() == mConstraints.length;
                assert params.getColumnDimension() == 1;
-               for(int i = END_OF_FIXED; i < params.getRowDimension(); ++i) {
+               for (int i = END_OF_FIXED; i < params.getRowDimension(); ++i) {
                   final double height = mConstraints[i].realToConstrained(params.get(i, 0));
                   final double x2 = Math2.sqr((offset + mOffsets[i - END_OF_FIXED]) - channel);
                   res += height * Math.exp((-0.5 * x2) / w2) * (x2 - w2);
@@ -435,11 +427,11 @@ public class MicrocalSpectrumFitter {
                res /= (w2 * w2 * SQRT_2PI);
                break;
             }
-            case OFFSET: {
+            case OFFSET : {
                // offset
                res = 0.0;
                assert params.getRowDimension() == mConstraints.length;
-               for(int i = END_OF_FIXED; i < params.getRowDimension(); ++i) {
+               for (int i = END_OF_FIXED; i < params.getRowDimension(); ++i) {
                   final double height = mConstraints[i].realToConstrained(params.get(i, 0));
                   final double x = (offset + mOffsets[i - END_OF_FIXED]) - channel;
                   res -= height * x * Math.exp(-0.5 * Math2.sqr(x / width));
@@ -447,7 +439,7 @@ public class MicrocalSpectrumFitter {
                res /= (Math.pow(width, 3.0) * SQRT_2PI);
                break;
             }
-            default: {
+            default : {
                final double x = (offset + mOffsets[idx - END_OF_FIXED]) - channel;
                res = Math.exp(-0.5 * Math2.sqr(x / width)) / (width * SQRT_2PI);
             }
@@ -463,11 +455,11 @@ public class MicrocalSpectrumFitter {
       spec.getProperties().setNumericProperty(SpectrumProperties.Resolution, 8.0);
       spec.getProperties().setNumericProperty(SpectrumProperties.ResolutionLine, SpectrumUtils.E_MnKa);
       final double[] peaks = PeakROISearch.GaussianSearch.compute(spec);
-      for(int i = 0; i < peaks.length; ++i)
-         if(peaks[i] > PEAK_THRESHOLD) {
+      for (int i = 0; i < peaks.length; ++i)
+         if (peaks[i] > PEAK_THRESHOLD) {
             int maxI = i;
-            for(++i; (i < peaks.length) && (peaks[i] > (0.5 * PEAK_THRESHOLD)); ++i)
-               if(mSpectrum.getCounts(i) > mSpectrum.getCounts(maxI))
+            for (++i; (i < peaks.length) && (peaks[i] > (0.5 * PEAK_THRESHOLD)); ++i)
+               if (mSpectrum.getCounts(i) > mSpectrum.getCounts(maxI))
                   maxI = i;
             mPeakPositions.add(Double.valueOf(maxI));
          }
@@ -502,9 +494,9 @@ public class MicrocalSpectrumFitter {
    }
 
    public void removeLine(RegionOfInterestSet.RegionOfInterest roi) {
-      for(final Iterator<PeakData> i = mPeaks.iterator(); i.hasNext();) {
+      for (final Iterator<PeakData> i = mPeaks.iterator(); i.hasNext();) {
          final PeakData pd = i.next();
-         if(pd.mROI.equals(roi)) {
+         if (pd.mROI.equals(roi)) {
             i.remove();
             mEnergyFit0 = null;
          }
@@ -517,12 +509,11 @@ public class MicrocalSpectrumFitter {
       mEnergyFit0 = null;
    }
 
-   public void compute()
-         throws EPQException {
+   public void compute() throws EPQException {
       performEnergyFit0();
       mFitResults = new TreeMap<RegionOfInterestSet.RegionOfInterest, MicrocalLineFitter>();
       int i = 0;
-      for(final PeakData peak : mPeaks) {
+      for (final PeakData peak : mPeaks) {
          final MicrocalLineFitter mlf = new MicrocalLineFitter(peak.mROI, peak.mEstChannel, peak.mWidth);
          mFitResults.put(peak.mROI, mlf);
          mlf.compute();
@@ -534,13 +525,13 @@ public class MicrocalSpectrumFitter {
 
    public ISpectrumData toFitSpectrum() {
       final EditableSpectrum es = new EditableSpectrum(mSpectrum.getChannelCount(), mSpectrum.getChannelWidth(), mSpectrum.getZeroOffset());
-      for(final MicrocalLineFitter mlf : mFitResults.values()) {
+      for (final MicrocalLineFitter mlf : mFitResults.values()) {
          final double w = mlf.getWidth().doubleValue();
          final double b = mlf.getBackground().doubleValue();
          final double k = 1.0 / (w * SQRT_2PI);
-         for(int ch = mlf.mMinCh; ch < mlf.mMaxCh; ++ch) {
+         for (int ch = mlf.mMinCh; ch < mlf.mMaxCh; ++ch) {
             double ampl = 0.0;
-            for(final XRayTransition xrt : mlf.mTransitions) {
+            for (final XRayTransition xrt : mlf.mTransitions) {
                final double a = mlf.getAmplitude(xrt).doubleValue();
                final double center = mlf.getChannelPosition(xrt).doubleValue();
                ampl += a * Math.exp(-0.5 * Math2.sqr((ch - center) / w));
@@ -554,12 +545,12 @@ public class MicrocalSpectrumFitter {
 
    public ISpectrumData toResidualSpectrum() {
       final EditableSpectrum es = new EditableSpectrum(mSpectrum);
-      for(final MicrocalLineFitter mlf : mFitResults.values()) {
+      for (final MicrocalLineFitter mlf : mFitResults.values()) {
          final double w = mlf.getWidth().doubleValue();
          final double k = 1.0 / (w * SQRT_2PI);
-         for(int ch = mlf.mMinCh; ch < mlf.mMaxCh; ++ch) {
+         for (int ch = mlf.mMinCh; ch < mlf.mMaxCh; ++ch) {
             double ampl = 0.0;
-            for(final XRayTransition xrt : mlf.mTransitions) {
+            for (final XRayTransition xrt : mlf.mTransitions) {
                final double a = mlf.getAmplitude(xrt).doubleValue();
                final double center = mlf.getChannelPosition(xrt).doubleValue();
                ampl += a * Math.exp(-0.5 * Math2.sqr((ch - center) / w));
@@ -571,20 +562,17 @@ public class MicrocalSpectrumFitter {
       return SpectrumUtils.copy(es);
    }
 
-   public ISpectrumData linearizeSpectrum(ISpectrumData spec)
-         throws EPQException {
+   public ISpectrumData linearizeSpectrum(ISpectrumData spec) throws EPQException {
       return SpectrumUtils.linearizeSpectrum2(spec, performEnergyFit1(), spec.getChannelWidth());
    }
 
-   public ISpectrumData toEstLinearizedSpectrum()
-         throws EPQException {
+   public ISpectrumData toEstLinearizedSpectrum() throws EPQException {
       final ISpectrumData res = SpectrumUtils.linearizeSpectrum2(mSpectrum, performEnergyFit0(), mSpectrum.getChannelWidth());
       SpectrumUtils.rename(res, "EstLinearized[" + mSpectrum.toString() + "]");
       return res;
    }
 
-   public String toHTML()
-         throws EPQException {
+   public String toHTML() throws EPQException {
       final NumberFormat nf1 = new HalfUpFormat("0.0");
       final NumberFormat nf2 = new HalfUpFormat("0.00");
       final NumberFormat nf4 = new HalfUpFormat("0.00000");
@@ -594,10 +582,10 @@ public class MicrocalSpectrumFitter {
       sb.append("<table>");
       sb.append("<tr><th>Spectrum</th><th>" + mSpectrum.toString() + "</th></tr>");
       sb.append("</table>");
-      if(mPeaks != null) {
+      if (mPeaks != null) {
          sb.append("<table>");
          sb.append("<tr><th>Channel</th><th>ROI</th><th>Fit</th><th>Width</th>");
-         for(final PeakData peak : mPeaks) {
+         for (final PeakData peak : mPeaks) {
             sb.append("<tr><td>" + nf1.format(peak.mEstChannel) + "</td>");
             sb.append("<td>" + peak.mROI.toString() + "</td>");
             sb.append("<td>" + Boolean.toString(peak.mFitEnergy) + "</td>");
@@ -605,7 +593,7 @@ public class MicrocalSpectrumFitter {
          }
          sb.append("</table>");
       }
-      if(mEnergyFit0 != null) {
+      if (mEnergyFit0 != null) {
          sb.append("<H3>Initial Energy Fit</H3>\n");
          sb.append("<table>");
          sb.append("<tr><th>offset</th><th>gain</th><th>quadratic</th></tr>");
@@ -615,7 +603,7 @@ public class MicrocalSpectrumFitter {
          sb.append("<td>" + UncertainValue2.multiply(1.0e6, mEnergyFit0[2]).format(nf1) + " &#215; 10<sup>-6</sup></td></tr>");
          sb.append("</table>");
       }
-      if(mFitResults != null) {
+      if (mFitResults != null) {
          sb.append("<H3>Peak Fit Results</H3>");
          sb.append("<table>");
          sb.append("<tr><th>ROI</th>");
@@ -627,10 +615,10 @@ public class MicrocalSpectrumFitter {
          sb.append("<th>Energy(Fit)</th>");
          sb.append("<th>Energy(Tabulated)</th>");
          sb.append("</tr>");
-         for(final Map.Entry<RegionOfInterestSet.RegionOfInterest, MicrocalLineFitter> me : mFitResults.entrySet()) {
+         for (final Map.Entry<RegionOfInterestSet.RegionOfInterest, MicrocalLineFitter> me : mFitResults.entrySet()) {
             final RegionOfInterestSet.RegionOfInterest roi = me.getKey();
             final MicrocalLineFitter mlf = me.getValue();
-            for(final XRayTransition xrt : mlf.getTransitions()) {
+            for (final XRayTransition xrt : mlf.getTransitions()) {
                final UncertainValue2 uv = mlf.getAmplitude(xrt);
                final UncertainValue2 pos = mlf.getChannelPosition(xrt);
                sb.append("<tr><td>" + roi.toString().substring(0, 20) + "</td>");
@@ -646,7 +634,7 @@ public class MicrocalSpectrumFitter {
          }
          sb.append("</table>");
       }
-      if(mEnergyFit1 != null) {
+      if (mEnergyFit1 != null) {
          sb.append("<H3>Secondary Energy Fit</H3>\n");
          sb.append("<table>");
          sb.append("<tr><th>offset</th><th>gain</th><th>quadratic</th></tr>");
@@ -681,7 +669,7 @@ public class MicrocalSpectrumFitter {
 
    private void setProgress(int percent) {
       final ProgressEvent pe = new ProgressEvent(this, ++mEventIndex, percent);
-      for(final ActionListener ae : mEvents)
+      for (final ActionListener ae : mEvents)
          ae.actionPerformed(pe);
    }
 

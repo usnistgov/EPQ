@@ -40,8 +40,7 @@ import javax.swing.JScrollPane;
  * @version 1.0
  */
 
-public class ParticleModelDialog
-   extends JDialog {
+public class ParticleModelDialog extends JDialog {
    private static final long serialVersionUID = 0x1;
    ArrayList<String> MainParticleModelList = new ArrayList<String>();
    private final CITZAF.ParticleModel[] allModels = CITZAF.ParticleModel.getAllImplimentations();
@@ -69,8 +68,7 @@ public class ParticleModelDialog
       try {
          jbInit();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -80,14 +78,12 @@ public class ParticleModelDialog
       try {
          jbInit();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
 
-   private void jbInit()
-         throws Exception {
+   private void jbInit() throws Exception {
       Main_Panel.setLayout(borderLayout1);
       jPanel_Buttons.setPreferredSize(new Dimension(213, 60));
       Main_Panel.setPreferredSize(new Dimension(213, 200));
@@ -136,9 +132,7 @@ public class ParticleModelDialog
       Main_Panel.add(jScrollPane_Models, BorderLayout.CENTER);
       jScrollPane_Models.getViewport().add(jList_Models, null);
       jList_Models.setForeground(SystemColor.textText);
-      jList_Models.setListData(new Object[] {
-         "Select a particle model"
-      });
+      jList_Models.setListData(new Object[]{"Select a particle model"});
       Main_Panel.add(jPanel_Buttons, BorderLayout.SOUTH);
       jPanel_Buttons.add(jButton_Add, null);
       jPanel_Buttons.add(jButton_Remove, null);
@@ -147,7 +141,7 @@ public class ParticleModelDialog
       jPanel_Buttons.add(jButton_Done, null);
       Main_Panel.add(jPanel_SpacerFrame, BorderLayout.NORTH);
 
-      for(final ParticleModel allModel : allModels) {
+      for (final ParticleModel allModel : allModels) {
          final java.awt.event.ActionListener menuListener = new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -173,7 +167,7 @@ public class ParticleModelDialog
 
    void jButton_Remove_actionPerformed(ActionEvent e) {
       final int Selected = jList_Models.getSelectedIndex();
-      if(Selected != -1)
+      if (Selected != -1)
          MainParticleModelList.remove(Selected);
       jList_Models.setListData(MainParticleModelList.toArray());
       this.setTitle(MainParticleModelList.size() + " particle models selected");
@@ -181,17 +175,15 @@ public class ParticleModelDialog
 
    void jButton_Clear_actionPerformed(ActionEvent e) {
       MainParticleModelList.clear();
-      jList_Models.setListData(new Object[] {
-         "Select a particle model"
-      });
+      jList_Models.setListData(new Object[]{"Select a particle model"});
       this.setTitle("Model Choices...");
    }
 
    protected void fireWindowClosingEvent(ActionEvent e) {
-      if(WindowClosingListeners != null) {
+      if (WindowClosingListeners != null) {
          final Vector<ActionListener> listeners = WindowClosingListeners;
          final int count = listeners.size();
-         for(int i = 0; i < count; i++)
+         for (int i = 0; i < count; i++)
             listeners.elementAt(i).actionPerformed(e);
       }
    }
@@ -201,12 +193,14 @@ public class ParticleModelDialog
     * closes, an event will be triggered so that all listening components can
     * respond appropriately.
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void addWindowClosingListener(ActionListener l) {
-      final Vector<ActionListener> v = WindowClosingListeners == null ? new Vector<ActionListener>(2)
+      final Vector<ActionListener> v = WindowClosingListeners == null
+            ? new Vector<ActionListener>(2)
             : new Vector<ActionListener>(WindowClosingListeners);
-      if(!v.contains(l)) {
+      if (!v.contains(l)) {
          v.addElement(l);
          WindowClosingListeners = v;
       }
@@ -215,10 +209,11 @@ public class ParticleModelDialog
    /**
     * removeWindowClosingListener - removes the window closing listener
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void removeWindowClosingListener(ActionListener l) {
-      if((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
+      if ((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(WindowClosingListeners);
          v.removeElement(l);
          WindowClosingListeners = v;
@@ -231,7 +226,7 @@ public class ParticleModelDialog
 
    public void setParticleModels(CITZAF.ParticleModel[] ParticleModels) {
       MainParticleModelList.clear();
-      for(final ParticleModel particleModel : ParticleModels)
+      for (final ParticleModel particleModel : ParticleModels)
          MainParticleModelList.add(particleModel.toString());
       jList_Models.setListData(MainParticleModelList.toArray());
    }

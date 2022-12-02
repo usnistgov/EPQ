@@ -39,8 +39,7 @@ import java.util.List;
  * shell.
  * </p>
  */
-public abstract class JumpRatio
-   extends AlgorithmClass {
+public abstract class JumpRatio extends AlgorithmClass {
 
    /**
     * <p>
@@ -71,26 +70,17 @@ public abstract class JumpRatio
     * @author nritchie
     * @version 1.0
     */
-   public abstract static class FamilyJumpRatio
-      extends JumpRatio {
+   public abstract static class FamilyJumpRatio extends JumpRatio {
 
       /**
        * Approximate jump ratios for the lines L1 and L2
        */
-      static private final double L_JUMPS[] = new double[] {
-         1.16,
-         1.41
-      };
+      static private final double L_JUMPS[] = new double[]{1.16, 1.41};
 
       /**
        * Approximate jump ratios for the lines M1, M2, M3, M4
        */
-      static private final double M_JUMPS[] = new double[] {
-         1.02,
-         1.04,
-         1.13,
-         1.38
-      };
+      static private final double M_JUMPS[] = new double[]{1.02, 1.04, 1.13, 1.38};
 
       public FamilyJumpRatio(String name, String ref) {
          super(name, ref);
@@ -100,8 +90,10 @@ public abstract class JumpRatio
        * Computes the total jump ratio for the specified element and line
        * family.
        * 
-       * @param elm An element
-       * @param family (One of AtomicShell.K_FAMILY, AtomicShell.L_FAMILY or
+       * @param elm
+       *           An element
+       * @param family
+       *           (One of AtomicShell.K_FAMILY, AtomicShell.L_FAMILY or
        *           AtomicShell.M_FAMILY)
        * @return The total jump ratio
        */
@@ -111,8 +103,10 @@ public abstract class JumpRatio
        * Determines whether the algorithm is capable of calculating the jump
        * ratio for this element and family.
        * 
-       * @param elm An element
-       * @param family (One of AtomicShell.K_FAMILY, AtomicShell.L_FAMILY or
+       * @param elm
+       *           An element
+       * @param family
+       *           (One of AtomicShell.K_FAMILY, AtomicShell.L_FAMILY or
        *           AtomicShell.M_FAMILY)
        * @return true or false
        */
@@ -131,26 +125,26 @@ public abstract class JumpRatio
        */
       @Override
       public double compute(AtomicShell sh) {
-         switch(sh.getShell()) {
-            case AtomicShell.K:
+         switch (sh.getShell()) {
+            case AtomicShell.K :
                return compute(sh.getElement(), sh.getFamily());
-            case AtomicShell.LI:
+            case AtomicShell.LI :
                return L_JUMPS[0];
-            case AtomicShell.LII:
+            case AtomicShell.LII :
                return L_JUMPS[1];
-            case AtomicShell.LIII:
+            case AtomicShell.LIII :
                return compute(sh.getElement(), sh.getFamily()) / (L_JUMPS[0] * L_JUMPS[1]);
-            case AtomicShell.MI:
+            case AtomicShell.MI :
                return M_JUMPS[0];
-            case AtomicShell.MII:
+            case AtomicShell.MII :
                return M_JUMPS[1];
-            case AtomicShell.MIII:
+            case AtomicShell.MIII :
                return M_JUMPS[2];
-            case AtomicShell.MIV:
+            case AtomicShell.MIV :
                return M_JUMPS[3];
-            case AtomicShell.MV:
+            case AtomicShell.MV :
                return compute(sh.getElement(), sh.getFamily()) / (M_JUMPS[0] * M_JUMPS[1] * M_JUMPS[2] * M_JUMPS[3]);
-            default:
+            default :
                return 1.0;
          }
       }
@@ -158,8 +152,10 @@ public abstract class JumpRatio
    }
 
    /**
-    * @param name - The name of the implementation
-    * @param ref - A reference detailing the source of the implemenation
+    * @param name
+    *           - The name of the implementation
+    * @param ref
+    *           - A reference detailing the source of the implemenation
     */
    public JumpRatio(String name, String ref) {
       super("Jump ratio", name, ref);
@@ -178,19 +174,14 @@ public abstract class JumpRatio
     */
    @Override
    public List<AlgorithmClass> getAllImplementations() {
-      return Arrays.asList(new AlgorithmClass[] {
-         JumpRatio.HeinrichDtsa,
-         JumpRatio.Citzaf,
-         JumpRatio.Springer1967,
-         JumpRatio.Poehn,
-         JumpRatio.Birks,
-      });
+      return Arrays.asList(new AlgorithmClass[]{JumpRatio.HeinrichDtsa, JumpRatio.Citzaf, JumpRatio.Springer1967, JumpRatio.Poehn, JumpRatio.Birks,});
    }
 
    /**
     * Does this implementation of the JumpRatio class handle this shell?
     * 
-    * @param shell AtomicShell
+    * @param shell
+    *           AtomicShell
     * @return true if this implementation can calculate this jump ratio
     */
    abstract public boolean isAvailable(AtomicShell shell);
@@ -199,7 +190,8 @@ public abstract class JumpRatio
     * Compute the jump ratio for the specified atomic shell. Compute should
     * return 1.0 if isAvailable returns false.
     * 
-    * @param shell AtomicShell
+    * @param shell
+    *           AtomicShell
     * @return The jump ratio (&gt;=1.0)
     */
    abstract public double compute(AtomicShell shell);
@@ -224,8 +216,7 @@ public abstract class JumpRatio
     * DTSA. Note: The DTSA implementation deviates slightly from the
     * implementation described in the IXCOM 11 paper.
     */
-   public static class HeinrichJumpRatio
-      extends JumpRatio {
+   public static class HeinrichJumpRatio extends JumpRatio {
       public HeinrichJumpRatio() {
          super(MassAbsorptionCoefficient.HeinrichDtsa.getName(), MassAbsorptionCoefficient.HeinrichDtsa.getReference());
       }
@@ -236,59 +227,59 @@ public abstract class JumpRatio
 
       @Override
       public boolean isAvailable(AtomicShell shell) {
-         switch(shell.getShell()) {
-            case AtomicShell.K:
-               if(shell.getElement().getAtomicNumber() > Element.elmIn)
+         switch (shell.getShell()) {
+            case AtomicShell.K :
+               if (shell.getElement().getAtomicNumber() > Element.elmIn)
                   return false;
-               if(shell.getElement().getAtomicNumber() < Element.elmB)
-                  return false;
-               return true;
-            case AtomicShell.LI:
-               if(shell.getElement().getAtomicNumber() > Element.elmU)
-                  return false;
-               if(shell.getElement().getAtomicNumber() < Element.elmB)
+               if (shell.getElement().getAtomicNumber() < Element.elmB)
                   return false;
                return true;
-            case AtomicShell.LII:
-               if(shell.getElement().getAtomicNumber() > Element.elmU)
+            case AtomicShell.LI :
+               if (shell.getElement().getAtomicNumber() > Element.elmU)
                   return false;
-               if(shell.getElement().getAtomicNumber() < Element.elmAl)
-                  return false;
-               return true;
-            case AtomicShell.LIII:
-               if(shell.getElement().getAtomicNumber() > Element.elmU)
-                  return false;
-               if(shell.getElement().getAtomicNumber() < Element.elmAl)
+               if (shell.getElement().getAtomicNumber() < Element.elmB)
                   return false;
                return true;
-            case AtomicShell.MI:
-               if(shell.getElement().getAtomicNumber() > Element.elmU)
+            case AtomicShell.LII :
+               if (shell.getElement().getAtomicNumber() > Element.elmU)
                   return false;
-               if(shell.getElement().getAtomicNumber() < Element.elmCu)
-                  return false;
-               return true;
-            case AtomicShell.MII:
-               if(shell.getElement().getAtomicNumber() > Element.elmU)
-                  return false;
-               if(shell.getElement().getAtomicNumber() < Element.elmCu)
+               if (shell.getElement().getAtomicNumber() < Element.elmAl)
                   return false;
                return true;
-            case AtomicShell.MIII:
-               if(shell.getElement().getAtomicNumber() > Element.elmU)
+            case AtomicShell.LIII :
+               if (shell.getElement().getAtomicNumber() > Element.elmU)
                   return false;
-               if(shell.getElement().getAtomicNumber() < Element.elmCu)
-                  return false;
-               return true;
-            case AtomicShell.MIV:
-               if(shell.getElement().getAtomicNumber() > Element.elmU)
-                  return false;
-               if(shell.getElement().getAtomicNumber() < Element.elmRb)
+               if (shell.getElement().getAtomicNumber() < Element.elmAl)
                   return false;
                return true;
-            case AtomicShell.MV:
-               if(shell.getElement().getAtomicNumber() > Element.elmU)
+            case AtomicShell.MI :
+               if (shell.getElement().getAtomicNumber() > Element.elmU)
                   return false;
-               if(shell.getElement().getAtomicNumber() < Element.elmTc)
+               if (shell.getElement().getAtomicNumber() < Element.elmCu)
+                  return false;
+               return true;
+            case AtomicShell.MII :
+               if (shell.getElement().getAtomicNumber() > Element.elmU)
+                  return false;
+               if (shell.getElement().getAtomicNumber() < Element.elmCu)
+                  return false;
+               return true;
+            case AtomicShell.MIII :
+               if (shell.getElement().getAtomicNumber() > Element.elmU)
+                  return false;
+               if (shell.getElement().getAtomicNumber() < Element.elmCu)
+                  return false;
+               return true;
+            case AtomicShell.MIV :
+               if (shell.getElement().getAtomicNumber() > Element.elmU)
+                  return false;
+               if (shell.getElement().getAtomicNumber() < Element.elmRb)
+                  return false;
+               return true;
+            case AtomicShell.MV :
+               if (shell.getElement().getAtomicNumber() > Element.elmU)
+                  return false;
+               if (shell.getElement().getAtomicNumber() < Element.elmTc)
                   return false;
                return true;
          }
@@ -305,8 +296,7 @@ public abstract class JumpRatio
 
    public static final JumpRatio HeinrichDtsa = new HeinrichJumpRatio();
 
-   public static class CitzafJumpRatio
-      extends FamilyJumpRatio {
+   public static class CitzafJumpRatio extends FamilyJumpRatio {
 
       public CitzafJumpRatio() {
          super("CITZAF", "Taken from DTSA's implementation of CITZAF");
@@ -321,14 +311,14 @@ public abstract class JumpRatio
       public double compute(Element elm, int family) {
          final int z = elm.getAtomicNumber();
          double tmp = 0.0;
-         switch(family) {
-            case AtomicShell.KFamily:
+         switch (family) {
+            case AtomicShell.KFamily :
                tmp = 1.11728 - (0.07368 * Math.log(z)); // { K-LINE (0.88) }
                break;
-            case AtomicShell.LFamily:
+            case AtomicShell.LFamily :
                tmp = 0.95478 - (0.00259 * z); // { L-LINE (0.75) }
                break;
-            case AtomicShell.MFamily:
+            case AtomicShell.MFamily :
                return 3.56;
          }
          return 1.0 / (1.0 - tmp);
@@ -337,8 +327,7 @@ public abstract class JumpRatio
 
    public static JumpRatio Citzaf = new CitzafJumpRatio();
 
-   public static class PoehnJumpRatio
-      extends FamilyJumpRatio {
+   public static class PoehnJumpRatio extends FamilyJumpRatio {
 
       public PoehnJumpRatio() {
          super("Poehn-1985", "As quoted in the Handbook of X-ray Spectrometry - pg 20");
@@ -347,12 +336,12 @@ public abstract class JumpRatio
       @Override
       public boolean isAvailable(Element elm, int family) {
          final int z = elm.getAtomicNumber();
-         switch(family) {
-            case AtomicShell.KFamily:
+         switch (family) {
+            case AtomicShell.KFamily :
                return (z >= 11) && (z <= 50);
-            case AtomicShell.LFamily:
+            case AtomicShell.LFamily :
                return (z >= 30) && (z <= 83);
-            default:
+            default :
                return false;
          }
       }
@@ -360,14 +349,14 @@ public abstract class JumpRatio
       @Override
       public double compute(Element elm, int family) {
          final int z = elm.getAtomicNumber();
-         switch(family) {
-            case AtomicShell.KFamily:
+         switch (family) {
+            case AtomicShell.KFamily :
                return 1.754e1 + (z * (-6.608e-1 + (z * (1.42e-2 - (z * 1.1e-4)))));
-            case AtomicShell.LFamily:
+            case AtomicShell.LFamily :
                return 1.16 * 1.41 * (2.003e1 + (z * (-7.732e-1 + (z * (1.159e-2 + (z * -5.835e-5))))));
-            case AtomicShell.MFamily:
+            case AtomicShell.MFamily :
                return 3.56;
-            default:
+            default :
                return 1.0;
          }
       }
@@ -375,111 +364,14 @@ public abstract class JumpRatio
 
    public static JumpRatio Poehn = new PoehnJumpRatio();
 
-   public static class BirksJumpRatio
-      extends FamilyJumpRatio {
+   public static class BirksJumpRatio extends FamilyJumpRatio {
 
-      static private final double[] K_JUMP_FACTORS = {
-         12.3,
-         11.8,
-         11.1,
-         10.8,
-         10.5,
-         10.2,
-         9.8,
-         9.6,
-         9.3,
-         9.1,
-         8.9,
-         8.8,
-         8.6,
-         8.4,
-         8.3,
-         8.1,
-         8.0,
-         7.9,
-         7.7,
-         7.6,
-         7.5,
-         7.4,
-         7.3,
-         7.2,
-         7.1,
-         7.0,
-         7.0,
-         6.9,
-         6.9,
-         6.8,
-         6.8,
-         6.7,
-         6.7,
-         6.6,
-         6.6,
-         6.6,
-         6.6,
-         6.5,
-         6.5,
-         6.5
-      };
-      static private final int[] L_JUMP_Z = {
-         50,
-         51,
-         52,
-         53,
-         54,
-         55,
-         56,
-         57,
-         60,
-         65,
-         70,
-         72,
-         73,
-         74,
-         75,
-         76,
-         77,
-         78,
-         79,
-         80,
-         81,
-         82,
-         83,
-         84,
-         85,
-         90,
-         91,
-         92
-      };
-      static private final double[] L_JUMP_FACTORS = {
-         5.0,
-         4.9,
-         4.8,
-         4.7,
-         4.6,
-         4.5,
-         4.5,
-         4.4,
-         4.3,
-         4.1,
-         4.0,
-         3.9,
-         3.9,
-         3.9,
-         3.8,
-         3.8,
-         3.8,
-         3.7,
-         3.7,
-         3.7,
-         3.7,
-         3.6,
-         3.6,
-         3.6,
-         3.6,
-         3.5,
-         3.5,
-         3.5
-      };
+      static private final double[] K_JUMP_FACTORS = {12.3, 11.8, 11.1, 10.8, 10.5, 10.2, 9.8, 9.6, 9.3, 9.1, 8.9, 8.8, 8.6, 8.4, 8.3, 8.1, 8.0, 7.9,
+            7.7, 7.6, 7.5, 7.4, 7.3, 7.2, 7.1, 7.0, 7.0, 6.9, 6.9, 6.8, 6.8, 6.7, 6.7, 6.6, 6.6, 6.6, 6.6, 6.5, 6.5, 6.5};
+      static private final int[] L_JUMP_Z = {50, 51, 52, 53, 54, 55, 56, 57, 60, 65, 70, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 90,
+            91, 92};
+      static private final double[] L_JUMP_FACTORS = {5.0, 4.9, 4.8, 4.7, 4.6, 4.5, 4.5, 4.4, 4.3, 4.1, 4.0, 3.9, 3.9, 3.9, 3.8, 3.8, 3.8, 3.7, 3.7,
+            3.7, 3.7, 3.6, 3.6, 3.6, 3.6, 3.5, 3.5, 3.5};
 
       public BirksJumpRatio() {
          super("Birks-1991", "Birks from the Practical Handbook of X-ray Spectrometry (1991)");
@@ -490,12 +382,12 @@ public abstract class JumpRatio
       @Override
       public boolean isAvailable(Element elm, int family) {
          final int z = elm.getAtomicNumber();
-         switch(family) {
-            case AtomicShell.KFamily:
+         switch (family) {
+            case AtomicShell.KFamily :
                return (z >= 11) && (z <= 50);
-            case AtomicShell.LFamily:
+            case AtomicShell.LFamily :
                return Arrays.binarySearch(L_JUMP_Z, z) >= 0;
-            default:
+            default :
                return false;
          }
       }
@@ -503,15 +395,15 @@ public abstract class JumpRatio
       @Override
       public double compute(Element elm, int family) {
          final int z = elm.getAtomicNumber();
-         if(isAvailable(elm, family))
-            switch(family) {
-               case AtomicShell.KFamily:
+         if (isAvailable(elm, family))
+            switch (family) {
+               case AtomicShell.KFamily :
                   return K_JUMP_FACTORS[z - 11];
-               case AtomicShell.LFamily:
+               case AtomicShell.LFamily :
                   return L_JUMP_FACTORS[Arrays.binarySearch(L_JUMP_Z, z)];
-               case AtomicShell.MFamily:
+               case AtomicShell.MFamily :
                   return 3.56;
-               default:
+               default :
                   return 1.0;
             }
          else
@@ -528,8 +420,7 @@ public abstract class JumpRatio
     * does not compute a jump ration for each shell independently but instead
     * provides a total jump ratio for a family of edges.
     */
-   public static class SpringerJumpRatio
-      extends FamilyJumpRatio {
+   public static class SpringerJumpRatio extends FamilyJumpRatio {
 
       public SpringerJumpRatio() {
          super("Springer 1967", "Springer, Neues Jahrb. Mineral Abhanfl. 106, p241 (1967) as quoted by Love, Scott & Reed");
@@ -544,17 +435,17 @@ public abstract class JumpRatio
       public double compute(Element elm, int family) {
          double tmp = 0.0, k = 1.0;
          final double z = elm.getAtomicNumber();
-         switch(family) {
-            case AtomicShell.KFamily:
+         switch (family) {
+            case AtomicShell.KFamily :
                tmp = 0.924 - (0.00144 * z);
                break;
-            case AtomicShell.LFamily: {
+            case AtomicShell.LFamily : {
                k = 1.16 * 1.41;
                tmp = (0.548 - (0.00231 * z));
             }
-            case AtomicShell.MFamily:
+            case AtomicShell.MFamily :
                return 3.56;
-            default:
+            default :
                return 1.0;
          }
          return k / (1.0 - (k * tmp));
@@ -563,8 +454,7 @@ public abstract class JumpRatio
 
    public static final JumpRatio Springer1967 = new SpringerJumpRatio();
 
-   public static class McMaster
-      extends JumpRatio {
+   public static class McMaster extends JumpRatio {
 
       public McMaster() {
          super("McMaster 1969", "http://csrri.iit.edu/mucal-src/mucal_c-1.3.tar.gz");
@@ -578,115 +468,82 @@ public abstract class JumpRatio
 
       /* L3-edge jump */
 
-      static private final double[] l3_jump = {
-         /* 1 */0.000000E+00, /* 2 */
-         0.000000E+00, /* 3 */
-         0.000000E+00,
-         /* 4 */0.000000E+00, /* 5 */
-         0.000000E+00, /* 6 */
-         0.000000E+00,
-         /* 7 */0.000000E+00, /* 8 */
-         0.000000E+00, /* 9 */
-         0.000000E+00,
-         /* 10 */0.000000E+00, /* 11 */
-         0.000000E+00, /* 12 */
-         0.000000E+00,
-         /* 13 */0.000000E+00, /* 14 */
-         0.000000E+00, /* 15 */
-         0.000000E+00,
-         /* 16 */0.000000E+00, /* 17 */
-         0.000000E+00, /* 18 */
-         0.000000E+00,
-         /* 19 */0.000000E+00, /* 20 */
-         0.000000E+00, /* 21 */
-         0.000000E+00,
-         /* 22 */0.000000E+00, /* 23 */
-         0.000000E+00, /* 24 */
-         0.000000E+00,
-         /* 25 */0.000000E+00, /* 26 */
-         0.000000E+00, /* 27 */
-         0.000000E+00,
-         /* 28 */0.277200E+01, /* 29 */
-         0.287400E+01, /* 30 */
-         0.568400E+01,
-         /* 31 */0.567100E+01, /* 32 */
-         0.570400E+01, /* 33 */
-         0.487500E+01,
-         /* 34 */0.458700E+01, /* 35 */
-         0.455700E+01, /* 36 */
-         0.417000E+01,
-         /* 37 */0.422300E+01, /* 38 */
-         0.390600E+01, /* 39 */
-         0.403600E+01,
-         /* 40 */0.397600E+01, /* 41 */
-         0.377400E+01, /* 42 */
-         0.367500E+01,
-         /* 43 */0.359100E+01, /* 44 */
-         0.343100E+01, /* 45 */
-         0.372100E+01,
-         /* 46 */0.340200E+01, /* 47 */
-         0.322300E+01, /* 48 */
-         0.324900E+01,
-         /* 49 */0.325500E+01, /* 50 */
-         0.306000E+01, /* 51 */
-         0.293900E+01,
-         /* 52 */0.297900E+01, /* 53 */
-         0.285600E+01, /* 54 */
-         0.287900E+01,
-         /* 55 */0.284700E+01, /* 56 */
-         0.283900E+01, /* 57 */
-         0.271700E+01,
-         /* 58 */0.273700E+01, /* 59 */
-         0.269500E+01, /* 60 */
-         0.266200E+01,
-         /* 61 */0.270200E+01, /* 62 */
-         0.268000E+01, /* 63 */
-         0.272300E+01,
-         /* 64 */0.270100E+01, /* 65 */
-         0.271300E+01, /* 66 */
-         0.904700E+01,
-         /* 67 */0.286300E+01, /* 68 */
-         0.293300E+01, /* 69 */
-         0.275800E+01,
-         /* 70 */0.257300E+01, /* 71 */
-         0.262000E+01, /* 72 */
-         0.241500E+01,
-         /* 73 */0.260000E+01, /* 74 */
-         0.261700E+01, /* 75 */
-         0.267500E+01,
-         /* 76 */0.252900E+01, /* 77 */
-         0.238700E+01, /* 78 */
-         0.263200E+01,
-         /* 79 */0.243900E+01, /* 80 */
-         0.240000E+01, /* 81 */
-         0.249800E+01,
-         /* 82 */0.246600E+01, /* 83 */
-         0.233800E+01, /* 84 */
-         0.000000E+00,
-         /* 85 */0.000000E+00, /* 86 */
-         0.234400E+01, /* 87 */
-         0.000000E+00,
-         /* 88 */0.000000E+00, /* 89 */
-         0.000000E+00, /* 90 */
-         0.238800E+01,
-         /* 91 */0.000000E+00, /* 92 */
-         0.229200E+01, /* 93 */
-         0.000000E+00,
-         /* 94 */0.225100E+01
-      };
+      static private final double[] l3_jump = {/* 1 */0.000000E+00, /* 2 */
+            0.000000E+00, /* 3 */
+            0.000000E+00, /* 4 */0.000000E+00, /* 5 */
+            0.000000E+00, /* 6 */
+            0.000000E+00, /* 7 */0.000000E+00, /* 8 */
+            0.000000E+00, /* 9 */
+            0.000000E+00, /* 10 */0.000000E+00, /* 11 */
+            0.000000E+00, /* 12 */
+            0.000000E+00, /* 13 */0.000000E+00, /* 14 */
+            0.000000E+00, /* 15 */
+            0.000000E+00, /* 16 */0.000000E+00, /* 17 */
+            0.000000E+00, /* 18 */
+            0.000000E+00, /* 19 */0.000000E+00, /* 20 */
+            0.000000E+00, /* 21 */
+            0.000000E+00, /* 22 */0.000000E+00, /* 23 */
+            0.000000E+00, /* 24 */
+            0.000000E+00, /* 25 */0.000000E+00, /* 26 */
+            0.000000E+00, /* 27 */
+            0.000000E+00, /* 28 */0.277200E+01, /* 29 */
+            0.287400E+01, /* 30 */
+            0.568400E+01, /* 31 */0.567100E+01, /* 32 */
+            0.570400E+01, /* 33 */
+            0.487500E+01, /* 34 */0.458700E+01, /* 35 */
+            0.455700E+01, /* 36 */
+            0.417000E+01, /* 37 */0.422300E+01, /* 38 */
+            0.390600E+01, /* 39 */
+            0.403600E+01, /* 40 */0.397600E+01, /* 41 */
+            0.377400E+01, /* 42 */
+            0.367500E+01, /* 43 */0.359100E+01, /* 44 */
+            0.343100E+01, /* 45 */
+            0.372100E+01, /* 46 */0.340200E+01, /* 47 */
+            0.322300E+01, /* 48 */
+            0.324900E+01, /* 49 */0.325500E+01, /* 50 */
+            0.306000E+01, /* 51 */
+            0.293900E+01, /* 52 */0.297900E+01, /* 53 */
+            0.285600E+01, /* 54 */
+            0.287900E+01, /* 55 */0.284700E+01, /* 56 */
+            0.283900E+01, /* 57 */
+            0.271700E+01, /* 58 */0.273700E+01, /* 59 */
+            0.269500E+01, /* 60 */
+            0.266200E+01, /* 61 */0.270200E+01, /* 62 */
+            0.268000E+01, /* 63 */
+            0.272300E+01, /* 64 */0.270100E+01, /* 65 */
+            0.271300E+01, /* 66 */
+            0.904700E+01, /* 67 */0.286300E+01, /* 68 */
+            0.293300E+01, /* 69 */
+            0.275800E+01, /* 70 */0.257300E+01, /* 71 */
+            0.262000E+01, /* 72 */
+            0.241500E+01, /* 73 */0.260000E+01, /* 74 */
+            0.261700E+01, /* 75 */
+            0.267500E+01, /* 76 */0.252900E+01, /* 77 */
+            0.238700E+01, /* 78 */
+            0.263200E+01, /* 79 */0.243900E+01, /* 80 */
+            0.240000E+01, /* 81 */
+            0.249800E+01, /* 82 */0.246600E+01, /* 83 */
+            0.233800E+01, /* 84 */
+            0.000000E+00, /* 85 */0.000000E+00, /* 86 */
+            0.234400E+01, /* 87 */
+            0.000000E+00, /* 88 */0.000000E+00, /* 89 */
+            0.000000E+00, /* 90 */
+            0.238800E+01, /* 91 */0.000000E+00, /* 92 */
+            0.229200E+01, /* 93 */
+            0.000000E+00, /* 94 */0.225100E+01};
 
       @Override
       public double compute(AtomicShell shell) {
          assert isAvailable(shell) : "Not supported";
-         if(isAvailable(shell))
-            switch(shell.getShell()) {
-               case AtomicShell.LI:
+         if (isAvailable(shell))
+            switch (shell.getShell()) {
+               case AtomicShell.LI :
                   return l1_jump;
-               case AtomicShell.LII:
+               case AtomicShell.LII :
                   return l2_jump;
-               case AtomicShell.LIII:
+               case AtomicShell.LIII :
                   return l3_jump[shell.getElement().getAtomicNumber() - 1];
-               default:
+               default :
                   assert false : "Not supported";
             }
          return 1.0;
@@ -695,8 +552,7 @@ public abstract class JumpRatio
       @Override
       public boolean isAvailable(AtomicShell shell) {
          final int sh = shell.getShell();
-         return ((shell.getElement().getAtomicNumber() > 27) && (sh == AtomicShell.LI)) || (sh == AtomicShell.LII)
-               || (sh == AtomicShell.LIII);
+         return ((shell.getElement().getAtomicNumber() > 27) && (sh == AtomicShell.LI)) || (sh == AtomicShell.LII) || (sh == AtomicShell.LIII);
       }
 
    }

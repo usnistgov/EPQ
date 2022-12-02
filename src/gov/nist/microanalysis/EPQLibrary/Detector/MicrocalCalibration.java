@@ -32,16 +32,14 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author nritchie
  * @version 1.0
  */
-public class MicrocalCalibration
-   extends EDSCalibration {
+public class MicrocalCalibration extends EDSCalibration {
 
    /**
     * A concrete implementation of the DetectorLineshapeModel using a constant
     * resolution over the range of energies.
     */
    // TODO Come up with a better model for microcalorimeter lineshapes
-   static public class BasicMicrocalLineshape
-      extends DetectorLineshapeModel {
+   static public class BasicMicrocalLineshape extends DetectorLineshapeModel {
 
       private final double mGaussianWidth;
 
@@ -59,7 +57,8 @@ public class MicrocalCalibration
        * Constructs a simple Gaussina model of a Si(Li) style detector which is
        * characterized by the full-width half-maximum at Mn Kα
        * 
-       * @param fwhm in eV
+       * @param fwhm
+       *           in eV
        */
       public BasicMicrocalLineshape(double fwhm) {
          super();
@@ -94,12 +93,12 @@ public class MicrocalCalibration
 
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(getClass() != obj.getClass())
+         if (getClass() != obj.getClass())
             return false;
          final BasicMicrocalLineshape other = (BasicMicrocalLineshape) obj;
-         if(Double.doubleToLongBits(mGaussianWidth) != Double.doubleToLongBits(other.mGaussianWidth))
+         if (Double.doubleToLongBits(mGaussianWidth) != Double.doubleToLongBits(other.mGaussianWidth))
             return false;
          return true;
       }
@@ -148,8 +147,7 @@ public class MicrocalCalibration
          xrw.addLayer((Material) MaterialFactory.createMaterial(MaterialFactory.ParaleneC), 3.0 * 100.0e-9);
          mWindows.add(xrw);
          mLineshape = new BasicMicrocalLineshape(fwhm);
-      }
-      catch(final EPQException e) {
+      } catch (final EPQException e) {
          throw new EPQFatalException(e);
       }
    }
@@ -168,23 +166,23 @@ public class MicrocalCalibration
     */
    @Override
    public double[] getEfficiency(DetectorProperties dp) {
-      if(mEfficiency == null) {
+      if (mEfficiency == null) {
          final SpectrumProperties sp = dp.getProperties();
          final double[] res = new double[dp.getChannelCount()];
          final double scale = getChannelWidth();
          final double offset = getZeroOffset();
          final MassAbsorptionCoefficient mac = AlgorithmUser.getDefaultMAC();
          final IXRayWindowProperties window = dp.getWindow();
-         for(int ch = res.length - 1; ch >= 0; --ch) {
+         for (int ch = res.length - 1; ch >= 0; --ch) {
             final double e = ToSI.eV((scale * (ch + 0.5)) + offset);
             double eff = 0.0;
-            for(final Layer l : mLayers) {
+            for (final Layer l : mLayers) {
                final Material mat = l.mMaterial;
                final double abs = 1.0 - Math.exp(-mac.compute(mat, e) * l.mThickness * mat.getDensity());
                eff += abs * (1.0 - eff);
             }
             eff *= window.transmission(e);
-            for(final IXRayWindowProperties xrwp : mWindows)
+            for (final IXRayWindowProperties xrwp : mWindows)
                eff *= xrwp.transmission(e);
             res[ch] = eff;
          }
@@ -202,14 +200,14 @@ public class MicrocalCalibration
     */
    @Override
    public boolean isVisible(XRayTransition xrt, double eBeam) {
-      switch(xrt.getFamily()) {
-         case AtomicShell.KFamily:
+      switch (xrt.getFamily()) {
+         case AtomicShell.KFamily :
             return (xrt.getElement().getAtomicNumber() >= Element.elmBe) && (xrt.getEdgeEnergy() < (eBeam / 1.3));
-         case AtomicShell.LFamily:
+         case AtomicShell.LFamily :
             return (xrt.getElement().getAtomicNumber() >= Element.elmSc) && (xrt.getEdgeEnergy() < (eBeam / 1.3));
-         case AtomicShell.MFamily:
+         case AtomicShell.MFamily :
             return (xrt.getElement().getAtomicNumber() >= Element.elmPm) && (xrt.getEdgeEnergy() < (eBeam / 1.3));
-         default:
+         default :
             return false;
       }
    }

@@ -42,11 +42,7 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @author Nicholas
  * @version 1.0
  */
-public class Composition
-      implements
-         Comparable<Composition>,
-         Cloneable,
-         Serializable {
+public class Composition implements Comparable<Composition>, Cloneable, Serializable {
 
    private static final long serialVersionUID = 0x42;
 
@@ -162,9 +158,7 @@ public class Composition
       assert (elms.length == massFracs.length);
       for (int i = 0; i < elms.length; ++i) {
          if (massFracs[i] < 0.0)
-            throw new EPQFatalException(
-                  "A mass fraction was less than zero while defining the material "
-                        + name);
+            throw new EPQFatalException("A mass fraction was less than zero while defining the material " + name);
          mConstituents.put(elms[i], new UncertainValue2(massFracs[i]));
       }
       mName = name;
@@ -210,13 +204,11 @@ public class Composition
     * @return A sorted list of Element objects
     */
    public List<Element> getSortedElements() {
-      final ArrayList<Element> res = new ArrayList<Element>(
-            mConstituents.keySet());
+      final ArrayList<Element> res = new ArrayList<Element>(mConstituents.keySet());
       Collections.sort(res, new Comparator<Element>() {
          @Override
          public int compare(Element o1, Element o2) {
-            return -Double.compare(weightFraction(o1, false),
-                  weightFraction(o2, false));
+            return -Double.compare(weightFraction(o1, false), weightFraction(o2, false));
          }
       });
       return Collections.unmodifiableList(res);
@@ -339,8 +331,7 @@ public class Composition
     * @param wgtFracs
     *           double[]
     */
-   public void defineByWeightFraction(Element[] elms,
-         UncertainValue2[] wgtFracs) {
+   public void defineByWeightFraction(Element[] elms, UncertainValue2[] wgtFracs) {
       clear();
       assert (elms.length == wgtFracs.length);
       for (int i = 0; i < elms.length; ++i)
@@ -404,13 +395,10 @@ public class Composition
    private void recomputeWeightFractions() {
       UncertainValue2 totalWgt = UncertainValue2.ZERO;
       for (final Element elm : mConstituentsAtomic.keySet())
-         totalWgt = UncertainValue2.add(totalWgt, UncertainValue2
-               .multiply(elm.getAtomicWeight(), atomicPercentU(elm)));
+         totalWgt = UncertainValue2.add(totalWgt, UncertainValue2.multiply(elm.getAtomicWeight(), atomicPercentU(elm)));
       mConstituents.clear();
       for (final Element elm : mConstituentsAtomic.keySet()) {
-         final UncertainValue2 wgtFrac = UncertainValue2.multiply(
-               elm.getAtomicWeight(),
-               UncertainValue2.divide(atomicPercentU(elm), totalWgt));
+         final UncertainValue2 wgtFrac = UncertainValue2.multiply(elm.getAtomicWeight(), UncertainValue2.divide(atomicPercentU(elm), totalWgt));
          mConstituents.put(elm, wgtFrac);
       }
       mOptimalRepresentation = Representation.STOICIOMETRY;
@@ -419,18 +407,15 @@ public class Composition
    private void recomputeStoiciometry() {
       double norm = 0.0;
       mConstituentsAtomic.clear();
-      for (final Map.Entry<Element, UncertainValue2> me : mConstituents
-            .entrySet()) {
+      for (final Map.Entry<Element, UncertainValue2> me : mConstituents.entrySet()) {
          final Element elm = me.getKey();
          final UncertainValue2 mf = me.getValue().reduced(elm.toAbbrev());
-         final UncertainValue2 moleFrac = UncertainValue2
-               .multiply(1.0 / elm.getAtomicWeight(), mf);
+         final UncertainValue2 moleFrac = UncertainValue2.multiply(1.0 / elm.getAtomicWeight(), mf);
          norm += moleFrac.doubleValue();
          mConstituentsAtomic.put(elm, moleFrac);
       }
       for (Element elm : mConstituentsAtomic.keySet())
-         mConstituentsAtomic.put(elm, UncertainValue2.multiply(1.0 / norm,
-               mConstituentsAtomic.get(elm)));
+         mConstituentsAtomic.put(elm, UncertainValue2.multiply(1.0 / norm, mConstituentsAtomic.get(elm)));
       mOptimalRepresentation = Representation.WEIGHT_PCT;
    }
 
@@ -491,8 +476,7 @@ public class Composition
     * @param matFracs
     *           double[] - The proportion of each
     */
-   public void defineByMaterialFraction(Composition[] compositions,
-         double[] matFracs) {
+   public void defineByMaterialFraction(Composition[] compositions, double[] matFracs) {
       // Tested against the glass database K93 on 5-Sept-2006 - Worked fine!
       assert compositions.length == matFracs.length;
       clear();
@@ -503,8 +487,7 @@ public class Composition
       for (final Element el : elms) {
          UncertainValue2 sum = UncertainValue2.ZERO;
          for (int i = 0; i < compositions.length; ++i)
-            sum = UncertainValue2.add(sum, UncertainValue2.multiply(matFracs[i],
-                  compositions[i].weightFractionU(el, true)));
+            sum = UncertainValue2.add(sum, UncertainValue2.multiply(matFracs[i], compositions[i].weightFractionU(el, true)));
          frac[ji] = sum;
          newElms[ji] = el;
          ++ji;
@@ -536,8 +519,7 @@ public class Composition
     * @return boolean
     */
    public boolean containsElement(Element el) {
-      return mConstituents.containsKey(el)
-            && (mConstituents.get(el).doubleValue() > 0.0);
+      return mConstituents.containsKey(el) && (mConstituents.get(el).doubleValue() > 0.0);
    }
 
    /**
@@ -575,8 +557,7 @@ public class Composition
       return atomicPercentU(elm).doubleValue();
    }
 
-   private static UncertainValue2 normalize(UncertainValue2 val, double norm,
-         boolean positive) {
+   private static UncertainValue2 normalize(UncertainValue2 val, double norm, boolean positive) {
       UncertainValue2 res;
       if (norm > 0.0)
          res = UncertainValue2.multiply(1.0 / norm, val);
@@ -614,9 +595,7 @@ public class Composition
       double norm = 0.0;
       for (Element elm2 : mConstituentsAtomic.keySet())
          norm += mConstituentsAtomic.get(elm2).doubleValue();
-      return o != null
-            ? normalize(UncertainValue2.nonNegative(o), norm, false)
-            : UncertainValue2.ZERO;
+      return o != null ? normalize(UncertainValue2.nonNegative(o), norm, false) : UncertainValue2.ZERO;
    }
 
    /**
@@ -647,12 +626,9 @@ public class Composition
     *           boolean Limit the results to positive numbers only?
     * @return UncertainValue
     */
-   public UncertainValue2 weightFractionU(Element elm, boolean normalized,
-         boolean positiveOnly) {
+   public UncertainValue2 weightFractionU(Element elm, boolean normalized, boolean positiveOnly) {
       final UncertainValue2 d = mConstituents.get(elm);
-      return d != null
-            ? (normalized ? normalize(d, mNormalization, positiveOnly) : d)
-            : UncertainValue2.ZERO;
+      return d != null ? (normalized ? normalize(d, mNormalization, positiveOnly) : d) : UncertainValue2.ZERO;
    }
 
    /**
@@ -691,11 +667,7 @@ public class Composition
     */
    public double weightFraction(Element elm, boolean normalized) {
       final UncertainValue2 d = mConstituents.get(elm);
-      return d != null
-            ? (normalized
-                  ? normalize(d, mNormalization, true).doubleValue()
-                  : d.doubleValue())
-            : 0.0;
+      return d != null ? (normalized ? normalize(d, mNormalization, true).doubleValue() : d.doubleValue()) : 0.0;
    }
 
    /**
@@ -734,8 +706,7 @@ public class Composition
     * @return A large number of atoms
     */
    public UncertainValue2 atomsPerKgU(Element elm, boolean normalized) {
-      return UncertainValue2.multiply(1.0 / elm.getMass(),
-            weightFractionU(elm, normalized));
+      return UncertainValue2.multiply(1.0 / elm.getMass(), weightFractionU(elm, normalized));
    }
 
    /**
@@ -746,11 +717,9 @@ public class Composition
     */
    public UncertainValue2 weightAvgAtomicNumberU() {
       UncertainValue2 res = UncertainValue2.ZERO;
-      for (final Map.Entry<Element, UncertainValue2> me : mConstituents
-            .entrySet()) {
+      for (final Map.Entry<Element, UncertainValue2> me : mConstituents.entrySet()) {
          final Element elm = me.getKey();
-         res = UncertainValue2.add(res, UncertainValue2
-               .multiply(elm.getAtomicNumber(), weightFractionU(elm, true)));
+         res = UncertainValue2.add(res, UncertainValue2.multiply(elm.getAtomicNumber(), weightFractionU(elm, true)));
       }
       return res;
    }
@@ -799,11 +768,9 @@ public class Composition
     */
    public UncertainValue2 sumWeightFractionU() {
       UncertainValue2 res = UncertainValue2.ZERO;
-      for (final Map.Entry<Element, UncertainValue2> me : mConstituents
-            .entrySet()) {
+      for (final Map.Entry<Element, UncertainValue2> me : mConstituents.entrySet()) {
          final Element elm = me.getKey();
-         final UncertainValue2 val = me.getValue()
-               .reduced("C[" + elm.toAbbrev() + "]");
+         final UncertainValue2 val = me.getValue().reduced("C[" + elm.toAbbrev() + "]");
          if (val.doubleValue() > 0.0)
             res = UncertainValue2.add(res, val);
       }
@@ -813,11 +780,8 @@ public class Composition
    @Override
    public String toString() {
       if ((mName == null) || (mName.length() == 0))
-         if ((mConstituents.size() == 1)
-               && (weightFraction(mConstituents.keySet().iterator().next(),
-                     false) > 0.9999))
-            return "Pure "
-                  + mConstituents.keySet().iterator().next().toAbbrev();
+         if ((mConstituents.size() == 1) && (weightFraction(mConstituents.keySet().iterator().next(), false) > 0.9999))
+            return "Pure " + mConstituents.keySet().iterator().next().toAbbrev();
          else
             return descriptiveString(false);
       return mName;
@@ -956,10 +920,8 @@ public class Composition
    public int compareTo(Composition comp) {
       if (this == comp)
          return 0;
-      final Iterator<Map.Entry<Element, UncertainValue2>> i = mConstituents
-            .entrySet().iterator();
-      final Iterator<Map.Entry<Element, UncertainValue2>> j = comp.mConstituents
-            .entrySet().iterator();
+      final Iterator<Map.Entry<Element, UncertainValue2>> i = mConstituents.entrySet().iterator();
+      final Iterator<Map.Entry<Element, UncertainValue2>> j = comp.mConstituents.entrySet().iterator();
       while (i.hasNext() && j.hasNext()) {
          final Map.Entry<Element, UncertainValue2> ei = i.next();
          final Map.Entry<Element, UncertainValue2> ej = j.next();
@@ -1030,9 +992,7 @@ public class Composition
       allElms.addAll(comp.getElementSet());
       for (final Element el : allElms)
          delta = UncertainValue2.add(delta,
-               UncertainValue2.sqr(
-                     UncertainValue2.subtract(comp.weightFractionU(el, false),
-                           weightFractionU(el, false))));
+               UncertainValue2.sqr(UncertainValue2.subtract(comp.weightFractionU(el, false), weightFractionU(el, false))));
       return UncertainValue2.multiply(1.0 / allElms.size(), delta).sqrt();
    }
 
@@ -1068,8 +1028,7 @@ public class Composition
    }
 
    @SuppressWarnings("unchecked")
-   private void readObject(java.io.ObjectInputStream in)
-         throws IOException, ClassNotFoundException {
+   private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
       mConstituents = (Map<Element, UncertainValue2>) in.readObject();
       mConstituentsAtomic = (Map<Element, UncertainValue2>) in.readObject();
       final double v = in.readDouble();
@@ -1098,9 +1057,7 @@ public class Composition
          long temp;
          temp = Double.doubleToLongBits(mNormalization);
          result = (PRIME * result) + (int) (temp ^ (temp >>> 32));
-         result = (PRIME * result) + ((mOptimalRepresentation == null)
-               ? 0
-               : mOptimalRepresentation.hashCode());
+         result = (PRIME * result) + ((mOptimalRepresentation == null) ? 0 : mOptimalRepresentation.hashCode());
          if (result == Integer.MAX_VALUE)
             result = Integer.MIN_VALUE;
          mHashCode = result;
@@ -1124,8 +1081,7 @@ public class Composition
             Objects.equals(mConstituentsAtomic, other.mConstituentsAtomic) && //
             Objects.equals(mName, other.mName) && //
             (Double.compare(mNormalization, other.mNormalization) == 0) && //
-            Objects.equals(mOptimalRepresentation,
-                  other.mOptimalRepresentation);
+            Objects.equals(mOptimalRepresentation, other.mOptimalRepresentation);
    }
 
    /**
@@ -1156,8 +1112,7 @@ public class Composition
             final UncertainValue2 uv2 = other.weightFractionU(elm, false);
             if ((uv1 == null) || (uv2 == null))
                return false;
-            if ((Math.abs(uv1.doubleValue() - uv2.doubleValue()) > tol)
-                  || (Math.abs(uv1.uncertainty() - uv2.uncertainty()) > tol))
+            if ((Math.abs(uv1.doubleValue() - uv2.doubleValue()) > tol) || (Math.abs(uv1.uncertainty() - uv2.uncertainty()) > tol))
                return false;
          }
          {
@@ -1165,8 +1120,7 @@ public class Composition
             final UncertainValue2 uv2 = other.atomicPercentU(elm);
             if ((uv1 == null) || (uv2 == null))
                return false;
-            if ((Math.abs(uv1.doubleValue() - uv2.doubleValue()) > tol)
-                  || (Math.abs(uv1.uncertainty() - uv2.uncertainty()) > tol))
+            if ((Math.abs(uv1.doubleValue() - uv2.doubleValue()) > tol) || (Math.abs(uv1.uncertainty() - uv2.uncertainty()) > tol))
                return false;
          }
       }
@@ -1181,8 +1135,7 @@ public class Composition
     * @param normalize
     * @return Map&lt;Element,Double&gt;
     */
-   public Map<Element, Double> absoluteError(Composition std,
-         boolean normalize) {
+   public Map<Element, Double> absoluteError(Composition std, boolean normalize) {
       final Set<Element> elms = new TreeSet<Element>();
       elms.addAll(std.getElementSet());
       elms.addAll(getElementSet());
@@ -1190,8 +1143,7 @@ public class Composition
       for (final Element elm : elms) {
          final double u = weightFractionU(elm, normalize).doubleValue();
          final double s = std.weightFractionU(elm, normalize).doubleValue();
-         res.put(elm,
-               Double.valueOf(s != 0.0 ? (u - s) / s : (u == 0.0 ? 0.0 : 1.0)));
+         res.put(elm, Double.valueOf(s != 0.0 ? (u - s) / s : (u == 0.0 ? 0.0 : 1.0)));
       }
       return res;
    }
@@ -1204,8 +1156,7 @@ public class Composition
     * @param normalize
     * @return Map&lt;Element,Double&gt;
     */
-   public Map<Element, Double> relativeError(Composition std,
-         boolean normalize) {
+   public Map<Element, Double> relativeError(Composition std, boolean normalize) {
       final Set<Element> elms = new TreeSet<Element>();
       elms.addAll(std.getElementSet());
       elms.addAll(getElementSet());
@@ -1244,8 +1195,7 @@ public class Composition
    public UncertainValue2 meanAtomicNumberU() {
       UncertainValue2 res = UncertainValue2.ZERO;
       for (final Element elm : getElementSet())
-         res = UncertainValue2.add(res, UncertainValue2
-               .multiply(elm.getAtomicNumber(), weightFractionU(elm, false)));
+         res = UncertainValue2.add(res, UncertainValue2.multiply(elm.getAtomicNumber(), weightFractionU(elm, false)));
       return res;
    }
 
@@ -1265,12 +1215,8 @@ public class Composition
    public void forceNormalization() {
       final UncertainValue2 norm = sumWeightFractionU();
       final Map<Element, UncertainValue2> newConst = new TreeMap<Element, UncertainValue2>();
-      for (final Map.Entry<Element, UncertainValue2> me : mConstituents
-            .entrySet())
-         newConst.put(me.getKey(),
-               norm.doubleValue() > 0.0
-                     ? UncertainValue2.divide(me.getValue(), norm)
-                     : UncertainValue2.ZERO);
+      for (final Map.Entry<Element, UncertainValue2> me : mConstituents.entrySet())
+         newConst.put(me.getKey(), norm.doubleValue() > 0.0 ? UncertainValue2.divide(me.getValue(), norm) : UncertainValue2.ZERO);
       mConstituents = newConst;
       mOptimalRepresentation = Representation.WEIGHT_PCT;
       renormalize();
@@ -1298,8 +1244,7 @@ public class Composition
                pos = 2;
             else {
                final String[] elmData = line.split("\t");
-               final Element elm = Element
-                     .byName(elmData[0].substring(0, 2).trim());
+               final Element elm = Element.byName(elmData[0].substring(0, 2).trim());
                final double wgtPct = Double.parseDouble(elmData[5]);
                result.addElement(elm, wgtPct / 100.0);
             }
@@ -1314,8 +1259,7 @@ public class Composition
    }
 
    public String toParsableFormat() {
-      final NumberFormat df = new HalfUpFormat("0.0###",
-            new DecimalFormatSymbols(Locale.US));
+      final NumberFormat df = new HalfUpFormat("0.0###", new DecimalFormatSymbols(Locale.US));
       final StringBuffer sb = new StringBuffer(256);
       sb.append(toString().replace(",", " "));
       for (final Element elm : getElementSet()) {
@@ -1333,9 +1277,7 @@ public class Composition
       final Composition res = new Composition();
       for (final Element elm : getElementSet()) {
          final double w = weightFraction(elm, false);
-         res.addElement(elm,
-               Math2.bound(w + (w * r.nextGaussian() * proportional)
-                     + (offset * r.nextGaussian()), 0.0, 1.1));
+         res.addElement(elm, Math2.bound(w + (w * r.nextGaussian() * proportional) + (offset * r.nextGaussian()), 0.0, 1.1));
       }
       return res;
    }
@@ -1360,8 +1302,7 @@ public class Composition
          sb.append(nfd.format(FromSI.gPerCC(((Material) this).getDensity())));
          sb.append("&nbsp;g/cm<sup>3</sup></td></tr>\n");
       }
-      sb.append(
-            "\t<tr><th>Element</th><th>Mass<br/>Fraction</th><th>Mass Fraction<br/>(normalized)</th><th>Atomic<br/>Fraction</th></tr>\n");
+      sb.append("\t<tr><th>Element</th><th>Mass<br/>Fraction</th><th>Mass Fraction<br/>(normalized)</th><th>Atomic<br/>Fraction</th></tr>\n");
       final NumberFormat nf = new HalfUpFormat("0.0000");
       for (final Element elm : getElementSet()) {
          sb.append("\t<tr><td>");
@@ -1378,8 +1319,7 @@ public class Composition
       return sb.toString();
    }
 
-   public static void toCSV(File file, Collection<Composition> comps)
-         throws FileNotFoundException {
+   public static void toCSV(File file, Collection<Composition> comps) throws FileNotFoundException {
       try (PrintWriter pw = new PrintWriter(file)) {
          pw.print("Name, ");
          pw.print("Density, ");
@@ -1389,8 +1329,7 @@ public class Composition
          ArrayList<Composition> sorted = new ArrayList<>(comps);
          sorted.sort(Comparator.comparing(Composition::getName));
          for (Composition comp : sorted) {
-            if ((comp.getName().charAt(0) != '[')
-                  && (comp.getElementCount() > 1)) {
+            if ((comp.getName().charAt(0) != '[') && (comp.getElementCount() > 1)) {
                pw.print("\"" + comp.getName() + "\", ");
                double den = 0.0;
                if (comp instanceof Material)
@@ -1400,8 +1339,7 @@ public class Composition
                else
                   pw.print(", ");
                for (int z = 1; z < 95; ++z) {
-                  double wf = comp.weightFraction(Element.byAtomicNumber(z),
-                        false);
+                  double wf = comp.weightFraction(Element.byAtomicNumber(z), false);
                   if (wf > 0.0)
                      pw.print(wf + ", ");
                   else
@@ -1430,25 +1368,20 @@ public class Composition
     * @param constituents
     * @return Composition
     */
-   static public Composition combine(String name,
-         Map<Composition, UncertainValue2> constituents) {
+   static public Composition combine(String name, Map<Composition, UncertainValue2> constituents) {
       final Composition res = new Composition();
-      for (final Map.Entry<Composition, UncertainValue2> me : constituents
-            .entrySet()) {
+      for (final Map.Entry<Composition, UncertainValue2> me : constituents.entrySet()) {
          final Composition cc = me.getKey();
          for (final Element elm : cc.getElementSet())
             res.addElement(elm,
-                  UncertainValue2.add(res.weightFractionU(elm, false),
-                        UncertainValue2.multiply(cc.weightFractionU(elm, false),
-                              me.getValue())));
+                  UncertainValue2.add(res.weightFractionU(elm, false), UncertainValue2.multiply(cc.weightFractionU(elm, false), me.getValue())));
       }
       res.setName(name);
       return res;
    }
 
    final private static int DIM = 9;
-   private static final long[] PROJECTORS = createProjectors(
-         2762689630628022905L);
+   private static final long[] PROJECTORS = createProjectors(2762689630628022905L);
 
    private long mIndexHashS = Long.MAX_VALUE;
    private long mIndexHashL = Long.MAX_VALUE;
@@ -1475,9 +1408,7 @@ public class Composition
       if (mIndexHashS == Long.MAX_VALUE) {
          long res = 0;
          for (final Element elm : getElementSet())
-            res += Math2.bound(
-                  (int) Math.sqrt(100.0 * weightFraction(elm, false)), 0, 10)
-                  * PROJECTORS[elm.getAtomicNumber()];
+            res += Math2.bound((int) Math.sqrt(100.0 * weightFraction(elm, false)), 0, 10) * PROJECTORS[elm.getAtomicNumber()];
          mIndexHashS = res;
       }
       return mIndexHashS;
@@ -1487,8 +1418,7 @@ public class Composition
       if (mIndexHashL == Long.MAX_VALUE) {
          long res = 0;
          for (final Element elm : getElementSet())
-            res += Math2.bound((int) (10.0 * weightFraction(elm, false)), 0, 10)
-                  * PROJECTORS[elm.getAtomicNumber()];
+            res += Math2.bound((int) (10.0 * weightFraction(elm, false)), 0, 10) * PROJECTORS[elm.getAtomicNumber()];
          mIndexHashL = res;
       }
       return mIndexHashL;

@@ -23,8 +23,7 @@ import junit.framework.TestCase;
  * @author nritchie
  * @version 1.0
  */
-public class MeanIonizationPotentialTest
-   extends TestCase {
+public class MeanIonizationPotentialTest extends TestCase {
 
    /**
     * Constructs a MeanIonizationPotentialTest

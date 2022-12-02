@@ -96,9 +96,7 @@ import Jama.Matrix;
  * @author John Villarrubia
  * @version 1.0
  */
-public class Mesh
-   implements
-   ITransform {
+public class Mesh implements ITransform {
 
    /**
     * <p>
@@ -118,9 +116,7 @@ public class Mesh
     * @author John Villarrubia
     * @version 1.0
     */
-   public interface ConnectedShape
-      extends
-      NormalShape {
+   public interface ConnectedShape extends NormalShape {
       /**
        * Returns the Tetrahedron that contained pos0 when contains(pos0) or
        * contains(pos0,pos1) last returned true. This can be used, for example,
@@ -226,14 +222,12 @@ public class Mesh
     * </p>
     */
 
-   static public class Line
-      extends
-      Element {
+   static public class Line extends Element {
 
       public Line(Mesh mesh, int index) {
          this.mesh = mesh;
          myIndex = index;
-         if(getNodeIndices().length != 2)
+         if (getNodeIndices().length != 2)
             throw new EPQFatalException("Wrong # of nodes for a 2-node line.");
       }
 
@@ -267,9 +261,9 @@ public class Mesh
     */
    static public class MeshShape
 
-      implements
-      ConnectedShape,
-      ITransform {
+         implements
+            ConnectedShape,
+            ITransform {
       private final Mesh mesh;
 
       /*
@@ -304,14 +298,14 @@ public class Mesh
           */
          final int maxElementNumber = mesh.getNumberOfElements();
          int tetIndex = maxElementNumber / 2;
-         while((mesh.getElementType(tetIndex) != 4) && (tetIndex <= maxElementNumber))
+         while ((mesh.getElementType(tetIndex) != 4) && (tetIndex <= maxElementNumber))
             tetIndex++;
-         if(mesh.getElementType(tetIndex) != 4) {
+         if (mesh.getElementType(tetIndex) != 4) {
             tetIndex = maxElementNumber / 2;
-            while((mesh.getElementType(tetIndex) != 4) && (tetIndex >= 1))
+            while ((mesh.getElementType(tetIndex) != 4) && (tetIndex >= 1))
                tetIndex--;
          }
-         if(mesh.getElementType(tetIndex) != 4)
+         if (mesh.getElementType(tetIndex) != 4)
             throw new EPQFatalException("No tetrahedra in the mesh");
          insideTet = Tetrahedron.getTetrahedron(mesh, tetIndex);
          /* set insidePoint to the center of this tetrahedron */
@@ -438,14 +432,10 @@ public class Mesh
          ConnectedShape nextShape = null;
          double u = currentShape.getFirstIntersection(currentpos, pos0);
 
-         double[] smalldisp = {
-            0.,
-            0.,
-            0.
-         };
+         double[] smalldisp = {0., 0., 0.};
          boolean smalldispSet = false;
 
-         while(u < 1.) {
+         while (u < 1.) {
             /*
              * The following conditionals check for backtracking. This can
              * happen as follows: If pos0 is on the boundary of the current tet
@@ -457,14 +447,14 @@ public class Mesh
              * shapes contains pos0.
              */
             nextShape = currentShape.nextTet();
-            if((nextShape == previousShape) || ((nextShape == null) && (previousShape == this))) {
+            if ((nextShape == previousShape) || ((nextShape == null) && (previousShape == this))) {
                /*
                 * This block if we detect backtracking. At least one of the two
                 * shapes must be a tet.
                 */
                Tetrahedron tetShape = null;
                ConnectedShape otherShape = null;
-               if(currentShape instanceof Tetrahedron) {
+               if (currentShape instanceof Tetrahedron) {
                   tetShape = (Tetrahedron) currentShape;
                   otherShape = nextShape;
                } else {
@@ -472,15 +462,15 @@ public class Mesh
                   otherShape = currentShape;
                }
                boolean cont;
-               if(pos1 == null)
+               if (pos1 == null)
                   cont = tetShape.contains(pos0);
                else
                   cont = tetShape.contains(pos0, pos1);
-               if(cont) {
+               if (cont) {
                   containingShape = tetShape;
                   return true;
                } else {
-                  if(otherShape == null)
+                  if (otherShape == null)
                      return false;
                   containingShape = (Tetrahedron) otherShape;
                   return true;
@@ -490,20 +480,20 @@ public class Mesh
                previousShape = currentShape;
                currentShape = nextShape;
             }
-            if(inside && (currentShape == null)) { // Inside-out crossing
+            if (inside && (currentShape == null)) { // Inside-out crossing
                currentShape = this;
-               if(!smalldispSet) { // First time through
+               if (!smalldispSet) { // First time through
                   smalldisp = Math2.normalize(Math2.minus(pos0, currentpos));
-                  for(int i = 0; i < 3; i++)
+                  for (int i = 0; i < 3; i++)
                      smalldisp[i] *= 1.e-16;
                   smalldispSet = true;
                }
                /* Put currentpos on the boundary */
-               for(int i = 0; i < 3; i++)
+               for (int i = 0; i < 3; i++)
                   currentpos[i] += u * (pos0[i] - currentpos[i]);
-               while(inside) {
+               while (inside) {
                   /* Move it slightly beyond */
-                  for(int i = 0; i < 3; i++)
+                  for (int i = 0; i < 3; i++)
                      currentpos[i] += smalldisp[i];
                   /*
                    * Test that we're now outside (previousShape is the tet we're
@@ -515,8 +505,8 @@ public class Mesh
                    * bit more
                    */
                }
-            } else if(!inside && (currentShape != null)) { // Outside-in
-                                                           // crossing
+            } else if (!inside && (currentShape != null)) { // Outside-in
+                                                            // crossing
                inside = true;
                currentpos = ((Tetrahedron) currentShape).getCenter();
             } else { // inside - inside (transition between tets)
@@ -533,25 +523,25 @@ public class Mesh
           * pos0.
           */
 
-         if(u > 1) {
+         if (u > 1) {
             /*
              * pos0 is unambiguously nearer than the next boundary. Inside is
              * true or false as dictated by the current value stored in that
              * flag.
              */
-            if(inside)
+            if (inside)
                containingShape = (Tetrahedron) currentShape;
             return inside;
          }
 
          // Here if u==1: pos0 is ON a boundary
-         if(pos1 != null) { // tiebreak available
-            if(inside) {
+         if (pos1 != null) { // tiebreak available
+            if (inside) {
                /*
                 * If the current tetrahedron contains pos0, then return that
                 */
                boolean cont = currentShape.contains(pos0, pos1);
-               if(cont) {
+               if (cont) {
                   containingShape = (Tetrahedron) currentShape;
                   return true;
                }
@@ -561,11 +551,11 @@ public class Mesh
                 * within the MeshShape, then there will be a nextTet.
                 */
                currentShape = currentShape.nextTet();
-               if(currentShape == null)
+               if (currentShape == null)
                   return false; // No nextTet, so we're outside.
                // There is a nextTet, so check it
                cont = currentShape.contains(pos0, pos1);
-               if(cont) {
+               if (cont) {
                   containingShape = (Tetrahedron) currentShape;
                   return true;
                }
@@ -578,7 +568,7 @@ public class Mesh
              */
             currentShape = currentShape.nextTet();
             final boolean cont = currentShape.contains(pos0, pos1);
-            if(cont)
+            if (cont)
                containingShape = (Tetrahedron) currentShape;
             return cont;
 
@@ -591,10 +581,10 @@ public class Mesh
           * was due to round-off error. To make sure the pos is unequivocally
           * inside, we move it slightly towards the center.
           */
-         if(inside) {
+         if (inside) {
             containingShape = (Tetrahedron) currentShape;
             final double[] deltaDir = Math2.normalize(Math2.minus(pos0, currentpos));
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
                pos0[i] -= MonteCarloSS.SMALL_DISP * deltaDir[i];
          }
 
@@ -609,12 +599,7 @@ public class Mesh
 
       @Override
       public double[] getFirstNormal(double[] pos0, double[] pos1) {
-         result = new double[] {
-            0.,
-            0.,
-            0.,
-            Double.MAX_VALUE
-         };
+         result = new double[]{0., 0., 0., Double.MAX_VALUE};
          /*
           * This is a brute-force implementation. It just checks all triangles
           * on the surface of the mesh. If N is the number of mesh elements,
@@ -632,9 +617,9 @@ public class Mesh
           * fancy with this algorithm.
           */
 
-         for(final Triangle t : mesh.boundaryFaces) {
+         for (final Triangle t : mesh.boundaryFaces) {
             final double[] firstnormal = t.getFirstNormal(pos0, pos1);
-            if((firstnormal[3] > 0) && (firstnormal[3] < result[3])) {
+            if ((firstnormal[3] > 0) && (firstnormal[3] < result[3])) {
                result = firstnormal;
                nextTetIndex = t.nextTetIndex();
             }
@@ -665,7 +650,7 @@ public class Mesh
        */
       @Override
       public Tetrahedron nextTet() {
-         if(nextTetIndex > 0)
+         if (nextTetIndex > 0)
             return Tetrahedron.getTetrahedron(mesh, nextTetIndex);
          return null;
       }
@@ -698,7 +683,7 @@ public class Mesh
       public void updateGeom() {
          insideTet.updateGeom();
          insidePoint = insideTet.getCenter();
-         if(containingShape != null)
+         if (containingShape != null)
             containingShape.updateGeom();
       }
    }
@@ -710,11 +695,7 @@ public class Mesh
     * only the first time they're needed.
     * </p>
     */
-   static final public class Tetrahedron
-      extends
-      Element
-      implements
-      ConnectedShape {
+   static final public class Tetrahedron extends Element implements ConnectedShape {
 
       /**
        * Returns the Tetrahedron corresponding to the indexed element of mesh.
@@ -725,7 +706,7 @@ public class Mesh
        * @return
        */
       static public Tetrahedron getTetrahedron(Mesh mesh, int index) {
-         if(mesh.elements[index] == null)
+         if (mesh.elements[index] == null)
             mesh.elements[index] = new Tetrahedron(mesh, index);
          return (Tetrahedron) mesh.elements[index];
       }
@@ -762,11 +743,7 @@ public class Mesh
       /* corresponding b values for 4 faces */
       private final double[] barray = new double[4];
 
-      private final double[] electricField = new double[] {
-         0.,
-         0.,
-         0.
-      };
+      private final double[] electricField = new double[]{0., 0., 0.};
 
       private double v0 = 0.;
 
@@ -781,13 +758,15 @@ public class Mesh
        * mesh. Throws EPQFatalException if the indexed element is not a
        * tetrahedron.
        *
-       * @param mesh - the mesh with which this Tetrahedron is associated.
-       * @param index - the Tetrahedron's index within the mesh.
+       * @param mesh
+       *           - the mesh with which this Tetrahedron is associated.
+       * @param index
+       *           - the Tetrahedron's index within the mesh.
        */
       private Tetrahedron(Mesh mesh, int index) {
          this.mesh = mesh;
          myIndex = index;
-         if(mesh.getElementType(myIndex) != 4)
+         if (mesh.getElementType(myIndex) != 4)
             throw new EPQFatalException("Mesh element at index " + index + " is not a tetrahedron.");
          updateGeom();
       }
@@ -795,13 +774,13 @@ public class Mesh
       /**
        * Returns the Tetrathedron adjacent to this one through the indexed face
        *
-       * @param faceIndex - index of the face shared with the adjacent
-       *           Tetrahedron
+       * @param faceIndex
+       *           - index of the face shared with the adjacent Tetrahedron
        * @return
        */
       public Tetrahedron adjacentTet(int faceIndex) {
          final int adjVolIndex = adjacentTetIndex(faceIndex);
-         if(adjVolIndex < 1)
+         if (adjVolIndex < 1)
             return null; // It was a mesh boundary
          else
             return Tetrahedron.getTetrahedron(mesh, adjVolIndex);
@@ -812,8 +791,8 @@ public class Mesh
        * indexed face. Returns 0 if the face is on the mesh boundary (no
        * adjacent Tetrahedron).
        *
-       * @param faceIndex - index of the face shared with the adjacent
-       *           Tetrahedron
+       * @param faceIndex
+       *           - index of the face shared with the adjacent Tetrahedron
        * @return
        */
       public int adjacentTetIndex(int faceIndex) {
@@ -828,9 +807,9 @@ public class Mesh
       @Override
       public boolean contains(double[] pos) {
          double posDotn;
-         for(int i = 0; i < 4; i++) {
+         for (int i = 0; i < 4; i++) {
             posDotn = (pos[0] * narray[i][0]) + (pos[1] * narray[i][1]) + (pos[2] * narray[i][2]);
-            if(posDotn > barray[i])
+            if (posDotn > barray[i])
                return false;
          }
          return true;
@@ -842,23 +821,19 @@ public class Mesh
          double p0dotn;
          double[] delta = null;
          // Loop over all planes in the shape
-         for(int i = 0; i < 4; i++) {
+         for (int i = 0; i < 4; i++) {
             p0dotn = (pos0[0] * narray[i][0]) + (pos0[1] * narray[i][1]) + (pos0[2] * narray[i][2]);
-            if(p0dotn > barray[i])
+            if (p0dotn > barray[i])
                return false;
-            if(p0dotn == barray[i]) { // p0 is ON the boundary
-               if(!didDelta) {
-                  delta = new double[] {
-                     pos1[0] - pos0[0],
-                     pos1[1] - pos0[1],
-                     pos1[2] - pos0[2]
-                  };
+            if (p0dotn == barray[i]) { // p0 is ON the boundary
+               if (!didDelta) {
+                  delta = new double[]{pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2]};
                   didDelta = true;
                }
                final double deltadotn = (delta[0] * narray[i][0]) + (delta[1] * narray[i][1]) + (delta[2] * narray[i][2]);
-               if(deltadotn > 0.)
+               if (deltadotn > 0.)
                   return false;
-               if((deltadotn == 0.) && !mesh.containsTieBreak(narray[i]))
+               if ((deltadotn == 0.) && !mesh.containsTieBreak(narray[i]))
                   return false;
             }
          }
@@ -876,7 +851,8 @@ public class Mesh
       /**
        * Returns the area of the indexed face.
        *
-       * @param index - index of face for which area is to be returned
+       * @param index
+       *           - index of face for which area is to be returned
        * @return - area of indexed face
        */
       public double faceArea(int index) {
@@ -897,7 +873,8 @@ public class Mesh
        * Returns the outward pointing normal vector of the face with the
        * supplied index
        *
-       * @param index - index of the face for which the normal vector is to be
+       * @param index
+       *           - index of the face for which the normal vector is to be
        *           returned
        * @return - the normal vector
        */
@@ -917,12 +894,9 @@ public class Mesh
          final Matrix coord = new Matrix(4, 4, 1.); // 4x4 matrix of 1s
          // Replace rows 0 to 3, columns 1 to 3 with node coordinates.
          final int[] elementsNodeIndices = mesh.getNodeIndices(myIndex);
-         coord.setMatrix(0, 3, 1, 3, new Matrix(new double[][] {
-            mesh.getNodeCoordinates(elementsNodeIndices[0]),
-            mesh.getNodeCoordinates(elementsNodeIndices[1]),
-            mesh.getNodeCoordinates(elementsNodeIndices[2]),
-            mesh.getNodeCoordinates(elementsNodeIndices[3])
-         }));
+         coord.setMatrix(0, 3, 1, 3,
+               new Matrix(new double[][]{mesh.getNodeCoordinates(elementsNodeIndices[0]), mesh.getNodeCoordinates(elementsNodeIndices[1]),
+                     mesh.getNodeCoordinates(elementsNodeIndices[2]), mesh.getNodeCoordinates(elementsNodeIndices[3])}));
          return coord.inverse();
       }
 
@@ -934,8 +908,8 @@ public class Mesh
       public double[] getCenter() {
          final double[] center = new double[3];
          final int[] nI = mesh.getNodeIndices(myIndex);
-         for(int j = 0; j < 3; j++) {
-            for(int i = 0; i < 4; i++) {
+         for (int j = 0; j < 3; j++) {
+            for (int i = 0; i < 4; i++) {
                final double[] nC = mesh.getNodeCoordinates(nI[i]);
                center[j] += nC[j];
             }
@@ -984,7 +958,7 @@ public class Mesh
        * @return - the volume
        */
       public double getEquivalentSphereRadius() {
-         if(sphereRadReady)
+         if (sphereRadReady)
             return sphereRad;
          else {
             sphereRad = Math.pow(FACTOR * getVolume(), 1. / 3.);
@@ -1012,19 +986,12 @@ public class Mesh
          int minindex = -1; // Stores index of plane responsible for umin
          int maxindex = -1; // Same for umax. Initial values are illegal
          // indices.
-         result = new double[] {
-            0.,
-            0.,
-            0.,
-            Double.MAX_VALUE
-         }; // Initial value designates no intersection
+         result = new double[]{0., 0., 0., Double.MAX_VALUE}; // Initial value
+                                                              // designates no
+                                                              // intersection
 
-         final double[] delta = {
-            pos1[0] - pos0[0],
-            pos1[1] - pos0[1],
-            pos1[2] - pos0[2]
-         };
-         for(int i = 0; i < 4; i++) {
+         final double[] delta = {pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2]};
+         for (int i = 0; i < 4; i++) {
             /*
              * Note significance of the sign of the next two variables
              * numerator<0 means pos0 is inside the current face; numerator>0
@@ -1033,10 +1000,9 @@ public class Mesh
              * intersection is an outside->inside transition. denominator>0
              * means the opposite.
              */
-            final double numerator = ((pos0[0] * narray[i][0]) + (pos0[1] * narray[i][1]) + (pos0[2] * narray[i][2]))
-                  - barray[i];
+            final double numerator = ((pos0[0] * narray[i][0]) + (pos0[1] * narray[i][1]) + (pos0[2] * narray[i][2])) - barray[i];
             final double denominator = (delta[0] * narray[i][0]) + (delta[1] * narray[i][1]) + (delta[2] * narray[i][2]);
-            if(denominator == 0) {
+            if (denominator == 0) {
                /*
                 * If the trajectory is parallel to the plane there are no
                 * intersections. If it starts inside it's always inside. If it
@@ -1046,7 +1012,7 @@ public class Mesh
                 * intersections with other planes of this shape. Otherwise, we
                 * return u>1.
                 */
-               if((numerator < 0) || ((numerator == 0) && mesh.containsTieBreak(narray[i]))) {
+               if ((numerator < 0) || ((numerator == 0) && mesh.containsTieBreak(narray[i]))) {
                   /*
                    * In the next line, if numerator=0 then the second of the
                    * above conditions is what places us within this if block.
@@ -1059,16 +1025,16 @@ public class Mesh
                return result;
             }
             u = -numerator / denominator; // Compute intersection point
-            if(denominator > 0) { // This is an insidethisplane->outside
+            if (denominator > 0) { // This is an insidethisplane->outside
                // transition
-               if(u < umax) { // It changes change umax
+               if (u < umax) { // It changes change umax
                   /*
                    * If the new umax is < 0 the "inside" is behind our line
                    * segment If the new umax is < umin, this plane's inside and
                    * an earlier one are disjoint. In either case abort and
                    * return no intersection
                    */
-                  if((u < 0)
+                  if ((u < 0)
                         || (u <= umin)) { /*
                                            * If the new umax is < 0 the "inside"
                                            * is behind our line segment If the
@@ -1090,33 +1056,33 @@ public class Mesh
                   maxtie = false;
                   umax = u;
                   maxindex = i; // remember index of this face
-               } else if(u == umax)
+               } else if (u == umax)
                   maxtie = true;
-            } else if(u > umin) { // It changes umin
+            } else if (u > umin) { // It changes umin
                /*
                 * If the new umin is > 1 the "inside" is beyond the end of our
                 * line segment. If it is >umax this plane's inside and an
                 * earlier one are disjoint. Return "no intersection" in either
                 * case.
                 */
-               if((u > 1) || (u >= umax)) {
+               if ((u > 1) || (u >= umax)) {
                   tie = false;
                   return result;
                }
                mintie = false;
                umin = u;
                minindex = i; // Remember index of this plane
-            } else if(u == umin)
+            } else if (u == umin)
                mintie = true;
          } // end for
 
          // When we arrive here [umin,umax] defines the completed intersection
          // interval
-         if(umin > 0) { // Our boundary crossing is outside -> inside at umin
+         if (umin > 0) { // Our boundary crossing is outside -> inside at umin
             result[3] = umin;
             intersectedFace = minindex;
             tie = mintie || withinPlane;
-            if(tie) { // remember positions for possible further processing
+            if (tie) { // remember positions for possible further processing
                this.pos0 = pos0.clone();
                this.pos1 = pos1.clone();
             }
@@ -1125,12 +1091,13 @@ public class Mesh
             result[2] = narray[intersectedFace][2];
             return result;
          } // Otherwise our starting position was already inside
-         if((umax <= 1) && (umax > 0.)) { // Our boundary crossing is outside ->
+         if ((umax <= 1) && (umax > 0.)) { // Our boundary crossing is outside
+                                           // ->
             // inside at umax<1
             result[3] = umax;
             intersectedFace = maxindex;
             tie = maxtie || withinPlane;
-            if(tie) { // remember positions for possible further processing
+            if (tie) { // remember positions for possible further processing
                this.pos0 = pos0.clone();
                this.pos1 = pos1.clone();
             }
@@ -1154,7 +1121,8 @@ public class Mesh
        * inside the tetrahedron. If x is outside, this routine will extrapolate;
        * this can give inaccurate results.
        *
-       * @param x - a point inside this element
+       * @param x
+       *           - a point inside this element
        * @return - the potential (in volts) at x
        */
       public double getPotential(double[] x) {
@@ -1203,7 +1171,7 @@ public class Mesh
        */
       @Override
       public Tetrahedron nextTet() {
-         if(!tie)
+         if (!tie)
             return adjacentTet(intersectedFace);
          /*
           * We end up here rarely, only if the trajectory at the last
@@ -1219,14 +1187,14 @@ public class Mesh
           * stop searching as soon as we find one.
           */
          final double u = Double.MAX_VALUE;
-         for(final int index : candidates) {
+         for (final int index : candidates) {
             final Tetrahedron candtet = Tetrahedron.getTetrahedron(mesh, index);
             /*
              * if this is the next tet, our previous trajectory should intersect
              * it earlier than any of the others
              */
             final double thisu = candtet.getFirstIntersection(pos0, pos1);
-            if((thisu > 0) && (thisu <= 1) && (thisu < u))
+            if ((thisu > 0) && (thisu <= 1) && (thisu < u))
                return candtet;
          }
          /*
@@ -1239,7 +1207,8 @@ public class Mesh
       /**
        * Sets the charge number to the supplied value.
        *
-       * @param n - The value to which to set the charge, in units of e.
+       * @param n
+       *           - The value to which to set the charge, in units of e.
        */
       public void setChargeNumber(int n) {
          mesh.setChargeNumber(myIndex, n);
@@ -1260,7 +1229,7 @@ public class Mesh
        */
       @Override
       public void updateGeom() {
-         for(int i = 0; i < 4; i++) {
+         for (int i = 0; i < 4; i++) {
             final int[] facenodeindices = mesh.tetFaceNodeIndices(myIndex, i);
             final double[] coords0 = mesh.getNodeCoordinates(facenodeindices[0]);
             mesh.planePerp(narray[i], coords0, mesh.getNodeCoordinates(facenodeindices[1]), mesh.getNodeCoordinates(facenodeindices[2]));
@@ -1280,12 +1249,9 @@ public class Mesh
        */
       public void updatePotentials() {
          final int[] nI = mesh.getNodeIndices(myIndex);
-         final Matrix temp = geoCoef().times(new Matrix(new double[] {
-            mesh.getNodePotential(nI[0]),
-            mesh.getNodePotential(nI[1]),
-            mesh.getNodePotential(nI[2]),
-            mesh.getNodePotential(nI[3])
-         }, 4));
+         final Matrix temp = geoCoef().times(new Matrix(
+               new double[]{mesh.getNodePotential(nI[0]), mesh.getNodePotential(nI[1]), mesh.getNodePotential(nI[2]), mesh.getNodePotential(nI[3])},
+               4));
          v0 = temp.get(0, 0);
          electricField[0] = -temp.get(1, 0);
          electricField[1] = -temp.get(2, 0);
@@ -1299,9 +1265,7 @@ public class Mesh
     * the order of its nodes. The nodes are clockwise from the inside.
     * </p>
     */
-   static public class Triangle
-      extends
-      Element {
+   static public class Triangle extends Element {
 
       private final double[] n = new double[3];
       private double b;
@@ -1334,12 +1298,14 @@ public class Mesh
       /**
        * Constructs a Triangle
        *
-       * @param mesh - The mesh with which this triangle is associated
-       * @param faceIndex - The index of the face of insideTet that corresonds
-       *           to this triangle.
-       * @param insideTet - the index of the Tetrahedron of which this triangle
-       *           is a face. (This tetrahedron is inside the plane of the
-       *           Triangle.)
+       * @param mesh
+       *           - The mesh with which this triangle is associated
+       * @param faceIndex
+       *           - The index of the face of insideTet that corresonds to this
+       *           triangle.
+       * @param insideTet
+       *           - the index of the Tetrahedron of which this triangle is a
+       *           face. (This tetrahedron is inside the plane of the Triangle.)
        */
 
       public Triangle(Mesh mesh, int faceIndex, int insideTet) {
@@ -1347,7 +1313,7 @@ public class Mesh
          this.faceIndex = faceIndex;
          this.insideTet = insideTet;
          nodeIndices = mesh.tetFaceNodeIndices(insideTet, faceIndex);
-         if(nodeIndices.length != 3)
+         if (nodeIndices.length != 3)
             throw new EPQFatalException("Wrong # of nodes for a 3-node triangle.");
          updateGeom();
       }
@@ -1360,8 +1326,10 @@ public class Mesh
        * faces for each one. For this reason it is best used only to adjudicate
        * ambiguous cases.
        *
-       * @param p0 - trajectory leg start point
-       * @param p1 - trajectory leg end point
+       * @param p0
+       *           - trajectory leg start point
+       * @param p1
+       *           - trajectory leg end point
        * @return - u, such that p0 + u(p1-p0) is the intersection. Values of u>1
        *         may not be quantitatively correct, and should be taken to mean
        *         only "no intersection between p0 and p1".
@@ -1372,11 +1340,11 @@ public class Mesh
          nextTet = insideTet;
          // Check the outside one if it exists
          final int outsideTet = getOutsideTet();
-         if(outsideTet != -1) {
+         if (outsideTet != -1) {
             tet = Tetrahedron.getTetrahedron(mesh, outsideTet);
             final double temp = tet.getFirstIntersection(p0, p1);
             // Set u to the smaller positive one
-            if((temp > 0.) && ((u < 0.) || (temp < u))) {
+            if ((temp > 0.) && ((u < 0.) || (temp < u))) {
                u = temp;
                nextTet = outsideTet;
             }
@@ -1397,17 +1365,14 @@ public class Mesh
        * there is no intersection or if the intersection is past p1, a value of
        * u&gt;1 will be returned.
        *
-       * @param p0 - The coordinates of the starting point of a line segment
-       * @param p1 - Coordinates of the end point of the line segment
+       * @param p0
+       *           - The coordinates of the starting point of a line segment
+       * @param p1
+       *           - Coordinates of the end point of the line segment
        * @return - [nx,ny,nz,u] as described above.
        */
       public double[] getFirstNormal(double[] p0, double[] p1) {
-         final double[] result = {
-            n[0],
-            n[1],
-            n[2],
-            Double.MAX_VALUE
-         };
+         final double[] result = {n[0], n[1], n[2], Double.MAX_VALUE};
          /*
           * Consider the line containing the segment joining p0 to p1. This line
           * has equation x = p0 + u*(p1-p0). The plane defined by our triangle
@@ -1415,16 +1380,13 @@ public class Mesh
           */
 
          double u = 0.;
-         final double[] delta = new double[] { // delta = p1-p0
-            p1[0] - p0[0],
-            p1[1] - p0[1],
-            p1[2] - p0[2]
-         };
+         final double[] delta = new double[]{ // delta = p1-p0
+               p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
          final double denominator = (n[0] * delta[0]) + (n[1] * delta[1]) + (n[2] * delta[2]);
          final double numerator = b - ((n[0] * p0[0]) + (n[1] * p0[1]) + (n[2] * p0[2]));
 
-         if(denominator == 0.) {
-            if((numerator == 0.) && mesh.containsTieBreak(n))
+         if (denominator == 0.) {
+            if ((numerator == 0.) && mesh.containsTieBreak(n))
                /*
                 * The numerator and denominator both = 0 case is a trajectory
                 * that hits the triangle edge-on. It is so improbable it almost
@@ -1450,7 +1412,7 @@ public class Mesh
           */
          nextTet = (numerator < 0) ? insideTet : getOutsideTet();
 
-         if((u <= 0.) || (u > 1.))
+         if ((u <= 0.) || (u > 1.))
             return result;
 
          /*
@@ -1460,16 +1422,13 @@ public class Mesh
           */
 
          final double[] x = { // Coordinates of the intersection
-            p0[0] + (u * delta[0]),
-            p0[1] + (u * delta[1]),
-            p0[2] + (u * delta[2])
-         };
+               p0[0] + (u * delta[0]), p0[1] + (u * delta[1]), p0[2] + (u * delta[2])};
 
-         for(int i = 0; i < 3; i++) {
+         for (int i = 0; i < 3; i++) {
             final double val = insideEdge(i, x);
-            if(val < 0.)
+            if (val < 0.)
                return result; // It missed
-            if(val == 0.) { // It exactly hit an edge
+            if (val == 0.) { // It exactly hit an edge
                u = associatedTetrahedronIntersection(p0, p1);
                break;
             }
@@ -1511,11 +1470,7 @@ public class Mesh
        */
       private double insideEdge(int edgeIndex, double[] x) {
          final double[] v = mesh.getNodeCoordinates(nodeIndices[edgeIndex]);
-         final double[] deltax = {
-            x[0] - v[0],
-            x[1] - v[1],
-            x[2] - v[2]
-         };
+         final double[] deltax = {x[0] - v[0], x[1] - v[1], x[2] - v[2]};
          return Math2.dot(Math2.cross(sides[edgeIndex], deltax), n);
       }
 
@@ -1533,7 +1488,7 @@ public class Mesh
       @Override
       public void updateGeom() {
          final double[][] coords = new double[3][];
-         for(int i = 0; i < 3; i++)
+         for (int i = 0; i < 3; i++)
             coords[i] = mesh.getNodeCoordinates(nodeIndices[i]);
          mesh.planePerp(n, coords[0], coords[1], coords[2]);
          b = Math2.dot(n, coords[0]);
@@ -1558,7 +1513,7 @@ public class Mesh
 
    public Mesh(IBasicMesh basicMesh) {
       this.basicMesh = basicMesh;
-      if(basicMesh instanceof IAdaptiveMesh)
+      if (basicMesh instanceof IAdaptiveMesh)
          isAdaptive = true;
       else
          isAdaptive = false;
@@ -1571,8 +1526,7 @@ public class Mesh
     * @param meshFileName
     * @throws FileNotFoundException
     */
-   public Mesh(String meshFileName)
-         throws FileNotFoundException {
+   public Mesh(String meshFileName) throws FileNotFoundException {
       this(new GmshMesh(meshFileName));
    }
 
@@ -1581,9 +1535,9 @@ public class Mesh
     * to 0, then calls updateAllPotentials().
     */
    public void clearElectrical() {
-      for(int elementIndex = 1; elementIndex <= getNumberOfElements(); elementIndex++)
+      for (int elementIndex = 1; elementIndex <= getNumberOfElements(); elementIndex++)
          setChargeNumber(elementIndex, 0);
-      for(int nodeIndex = 1; nodeIndex <= getNumberOfNodes(); nodeIndex++)
+      for (int nodeIndex = 1; nodeIndex <= getNumberOfNodes(); nodeIndex++)
          setNodePotential(nodeIndex, 0.);
       updateAllPotentials();
    }
@@ -1601,17 +1555,18 @@ public class Mesh
     * arbitrarily assigns containment based on a tie-break algorithm that is a
     * function of the plane normal, which is supplied as a parameter.
     *
-    * @param normal - the plane's normal vector
+    * @param normal
+    *           - the plane's normal vector
     * @return - true if the plane contains the point, false otherwise.
     */
    private boolean containsTieBreak(double[] normal) {
-      if(normal[0] < 0.)
+      if (normal[0] < 0.)
          return false;
-      if(normal[0] == 0.) {
-         if(normal[1] < 0.)
+      if (normal[0] == 0.) {
+         if (normal[1] < 0.)
             return false;
-         if(normal[1] == 0.)
-            if(normal[2] < 0.)
+         if (normal[1] == 0.)
+            if (normal[2] < 0.)
                return false;
       }
       return true;
@@ -1621,7 +1576,8 @@ public class Mesh
     * Decrements the charge number by 1. This corresponds, e.g., to an increase
     * of one electron in this volume element.
     *
-    * @param index - The index of the element for which charge is to be
+    * @param index
+    *           - The index of the element for which charge is to be
     *           decremented.
     */
    public void decrementChargeNumber(int index) {
@@ -1639,11 +1595,11 @@ public class Mesh
     * to generate this mesh; the import and export methods cannot be used with a
     * different mesh, even of the same sample.
     *
-    * @param outName - the name of the file to which the data are to be saved.
+    * @param outName
+    *           - the name of the file to which the data are to be saved.
     * @throws IOException
     */
-   public void exportChargeAndPotentials(String outName)
-         throws IOException {
+   public void exportChargeAndPotentials(String outName) throws IOException {
       BufferedWriter out = null;
 
       try {
@@ -1653,7 +1609,7 @@ public class Mesh
          final int nn = getNumberOfNodes();
          out.write(Integer.toString(nn));
          out.newLine();
-         for(int i = 1; i <= nn; i++) {
+         for (int i = 1; i <= nn; i++) {
             out.write(Double.toString(getNodePotential(i)));
             out.newLine();
          }
@@ -1662,22 +1618,20 @@ public class Mesh
          out.newLine();
          final int nel = getNumberOfElements();
          int count = 0;
-         for(int i = 1; i <= nel; i++)
-            if(getChargeNumber(i) != 0)
+         for (int i = 1; i <= nel; i++)
+            if (getChargeNumber(i) != 0)
                count++;
          out.write(Integer.toString(count));
          out.newLine();
-         for(int i = 1; i <= nel; i++)
-            if(getChargeNumber(i) != 0) {
+         for (int i = 1; i <= nel; i++)
+            if (getChargeNumber(i) != 0) {
                out.write(Integer.toString(i) + "\t" + Integer.toString(getChargeNumber(i)));
                out.newLine();
             }
-      }
-      catch(final IOException e) {
+      } catch (final IOException e) {
          throw new EPQFatalException("Error opening or writing to " + outName + ".");
-      }
-      finally {
-         if(out != null)
+      } finally {
+         if (out != null)
             out.close();
       }
    }
@@ -1691,9 +1645,11 @@ public class Mesh
     * through the indexed face. If there is no adjacent volume (i.e., the
     * indexed face is on the mesh boundary) 0 is returned.
     *
-    * @param elementIndex - index of the volume element for which the
-    *           neighboring element is to be returned.
-    * @param faceIndex - index of the face shared with the neighbor
+    * @param elementIndex
+    *           - index of the volume element for which the neighboring element
+    *           is to be returned.
+    * @param faceIndex
+    *           - index of the face shared with the neighbor
     * @return
     */
    public int getAdjacentVolumeIndex(int elementIndex, int faceIndex) {
@@ -1709,15 +1665,16 @@ public class Mesh
     * corresponding charge densities (in C/m^3). If a position lies outside the
     * mesh the returned value is 0.
     *
-    * @param pos - An N x 3 (double[][]) array of positions
+    * @param pos
+    *           - An N x 3 (double[][]) array of positions
     * @return - double[] An array of corresponding potentials.
     */
    public double[] getChargeDensity(double[][] pos) {
       final int n = pos.length;
       final double[] v = new double[n];
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          final double[] p = pos[i];
-         if(myShape.contains(p)) {
+         if (myShape.contains(p)) {
             final Tetrahedron cE = myShape.containingShape();
             v[i] = cE.getChargeDensity();
          } else
@@ -1738,8 +1695,8 @@ public class Mesh
       int totalCharge = 0;
       int elementCharge;
       final int numElements = elements.length;
-      for(int i = 1; i < numElements; i++)
-         if(isVolumeType(i) && (basicMesh.getTags(i)[0] == tag) && ((elementCharge = basicMesh.getChargeNumber(i)) != 0))
+      for (int i = 1; i < numElements; i++)
+         if (isVolumeType(i) && (basicMesh.getTags(i)[0] == tag) && ((elementCharge = basicMesh.getChargeNumber(i)) != 0))
             totalCharge += elementCharge;
       return totalCharge;
    }
@@ -1749,15 +1706,16 @@ public class Mesh
     * containing the number of elementary charges in the mesh that contains each
     * position. If a position lies outside the mesh the returned value is 0.
     *
-    * @param pos - An N x 3 (double[][]) array of positions
+    * @param pos
+    *           - An N x 3 (double[][]) array of positions
     * @return - double[] An array of corresponding potentials.
     */
    public int[] getChargeNumber(double[][] pos) {
       final int n = pos.length;
       final int[] c = new int[n];
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          final double[] p = pos[i];
-         if(myShape.contains(p)) {
+         if (myShape.contains(p)) {
             final Tetrahedron cE = myShape.containingShape();
             c[i] = cE.getChargeNumber();
          } else
@@ -1800,7 +1758,7 @@ public class Mesh
    }
 
    public int getMeshRevision() {
-      if(isAdaptive)
+      if (isAdaptive)
          return ((IAdaptiveMesh) basicMesh).getMeshRevision();
       else
          return 0;
@@ -1913,15 +1871,16 @@ public class Mesh
     * corresponding interpolated potentials. If a position lies outside the mesh
     * the returned value is unpredictable.
     *
-    * @param pos - An N x 3 (double[][]) array of positions
+    * @param pos
+    *           - An N x 3 (double[][]) array of positions
     * @return - double[] An array of corresponding potentials.
     */
    public double[] getPotential(double[][] pos) {
       final int n = pos.length;
       final double[] v = new double[n];
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          final double[] p = pos[i];
-         if(myShape.contains(p)) {
+         if (myShape.contains(p)) {
             final Tetrahedron cE = myShape.containingShape();
             v[i] = cE.getPotential(p);
          }
@@ -1957,40 +1916,39 @@ public class Mesh
     * Imports volume element charge state and node potentials from a previously
     * exported file.
     *
-    * @param inName - the previously exported file
+    * @param inName
+    *           - the previously exported file
     * @throws FileNotFoundException
     */
-   public void importChargeAndPotentials(String inName)
-         throws FileNotFoundException {
+   public void importChargeAndPotentials(String inName) throws FileNotFoundException {
       final Scanner scanner = new Scanner(new BufferedReader(new FileReader(inName)));
       final Scanner s = scanner.useLocale(Locale.US);
 
       try {
          String str = s.next();
-         if(!str.equals("$NodePotentials"))
+         if (!str.equals("$NodePotentials"))
             throw new EPQFatalException("1st token of import file was not $NodePotentials");
          final int nn = s.nextInt();
-         for(int i = 1; i <= nn; i++)
+         for (int i = 1; i <= nn; i++)
             setNodePotential(i, s.nextDouble());
 
          str = s.next();
-         if(!str.equals("$VolumeElementCharges"))
+         if (!str.equals("$VolumeElementCharges"))
             throw new EPQFatalException("Encountered token " + str + " instead of $VolumeElementCharges");
          final int count = s.nextInt();
          /* Initialize all charges to 0 */
-         for(int i = 1; i <= getNumberOfElements(); i++)
+         for (int i = 1; i <= getNumberOfElements(); i++)
             setChargeNumber(i, 0);
          /* Update the nonzero ones */
-         for(int i = 1; i <= count; i++) {
+         for (int i = 1; i <= count; i++) {
             final int index = s.nextInt();
             final int nElectrons = s.nextInt();
             setChargeNumber(index, nElectrons);
          }
-      }
-      finally {
-         if(s != null)
+      } finally {
+         if (s != null)
             s.close();
-         if(scanner != null)
+         if (scanner != null)
             scanner.close();
       }
 
@@ -2002,7 +1960,8 @@ public class Mesh
     * Increments the charge number in the indicated element by 1. This
     * corresponds, e.g., to a loss of one electron from this volume element.
     *
-    * @param index - The index of the element for which charge is to be
+    * @param index
+    *           - The index of the element for which charge is to be
     *           incremented.
     */
    public void incrementChargeNumber(int index) {
@@ -2022,7 +1981,7 @@ public class Mesh
     */
    public boolean initializeIfNeeded() {
       final int rev = getMeshRevision();
-      if(rev != lastMeshRevision) {
+      if (rev != lastMeshRevision) {
          /* Initialize an array to cache Elements */
          elements = new Element[basicMesh.getNumberOfElements() + 1];
          /*
@@ -2032,7 +1991,7 @@ public class Mesh
          final int[][] bF = basicMesh.getBoundaryFaces();
          boundaryFaces = new Triangle[bF.length];
 
-         for(int i = 0; i < bF.length; i++)
+         for (int i = 0; i < bF.length; i++)
             boundaryFaces[i] = new Triangle(this, bF[i][1], bF[i][0]);
          myShape = new MeshShape(this);
 
@@ -2063,7 +2022,7 @@ public class Mesh
     */
    private void planePerp(double[] dest, double[] p1, double[] p2, double[] p3) {
       final double[] normal = Math2.normalize(Math2.cross(Math2.minus(p2, p1), Math2.minus(p3, p1)));
-      for(int i = 0; i < 3; i++)
+      for (int i = 0; i < 3; i++)
          dest[i] = normal[i];
    }
 
@@ -2071,10 +2030,10 @@ public class Mesh
    @Override
    public void rotate(double[] pivot, double phi, double theta, double psi) {
       /* Rotate all nodes of the mesh */
-      for(int i = 1; i <= getNumberOfNodes(); i++)
+      for (int i = 1; i <= getNumberOfNodes(); i++)
          basicMesh.setNodeCoordinates(i, Transform3D.rotate(getNodeCoordinates(i), pivot, phi, theta, psi));
       /* Force geometry update for all elements that depend on these nodes */
-      for(final Triangle t : boundaryFaces)
+      for (final Triangle t : boundaryFaces)
          t.updateGeom();
       /* Force update or clear other cached values */
       myShape.updateGeom();
@@ -2084,8 +2043,10 @@ public class Mesh
    /**
     * Sets the charge number to the supplied value.
     *
-    * @param index - The index of the element for which charge is to be set.
-    * @param n - The value to which to set the charge, in units of e.
+    * @param index
+    *           - The index of the element for which charge is to be set.
+    * @param n
+    *           - The value to which to set the charge, in units of e.
     */
    public void setChargeNumber(int index, int n) {
       basicMesh.setChargeNumber(index, n);
@@ -2096,21 +2057,25 @@ public class Mesh
     * nodes starts from 1 rather than 0, to follow Gmsh convention. Therefore
     * nodes are indexed from 1 to getNumberOfNodes().
     *
-    * @param nodeIndex - list of node indices
-    * @param potVal - the new value of its potential (in volts)
+    * @param nodeIndex
+    *           - list of node indices
+    * @param potVal
+    *           - the new value of its potential (in volts)
     */
    public void setNodePotential(int nodeIndex, double potVal) {
       basicMesh.setNodePotential(nodeIndex, potVal);
    }
 
    /**
-    * @param nodeIndex - int[] list of N node indices
-    * @param potVal - double[] list of corresponding N potentials
+    * @param nodeIndex
+    *           - int[] list of N node indices
+    * @param potVal
+    *           - double[] list of corresponding N potentials
     */
    public void setNodePotential(int[] nodeIndex, double[] potVal) {
-      if(nodeIndex.length != potVal.length)
+      if (nodeIndex.length != potVal.length)
          throw new EPQFatalException("setNodePotential called with nodeIndex and potVal arrays of unequal length.");
-      for(int i = 0; i < nodeIndex.length; i++)
+      for (int i = 0; i < nodeIndex.length; i++)
          basicMesh.setNodePotential(nodeIndex[i], potVal[i]);
    }
 
@@ -2130,10 +2095,10 @@ public class Mesh
    @Override
    public void translate(double[] distance) {
       /* translate all nodes of the mesh */
-      for(int i = 1; i <= getNumberOfNodes(); i++)
+      for (int i = 1; i <= getNumberOfNodes(); i++)
          basicMesh.setNodeCoordinates(i, Transform3D.translate(getNodeCoordinates(i), distance, false));
       /* Force geometry update for all elements that depend on these nodes */
-      for(final Triangle t : boundaryFaces)
+      for (final Triangle t : boundaryFaces)
          t.updateGeom();
       /* Force update or clear other cached values */
       myShape.updateGeom();
@@ -2149,8 +2114,8 @@ public class Mesh
     */
    public void updateAllPotentials() {
       final int n = getNumberOfElements();
-      for(int index = 1; index <= n; index++)
-         if((elements[index] != null) && (getElementType(index) == 4))
+      for (int index = 1; index <= n; index++)
+         if ((elements[index] != null) && (getElementType(index) == 4))
             ((Tetrahedron) elements[index]).updatePotentials();
    }
 
@@ -2162,7 +2127,7 @@ public class Mesh
     * @param index
     */
    public void updateElementPotentialsIfExists(int index) {
-      if((elements[index] != null) && (basicMesh.getElementType(index) == 4)) {
+      if ((elements[index] != null) && (basicMesh.getElementType(index) == 4)) {
          final Tetrahedron tet = (Tetrahedron) elements[index];
          tet.updatePotentials();
       }
@@ -2184,32 +2149,37 @@ public class Mesh
     * values--charge density and potential in that order-- per line in raster
     * order, i values (the "x" index) varying most rapidly.
     *
-    * @param p0 - double[] A 3-vector representing the starting postion (1st
+    * @param p0
+    *           - double[] A 3-vector representing the starting postion (1st
     *           sample) of the charge &amp; potential map
-    * @param deltax - double[] A 3-vector representing the increment between
-    *           points within a line of points along the "x" direction.
-    * @param deltay- double[] A 3-vector representing the increment between
-    *           lines of points along the "y" direction.
-    * @param nx - the number of x increments
-    * @param ny - the number of y increments
-    * @param outName - name (may include full path) of the file for output
+    * @param deltax
+    *           - double[] A 3-vector representing the increment between points
+    *           within a line of points along the "x" direction.
+    * @param deltay-
+    *           double[] A 3-vector representing the increment between lines of
+    *           points along the "y" direction.
+    * @param nx
+    *           - the number of x increments
+    * @param ny
+    *           - the number of y increments
+    * @param outName
+    *           - name (may include full path) of the file for output
     * @throws IOException
     */
-   public void writeChargeAndPotentialMap(double[] p0, double[] deltax, double[] deltay, int nx, int ny, String outName)
-         throws IOException {
+   public void writeChargeAndPotentialMap(double[] p0, double[] deltax, double[] deltay, int nx, int ny, String outName) throws IOException {
       BufferedWriter out = null;
       try {
          out = new BufferedWriter(new FileWriter(outName));
 
-         for(int i = 0; i < 3; i++)
+         for (int i = 0; i < 3; i++)
             out.write(Double.toString(p0[i]) + " ");
          out.newLine();
 
-         for(int i = 0; i < 3; i++)
+         for (int i = 0; i < 3; i++)
             out.write(Double.toString(deltax[i]) + " ");
          out.newLine();
 
-         for(int i = 0; i < 3; i++)
+         for (int i = 0; i < 3; i++)
             out.write(Double.toString(deltay[i]) + " ");
          out.newLine();
 
@@ -2222,11 +2192,11 @@ public class Mesh
          Tetrahedron nearestTet = myShape.insideTet;
          double chargeDensity;
          double potential;
-         for(int j = 0; j < ny; j++)
-            for(int i = 0; i < nx; i++) {
+         for (int j = 0; j < ny; j++)
+            for (int i = 0; i < nx; i++) {
                p = Math2.plus(p0, Math2.plus(Math2.multiply(i, deltax), Math2.multiply(j, deltay)));
                final boolean contains = myShape.contains(p, null, nearestTet);
-               if(contains) {
+               if (contains) {
                   nearestTet = myShape.containingShape();
                   chargeDensity = nearestTet.getChargeDensity();
                   potential = nearestTet.getPotential(p);
@@ -2237,12 +2207,10 @@ public class Mesh
                out.write(Double.toString(chargeDensity) + " " + Double.toString(potential));
                out.newLine();
             }
-      }
-      catch(final IOException e) {
+      } catch (final IOException e) {
          throw new EPQFatalException("Error opening or writing " + outName + ".");
-      }
-      finally {
-         if(out != null)
+      } finally {
+         if (out != null)
             out.close();
       }
    }

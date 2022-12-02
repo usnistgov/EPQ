@@ -60,22 +60,22 @@ public class HTMLList {
 
    @Override
    public String toString() {
-      if(mItems.size() > 0) {
+      if (mItems.size() > 0) {
          final StringWriter sw = new StringWriter();
          final PrintWriter pw = new PrintWriter(sw);
-         if(mHeader != null) {
+         if (mHeader != null) {
             pw.print("<h2>");
             pw.print(mHeader);
             pw.print("</h2>");
          }
          pw.println("<ul>");
-         for(final String str : mItems) {
+         for (final String str : mItems) {
             pw.print(" <li>");
             pw.print(str);
             pw.println("</li>");
          }
          pw.println("</ul>");
-         if(mErrorMsg != null) {
+         if (mErrorMsg != null) {
             pw.print("<p><font color=\"red\">");
             pw.print(mErrorMsg);
             pw.print("</font></p>");
@@ -86,8 +86,8 @@ public class HTMLList {
    }
 
    public HTML.Tag getTag() {
-      if(mItems.size() > 0) {
-         if(mHeader != null)
+      if (mItems.size() > 0) {
+         if (mHeader != null)
             return HTML.Tag.H2;
          else
             return HTML.Tag.UL;

@@ -37,8 +37,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author nicholas
  * @version 1.0
  */
-public class PersonEditor
-   extends JDialog {
+public class PersonEditor extends JDialog {
 
    private static final long serialVersionUID = -1516387854025417776L;
 
@@ -51,7 +50,7 @@ public class PersonEditor
 
    private void initialize() {
       setLayout(new FormLayout("right:pref, 5dlu, fill:100dlu", "pref, 5dlu, fill:100dlu, 10dlu, pref"));
-      if(getContentPane() instanceof JPanel) {
+      if (getContentPane() instanceof JPanel) {
          final JPanel p = (JPanel) getContentPane();
          p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       }
@@ -118,8 +117,7 @@ public class PersonEditor
       super(owner, "Edit person data", true);
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -133,8 +131,7 @@ public class PersonEditor
       super(owner, "Edit person data", true);
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }

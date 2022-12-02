@@ -32,8 +32,7 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @author nritchie
  * @version 1.0
  */
-public class ZetaFactor
-   extends AlgorithmClass {
+public class ZetaFactor extends AlgorithmClass {
 
    public Map<XRayTransitionSet, Number> mStandards = new HashMap<XRayTransitionSet, Number>();
 
@@ -72,7 +71,7 @@ public class ZetaFactor
     */
    public Set<Element> measuredElements(Set<XRayTransitionSet> measuredLines) {
       Set<Element> elms = new TreeSet<Element>();
-      for(XRayTransitionSet xrts : measuredLines)
+      for (XRayTransitionSet xrts : measuredLines)
          elms.add(xrts.getElement());
       return Collections.unmodifiableSet(elms);
    }
@@ -83,7 +82,7 @@ public class ZetaFactor
 
    public Set<Element> standardizedElements() {
       Set<Element> elms = new TreeSet<Element>();
-      for(XRayTransitionSet xrts : mStandards.keySet())
+      for (XRayTransitionSet xrts : mStandards.keySet())
          elms.add(xrts.getElement());
       return Collections.unmodifiableSet(elms);
    }
@@ -99,8 +98,8 @@ public class ZetaFactor
    public Set<Element> validateStandards(Set<XRayTransitionSet> measuredLines) {
       final Set<Element> measuredElms = new TreeSet<Element>(measuredElements(measuredLines));
       final Set<Element> standardizedElms = new TreeSet<Element>();
-      for(XRayTransitionSet xrts : measuredLines)
-         if(mStandards.containsKey(xrts))
+      for (XRayTransitionSet xrts : measuredLines)
+         if (mStandards.containsKey(xrts))
             standardizedElms.add(xrts.getElement());
       measuredElms.removeAll(standardizedElms);
       return measuredElms;
@@ -116,8 +115,7 @@ public class ZetaFactor
     *         Composition&gt;
     * @throws EPQException
     */
-   public Pair<Number, Composition> compute(Map<XRayTransitionSet, Number> measurements, Number dose)
-         throws EPQException {
+   public Pair<Number, Composition> compute(Map<XRayTransitionSet, Number> measurements, Number dose) throws EPQException {
       return computeHelper(measurements, dose, null, null, 0.0);
    }
 
@@ -126,20 +124,23 @@ public class ZetaFactor
     * an established mass-thickness and composition.
     *
     * @param measurements
-    * @param dose In amps/second
-    * @param assumedRhoT In kg/m<sup>2</sup>
+    * @param dose
+    *           In amps/second
+    * @param assumedRhoT
+    *           In kg/m<sup>2</sup>
     * @param assumedComp
-    * @param toa In radians
+    * @param toa
+    *           In radians
     * @return Pair<Number, Composition> -> Pair<&rho;t, Composition>
     * @throws EPQException
     */
-   private Pair<Number, Composition> computeHelper(Map<XRayTransitionSet, Number> measurements, Number dose, Number assumedRhoT, Composition assumedComposition, double toa)
-         throws EPQException {
+   private Pair<Number, Composition> computeHelper(Map<XRayTransitionSet, Number> measurements, Number dose, Number assumedRhoT,
+         Composition assumedComposition, double toa) throws EPQException {
       final boolean withAbs = (assumedRhoT != null) && (assumedComposition != null);
       {
          // Check there is a standard for each measurement
          Set<Element> missingStd = validateStandards(measurements.keySet());
-         if(missingStd.size() > 0)
+         if (missingStd.size() > 0)
             throw new EPQException("Standards are missing for " + missingStd.toString());
       }
       final Map<Element, Number> ci = new TreeMap<Element, Number>();
@@ -147,12 +148,12 @@ public class ZetaFactor
       final Map<Element, XRayTransitionSet> bestXrts = new TreeMap<Element, XRayTransitionSet>();
       // Determine the best standard to use for each element and compute the
       // numerator.
-      for(XRayTransitionSet xrts1 : measurements.keySet()) {
+      for (XRayTransitionSet xrts1 : measurements.keySet()) {
          final Element elm = xrts1.getElement();
          final Number a = withAbs ? computeAbsorption(assumedRhoT, assumedComposition, toa, xrts1) : UncertainValue2.ONE;
          final Number num = UncertainValue2.multiply(measurements.get(xrts1), UncertainValue2.multiply(mStandards.get(xrts1), a));
          final Number best = ci.get(elm);
-         if((best == null) || (UncertainValue2.fractionalUncertainty(best) > UncertainValue2.fractionalUncertainty(num))) {
+         if ((best == null) || (UncertainValue2.fractionalUncertainty(best) > UncertainValue2.fractionalUncertainty(num))) {
             ci.put(elm, num);
             bestXrts.put(elm, xrts1);
          }
@@ -163,15 +164,14 @@ public class ZetaFactor
       final Number den = UncertainValue2.add(ci.values());
       // Compute the composition and mass thickness from the best measurements
       Composition comp = new Composition();
-      for(Element elm : bestXrts.keySet())
+      for (Element elm : bestXrts.keySet())
          comp.addElement(elm, UncertainValue2.divide(ci.get(elm), den));
       final Number rhot = UncertainValue2.divide(den, dose);
       mOptimal = new TreeSet<XRayTransitionSet>(bestXrts.values());
       return new Pair<Number, Composition>(rhot, comp);
    }
 
-   public Number computeAbsorption(Number assumedRhoT, Composition assumedComposition, double toa, XRayTransitionSet xrts1)
-         throws EPQException {
+   public Number computeAbsorption(Number assumedRhoT, Composition assumedComposition, double toa, XRayTransitionSet xrts1) throws EPQException {
       final MassAbsorptionCoefficient macAlg = (MassAbsorptionCoefficient) getAlgorithm(MassAbsorptionCoefficient.class);
       final XRayTransition weightiest = xrts1.getWeighiestTransition();
       final Number mac = macAlg.computeWithUncertaintyEstimate(assumedComposition, weightiest);
@@ -190,15 +190,14 @@ public class ZetaFactor
     * @return Pair&lt;Number, Composition&gt;
     * @throws EPQException
     */
-   public Pair<Number, Composition> compute(Map<XRayTransitionSet, Number> measurements, Number dose, double toa)
-         throws EPQException {
+   public Pair<Number, Composition> compute(Map<XRayTransitionSet, Number> measurements, Number dose, double toa) throws EPQException {
       Pair<Number, Composition> prev = compute(measurements, dose);
-      for(int i = 0; i < 100; ++i) {
+      for (int i = 0; i < 100; ++i) {
          final Number rhoT = prev.first;
          final Composition comp = prev.second;
          Pair<Number, Composition> est = computeHelper(measurements, dose, rhoT, comp, toa);
          final boolean thP = (Math.abs(rhoT.doubleValue() - est.first.doubleValue()) < 0.01 * rhoT.doubleValue());
-         if(thP && comp.almostEquals(est.second, 0.001))
+         if (thP && comp.almostEquals(est.second, 0.001))
             break;
          prev = est;
       }
@@ -208,10 +207,14 @@ public class ZetaFactor
    /**
     * Compute &zeta; from a sufficently thin standard
     *
-    * @param massThickness in kg/m^2
-    * @param intensity in counts
-    * @param massFraction in mass fraction
-    * @param dose product of the (probe current)*(live time) or a number
+    * @param massThickness
+    *           in kg/m^2
+    * @param intensity
+    *           in counts
+    * @param massFraction
+    *           in mass fraction
+    * @param dose
+    *           product of the (probe current)*(live time) or a number
     *           proportional to it.
     * @return zeta
     */
@@ -220,12 +223,18 @@ public class ZetaFactor
    }
 
    /**
-    * @param xrts Transitions to consider
-    * @param comp Composition of the standard
-    * @param intensity Measured intensity
-    * @param dose Probe dose in A*sec
-    * @param massThickness Mass thickness in kg/m<sup>2</sup>
-    * @param toa take off angle.
+    * @param xrts
+    *           Transitions to consider
+    * @param comp
+    *           Composition of the standard
+    * @param intensity
+    *           Measured intensity
+    * @param dose
+    *           Probe dose in A*sec
+    * @param massThickness
+    *           Mass thickness in kg/m<sup>2</sup>
+    * @param toa
+    *           take off angle.
     * @return The zeta-factor
     * @throws EPQException
     */
@@ -238,7 +247,7 @@ public class ZetaFactor
 
    public void calibrate(Map<XRayTransitionSet, Number> measurements, Composition comp, Number dose, Number massThickness, double toa)
          throws EPQException {
-      for(Map.Entry<XRayTransitionSet, Number> me : measurements.entrySet()) {
+      for (Map.Entry<XRayTransitionSet, Number> me : measurements.entrySet()) {
          XRayTransitionSet xrts = me.getKey();
          mStandards.put(xrts, computeZeta(xrts, comp, me.getValue(), dose, massThickness, toa));
       }
@@ -249,9 +258,12 @@ public class ZetaFactor
     * Okayama's 1972 range equation and the assumption of a maximum 3% loss in
     * the initial electron energy.
     * 
-    * @param elm Element
-    * @param e0 in Joules
-    * @param density in kg/m^3
+    * @param elm
+    *           Element
+    * @param e0
+    *           in Joules
+    * @param density
+    *           in kg/m^3
     * @return maxThickness in meters
     */
    public static double maxThickness(Element elm, double e0, double density) {
@@ -266,9 +278,7 @@ public class ZetaFactor
       return mOptimal;
    }
 
-   final private static AlgorithmClass[] mAllImplementations = {
-      new ZetaFactor()
-   };
+   final private static AlgorithmClass[] mAllImplementations = {new ZetaFactor()};
 
    @Override
    public List<AlgorithmClass> getAllImplementations() {

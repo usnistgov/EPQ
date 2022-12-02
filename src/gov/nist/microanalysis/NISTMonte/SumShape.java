@@ -35,33 +35,32 @@ import gov.nist.microanalysis.Utility.Math2;
  * @version 1.0
  */
 
-public class SumShape
-   implements MonteCarloSS.Shape, ITransform, TrajectoryVRML.IRender {
+public class SumShape implements MonteCarloSS.Shape, ITransform, TrajectoryVRML.IRender {
    // The list of Shape instances to union.
    private final ArrayList<MonteCarloSS.Shape> mShapes;
 
    /**
     * Creates a sum shape that represents the sum of an array of Shapes.
     * 
-    * @param shapes Shape[]
+    * @param shapes
+    *           Shape[]
     */
    public SumShape(MonteCarloSS.Shape[] shapes) {
       mShapes = new ArrayList<MonteCarloSS.Shape>();
-      for(final MonteCarloSS.Shape shape : shapes)
+      for (final MonteCarloSS.Shape shape : shapes)
          mShapes.add(shape);
    }
 
    /**
     * Create a sum shape that represents the sum of two shapes.
     * 
-    * @param a Shape
-    * @param b Shape
+    * @param a
+    *           Shape
+    * @param b
+    *           Shape
     */
    public SumShape(MonteCarloSS.Shape a, MonteCarloSS.Shape b) {
-      this(new MonteCarloSS.Shape[] {
-         a,
-         b
-      });
+      this(new MonteCarloSS.Shape[]{a, b});
    }
 
    /**
@@ -69,8 +68,8 @@ public class SumShape
     */
    @Override
    public boolean contains(double[] pos) {
-      for(final MonteCarloSS.Shape shape : mShapes)
-         if(shape.contains(pos))
+      for (final MonteCarloSS.Shape shape : mShapes)
+         if (shape.contains(pos))
             return true;
       return false;
    }
@@ -82,37 +81,37 @@ public class SumShape
    @Override
    public double getFirstIntersection(double[] pos0, double[] pos1) {
       double u = Double.MAX_VALUE;
-      if(contains(pos0)) {
+      if (contains(pos0)) {
          // Starting inside...
          double[] start = pos0.clone();
          do {
             double uInc = -1;
             double[] end = null;
-            for(final MonteCarloSS.Shape shape : mShapes)
-               if(shape.contains(start)) {
+            for (final MonteCarloSS.Shape shape : mShapes)
+               if (shape.contains(start)) {
                   final double ui = shape.getFirstIntersection(start, pos1);
                   assert ui > 0.0;
-                  if((ui != Double.MAX_VALUE) && (ui > uInc)) {
+                  if ((ui != Double.MAX_VALUE) && (ui > uInc)) {
                      end = Math2.pointBetween(start, pos1, ui);
                      uInc = ui;
                      u = Math2.distance(end, pos0) / Math2.distance(pos1, pos0);
-                     if(u > 1.0)
+                     if (u > 1.0)
                         break;
                   }
                }
-            if(end == null)
+            if (end == null)
                break;
             // Bump the start point into the next Shape...
             start = Math2.plus(end, Math2.multiply(1.0e-14, Math2.normalize(Math2.minus(pos1, pos0))));
             // Repeat until we can take a full step or
             // the step can't be enlarged...
             u = Math2.distance(end, pos0) / Math2.distance(pos1, pos0);
-         } while(u < 1.0);
+         } while (u < 1.0);
       } else {
          // Starting outside so get the shortest distance to a boundary
-         for(final MonteCarloSS.Shape shape : mShapes) {
+         for (final MonteCarloSS.Shape shape : mShapes) {
             final double ui = shape.getFirstIntersection(pos0, pos1);
-            if(ui < u)
+            if (ui < u)
                u = ui;
          }
       }
@@ -125,8 +124,8 @@ public class SumShape
     */
    @Override
    public void rotate(double[] pivot, double phi, double theta, double psi) {
-      for(final MonteCarloSS.Shape shape : mShapes) {
-         if(!(shape instanceof ITransform))
+      for (final MonteCarloSS.Shape shape : mShapes) {
+         if (!(shape instanceof ITransform))
             throw new EPQFatalException(shape.toString() + " does not support transformation.");
          ((ITransform) shape).rotate(pivot, phi, theta, psi);
       }
@@ -137,8 +136,8 @@ public class SumShape
     */
    @Override
    public void translate(double[] distance) {
-      for(final MonteCarloSS.Shape shape : mShapes) {
-         if(!(shape instanceof ITransform))
+      for (final MonteCarloSS.Shape shape : mShapes) {
+         if (!(shape instanceof ITransform))
             throw new EPQFatalException(shape.toString() + " does not support transformation.");
          ((ITransform) shape).translate(distance);
       }
@@ -156,10 +155,9 @@ public class SumShape
     *      java.io.Writer)
     */
    @Override
-   public void render(TrajectoryVRML.RenderContext rc, Writer wr)
-         throws IOException {
-      for(final MonteCarloSS.Shape shape : mShapes)
-         if(shape instanceof TrajectoryVRML.IRender)
+   public void render(TrajectoryVRML.RenderContext rc, Writer wr) throws IOException {
+      for (final MonteCarloSS.Shape shape : mShapes)
+         if (shape instanceof TrajectoryVRML.IRender)
             ((TrajectoryVRML.IRender) shape).render(rc, wr);
    }
 
@@ -176,8 +174,8 @@ public class SumShape
    public String toString() {
       final StringBuffer res = new StringBuffer("Sum[");
       boolean first = true;
-      for(final MonteCarloSS.Shape shape : mShapes) {
-         if(!first)
+      for (final MonteCarloSS.Shape shape : mShapes) {
+         if (!first)
             res.append(", ");
          res.append(shape.toString());
          first = false;

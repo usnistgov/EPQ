@@ -44,8 +44,7 @@ import gov.nist.microanalysis.Utility.HalfUpFormat;
  * @author nritchie
  * @version 1.0
  */
-public class ROIDialog
-   extends JDialog {
+public class ROIDialog extends JDialog {
    private static final long serialVersionUID = 3467983273597958202L;
 
    private JTextField mMinField;
@@ -68,14 +67,12 @@ public class ROIDialog
     * @param modal
     * @throws HeadlessException
     */
-   public ROIDialog(Frame owner, String title, boolean modal)
-         throws HeadlessException {
+   public ROIDialog(Frame owner, String title, boolean modal) throws HeadlessException {
       super(owner, title, modal);
       try {
          initialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -88,14 +85,12 @@ public class ROIDialog
     * @param modal
     * @throws HeadlessException
     */
-   public ROIDialog(Dialog owner, String title, boolean modal)
-         throws HeadlessException {
+   public ROIDialog(Dialog owner, String title, boolean modal) throws HeadlessException {
       super(owner, title, modal);
       try {
          initialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -110,7 +105,7 @@ public class ROIDialog
    public void setLimits(double min, double max) {
       mMinLimit = min / 1000.0;
       mMaxLimit = max / 1000.0;
-      if(jLabel_Message != null) {
+      if (jLabel_Message != null) {
          final NumberFormat nf = new HalfUpFormat("0.0");
          jLabel_Message.setText("Limits = [" + nf.format(mMinLimit) + " keV, " + nf.format(mMaxLimit) + " keV]");
       }
@@ -134,14 +129,14 @@ public class ROIDialog
       getRootPane().getActionMap().put(CANCEL_ACTION_KEY, cancelAction);
    }
 
-   private void initialize()
-         throws Exception {
+   private void initialize() throws Exception {
 
       setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
       mIsOk = false;
       mIsZoom = false;
-      final FormLayout fl = new FormLayout("50dlu, right:pref, 5dlu, 30dlu, 5dlu, pref, 40dlu, 10dlu", "5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu");
+      final FormLayout fl = new FormLayout("50dlu, right:pref, 5dlu, 30dlu, 5dlu, pref, 40dlu, 10dlu",
+            "5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu");
       setLayout(fl);
       final CellConstraints cc = new CellConstraints();
       add(new JLabel("Minimum energy"), cc.xy(2, 2));
@@ -160,12 +155,11 @@ public class ROIDialog
             final NumberFormat nf = NumberFormat.getInstance();
             try {
                final double val = nf.parse(jf.getText()).doubleValue();
-               if((val < mMinLimit) || (val > mMaxLimit))
+               if ((val < mMinLimit) || (val > mMaxLimit))
                   throw new ParseException(jf.getText(), 0);
                jf.setBackground(SystemColor.window);
                mOkButton.setEnabled(true);
-            }
-            catch(final ParseException pe) {
+            } catch (final ParseException pe) {
                jf.selectAll();
                jf.setBackground(Color.PINK);
                mOkButton.setEnabled(false);
@@ -237,10 +231,9 @@ public class ROIDialog
       double res = Double.NaN;
       try {
          res = nf.parse(field.getText()).doubleValue();
-         if((res < mMinLimit) || (res > mMaxLimit))
+         if ((res < mMinLimit) || (res > mMaxLimit))
             res = Double.NaN;
-      }
-      catch(final ParseException pe) {
+      } catch (final ParseException pe) {
          res = Double.NaN;
       }
       return res;
@@ -255,7 +248,7 @@ public class ROIDialog
       final double[] res = new double[2];
       res[0] = 1000.0 * parse(mMinField);
       res[1] = 1000.0 * parse(mMaxField);
-      if(res[0] > res[1]) {
+      if (res[0] > res[1]) {
          final double s = res[0];
          res[0] = res[1];
          res[1] = s;

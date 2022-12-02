@@ -28,14 +28,11 @@ import gov.nist.microanalysis.NISTMonte.Gen3.BaseXRayGeneration3.XRay;
  * @version 1.0
  */
 
-final public class EmissionImage3
-   extends EmissionImageBase
-   implements ActionListener {
+final public class EmissionImage3 extends EmissionImageBase implements ActionListener {
 
    private final XRayTransition mTransition;
 
-   public EmissionImage3(int width, int height, XRayTransition xrt)
-         throws EPQException {
+   public EmissionImage3(int width, int height, XRayTransition xrt) throws EPQException {
       super(width, height);
       mTransition = xrt;
       xrt.getEnergy();
@@ -59,22 +56,23 @@ final public class EmissionImage3
     * actionPerformed - Implements actionPerformed for the ActionListener
     * interface.
     * 
-    * @param e ActionEvent
+    * @param e
+    *           ActionEvent
     */
    @Override
    public void actionPerformed(ActionEvent e) {
       final XRayTransport3 xrg = (XRayTransport3) e.getSource();
-      switch(e.getID()) {
-         case MonteCarloSS.TrajectoryEndEvent:
+      switch (e.getID()) {
+         case MonteCarloSS.TrajectoryEndEvent :
             ++mTrajectoryCount;
             break;
-         case BaseXRayGeneration3.XRayGeneration: {
-            if(mTrajectoryCount < mMaxTrajectories) {
+         case BaseXRayGeneration3.XRayGeneration : {
+            if (mTrajectoryCount < mMaxTrajectories) {
                final XRay xr = xrg.getXRay(mTransition);
-               if(xr != null) {
+               if (xr != null) {
                   final double[] pos = xr.getGenerationPos();
                   final double ii = mEmission ? xr.getIntensity() : xr.getGenerated();
-                  if(ii > 0.0)
+                  if (ii > 0.0)
                      setPixel(pos[0], pos[2], ii);
                }
                resetImage();

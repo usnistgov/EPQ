@@ -25,8 +25,7 @@ import gov.nist.microanalysis.Utility.HalfUpFormat;
  * @author nritchie
  * @version 1.0
  */
-public class GridDetector
-   implements ActionListener {
+public class GridDetector implements ActionListener {
    /**
     * The coordinate of the corner of the detector grid.
     */
@@ -50,16 +49,15 @@ public class GridDetector
     * Constructs a square GridDetector with an edge dimension given by size (in
     * meters) divided into nBins equal sized bins.
     * 
-    * @param center double[3] coordinate of center in meters
-    * @param size double dimension of detector edge in meters
-    * @param nBins int number of bins (rounded up to odd)
+    * @param center
+    *           double[3] coordinate of center in meters
+    * @param size
+    *           double dimension of detector edge in meters
+    * @param nBins
+    *           int number of bins (rounded up to odd)
     */
    public GridDetector(double[] center, double size, int nBins) {
-      mCorner = new double[] {
-         center[0] - (0.5 * size),
-         center[1] - (0.5 * size),
-         center[2]
-      };
+      mCorner = new double[]{center[0] - (0.5 * size), center[1] - (0.5 * size), center[2]};
       mSize = size;
       nBins = (2 * (nBins / 2)) + 1; // Round up to next odd
       mBins = new int[nBins][nBins];
@@ -69,15 +67,12 @@ public class GridDetector
    private int[] bindex(double[] p0, double[] p1) {
       final double fy = (mCorner[2] - p0[2]) / (p1[2] - p0[2]);
       // Does this trajectory pass through the Z plane from high Z side?
-      if((fy >= 0.0) && (fy < 1.0) && (mCorner[2] < p0[2])) {
+      if ((fy >= 0.0) && (fy < 1.0) && (mCorner[2] < p0[2])) {
          final double px = (((p0[0] * (1.0 - fy)) + (p1[0] * fy)) - mCorner[0]) / mSize;
          final double py = (((p0[1] * (1.0 - fy)) + (p1[1] * fy)) - mCorner[1]) / mSize;
          // Does this trajectory pass through the detector?
-         if((px >= 0) && (px < 1.0) && (py >= 0) && (py < 1.0))
-            return new int[] {
-               (int) (px * mBins.length),
-               (int) (py * mBins[0].length)
-            };
+         if ((px >= 0) && (px < 1.0) && (py >= 0) && (py < 1.0))
+            return new int[]{(int) (px * mBins.length), (int) (py * mBins[0].length)};
       }
       return null;
    }
@@ -88,18 +83,18 @@ public class GridDetector
    @Override
    public void actionPerformed(ActionEvent ae) {
       assert (ae.getSource() instanceof MonteCarloSS);
-      switch(ae.getID()) {
-      // case MonteCarloSS.ScatterEvent:
-      // case MonteCarloSS.NonScatterEvent:
-         case MonteCarloSS.BackscatterEvent: {
+      switch (ae.getID()) {
+         // case MonteCarloSS.ScatterEvent:
+         // case MonteCarloSS.NonScatterEvent:
+         case MonteCarloSS.BackscatterEvent : {
             final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
             final Electron el = mcss.getElectron();
             final int[] idx = bindex(el.getPrevPosition(), el.getPosition());
-            if(idx != null)
+            if (idx != null)
                ++mBins[idx[0]][idx[1]];
             break;
          }
-         case MonteCarloSS.TrajectoryStartEvent:
+         case MonteCarloSS.TrajectoryStartEvent :
             ++mTotal;
             break;
       }
@@ -111,32 +106,31 @@ public class GridDetector
     * @param wr
     * @throws IOException
     */
-   public void dump(Writer wr)
-         throws IOException {
+   public void dump(Writer wr) throws IOException {
       final NumberFormat df = new HalfUpFormat("0.000E0");
       wr.append("Grid detector - " + Integer.toString(mTotal) + "\n");
-      wr.append("Center = (" + df.format(1000.0 * (mCorner[0] + (0.5 * mSize))) + ","
-            + df.format(1000.0 * (mCorner[1] + (0.5 * mSize))) + "," + df.format(1000.0 * mCorner[2]) + ")\n");
+      wr.append("Center = (" + df.format(1000.0 * (mCorner[0] + (0.5 * mSize))) + "," + df.format(1000.0 * (mCorner[1] + (0.5 * mSize))) + ","
+            + df.format(1000.0 * mCorner[2]) + ")\n");
       wr.append("Total electon trajectories = " + Integer.toString(mTotal) + "\n");
       // Row of X indices
       wr.append("Index\t");
-      for(int dx = 0; dx < mBins.length; ++dx) {
+      for (int dx = 0; dx < mBins.length; ++dx) {
          wr.append("\t");
          wr.append(Integer.toString(dx));
       }
       wr.append("\n");
       // Row of X offsets
       wr.append("Offset (µm)\t");
-      for(int dx = 0; dx < mBins.length; ++dx) {
+      for (int dx = 0; dx < mBins.length; ++dx) {
          wr.append("\t");
          wr.append(df.format(((mSize * ((dx - (mBins.length / 2)) + 0.5)) / mBins.length) * 1.0e6));
       }
       wr.append("\n");
-      for(int dy = 0; dy < mBins[0].length; ++dy) {
+      for (int dy = 0; dy < mBins[0].length; ++dy) {
          wr.append(Integer.toString(dy));
          wr.append("\t");
          wr.append(df.format(((mSize * ((dy - (mBins[0].length / 2)) + 0.5)) / mBins[1].length) * 1.0e6));
-         for(final int[] mBin : mBins) {
+         for (final int[] mBin : mBins) {
             wr.append("\t");
             wr.append(Integer.toString(mBin[dy]));
          }

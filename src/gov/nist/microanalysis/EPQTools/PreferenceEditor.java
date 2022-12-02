@@ -43,8 +43,7 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * 
  */
-public class PreferenceEditor
-   extends JPanel {
+public class PreferenceEditor extends JPanel {
    static final long serialVersionUID = 0x42;
    private final JTree mTree;
    private final DefaultMutableTreeNode mTop = new DefaultMutableTreeNode();
@@ -84,7 +83,7 @@ public class PreferenceEditor
       mButtonPanel.add(mAddButton, cc.xy(1, 1));
       mButtonPanel.add(mRemoveButton, cc.xy(3, 1));
 
-      if(content != null)
+      if (content != null)
          mContent = content;
       mContentMap.put(mRootName, content);
 
@@ -121,7 +120,7 @@ public class PreferenceEditor
       item.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if(!mNodeList.contains(e.getActionCommand())) {
+            if (!mNodeList.contains(e.getActionCommand())) {
                final DefaultMutableTreeNode node = new DefaultMutableTreeNode(e.getActionCommand());
                mNodeList.add(e.getActionCommand());
                mTop.add(node);
@@ -143,8 +142,7 @@ public class PreferenceEditor
    public static void main(String[] args) {
       try {
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          // TODO Auto-generated catch block
          e.printStackTrace();
       }

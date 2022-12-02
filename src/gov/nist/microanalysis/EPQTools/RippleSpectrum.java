@@ -34,9 +34,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author nritchie
  * @version 1.0
  */
-public class RippleSpectrum
-   extends
-   BaseSpectrum {
+public class RippleSpectrum extends BaseSpectrum {
 
    private final RippleFile mRipple;
    private final SpectrumProperties mProperties;
@@ -60,11 +58,7 @@ public class RippleSpectrum
     * @throws IOException
     * @throws FileNotFoundException
     */
-   public RippleSpectrum(String filename, SpectrumProperties sp)
-         throws FileNotFoundException,
-         IOException,
-         EPQException,
-         Exception {
+   public RippleSpectrum(String filename, SpectrumProperties sp) throws FileNotFoundException, IOException, EPQException, Exception {
       mRipple = new RippleFile(filename, true);
       mProperties = new SpectrumProperties();
       mProperties.addAll(sp);
@@ -137,33 +131,30 @@ public class RippleSpectrum
     * @param y
     * @throws IOException
     */
-   public void setPosition(int x, int y)
-         throws IOException {
+   public void setPosition(int x, int y) throws IOException {
       seek(y, x);
    }
 
-   public void seek(int row, int col)
-         throws IOException {
-      if((mRow != row) || (mCol != col)) {
+   public void seek(int row, int col) throws IOException {
+      if ((mRow != row) || (mCol != col)) {
          mRow = row;
          mCol = col;
          updateData();
       }
    }
 
-   private void updateData()
-         throws IOException {
+   private void updateData() throws IOException {
       mData = new double[mDepth];
       final int maxRow = Math.min(mRow + mRowSpan, getRows());
       final int maxCol = Math.min(mCol + mColSpan, getColumns());
-      for(int r = mRow; r < maxRow; ++r)
-         for(int c = mCol; c < maxCol; ++c) {
+      for (int r = mRow; r < maxRow; ++r)
+         for (int c = mCol; c < maxCol; ++c) {
             mRipple.seek(r, c);
             Math2.plusEquals(mData, mRipple.readDouble(mData.length));
          }
-      mProperties.setTextProperty(SpectrumProperties.SampleId, toString() + "[[" + Integer.toString(mRow) + ", "
-            + Integer.toString(maxRow) + "),[" + Integer.toString(mCol) + ", " + Integer.toString(maxCol) + ")]");
-      if(!Double.isNaN(mBaseLiveTime))
+      mProperties.setTextProperty(SpectrumProperties.SampleId, toString() + "[[" + Integer.toString(mRow) + ", " + Integer.toString(maxRow) + "),["
+            + Integer.toString(mCol) + ", " + Integer.toString(maxCol) + ")]");
+      if (!Double.isNaN(mBaseLiveTime))
          mProperties.setNumericProperty(SpectrumProperties.LiveTime, (maxRow - mRow) * (maxCol - mCol) * mBaseLiveTime);
    }
 
@@ -184,11 +175,10 @@ public class RippleSpectrum
       return mProperties;
    }
 
-   public void setSpan(int rowSpan, int colSpan)
-         throws IOException {
+   public void setSpan(int rowSpan, int colSpan) throws IOException {
       final int newRowSpan = Math.max(1, rowSpan);
       final int newColSpan = Math.max(1, colSpan);
-      if((newRowSpan != mRowSpan) || (newColSpan != mColSpan)) {
+      if ((newRowSpan != mRowSpan) || (newColSpan != mColSpan)) {
          mRowSpan = newRowSpan;
          mColSpan = newColSpan;
          updateData();
@@ -210,32 +200,32 @@ public class RippleSpectrum
     * vendor's poor design decisions.
     * </p>
     * 
-    * @param off The number of channels to offset the data
+    * @param off
+    *           The number of channels to offset the data
     */
    public void setBrukerOffset(int off) {
       mBrukerOffset = off;
    }
 
-   public MapImage process(VectorSet vecs, int binSize)
-         throws IOException {
+   public MapImage process(VectorSet vecs, int binSize) throws IOException {
       Vector[] vs = vecs.getVectors().toArray(new Vector[vecs.getVectors().size()]);
       RegionOfInterest[] rois = new RegionOfInterest[vs.length];
-      for(int i = 0; i < vs.length; ++i)
+      for (int i = 0; i < vs.length; ++i)
          rois[i] = vs[i].getROI();
       final int ww = getColumns(), hh = getRows();
       // System.out.println("Width=" + ww);
       // System.out.println("Height=" + hh);
       final MapImage mi = new MapImage(ww / binSize, hh / binSize, rois, vecs.toString(), MapImage.DataType.K_RATIOS);
-      for(int r = 0; r < (hh - binSize + 1) / binSize; ++r) {
-         for(int rr = r * binSize; rr < (r + 1) * binSize; ++rr) {
-            for(int c = 0; c < (ww - binSize + 1) / binSize; ++c) {
+      for (int r = 0; r < (hh - binSize + 1) / binSize; ++r) {
+         for (int rr = r * binSize; rr < (r + 1) * binSize; ++rr) {
+            for (int c = 0; c < (ww - binSize + 1) / binSize; ++c) {
                // build the sum spectrum
                double[] spec = new double[mData.length];
-               for(int cc = c * binSize; cc < (c + 1) * binSize; ++cc) {
+               for (int cc = c * binSize; cc < (c + 1) * binSize; ++cc) {
                   seek(rr, cc);
                   Math2.addInPlace(spec, this.mData);
                }
-               for(int i = 0; i < vs.length; ++i)
+               for (int i = 0; i < vs.length; ++i)
                   mi.set(c, r, i, vs[i].apply(spec));
             }
          }

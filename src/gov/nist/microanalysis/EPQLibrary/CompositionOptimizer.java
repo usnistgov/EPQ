@@ -30,17 +30,14 @@ import java.util.TreeSet;
  * @author Nicholas
  * @version 1.0
  */
-public class CompositionOptimizer
-   extends EPMAOptimizer {
+public class CompositionOptimizer extends EPMAOptimizer {
 
-   class CompositionOptimizedStandard
-      extends OptimizedStandard {
+   class CompositionOptimizedStandard extends OptimizedStandard {
 
       private final UncertainValue2 mComposition;
       private final RegionOfInterest mFullROI;
 
-      public CompositionOptimizedStandard(Composition std, RegionOfInterest region, SpectrumProperties sp)
-            throws EPQException {
+      public CompositionOptimizedStandard(Composition std, RegionOfInterest region, SpectrumProperties sp) throws EPQException {
          super(std, region, 0.0, sp);
          assert region.getElementSet().size() == 1;
          final Element elm = region.getElementSet().first();
@@ -49,12 +46,12 @@ public class CompositionOptimizer
          mScore = 100.0 * (1.0 - mComposition.fractionalUncertainty());
          final RegionOfInterestSet rois = new RegionOfInterestSet(region);
          final double e0 = ToSI.keV(sp.getNumericWithDefault(SpectrumProperties.BeamEnergy, 20.0));
-         for(final Element elm2 : std.getElementSet())
-            if(!elm2.equals(elm))
+         for (final Element elm2 : std.getElementSet())
+            if (!elm2.equals(elm))
                rois.add(elm2, e0, 0.0001);
          RegionOfInterest fullRoi = null;
-         for(final RegionOfInterest roi : rois)
-            if(roi.intersects(region)) {
+         for (final RegionOfInterest roi : rois)
+            if (roi.intersects(region)) {
                fullRoi = roi;
                break;
             }
@@ -64,9 +61,9 @@ public class CompositionOptimizer
       @Override
       public int compareTo(OptimizedStandard o) {
          int res = -Double.compare(mScore, o.mScore);
-         if(res == 0)
+         if (res == 0)
             res = mComposition.compareTo(((CompositionOptimizedStandard) o).mComposition);
-         if(res == 0)
+         if (res == 0)
             res = super.compareTo(o);
          return res;
       }
@@ -109,21 +106,19 @@ public class CompositionOptimizer
     *      gov.nist.microanalysis.EPQLibrary.SpectrumProperties)
     */
    @Override
-   public List<OptimizedStandard> getOptimizedStandards(Element elm, SpectrumProperties sp)
-         throws EPQException {
+   public List<OptimizedStandard> getOptimizedStandards(Element elm, SpectrumProperties sp) throws EPQException {
       final ArrayList<OptimizedStandard> res = new ArrayList<EPMAOptimizer.OptimizedStandard>();
       final List<Composition> comps = mDatabase.findStandards(elm, 0.01, mExclude);
       final double e0 = ToSI.keV(sp.getNumericProperty(SpectrumProperties.BeamEnergy));
       final RegionOfInterestSet rois = LinearSpectrumFit.createElementROIS(elm, mDetector, e0);
-      for(final Composition comp : comps)
-         for(final RegionOfInterest roi : rois)
+      for (final Composition comp : comps)
+         for (final RegionOfInterest roi : rois)
             res.add(new CompositionOptimizedStandard(comp, roi, sp));
       Collections.sort(res);
       return res;
    }
 
-   private class RefComparitor
-      implements Comparator<Composition> {
+   private class RefComparitor implements Comparator<Composition> {
       private final XRayTransition mTransition;
       private final SpectrumProperties mProperties;
       private final TreeMap<Composition, Double> mKRatios = new TreeMap<Composition, Double>();
@@ -139,21 +134,19 @@ public class CompositionOptimizer
          double kr1;
          try {
             kr1 = mKRatios.containsKey(o1) ? mKRatios.get(o1) : mXPP.computeKRatio(o1, mTransition, mProperties);
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             kr1 = 1.0e-10;
          }
          mKRatios.put(o1, kr1);
          double kr2;
          try {
             kr2 = mKRatios.containsKey(o2) ? mKRatios.get(o2) : mXPP.computeKRatio(o2, mTransition, mProperties);
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             kr2 = 1.0e-10;
          }
          mKRatios.put(o2, kr2);
          int res = -Double.compare(kr1, kr2);
-         if(res == 0)
+         if (res == 0)
             res = o1.compareTo(o2);
          return res;
       }
@@ -166,20 +159,18 @@ public class CompositionOptimizer
     * @see gov.nist.microanalysis.EPQLibrary.EPMAOptimizer#suggestReferences(gov.nist.microanalysis.EPQLibrary.RegionOfInterestSet.RegionOfInterest)
     */
    @Override
-   public ArrayList<Composition> suggestReferences(RegionOfInterest roi)
-         throws EPQException {
-      if(roi.getElementSet().size() > 1)
-         throw new EPQException("suggestReferences(..) requires a single element ROI. Yours = "
-               + roi.getElementSet().toString());
+   public ArrayList<Composition> suggestReferences(RegionOfInterest roi) throws EPQException {
+      if (roi.getElementSet().size() > 1)
+         throw new EPQException("suggestReferences(..) requires a single element ROI. Yours = " + roi.getElementSet().toString());
       assert roi.getElementSet().size() == 1;
       final Element elm = roi.getElementSet().first();
       final List<Composition> comps = mDatabase.findStandards(elm, 0.1, mExclude);
       final double e0 = mDetector.getOwner().getMaxBeamEnergy();
       final ArrayList<Composition> res = new ArrayList<Composition>();
-      for(final Composition comp : comps) {
+      for (final Composition comp : comps) {
          final RegionOfInterestSet allElmRois = LinearSpectrumFit.createAllElementROIS(comp, mDetector, e0);
-         for(final RegionOfInterest allElmRoi : allElmRois)
-            if(allElmRoi.equals(roi) && (allElmRoi.getElementSet().size() == 1))
+         for (final RegionOfInterest allElmRoi : allElmRois)
+            if (allElmRoi.equals(roi) && (allElmRoi.getElementSet().size() == 1))
                res.add(comp);
       }
       final SpectrumProperties sp = new SpectrumProperties();
@@ -197,7 +188,7 @@ public class CompositionOptimizer
       sb.append("<h3>Standard Blocks</h3>");
       sb.append("<table>");
       sb.append("<tr><th>Block</th><th>Contains materials</th></tr>");
-      for(final StandardBlock2 block : blocks) {
+      for (final StandardBlock2 block : blocks) {
          sb.append("<tr><td>");
          sb.append(block.toString());
          sb.append("</td><td>");

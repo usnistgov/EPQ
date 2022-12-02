@@ -20,8 +20,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class MonteCarloSSTest
-   extends TestCase {
+public class MonteCarloSSTest extends TestCase {
    /**
     * MonteCarloSSTest
     */
@@ -29,8 +28,7 @@ public class MonteCarloSSTest
       super(test);
    }
 
-   public void testOne()
-         throws EPQException {
+   public void testOne() throws EPQException {
       assertEquals(MonteCarloSS.ScatterEvent, 1);
       final MonteCarloSS mcss = new MonteCarloSS();
       // / TODO Restore these tests....
@@ -46,16 +44,8 @@ public class MonteCarloSSTest
       // assertEquals(mcss.getMassAbsorptionCoefficient().compute(Element.Ti,
       // ToSI.keV(20.0),false), 1.54e-21, 0.1e-21);
       {
-         final double[] o = {
-            0.001,
-            -0.001,
-            0.0004
-         };
-         final double[] t = {
-            1.0,
-            1.0,
-            1.0
-         };
+         final double[] o = {0.001, -0.001, 0.0004};
+         final double[] t = {1.0, 1.0, 1.0};
          final double u = mcss.getChamber().getShape().getFirstIntersection(o, t);
          assert u > 0.0;
          final double[] res = new double[3];
@@ -65,28 +55,12 @@ public class MonteCarloSSTest
          assertTrue(mcss.getChamber().getShape().contains(res));
       }
       {
-         final double[] c0 = {
-            -1.0,
-            -1.0,
-            -1.0
-         };
-         final double[] c1 = {
-            1.0,
-            1.0,
-            1.0
-         };
+         final double[] c0 = {-1.0, -1.0, -1.0};
+         final double[] c1 = {1.0, 1.0, 1.0};
          final SimpleBlock sb = new SimpleBlock(c0, c1);
          {
-            final double[] pos0 = {
-               -1.0,
-               -1.0,
-               -3.0
-            };
-            final double[] pos1 = {
-               1.0,
-               1.0,
-               2.0
-            };
+            final double[] pos0 = {-1.0, -1.0, -3.0};
+            final double[] pos1 = {1.0, 1.0, 2.0};
             final double u = sb.getFirstIntersection(pos0, pos1);
             final double[] res = new double[3];
             res[0] = pos0[0] + ((pos1[0] - pos0[0]) * u);

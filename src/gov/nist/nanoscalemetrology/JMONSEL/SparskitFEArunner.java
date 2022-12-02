@@ -51,9 +51,7 @@ import gov.nist.microanalysis.NISTMonte.MeshedRegion;
  * @author JohnVillarrubia
  * @version 1.0
  */
-public class SparskitFEArunner
-   implements
-   IFEArunner {
+public class SparskitFEArunner implements IFEArunner {
 
    private int matrixFormat = 1;
    private int matrixPrinting = 0;
@@ -98,22 +96,20 @@ public class SparskitFEArunner
 
       try {
          specWriter.writeFEAfiles();
-      }
-      catch(final IOException err) {
+      } catch (final IOException err) {
          throw new EPQFatalException(err.getMessage());
       }
 
       // Write solver parameter file
       try {
          writeSolverPar();
-      }
-      catch(final IOException err) {
+      } catch (final IOException err) {
          throw new EPQFatalException("Exception attempting to write solver.par: " + err.getMessage());
       }
 
       // Delete previous resolution if any
       final File resFile = new File(feaFolder, "sample.res");
-      if(resFile.exists())
+      if (resFile.exists())
          resFile.delete();
 
       /*
@@ -123,15 +119,13 @@ public class SparskitFEArunner
       final String command = "getdp_sparskit sample -pre EleSta_v -cal";
       try {
          specWriter.runGetDP(command);
-      }
-      catch(final InterruptedException e) {
+      } catch (final InterruptedException e) {
          throw new EPQFatalException(e.getMessage());
       }
 
    }
 
-   private void writeSolverPar()
-         throws IOException {
+   private void writeSolverPar() throws IOException {
       /* Open resource for input */
       BufferedReader in = null;
       BufferedWriter out = null;
@@ -142,7 +136,7 @@ public class SparskitFEArunner
 
          /* Copy the comments from resource to output */
          String line = in.readLine();
-         while(line != null) {
+         while (line != null) {
             out.write(line);
             out.newLine();
             line = in.readLine();
@@ -187,11 +181,10 @@ public class SparskitFEArunner
          out.newLine();
          out.write("            Stopping_Test            " + getStoppingTest());
          out.newLine();
-      }
-      finally {
-         if(in != null)
+      } finally {
+         if (in != null)
             in.close();
-         if(out != null)
+         if (out != null)
             out.close();
       }
    }
@@ -214,10 +207,11 @@ public class SparskitFEArunner
     * - default : 1<br>
     * </p>
     *
-    * @param matrixFormat The value to which to set matrixFormat.
+    * @param matrixFormat
+    *           The value to which to set matrixFormat.
     */
    public void setMatrixFormat(int matrixFormat) {
-      if(this.matrixFormat != matrixFormat)
+      if (this.matrixFormat != matrixFormat)
          this.matrixFormat = matrixFormat;
    }
 
@@ -240,10 +234,11 @@ public class SparskitFEArunner
    /**
     * Sets the value assigned to matrixPrinting.
     *
-    * @param matrixPrinting The value to which to set matrixPrinting.
+    * @param matrixPrinting
+    *           The value to which to set matrixPrinting.
     */
    public void setMatrixPrinting(int matrixPrinting) {
-      if(this.matrixPrinting != matrixPrinting)
+      if (this.matrixPrinting != matrixPrinting)
          this.matrixPrinting = matrixPrinting;
    }
 
@@ -266,10 +261,11 @@ public class SparskitFEArunner
     * - default : 0
     * </p>
     *
-    * @param matrixStorage The value to which to set matrixStorage.
+    * @param matrixStorage
+    *           The value to which to set matrixStorage.
     */
    public void setMatrixStorage(int matrixStorage) {
-      if(this.matrixStorage != matrixStorage)
+      if (this.matrixStorage != matrixStorage)
          this.matrixStorage = matrixStorage;
    }
 
@@ -294,10 +290,11 @@ public class SparskitFEArunner
     * - default : 0
     * </p>
     *
-    * @param scaling The value to which to set scaling.
+    * @param scaling
+    *           The value to which to set scaling.
     */
    public void setScaling(int scaling) {
-      if(this.scaling != scaling)
+      if (this.scaling != scaling)
          this.scaling = scaling;
    }
 
@@ -319,11 +316,11 @@ public class SparskitFEArunner
     * - default : 1
     * </p>
     *
-    * @param renumberingTechnique The value to which to set
-    *           renumberingTechnique.
+    * @param renumberingTechnique
+    *           The value to which to set renumberingTechnique.
     */
    public void setRenumberingTechnique(int renumberingTechnique) {
-      if(this.renumberingTechnique != renumberingTechnique)
+      if (this.renumberingTechnique != renumberingTechnique)
          this.renumberingTechnique = renumberingTechnique;
    }
 
@@ -352,10 +349,11 @@ public class SparskitFEArunner
     * - default : 2
     * </p>
     *
-    * @param preconditioner The value to which to set preconditioner.
+    * @param preconditioner
+    *           The value to which to set preconditioner.
     */
    public void setPreconditioner(int preconditioner) {
-      if(this.preconditioner != preconditioner)
+      if (this.preconditioner != preconditioner)
          this.preconditioner = preconditioner;
    }
 
@@ -379,11 +377,11 @@ public class SparskitFEArunner
     * - default : 2
     * </p>
     *
-    * @param preconditionerPosition The value to which to set
-    *           preconditionerPosition.
+    * @param preconditionerPosition
+    *           The value to which to set preconditionerPosition.
     */
    public void setPreconditionerPosition(int preconditionerPosition) {
-      if(this.preconditionerPosition != preconditionerPosition)
+      if (this.preconditionerPosition != preconditionerPosition)
          this.preconditionerPosition = preconditionerPosition;
    }
 
@@ -407,10 +405,11 @@ public class SparskitFEArunner
     * - default : 10
     * </p>
     *
-    * @param nbFill The value to which to set nbFill.
+    * @param nbFill
+    *           The value to which to set nbFill.
     */
    public void setNbFill(int nbFill) {
-      if(this.nbFill != nbFill)
+      if (this.nbFill != nbFill)
          this.nbFill = nbFill;
    }
 
@@ -434,11 +433,11 @@ public class SparskitFEArunner
     * - default : 0.05
     * </p>
     *
-    * @param permutationTolerance The value to which to set
-    *           permutationTolerance.
+    * @param permutationTolerance
+    *           The value to which to set permutationTolerance.
     */
    public void setPermutationTolerance(double permutationTolerance) {
-      if(this.permutationTolerance != permutationTolerance)
+      if (this.permutationTolerance != permutationTolerance)
          this.permutationTolerance = permutationTolerance;
    }
 
@@ -463,10 +462,11 @@ public class SparskitFEArunner
     * - default : 0
     * </p>
     *
-    * @param droppingTolerance The value to which to set droppingTolerance.
+    * @param droppingTolerance
+    *           The value to which to set droppingTolerance.
     */
    public void setDroppingTolerance(int droppingTolerance) {
-      if(this.droppingTolerance != droppingTolerance)
+      if (this.droppingTolerance != droppingTolerance)
          this.droppingTolerance = droppingTolerance;
    }
 
@@ -490,11 +490,11 @@ public class SparskitFEArunner
     * - default : 0
     * </p>
     *
-    * @param diagonalCompensation The value to which to set
-    *           diagonalCompensation.
+    * @param diagonalCompensation
+    *           The value to which to set diagonalCompensation.
     */
    public void setDiagonalCompensation(int diagonalCompensation) {
-      if(this.diagonalCompensation != diagonalCompensation)
+      if (this.diagonalCompensation != diagonalCompensation)
          this.diagonalCompensation = diagonalCompensation;
    }
 
@@ -517,10 +517,11 @@ public class SparskitFEArunner
     * - default : 0
     * </p>
     *
-    * @param reuseILU The value to which to set reuseILU.
+    * @param reuseILU
+    *           The value to which to set reuseILU.
     */
    public void setReuseILU(int reuseILU) {
-      if(this.reuseILU != reuseILU)
+      if (this.reuseILU != reuseILU)
          this.reuseILU = reuseILU;
    }
 
@@ -552,10 +553,11 @@ public class SparskitFEArunner
     * - default : 8
     * </p>
     *
-    * @param algorithm The value to which to set algorithm.
+    * @param algorithm
+    *           The value to which to set algorithm.
     */
    public void setAlgorithm(int algorithm) {
-      if(this.algorithm != algorithm)
+      if (this.algorithm != algorithm)
          this.algorithm = algorithm;
    }
 
@@ -575,10 +577,11 @@ public class SparskitFEArunner
     * - default : 120
     * </p>
     *
-    * @param krylovSize The value to which to set krylovSize.
+    * @param krylovSize
+    *           The value to which to set krylovSize.
     */
    public void setKrylovSize(int krylovSize) {
-      if(this.krylovSize != krylovSize)
+      if (this.krylovSize != krylovSize)
          this.krylovSize = krylovSize;
    }
 
@@ -600,10 +603,11 @@ public class SparskitFEArunner
     * - default : 1
     * </p>
     *
-    * @param ICAcceleration The value to which to set ICAcceleration.
+    * @param ICAcceleration
+    *           The value to which to set ICAcceleration.
     */
    public void setICAcceleration(int ICAcceleration) {
-      if(this.ICAcceleration != ICAcceleration)
+      if (this.ICAcceleration != ICAcceleration)
          this.ICAcceleration = ICAcceleration;
    }
 
@@ -625,10 +629,11 @@ public class SparskitFEArunner
     * - default : 0
     * </p>
     *
-    * @param reuseLU The value to which to set reuseLU.
+    * @param reuseLU
+    *           The value to which to set reuseLU.
     */
    public void setReuseLU(int reuseLU) {
-      if(this.reuseLU != reuseLU)
+      if (this.reuseLU != reuseLU)
          this.reuseLU = reuseLU;
    }
 
@@ -649,11 +654,11 @@ public class SparskitFEArunner
     * - default : 0
     * </p>
     *
-    * @param iterativeImprovement The value to which to set
-    *           iterativeImprovement.
+    * @param iterativeImprovement
+    *           The value to which to set iterativeImprovement.
     */
    public void setIterativeImprovement(int iterativeImprovement) {
-      if(this.iterativeImprovement != iterativeImprovement)
+      if (this.iterativeImprovement != iterativeImprovement)
          this.iterativeImprovement = iterativeImprovement;
    }
 
@@ -673,10 +678,11 @@ public class SparskitFEArunner
     * - default : 4000
     * </p>
     *
-    * @param nbIterMax The value to which to set nbIterMax.
+    * @param nbIterMax
+    *           The value to which to set nbIterMax.
     */
    public void setNbIterMax(int nbIterMax) {
-      if(this.nbIterMax != nbIterMax)
+      if (this.nbIterMax != nbIterMax)
          this.nbIterMax = nbIterMax;
    }
 
@@ -696,10 +702,11 @@ public class SparskitFEArunner
     * - default : 1e-010
     * </p>
     *
-    * @param stoppingTest The value to which to set stoppingTest.
+    * @param stoppingTest
+    *           The value to which to set stoppingTest.
     */
    public void setStoppingTest(double stoppingTest) {
-      if(this.stoppingTest != stoppingTest)
+      if (this.stoppingTest != stoppingTest)
          this.stoppingTest = stoppingTest;
    }
 

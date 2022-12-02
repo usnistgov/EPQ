@@ -15,9 +15,7 @@ import javax.swing.table.TableCellEditor;
  * http://creativecommons.org/licenses/publicdomain/ Minor modifications by NWMR
  * which are not subject to copyright.
  */
-public class ComboBoxCellEditor
-   extends AbstractCellEditor
-   implements ActionListener, TableCellEditor, Serializable {
+public class ComboBoxCellEditor extends AbstractCellEditor implements ActionListener, TableCellEditor, Serializable {
 
    static private final long serialVersionUID = 0x98de238a349L;
 
@@ -43,7 +41,7 @@ public class ComboBoxCellEditor
       // We should ignore these ones.
 
       // Hitting enter results in an actioncommand "comboBoxEdited"
-      if(e.getActionCommand().equals("comboBoxEdited"))
+      if (e.getActionCommand().equals("comboBoxEdited"))
          stopCellEditing();
    }
 
@@ -55,7 +53,7 @@ public class ComboBoxCellEditor
 
    @Override
    public boolean stopCellEditing() {
-      if(mComboBox.isEditable())
+      if (mComboBox.isEditable())
          // Notify the combo box that editing has stopped (e.g. User pressed F2)
          mComboBox.actionPerformed(new ActionEvent(this, 0, ""));
       fireEditingStopped();

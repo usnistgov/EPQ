@@ -29,9 +29,7 @@ import gov.nist.nanoscalemetrology.JMONSEL.Mesh.Tetrahedron;
  * @author John Villarrubia
  * @version 1.0
  */
-public class ThresholdChargeConductionModel
-   implements
-   IConductionModel {
+public class ThresholdChargeConductionModel implements IConductionModel {
 
    private double frac;
 
@@ -56,10 +54,11 @@ public class ThresholdChargeConductionModel
    /**
     * Sets the value assigned to frac.
     *
-    * @param frac The value to which to set frac.
+    * @param frac
+    *           The value to which to set frac.
     */
    public void setFrac(double frac) {
-      if(this.frac != frac)
+      if (this.frac != frac)
          this.frac = frac;
    }
 
@@ -92,14 +91,14 @@ public class ThresholdChargeConductionModel
       double[] x = new double[3];// debug
       double v = 0.;
       int id = 0;// debug
-      while(finalRegion != startRegion) {
+      while (finalRegion != startRegion) {
          startRegion = finalRegion;
          finalRegion = oneStep(startRegion, mesh);
          count++;// debug
          x = ((Tetrahedron) (finalRegion.getShape())).getCenter();// debug
          v = ((Tetrahedron) (finalRegion.getShape())).getPotential(x); // debug
          id = ((Tetrahedron) (finalRegion.getShape())).getIndex();// debug
-         if(count > 100) {
+         if (count > 100) {
             final int dummy;// debug
             dummy = 0;
          }
@@ -122,14 +121,14 @@ public class ThresholdChargeConductionModel
     * probability proportional to the current.
     */
    private MeshElementRegion oneStep(MeshElementRegion startRegion, Mesh mesh) {
-      if(startRegion.isConstrained())
+      if (startRegion.isConstrained())
          return startRegion;
       // int elemNum = s.getIndex();
       /* Determine the material in this tet and its dielectric Strength */
       // final long tetMaterialTag = mesh.getTags(elemNum)[0];
       final SEmaterial tetMaterial = (SEmaterial) startRegion.getMaterial();
       double eThresh = tetMaterial.getDielectricBreakdownField();
-      if(eThresh >= Double.MAX_VALUE)
+      if (eThresh >= Double.MAX_VALUE)
          return startRegion;
       else
          eThresh *= frac;
@@ -138,7 +137,7 @@ public class ThresholdChargeConductionModel
 
       final double[] eField = correctedEField(tet);
       final double eMagSquared = Math2.dot(eField, eField);
-      if(eMagSquared < (eThresh * eThresh))
+      if (eMagSquared < (eThresh * eThresh))
          return startRegion;
 
       final double[] faceCurrents = faceCurrents(tet, eField);
@@ -152,9 +151,9 @@ public class ThresholdChargeConductionModel
       final double v0 = tet.getPotential(tet.getCenter());
       int count = 0;
       int faceIndex = 0;
-      for(int i = 0; i < 4; i++) {
+      for (int i = 0; i < 4; i++) {
          final Tetrahedron nextTet = tet.adjacentTet(i);
-         if((faceCurrents[i] < 0.) && (nextTet.getPotential(nextTet.getCenter()) > v0)) {
+         if ((faceCurrents[i] < 0.) && (nextTet.getPotential(nextTet.getCenter()) > v0)) {
             faceCurrents[i] *= -1;
             faceIndex = i;
             count++;
@@ -166,13 +165,13 @@ public class ThresholdChargeConductionModel
        * of electrons at ALL faces. If this happens, we just leave our electron
        * here.
        */
-      if(count == 0)
+      if (count == 0)
          return startRegion;
       /*
        * If there's more than 1 candidate, we put the electron through one of
        * them with probability proportional to the face current.
        */
-      if(count > 1)
+      if (count > 1)
          faceIndex = randomPick(faceCurrents);
 
       final Tetrahedron nextTet = tet.adjacentTet(faceIndex);
@@ -187,13 +186,13 @@ public class ThresholdChargeConductionModel
 
       runningTotal[0] = x[0];
       final int len = x.length;
-      for(int i = 1; i < len; i++)
+      for (int i = 1; i < len; i++)
          runningTotal[i] = runningTotal[i - 1] + x[i];
 
       final double val = Math2.rgen.nextDouble() * runningTotal[len - 1];
 
       int pick = 0;
-      while(runningTotal[pick] < val)
+      while (runningTotal[pick] < val)
          pick++;
 
       return pick;
@@ -223,12 +222,12 @@ public class ThresholdChargeConductionModel
       final long tetMaterialTag = mesh.getTags(tet.getIndex())[0];
 
       final double[] result = new double[4];
-      for(int faceIndex = 0; faceIndex < 4; faceIndex++) {
+      for (int faceIndex = 0; faceIndex < 4; faceIndex++) {
          final Tetrahedron nextTet = tet.adjacentTet(faceIndex);
-         if(nextTet == null) // Boundary of the mesh
+         if (nextTet == null) // Boundary of the mesh
             continue;
          final long nextTetMaterialTag = mesh.getTags(nextTet.getIndex())[0];
-         if(nextTetMaterialTag != tetMaterialTag)
+         if (nextTetMaterialTag != tetMaterialTag)
             continue;
          final double[] n = tet.faceNormal(faceIndex);
          /*
@@ -258,9 +257,9 @@ public class ThresholdChargeConductionModel
       final Mesh mesh = tet.getMesh();
       final long tetMaterialTag = mesh.getTags(tet.getIndex())[0];
       double[] eField = tet.getEField();
-      for(int faceIndex = 0; faceIndex < 4; faceIndex++) {
+      for (int faceIndex = 0; faceIndex < 4; faceIndex++) {
          final int adjIndex = tet.adjacentTetIndex(faceIndex);
-         if((adjIndex == 0) || (tetMaterialTag != mesh.getTags(adjIndex)[0]))
+         if ((adjIndex == 0) || (tetMaterialTag != mesh.getTags(adjIndex)[0]))
             eField = perpendicularProjection(eField, tet.faceNormal(faceIndex));
       }
       return eField;
@@ -271,8 +270,10 @@ public class ThresholdChargeConductionModel
     * If n is normalized, this is the projection of v onto the plane for which n
     * is the normal vector.
     *
-    * @param v - A vector
-    * @param n - A vector
+    * @param v
+    *           - A vector
+    * @param n
+    *           - A vector
     * @return
     */
    private double[] perpendicularProjection(double[] v, double[] n) {
@@ -283,8 +284,10 @@ public class ThresholdChargeConductionModel
     * Computes (v.n)n where v and n are vectors and "." is the dot product. If n
     * is normalized, this is the projection of v in the n direction.
     *
-    * @param v - A vector
-    * @param n - A vector
+    * @param v
+    *           - A vector
+    * @param n
+    *           - A vector
     * @return
     */
    private double[] parallelProjection(double[] v, double[] n) {

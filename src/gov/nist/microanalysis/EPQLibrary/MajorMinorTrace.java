@@ -38,15 +38,15 @@ public enum MajorMinorTrace {
    }
 
    public static MajorMinorTrace create(double massFrac) {
-      for(final MajorMinorTrace mmt : values())
-         if(mmt.contains(massFrac))
+      for (final MajorMinorTrace mmt : values())
+         if (mmt.contains(massFrac))
             return mmt;
       return None;
    }
 
    static public Map<Element, MajorMinorTrace> from(Composition comp, boolean normalized) {
       final Map<Element, MajorMinorTrace> res = new TreeMap<Element, MajorMinorTrace>();
-      for(final Element elm : comp.getElementSet())
+      for (final Element elm : comp.getElementSet())
          res.put(elm, create(comp.weightFraction(elm, normalized)));
       return res;
    }
@@ -56,8 +56,10 @@ public enum MajorMinorTrace {
     * description of a material. This is useful for working with an unknown that
     * the user only wants to define in the loosest possible terms.
     * 
-    * @param mmtm Map&lt;Element, MajorMinorTrace&gt;
-    * @param name A name for the crude compositional object
+    * @param mmtm
+    *           Map&lt;Element, MajorMinorTrace&gt;
+    * @param name
+    *           A name for the crude compositional object
     * @return Composition
     */
    static public Composition asComposition(Map<Element, MajorMinorTrace> mmtm, String name) {
@@ -65,29 +67,29 @@ public enum MajorMinorTrace {
       final double[] qty = new double[elms.length];
       double sum = 0.0;
       int majorCount = 0;
-      for(int i = 0; i < elms.length; ++i) {
+      for (int i = 0; i < elms.length; ++i) {
          final MajorMinorTrace mmt = mmtm.get(elms[i]);
-         switch(mmt) {
-            case None:
+         switch (mmt) {
+            case None :
                qty[i] = 0.0;
                break;
-            case Trace:
+            case Trace :
                qty[i] = 0.001;
                sum += qty[i];
                break;
-            case Minor:
+            case Minor :
                qty[i] = Math.pow(10.0, -1.5);
                sum += qty[i];
                break;
-            case Major:
+            case Major :
                majorCount++;
                break;
          }
       }
-      if(majorCount > 0)
+      if (majorCount > 0)
          // Divide the remainder among the Major constituents.
-         for(int i = 0; i < elms.length; ++i)
-            if(mmtm.get(elms[i]).equals(Major))
+         for (int i = 0; i < elms.length; ++i)
+            if (mmtm.get(elms[i]).equals(Major))
                qty[i] = (1.0 - sum) / majorCount;
       // The result will be normalized *unless* there are
       // no Major constituents.

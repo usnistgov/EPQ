@@ -48,8 +48,7 @@ import java.nio.channels.FileChannel;
  * 1999 October 8 - use com.mindprod.ledatastream package name.
  * </p>
  */
-public class LEDataInputStream
-   implements DataInput, AutoCloseable {
+public class LEDataInputStream implements DataInput, AutoCloseable {
 
    public static final String EmbeddedCopyright = "copyright (c) 1998-2002 Roedy Green, Canadian Mind Products, http://mindprod.com";
 
@@ -69,8 +68,7 @@ public class LEDataInputStream
     * like DataInputStream.readShort except little endian.
     */
    @Override
-   public final short readShort()
-         throws IOException {
+   public final short readShort() throws IOException {
       d.readFully(w, 0, 2);
       return (short) (((w[1] & 0xff) << 8) | (w[0] & 0xff));
    }
@@ -80,8 +78,7 @@ public class LEDataInputStream
     * int even though it reads a short.
     */
    @Override
-   public final int readUnsignedShort()
-         throws IOException {
+   public final int readUnsignedShort() throws IOException {
       d.readFully(w, 0, 2);
       return (((w[1] & 0xff) << 8) | (w[0] & 0xff));
    }
@@ -90,8 +87,7 @@ public class LEDataInputStream
     * like DataInputStream.readChar except little endian.
     */
    @Override
-   public final char readChar()
-         throws IOException {
+   public final char readChar() throws IOException {
       d.readFully(w, 0, 2);
       return (char) (((w[1] & 0xff) << 8) | (w[0] & 0xff));
    }
@@ -100,8 +96,7 @@ public class LEDataInputStream
     * like DataInputStream.readInt except little endian.
     */
    @Override
-   public final int readInt()
-         throws IOException {
+   public final int readInt() throws IOException {
       d.readFully(w, 0, 4);
       return ((w[3]) << 24) | ((w[2] & 0xff) << 16) | ((w[1] & 0xff) << 8) | (w[0] & 0xff);
    }
@@ -110,14 +105,13 @@ public class LEDataInputStream
     * like DataInputStream.readLong except little endian.
     */
    @Override
-   public final long readLong()
-         throws IOException {
+   public final long readLong() throws IOException {
       d.readFully(w, 0, 8);
-      return ((long) (w[7]) << 56) | (/*
-                                       * long cast needed or shift done modulo
-                                       * 32
-                                       */
-      (long) (w[6] & 0xff) << 48) | ((long) (w[5] & 0xff) << 40) | ((long) (w[4] & 0xff) << 32) | ((long) (w[3] & 0xff) << 24)
+      return ((long) (w[7]) << 56)
+            | (/*
+                * long cast needed or shift done modulo 32
+                */
+            (long) (w[6] & 0xff) << 48) | ((long) (w[5] & 0xff) << 40) | ((long) (w[4] & 0xff) << 32) | ((long) (w[3] & 0xff) << 24)
             | ((long) (w[2] & 0xff) << 16) | ((long) (w[1] & 0xff) << 8) | (w[0] & 0xff);
    }
 
@@ -125,8 +119,7 @@ public class LEDataInputStream
     * like DataInputStream.readFloat except little endian.
     */
    @Override
-   public final float readFloat()
-         throws IOException {
+   public final float readFloat() throws IOException {
       return Float.intBitsToFloat(readInt());
    }
 
@@ -134,8 +127,7 @@ public class LEDataInputStream
     * like DataInputStream.readDouble except little endian.
     */
    @Override
-   public final double readDouble()
-         throws IOException {
+   public final double readDouble() throws IOException {
       return Double.longBitsToDouble(readLong());
    }
 
@@ -143,47 +135,40 @@ public class LEDataInputStream
    // We can't simply inherit since dataInputStream is final.
 
    /* Watch out, may return fewer bytes than requested. */
-   public final int read(byte b[], int off, int len)
-         throws IOException {
+   public final int read(byte b[], int off, int len) throws IOException {
       // For efficiency, we avoid one layer of wrapper
       return in.read(b, off, len);
    }
 
    @Override
-   public final void readFully(byte b[])
-         throws IOException {
+   public final void readFully(byte b[]) throws IOException {
       d.readFully(b, 0, b.length);
    }
 
    @Override
-   public final void readFully(byte b[], int off, int len)
-         throws IOException {
+   public final void readFully(byte b[], int off, int len) throws IOException {
       d.readFully(b, off, len);
    }
 
    @Override
-   public final int skipBytes(int n)
-         throws IOException {
+   public final int skipBytes(int n) throws IOException {
       return d.skipBytes(n);
    }
 
    /* only reads one byte */
    @Override
-   public final boolean readBoolean()
-         throws IOException {
+   public final boolean readBoolean() throws IOException {
       return d.readBoolean();
    }
 
    @Override
-   public final byte readByte()
-         throws IOException {
+   public final byte readByte() throws IOException {
       return d.readByte();
    }
 
    // note: returns an int, even though says Byte.
    @Override
-   public final int readUnsignedByte()
-         throws IOException {
+   public final int readUnsignedByte() throws IOException {
       return d.readUnsignedByte();
    }
 
@@ -193,31 +178,26 @@ public class LEDataInputStream
     */
    @Override
    @Deprecated
-   public final String readLine()
-         throws IOException {
+   public final String readLine() throws IOException {
       return d.readLine();
    }
 
    @Override
-   public final String readUTF()
-         throws IOException {
+   public final String readUTF() throws IOException {
       return d.readUTF();
    }
 
    // Note. This is a STATIC method!
-   public final static String readUTF(DataInput in)
-         throws IOException {
+   public final static String readUTF(DataInput in) throws IOException {
       return DataInputStream.readUTF(in);
    }
 
    @Override
-   public final void close()
-         throws IOException {
+   public final void close() throws IOException {
       d.close();
    }
 
-   public final void reset()
-         throws IOException {
+   public final void reset() throws IOException {
       d.reset();
       w = new byte[8];
    }
@@ -226,8 +206,7 @@ public class LEDataInputStream
       return in instanceof FileInputStream ? ((FileInputStream) in).getChannel() : null;
    }
 
-   public FileDescriptor getFD()
-         throws IOException {
+   public FileDescriptor getFD() throws IOException {
       return in instanceof FileInputStream ? ((FileInputStream) in).getFD() : null;
    }
 

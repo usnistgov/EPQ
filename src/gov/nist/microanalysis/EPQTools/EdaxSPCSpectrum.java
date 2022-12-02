@@ -35,8 +35,7 @@ import gov.nist.microanalysis.EPQLibrary.StageCoordinate.Axis;
  * @author nritchie
  * @version 1.0
  */
-public class EdaxSPCSpectrum
-   extends BaseSpectrum {
+public class EdaxSPCSpectrum extends BaseSpectrum {
 
    // I really don't know what version numbers work so I'm being
    // generous in my limits until I discover which ones don't work.
@@ -53,8 +52,7 @@ public class EdaxSPCSpectrum
             final float version = dis.readFloat();
             return (version >= MIN_VERSION) && (version < MAX_VERSION);
          }
-      }
-      catch(final IOException e) {
+      } catch (final IOException e) {
          return false;
       }
    }
@@ -70,18 +68,17 @@ public class EdaxSPCSpectrum
     */
    private static String extractName(String path) {
       int end = path.length();
-      if(path.endsWith(".spc"))
+      if (path.endsWith(".spc"))
          end -= 4;
       final int st = path.lastIndexOf("\\") + 1;
       return path.substring(st, end);
    }
 
-   public EdaxSPCSpectrum(FileInputStream is)
-         throws EPQException, IOException {
+   public EdaxSPCSpectrum(FileInputStream is) throws EPQException, IOException {
       try (final LEDataInputStream dis = new LEDataInputStream(is)) {
          final float version = dis.readFloat();
          float f;
-         if((version < MIN_VERSION) || (version > MAX_VERSION))
+         if ((version < MIN_VERSION) || (version > MAX_VERSION))
             throw new EPQException(BAD_FILE_FORMAT);
          mProperties = new SpectrumProperties();
          mProperties.setTextProperty(SpectrumProperties.Software, "EDAX v. " + Float.toString(dis.readFloat()));
@@ -105,12 +102,12 @@ public class EdaxSPCSpectrum
          assert dis.getChannel().position() == 64;
          {
             final String desc = readString(dis, 40);
-            if(desc.length() > 0)
+            if (desc.length() > 0)
                mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, desc);
          }
          {
             final String comm = readString(dis, 256 - 40);
-            if(comm.length() > 0)
+            if (comm.length() > 0)
                mProperties.setTextProperty(SpectrumProperties.SpectrumComment, comm);
          }
          dis.skipBytes(8);
@@ -131,40 +128,30 @@ public class EdaxSPCSpectrum
          mProperties.setObjectProperty(SpectrumProperties.StagePosition, sc);
          mProperties.setNumericProperty(SpectrumProperties.TakeOffAngle, dis.readFloat());
          f = dis.readFloat();
-         if(f > 0.0)
+         if (f > 0.0)
             mProperties.setNumericProperty(SpectrumProperties.ProbeCurrent, f);
          mProperties.setNumericProperty(SpectrumProperties.Resolution, dis.readFloat());
-         final String[] types = {
-            "std",
-            "UTW",
-            "Super UTW",
-            "ECON 3/4 Open",
-            "ECON 3/4 Closed",
-            "Econ 5/6 Open",
-            "Econ 5/6 Closed",
-            "TEMECON"
-         };
+         final String[] types = {"std", "UTW", "Super UTW", "ECON 3/4 Open", "ECON 3/4 Closed", "Econ 5/6 Open", "Econ 5/6 Closed", "TEMECON"};
          assert dis.getChannel().position() == 476;
          final int tmp = dis.readInt() - 1;
-         mProperties.setTextProperty(SpectrumProperties.DetectorDescription, (tmp >= 0) && (tmp < types.length) ? types[tmp]
-               : "unknown");
+         mProperties.setTextProperty(SpectrumProperties.DetectorDescription, (tmp >= 0) && (tmp < types.length) ? types[tmp] : "unknown");
          f = dis.readFloat();
-         if(f > 0.0)
+         if (f > 0.0)
             mProperties.setNumericProperty(SpectrumProperties.HydroCarbonWindow, f);
          f = dis.readFloat();
-         if(f > 0.0)
+         if (f > 0.0)
             mProperties.setNumericProperty(SpectrumProperties.AluminumWindow, 1000.0 * f);
          f = dis.readFloat();
-         if(f > 0.0)
+         if (f > 0.0)
             mProperties.setNumericProperty(SpectrumProperties.BerylliumWindow, f);
          f = dis.readFloat();
-         if(f > 0.0)
+         if (f > 0.0)
             mProperties.setNumericProperty(SpectrumProperties.GoldLayer, 1000.0 * f);
          f = dis.readFloat();
-         if(f > 0.0)
+         if (f > 0.0)
             mProperties.setNumericProperty(SpectrumProperties.DeadLayer, f);
          f = dis.readFloat();
-         if(f > 0.0)
+         if (f > 0.0)
             mProperties.setNumericProperty(SpectrumProperties.DetectorThickness, 10.0 * f);
          //
          {
@@ -186,13 +173,13 @@ public class EdaxSPCSpectrum
          {
             final int nElm = dis.readShort();
             final TreeSet<Element> elms = new TreeSet<Element>();
-            for(int i = 0; i < 48; ++i) {
+            for (int i = 0; i < 48; ++i) {
                final int z = dis.readShort();
-               if((i < nElm) && (Element.isValid(z)))
+               if ((i < nElm) && (Element.isValid(z)))
                   elms.add(Element.byAtomicNumber(z));
             }
             dis.skipBytes(1342 - (int) dis.getChannel().position());
-            if(elms.size() > 0)
+            if (elms.size() > 0)
                mProperties.setTextProperty(SpectrumProperties.ElementList, elms.toString());
          }
          assert dis.getChannel().position() == 1342;
@@ -204,14 +191,14 @@ public class EdaxSPCSpectrum
             assert numConcen < 24;
             final int[] z = new int[24];
             final float[] c = new float[24];
-            for(int i = 0; i < 24; ++i)
+            for (int i = 0; i < 24; ++i)
                z[i] = dis.readShort();
-            for(int i = 0; i < 24; ++i)
+            for (int i = 0; i < 24; ++i)
                c[i] = dis.readFloat();
-            if(numConcen > 0) {
+            if (numConcen > 0) {
                final Composition comp = new Composition();
-               for(int i = 0; i < numConcen; ++i)
-                  if(Element.isValid(z[i]) && (c[i] > 0.0))
+               for (int i = 0; i < numConcen; ++i)
+                  if (Element.isValid(z[i]) && (c[i] > 0.0))
                      comp.addElement(Element.byAtomicNumber(z[i]), c[i]);
                mProperties.setCompositionProperty(SpectrumProperties.MicroanalyticalComposition, comp);
             }
@@ -219,26 +206,25 @@ public class EdaxSPCSpectrum
          dis.skipBytes(3840 - (int) dis.getChannel().position());
          assert dis.getChannel().position() == 3840;
          // Read spectral data
-         for(int i = 0; i < mData.length; ++i)
+         for (int i = 0; i < mData.length; ++i)
             mData[i] = dis.readInt();
          dis.skipBytes((4096 - mData.length) * 4);
          {
             final String filename = readString(dis, 256);
-            if(filename.length() > 0) {
+            if (filename.length() > 0) {
                mProperties.setTextProperty(SpectrumProperties.SourceFile, filename);
                mProperties.setTextProperty(SpectrumProperties.SpecimenName, extractName(filename));
             }
          }
          {
             final String filename = readString(dis, 256);
-            if(filename.length() > 0) {
+            if (filename.length() > 0) {
                final File file = new File(filename);
-               if(file.canRead())
+               if (file.canRead())
                   try {
                      final BufferedImage bi = ImageIO.read(file);
                      getProperties().setImageProperty(SpectrumProperties.MicroImage, bi);
-                  }
-                  catch(final Throwable e) {
+                  } catch (final Throwable e) {
                      // Just ignore it. We tried, we failed, it probably ain't
                      // worth the effort
                   }
@@ -249,12 +235,11 @@ public class EdaxSPCSpectrum
       }
    }
 
-   private String readString(LEDataInputStream dis, int len)
-         throws IOException {
+   private String readString(LEDataInputStream dis, int len) throws IOException {
       final byte[] buffer = new byte[len];
       dis.readFully(buffer);
-      for(int i = 0; i < len; ++i)
-         if(buffer[i] == 0) {
+      for (int i = 0; i < len; ++i)
+         if (buffer[i] == 0) {
             len = i;
             break;
          }

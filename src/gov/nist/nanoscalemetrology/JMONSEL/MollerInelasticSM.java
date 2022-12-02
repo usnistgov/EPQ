@@ -48,9 +48,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * improvements should be implemented in a new scatter mechanism under a new
  * name.
  */
-public class MollerInelasticSM
-   extends
-   ScatterMechanism {
+public class MollerInelasticSM extends ScatterMechanism {
 
    /*
     * The following is the "free electron" density in electrons/m^3. This
@@ -89,8 +87,7 @@ public class MollerInelasticSM
     * specifying a different one in the second form of the constructor.
     */
    private final double FECUTOFF = ToSI.eV(10.);
-   private final double SIGMA0 = Math.pow(PhysicalConstants.ElectronCharge, 4)
-         / Math.pow(4 * PhysicalConstants.PermittivityOfFreeSpace, 2) / Math.PI;
+   private final double SIGMA0 = Math.pow(PhysicalConstants.ElectronCharge, 4) / Math.pow(4 * PhysicalConstants.PermittivityOfFreeSpace, 2) / Math.PI;
 
    /*
     * The scatter routine must solve for the energy of the produced SE by
@@ -157,7 +154,7 @@ public class MollerInelasticSM
     * accountable if they break this rule!)
     */
    private double fepsm_over_epsm(double kE) {
-      if(kE != last_kE) {
+      if (kE != last_kE) {
          /*
           * Divisions in the following lines should be safe because the calling
           * routines within this class guarantee 0 < eps <= 1/2
@@ -211,7 +208,7 @@ public class MollerInelasticSM
       final double rk = Math2.rgen.nextDouble() * fepsm_over_epsm(kE);
       double eps;
 
-      if(rk < 1.E3) {
+      if (rk < 1.E3) {
          /*
           * This block implements the solution of a cubic equation for eps. This
           * is a simple form of the solution, valid only for the special case
@@ -272,6 +269,7 @@ public class MollerInelasticSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatterRate(double)
     */
@@ -283,7 +281,7 @@ public class MollerInelasticSM
        * energy for generating an SE, there can be no SE, so return scatter rate
        * = 0.
        */
-      if(kE < (2. * minEgenSE))
+      if (kE < (2. * minEgenSE))
          return 0.;
       /*
        * Otherwise, compute the scatter rate according to Moller formula. 0 <
@@ -298,19 +296,20 @@ public class MollerInelasticSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#setMaterial(gov.nist
     * .microanalysis.EPQLibrary.Material)
     */
    @Override
    public void setMaterial(Material mat) {
-      if(!(mat instanceof SEmaterial))
+      if (!(mat instanceof SEmaterial))
          throw new EPQFatalException("Material " + mat.toString() + " is not an SEmaterial as required for MollerInelasticSM.");
       final Double[] binding = ((SEmaterial) mat).getBindingEnergyArray();
       final Double[] density = ((SEmaterial) mat).getElectronDensityArray();
       feDensity = 0.;
-      for(int i = 0; i < binding.length; i++)
-         if(binding[i] <= fecutoff)
+      for (int i = 0; i < binding.length; i++)
+         if (binding[i] <= fecutoff)
             feDensity += density[i];
       sr_const = feDensity * SIGMA0;
       return;
@@ -321,10 +320,11 @@ public class MollerInelasticSM
     * by default. It can be set to a different positive value by using this
     * method. SE with energies below this value are "turned off".
     *
-    * @param minEgenSE The minEgenSE to set.
+    * @param minEgenSE
+    *           The minEgenSE to set.
     */
    public void setMinEgenSE(double minEgenSE) {
-      if(minEgenSE > 0.)
+      if (minEgenSE > 0.)
          this.minEgenSE = minEgenSE;
       else
          throw new EPQFatalException("Illegal minEgenSE.");

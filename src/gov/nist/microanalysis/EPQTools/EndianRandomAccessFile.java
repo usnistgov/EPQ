@@ -21,8 +21,7 @@ import java.io.RandomAccessFile;
  * @author Nicholas
  * @version 1.0
  */
-public class EndianRandomAccessFile
-   implements DataInput, DataOutput {
+public class EndianRandomAccessFile implements DataInput, DataOutput {
 
    /**
     * LittleEndian - Specifies that Little Endian ordering should be used.
@@ -41,14 +40,16 @@ public class EndianRandomAccessFile
     * EndianRandomAccessFile - Similar to the RandomAccessFile constructors
     * except for the final argument.
     * 
-    * @param f String
-    * @param rw String As in RandomAccessFile mode "r", "rw", "rws", "rwd"
-    * @param endian String - One of EndianRandomAccessFile.LittleEndian or
+    * @param f
+    *           String
+    * @param rw
+    *           String As in RandomAccessFile mode "r", "rw", "rws", "rwd"
+    * @param endian
+    *           String - One of EndianRandomAccessFile.LittleEndian or
     *           EndianRandomAccessFile.BigEndian
     * @throws IOException
     */
-   public EndianRandomAccessFile(String f, String rw, String endian)
-         throws IOException {
+   public EndianRandomAccessFile(String f, String rw, String endian) throws IOException {
       mRaf = new RandomAccessFile(f, rw);
       mBuffer = new byte[8];
       setEndian(endian);
@@ -62,14 +63,16 @@ public class EndianRandomAccessFile
     * EndianRandomAccessFile - Similar to the RandomAccessFile constructors
     * except for the final argument.
     * 
-    * @param f File
-    * @param rw String As in RandomAccessFile mode "r", "rw", "rws", "rwd"
-    * @param endian String - One of EndianRandomAccessFile.LittleEndian or
+    * @param f
+    *           File
+    * @param rw
+    *           String As in RandomAccessFile mode "r", "rw", "rws", "rwd"
+    * @param endian
+    *           String - One of EndianRandomAccessFile.LittleEndian or
     *           EndianRandomAccessFile.BigEndian
     * @throws IOException
     */
-   public EndianRandomAccessFile(File f, String rw, String endian)
-         throws IOException {
+   public EndianRandomAccessFile(File f, String rw, String endian) throws IOException {
       mRaf = new RandomAccessFile(f, rw);
       mBuffer = new byte[8];
       setEndian(endian);
@@ -79,9 +82,8 @@ public class EndianRandomAccessFile
     * like RandomAcessFile.readShort except endianess depends upon constructor.
     */
    @Override
-   public final short readShort()
-         throws IOException {
-      if(mLittleEndian) {
+   public final short readShort() throws IOException {
+      if (mLittleEndian) {
          mRaf.readFully(mBuffer, 0, 2);
          return (short) (((mBuffer[1] & 0xff) << 8) | (mBuffer[0] & 0xff));
       } else
@@ -93,9 +95,8 @@ public class EndianRandomAccessFile
     * constructor Note, returns int even though it reads a short.
     */
    @Override
-   public final int readUnsignedShort()
-         throws IOException {
-      if(mLittleEndian) {
+   public final int readUnsignedShort() throws IOException {
+      if (mLittleEndian) {
          mRaf.readFully(mBuffer, 0, 2);
          return (((mBuffer[1] & 0xff) << 8) | (mBuffer[0] & 0xff));
       } else
@@ -109,10 +110,9 @@ public class EndianRandomAccessFile
     * @return long
     * @throws IOException
     */
-   public final long readUnsignedInt()
-         throws IOException {
+   public final long readUnsignedInt() throws IOException {
       mRaf.readFully(mBuffer, 0, 4);
-      if(mLittleEndian)
+      if (mLittleEndian)
          return (((mBuffer[3] & 0xff) << 24) | ((mBuffer[2] & 0xff) << 16) | ((mBuffer[1] & 0xff) << 8) | (mBuffer[0] & 0xff));
       else
          return (((mBuffer[0] & 0xff) << 24) | ((mBuffer[1] & 0xff) << 16) | ((mBuffer[2] & 0xff) << 8) | (mBuffer[3] & 0xff));
@@ -126,9 +126,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readChar()
     */
    @Override
-   public final char readChar()
-         throws IOException {
-      if(mLittleEndian) {
+   public final char readChar() throws IOException {
+      if (mLittleEndian) {
          mRaf.readFully(mBuffer, 0, 2);
          return (char) (((mBuffer[1] & 0xff) << 8) | (mBuffer[0] & 0xff));
       } else
@@ -143,9 +142,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readInt()
     */
    @Override
-   public final int readInt()
-         throws IOException {
-      if(mLittleEndian) {
+   public final int readInt() throws IOException {
+      if (mLittleEndian) {
          mRaf.readFully(mBuffer, 0, 4);
          return ((mBuffer[3]) << 24) | ((mBuffer[2] & 0xff) << 16) | ((mBuffer[1] & 0xff) << 8) | (mBuffer[0] & 0xff);
       } else
@@ -160,17 +158,15 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readLong()
     */
    @Override
-   public final long readLong()
-         throws IOException {
-      if(mLittleEndian) {
+   public final long readLong() throws IOException {
+      if (mLittleEndian) {
          mRaf.readFully(mBuffer, 0, 8);
-         return ((long) (mBuffer[7]) << 56) | (/*
-                                                * long cast necessary or shift
-                                                * done modulo 32
-                                                */
-         (long) (mBuffer[6] & 0xff) << 48) | ((long) (mBuffer[5] & 0xff) << 40) | ((long) (mBuffer[4] & 0xff) << 32)
-               | ((long) (mBuffer[3] & 0xff) << 24) | ((long) (mBuffer[2] & 0xff) << 16) | ((long) (mBuffer[1] & 0xff) << 8)
-               | (mBuffer[0] & 0xff);
+         return ((long) (mBuffer[7]) << 56)
+               | (/*
+                   * long cast necessary or shift done modulo 32
+                   */
+               (long) (mBuffer[6] & 0xff) << 48) | ((long) (mBuffer[5] & 0xff) << 40) | ((long) (mBuffer[4] & 0xff) << 32)
+               | ((long) (mBuffer[3] & 0xff) << 24) | ((long) (mBuffer[2] & 0xff) << 16) | ((long) (mBuffer[1] & 0xff) << 8) | (mBuffer[0] & 0xff);
       } else
          return mRaf.readLong();
    }
@@ -183,9 +179,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readFloat()
     */
    @Override
-   public final float readFloat()
-         throws IOException {
-      if(mLittleEndian)
+   public final float readFloat() throws IOException {
+      if (mLittleEndian)
          return Float.intBitsToFloat(readInt());
       else
          return mRaf.readFloat();
@@ -199,9 +194,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readDouble()
     */
    @Override
-   public final double readDouble()
-         throws IOException {
-      if(mLittleEndian)
+   public final double readDouble() throws IOException {
+      if (mLittleEndian)
          return Double.longBitsToDouble(readLong());
       else
          return mRaf.readDouble();
@@ -215,9 +209,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeShort(int)
     */
    @Override
-   public final void writeShort(int v)
-         throws IOException {
-      if(mLittleEndian) {
+   public final void writeShort(int v) throws IOException {
+      if (mLittleEndian) {
          mBuffer[0] = (byte) v;
          mBuffer[1] = (byte) (v >> 8);
          mRaf.write(mBuffer, 0, 2);
@@ -234,9 +227,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeChar(int)
     */
    @Override
-   public final void writeChar(int v)
-         throws IOException {
-      if(mLittleEndian) {
+   public final void writeChar(int v) throws IOException {
+      if (mLittleEndian) {
          // same code as writeShort
          mBuffer[0] = (byte) v;
          mBuffer[1] = (byte) (v >> 8);
@@ -253,9 +245,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeInt(int)
     */
    @Override
-   public final void writeInt(int v)
-         throws IOException {
-      if(mLittleEndian) {
+   public final void writeInt(int v) throws IOException {
+      if (mLittleEndian) {
          mBuffer[0] = (byte) v;
          mBuffer[1] = (byte) (v >> 8);
          mBuffer[2] = (byte) (v >> 16);
@@ -273,9 +264,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeLong(long)
     */
    @Override
-   public final void writeLong(long v)
-         throws IOException {
-      if(mLittleEndian) {
+   public final void writeLong(long v) throws IOException {
+      if (mLittleEndian) {
          mBuffer[0] = (byte) v;
          mBuffer[1] = (byte) (v >> 8);
          mBuffer[2] = (byte) (v >> 16);
@@ -297,9 +287,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeFloat(float)
     */
    @Override
-   public final void writeFloat(float v)
-         throws IOException {
-      if(mLittleEndian)
+   public final void writeFloat(float v) throws IOException {
+      if (mLittleEndian)
          writeInt(Float.floatToIntBits(v));
       else
          mRaf.writeFloat(v);
@@ -313,9 +302,8 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeDouble(double)
     */
    @Override
-   public final void writeDouble(double v)
-         throws IOException {
-      if(mLittleEndian)
+   public final void writeDouble(double v) throws IOException {
+      if (mLittleEndian)
          writeLong(Double.doubleToLongBits(v));
       else
          mRaf.writeDouble(v);
@@ -329,11 +317,10 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeChars(java.lang.String)
     */
    @Override
-   public final void writeChars(String s)
-         throws IOException {
-      if(mLittleEndian) {
+   public final void writeChars(String s) throws IOException {
+      if (mLittleEndian) {
          final int len = s.length();
-         for(int i = 0; i < len; i++)
+         for (int i = 0; i < len; i++)
             writeChar(s.charAt(i));
       } else
          mRaf.writeChars(s);
@@ -345,8 +332,7 @@ public class EndianRandomAccessFile
     * @return FileDescriptor
     * @throws IOException
     */
-   public final FileDescriptor getFD()
-         throws IOException {
+   public final FileDescriptor getFD() throws IOException {
       return mRaf.getFD();
    }
 
@@ -356,8 +342,7 @@ public class EndianRandomAccessFile
     * @return
     * @throws IOException
     */
-   public final long getFilePointer()
-         throws IOException {
+   public final long getFilePointer() throws IOException {
       return mRaf.getFilePointer();
    }
 
@@ -367,8 +352,7 @@ public class EndianRandomAccessFile
     * @return long
     * @throws IOException
     */
-   public final long length()
-         throws IOException {
+   public final long length() throws IOException {
       return mRaf.length();
    }
 
@@ -381,8 +365,7 @@ public class EndianRandomAccessFile
     * @return int
     * @throws IOException
     */
-   public final int read(byte b[], int off, int len)
-         throws IOException {
+   public final int read(byte b[], int off, int len) throws IOException {
       return mRaf.read(b, off, len);
    }
 
@@ -393,8 +376,7 @@ public class EndianRandomAccessFile
     * @return int
     * @throws IOException
     */
-   public final int read(byte b[])
-         throws IOException {
+   public final int read(byte b[]) throws IOException {
       return mRaf.read(b);
    }
 
@@ -404,8 +386,7 @@ public class EndianRandomAccessFile
     * @return int
     * @throws IOException
     */
-   public final int read()
-         throws IOException {
+   public final int read() throws IOException {
       return mRaf.read();
    }
 
@@ -417,8 +398,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readFully(byte[])
     */
    @Override
-   public final void readFully(byte b[])
-         throws IOException {
+   public final void readFully(byte b[]) throws IOException {
       mRaf.readFully(b, 0, b.length);
    }
 
@@ -432,8 +412,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readFully(byte[], int, int)
     */
    @Override
-   public final void readFully(byte b[], int off, int len)
-         throws IOException {
+   public final void readFully(byte b[], int off, int len) throws IOException {
       mRaf.readFully(b, off, len);
    }
 
@@ -446,8 +425,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#skipBytes(int)
     */
    @Override
-   public final int skipBytes(int n)
-         throws IOException {
+   public final int skipBytes(int n) throws IOException {
       return mRaf.skipBytes(n);
    }
 
@@ -459,8 +437,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readBoolean()
     */
    @Override
-   public final boolean readBoolean()
-         throws IOException {
+   public final boolean readBoolean() throws IOException {
       return mRaf.readBoolean();
    }
 
@@ -472,8 +449,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readByte()
     */
    @Override
-   public final byte readByte()
-         throws IOException {
+   public final byte readByte() throws IOException {
       return mRaf.readByte();
    }
 
@@ -485,8 +461,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readUnsignedByte()
     */
    @Override
-   public final int readUnsignedByte()
-         throws IOException {
+   public final int readUnsignedByte() throws IOException {
       return mRaf.readUnsignedByte();
    }
 
@@ -498,8 +473,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readLine()
     */
    @Override
-   public final String readLine()
-         throws IOException {
+   public final String readLine() throws IOException {
       return mRaf.readLine();
    }
 
@@ -511,8 +485,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataInput#readUTF()
     */
    @Override
-   public final String readUTF()
-         throws IOException {
+   public final String readUTF() throws IOException {
       return mRaf.readUTF();
    }
 
@@ -522,8 +495,7 @@ public class EndianRandomAccessFile
     * @param pos
     * @throws IOException
     */
-   public final void seek(long pos)
-         throws IOException {
+   public final void seek(long pos) throws IOException {
       mRaf.seek(pos);
    }
 
@@ -535,8 +507,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#write(int)
     */
    @Override
-   public final synchronized void write(int b)
-         throws IOException {
+   public final synchronized void write(int b) throws IOException {
       mRaf.write(b);
    }
 
@@ -550,8 +521,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#write(byte[], int, int)
     */
    @Override
-   public final synchronized void write(byte b[], int off, int len)
-         throws IOException {
+   public final synchronized void write(byte b[], int off, int len) throws IOException {
       mRaf.write(b, off, len);
    }
 
@@ -563,8 +533,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeBoolean(boolean)
     */
    @Override
-   public final void writeBoolean(boolean v)
-         throws IOException {
+   public final void writeBoolean(boolean v) throws IOException {
       mRaf.writeBoolean(v);
    }
 
@@ -576,8 +545,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeByte(int)
     */
    @Override
-   public final void writeByte(int v)
-         throws IOException {
+   public final void writeByte(int v) throws IOException {
       mRaf.writeByte(v);
    }
 
@@ -589,8 +557,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeBytes(java.lang.String)
     */
    @Override
-   public final void writeBytes(String s)
-         throws IOException {
+   public final void writeBytes(String s) throws IOException {
       mRaf.writeBytes(s);
    }
 
@@ -602,8 +569,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#writeUTF(java.lang.String)
     */
    @Override
-   public final void writeUTF(String str)
-         throws IOException {
+   public final void writeUTF(String str) throws IOException {
       mRaf.writeUTF(str);
    }
 
@@ -615,8 +581,7 @@ public class EndianRandomAccessFile
     * @see java.io.DataOutput#write(byte[])
     */
    @Override
-   public final void write(byte b[])
-         throws IOException {
+   public final void write(byte b[]) throws IOException {
       mRaf.write(b, 0, b.length);
    }
 
@@ -625,8 +590,7 @@ public class EndianRandomAccessFile
     * 
     * @throws IOException
     */
-   public final void close()
-         throws IOException {
+   public final void close() throws IOException {
       mRaf.close();
    }
 }

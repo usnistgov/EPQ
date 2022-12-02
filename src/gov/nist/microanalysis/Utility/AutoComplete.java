@@ -29,8 +29,7 @@ import javax.swing.text.PlainDocument;
  * AutoComplete provides a mechanism to modify the standard JComboBox to
  * implement auto-completion.
  */
-public class AutoComplete<T>
-   extends PlainDocument {
+public class AutoComplete<T> extends PlainDocument {
    static private final long serialVersionUID = 0x8691269dc273aL;
    JComboBox<? extends Object> mComboBox;
    ComboBoxModel<? extends Object> mModel;
@@ -48,7 +47,8 @@ public class AutoComplete<T>
    /**
     * Constructs a AutoComplete. You should consider using enable(...) instead.
     * 
-    * @param comboBox JComboBox
+    * @param comboBox
+    *           JComboBox
     */
    public AutoComplete(final JComboBox<? extends Object> comboBox) {
       mComboBox = comboBox;
@@ -56,7 +56,7 @@ public class AutoComplete<T>
       comboBox.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if(!mSelecting)
+            if (!mSelecting)
                highlightCompletedText(0);
          }
       });
@@ -64,27 +64,27 @@ public class AutoComplete<T>
          @Override
          @SuppressWarnings("unchecked")
          public void propertyChange(PropertyChangeEvent e) {
-            if(e.getPropertyName().equals("editor"))
+            if (e.getPropertyName().equals("editor"))
                configureEditor((ComboBoxEditor) e.getNewValue());
-            if(e.getPropertyName().equals("model"))
+            if (e.getPropertyName().equals("model"))
                mModel = (ComboBoxModel<T>) e.getNewValue();
          }
       });
       mEditorKeyListener = new KeyAdapter() {
          @Override
          public void keyPressed(KeyEvent e) {
-            if(comboBox.isDisplayable())
+            if (comboBox.isDisplayable())
                comboBox.setPopupVisible(true);
             mHitBackspace = false;
-            switch(e.getKeyCode()) {
+            switch (e.getKeyCode()) {
                // determine if the pressed key is backspace (needed by the
                // remove method)
-               case KeyEvent.VK_BACK_SPACE:
+               case KeyEvent.VK_BACK_SPACE :
                   mHitBackspace = true;
                   mHitBackspaceOnSelection = mEditor.getSelectionStart() != mEditor.getSelectionEnd();
                   break;
                // ignore delete key
-               case KeyEvent.VK_DELETE:
+               case KeyEvent.VK_DELETE :
                   e.consume();
                   comboBox.getToolkit().beep();
                   break;
@@ -104,14 +104,14 @@ public class AutoComplete<T>
          @Override
          public void focusLost(FocusEvent e) {
             // Workaround for Bug 5100422 - Hide Popup on focus loss
-            if(mHidePopupOnFocusLoss)
+            if (mHidePopupOnFocusLoss)
                comboBox.setPopupVisible(false);
          }
       };
       configureEditor(comboBox.getEditor());
       // Handle initially selected object
       final Object selected = comboBox.getSelectedItem();
-      if(selected != null)
+      if (selected != null)
          setText(selected.toString());
       highlightCompletedText(0);
    }
@@ -122,7 +122,8 @@ public class AutoComplete<T>
     * the specified JComboBox. If the JComboBox is to be part of a JTable use
     * ComboBoxCellEditor to wrap the JComboBox instead of DefaultCellEditor.
     * 
-    * @param comboBox A JComboBox
+    * @param comboBox
+    *           A JComboBox
     */
    public static void enable(JComboBox<? extends Object> comboBox) {
       // has to be editable
@@ -132,12 +133,12 @@ public class AutoComplete<T>
    }
 
    void configureEditor(ComboBoxEditor newEditor) {
-      if(mEditor != null) {
+      if (mEditor != null) {
          mEditor.removeKeyListener(mEditorKeyListener);
          mEditor.removeFocusListener(mEditorFocusListener);
       }
 
-      if(newEditor != null) {
+      if (newEditor != null) {
          mEditor = (JTextComponent) newEditor.getEditorComponent();
          mEditor.addKeyListener(mEditorKeyListener);
          mEditor.addFocusListener(mEditorFocusListener);
@@ -146,16 +147,15 @@ public class AutoComplete<T>
    }
 
    @Override
-   public void remove(int offs, int len)
-         throws BadLocationException {
+   public void remove(int offs, int len) throws BadLocationException {
       // return immediately when selecting an item
-      if(mSelecting)
+      if (mSelecting)
          return;
-      if(mHitBackspace) {
+      if (mHitBackspace) {
          // user hit backspace => move the selection backwards
          // old item keeps being selected
-         if(offs > 0) {
-            if(mHitBackspaceOnSelection)
+         if (offs > 0) {
+            if (mHitBackspaceOnSelection)
                offs--;
          } else
             // User hit backspace with the cursor positioned on the start =>
@@ -168,16 +168,15 @@ public class AutoComplete<T>
    }
 
    @Override
-   public void insertString(int offs, String str, AttributeSet a)
-         throws BadLocationException {
+   public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
       // return immediately when selecting an item
-      if(mSelecting)
+      if (mSelecting)
          return;
       // insert the string into the document
       super.insertString(offs, str, a);
       // lookup and select a matching item
       Object item = lookupItem(getText(0, getLength()));
-      if(item != null)
+      if (item != null)
          setSelectedItem(item);
       else {
          // keep old item selected if there is no match
@@ -200,8 +199,7 @@ public class AutoComplete<T>
          // remove all text and insert the completed string
          super.remove(0, getLength());
          super.insertString(0, text, null);
-      }
-      catch(final BadLocationException e) {
+      } catch (final BadLocationException e) {
          throw new RuntimeException(e.toString());
       }
    }
@@ -221,15 +219,15 @@ public class AutoComplete<T>
       final Object selectedItem = mModel.getSelectedItem();
       // only search for a different item if the currently selected does not
       // match
-      if((selectedItem != null) && startsWithIgnoreCase(selectedItem.toString(), pattern))
+      if ((selectedItem != null) && startsWithIgnoreCase(selectedItem.toString(), pattern))
          return selectedItem;
       else
          // iterate over all items
-         for(int i = 0, n = mModel.getSize(); i < n; i++) {
-         final Object currentItem = mModel.getElementAt(i);
-         // current item starts with the pattern?
-         if((currentItem != null) && startsWithIgnoreCase(currentItem.toString(), pattern))
-         return currentItem;
+         for (int i = 0, n = mModel.getSize(); i < n; i++) {
+            final Object currentItem = mModel.getElementAt(i);
+            // current item starts with the pattern?
+            if ((currentItem != null) && startsWithIgnoreCase(currentItem.toString(), pattern))
+               return currentItem;
          }
       // no item starts with the pattern => return null
       return null;

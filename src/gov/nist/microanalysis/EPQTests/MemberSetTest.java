@@ -18,8 +18,7 @@ package gov.nist.microanalysis.EPQTests;
 import gov.nist.microanalysis.Utility.MemberSet;
 import junit.framework.TestCase;
 
-public class MemberSetTest
-   extends TestCase {
+public class MemberSetTest extends TestCase {
 
    /**
     * Test method for
@@ -27,11 +26,11 @@ public class MemberSetTest
     */
    public void testContains() {
       final MemberSet ms = new MemberSet(20, false);
-      for(int i = 0; i < ms.size(); i += 3)
+      for (int i = 0; i < ms.size(); i += 3)
          ms.add(i);
-      for(int i = 0; i < ms.size(); i += 5)
+      for (int i = 0; i < ms.size(); i += 5)
          ms.add(i);
-      for(int i = 0; i < ms.size(); ++i)
+      for (int i = 0; i < ms.size(); ++i)
          assertTrue(ms.contains(i) == (((i % 3) == 0) || ((i % 5) == 0)));
    }
 
@@ -41,9 +40,9 @@ public class MemberSetTest
    public void testAdd() {
       final MemberSet ms = new MemberSet(20, false);
       int count = 0;
-      for(int i = 0; i < ms.size(); ++i) {
+      for (int i = 0; i < ms.size(); ++i) {
          final int x = (int) (Math.random() * ms.size());
-         if(!ms.contains(x)) {
+         if (!ms.contains(x)) {
             count++;
             ms.add(x);
             assertTrue(ms.contains(x));
@@ -59,9 +58,9 @@ public class MemberSetTest
    public void testRemoveInt() {
       final MemberSet ms = new MemberSet(20, true);
       int count = 0;
-      for(int i = 0; i < ms.size(); ++i) {
+      for (int i = 0; i < ms.size(); ++i) {
          final int x = (int) (Math.random() * ms.size());
-         if(ms.contains(x)) {
+         if (ms.contains(x)) {
             count++;
             ms.remove(x);
             assertTrue(!ms.contains(x));
@@ -86,12 +85,12 @@ public class MemberSetTest
    public void testInclude() {
       final MemberSet ms1 = new MemberSet(20, false);
       final MemberSet ms2 = new MemberSet(20, false);
-      for(int i = 0; i < ms1.size(); i += 3)
+      for (int i = 0; i < ms1.size(); i += 3)
          ms1.add(i);
-      for(int i = 0; i < ms2.size(); i += 5)
+      for (int i = 0; i < ms2.size(); i += 5)
          ms2.add(i);
       ms1.include(ms2);
-      for(int i = 0; i < ms1.size(); ++i)
+      for (int i = 0; i < ms1.size(); ++i)
          assertTrue(ms1.contains(i) == (((i % 3) == 0) || ((i % 5) == 0)));
    }
 
@@ -103,12 +102,12 @@ public class MemberSetTest
    public void testRemoveMemberSet() {
       final MemberSet ms1 = new MemberSet(20, false);
       final MemberSet ms2 = new MemberSet(20, false);
-      for(int i = 0; i < ms1.size(); i += 3)
+      for (int i = 0; i < ms1.size(); i += 3)
          ms1.add(i);
-      for(int i = 0; i < ms2.size(); i += 5)
+      for (int i = 0; i < ms2.size(); i += 5)
          ms2.add(i);
       ms1.remove(ms2);
-      for(int i = 0; i < ms1.size(); ++i)
+      for (int i = 0; i < ms1.size(); ++i)
          assertTrue(ms1.contains(i) == (((i % 3) == 0) && (!((i % 5) == 0))));
    }
 
@@ -120,12 +119,12 @@ public class MemberSetTest
    public void testBoth() {
       final MemberSet ms1 = new MemberSet(20, false);
       final MemberSet ms2 = new MemberSet(20, false);
-      for(int i = 0; i < ms1.size(); i += 3)
+      for (int i = 0; i < ms1.size(); i += 3)
          ms1.add(i);
-      for(int i = 0; i < ms2.size(); i += 5)
+      for (int i = 0; i < ms2.size(); i += 5)
          ms2.add(i);
       ms1.both(ms2);
-      for(int i = 0; i < ms1.size(); ++i)
+      for (int i = 0; i < ms1.size(); ++i)
          assertTrue(ms1.contains(i) == (((i % 3) == 0) && ((i % 5) == 0)));
    }
 
@@ -137,12 +136,12 @@ public class MemberSetTest
    public void testNeither() {
       final MemberSet ms1 = new MemberSet(20, false);
       final MemberSet ms2 = new MemberSet(20, false);
-      for(int i = 0; i < ms1.size(); i += 3)
+      for (int i = 0; i < ms1.size(); i += 3)
          ms1.add(i);
-      for(int i = 0; i < ms2.size(); i += 5)
+      for (int i = 0; i < ms2.size(); i += 5)
          ms2.add(i);
       ms1.neither(ms2);
-      for(int i = 0; i < ms1.size(); ++i)
+      for (int i = 0; i < ms1.size(); ++i)
          assertTrue(ms1.contains(i) != (((i % 3) == 0) || ((i % 5) == 0)));
    }
 
@@ -176,9 +175,9 @@ public class MemberSetTest
       MemberSet ms1 = new MemberSet(20, false);
       MemberSet ms2 = new MemberSet(20, false);
       assertTrue(ms1.equals(ms2));
-      for(int i = 0; i < ms1.size(); i += 3)
+      for (int i = 0; i < ms1.size(); i += 3)
          ms1.add(i);
-      for(int i = 0; i < ms2.size(); i += 5)
+      for (int i = 0; i < ms2.size(); i += 5)
          ms2.add(i);
       assertFalse(ms1.equals(ms2));
       ms1 = new MemberSet(20, true);
@@ -190,18 +189,18 @@ public class MemberSetTest
 
    public void testNextMember() {
       final MemberSet ms1 = new MemberSet(2023, false);
-      for(int i = 0; i < ms1.size(); i += 3)
+      for (int i = 0; i < ms1.size(); i += 3)
          ms1.add(i);
       int j = 0;
-      for(int i = ms1.nextMember(-1); i != -1; i = ms1.nextMember(i)) {
+      for (int i = ms1.nextMember(-1); i != -1; i = ms1.nextMember(i)) {
          assertTrue(i == j);
          j += 3;
       }
       ms1.reset(false);
-      for(int i = 0; i < ms1.size(); i += 21)
+      for (int i = 0; i < ms1.size(); i += 21)
          ms1.add(i);
       j = 0;
-      for(int i = ms1.nextMember(-1); i != -1; i = ms1.nextMember(i)) {
+      for (int i = ms1.nextMember(-1); i != -1; i = ms1.nextMember(i)) {
          assertTrue(i == j);
          j += 21;
       }

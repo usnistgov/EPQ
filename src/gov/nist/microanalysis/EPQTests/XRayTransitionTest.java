@@ -24,14 +24,12 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class XRayTransitionTest
-   extends TestCase {
+public class XRayTransitionTest extends TestCase {
    public XRayTransitionTest(String test) {
       super(test);
    }
 
-   public void testOne()
-         throws Exception {
+   public void testOne() throws Exception {
       {
          final XRayTransition xrt = new XRayTransition(new AtomicShell(Element.Au, AtomicShell.LIII), AtomicShell.MV);
          xrt.getEnergy();
@@ -45,14 +43,14 @@ public class XRayTransitionTest
       // It is important that XRayTransition objects are sorted by destination
       // shell then source shell to optimize calculation in ComputeZAF.
       final TreeSet<XRayTransition> ts = new TreeSet<XRayTransition>();
-      for(int i = XRayTransition.KA1; i < XRayTransition.Last; ++i)
-         if(XRayTransition.exists(Element.U, i))
+      for (int i = XRayTransition.KA1; i < XRayTransition.Last; ++i)
+         if (XRayTransition.exists(Element.U, i))
             ts.add(new XRayTransition(Element.U, i));
       final Iterator<XRayTransition> j = ts.iterator();
       XRayTransition prev = j.next();
-      while(j.hasNext()) {
+      while (j.hasNext()) {
          final XRayTransition xrt = j.next();
-         if(xrt.getDestinationShell() == prev.getDestinationShell())
+         if (xrt.getDestinationShell() == prev.getDestinationShell())
             assertTrue(xrt.getSourceShell() > prev.getSourceShell());
          else
             assertTrue(xrt.getDestinationShell() > prev.getDestinationShell());

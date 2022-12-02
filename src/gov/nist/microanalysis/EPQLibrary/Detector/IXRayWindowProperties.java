@@ -18,14 +18,14 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
  * @version 1.0
  */
 
-public interface IXRayWindowProperties
-   extends Cloneable {
+public interface IXRayWindowProperties extends Cloneable {
 
    /**
     * transmission - Returns the fractional transmission as a function of the
     * x-ray energy.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - [0.0,1.0]
     */
    double transmission(double energy);

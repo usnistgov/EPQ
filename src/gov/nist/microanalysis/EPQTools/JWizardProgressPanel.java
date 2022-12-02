@@ -28,8 +28,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author nritchie
  * @version 1.0
  */
-public class JWizardProgressPanel<T>
-   extends JWizardPanel {
+public class JWizardProgressPanel<T> extends JWizardPanel {
    private static final long serialVersionUID = -7686047235940468693L;
    private final JProgressBar jProgressBar_Progress = new JProgressBar();
    private final JLabel jLabel_Progress = new JLabel("");
@@ -43,8 +42,8 @@ public class JWizardProgressPanel<T>
       StringBuffer res = new StringBuffer();
       String tmp = Integer.toString(val);
       final int len = tmp.length();
-      for(int i = 0; i < len; ++i) {
-         if((len - i) % 3 == 0)
+      for (int i = 0; i < len; ++i) {
+         if ((len - i) % 3 == 0)
             res.append('\u2009');
          res.append(tmp.charAt(i));
       }
@@ -57,7 +56,8 @@ public class JWizardProgressPanel<T>
     * 
     * @param wiz
     * @param message
-    * @param thread The thread should implement {@link SwingWorker} methods
+    * @param thread
+    *           The thread should implement {@link SwingWorker} methods
     *           'process(java.util.List&lt;Integer&gt; chunks)' to update this
     *           panel using the setProgress method and 'done()' to set
     *           'enableFinish(true)'.
@@ -86,7 +86,7 @@ public class JWizardProgressPanel<T>
       getWizard().setMessageText(mMessage);
       getWizard().enableFinish(false);
       setProgress(0);
-      if(mThread != null)
+      if (mThread != null)
          mThread.execute();
       else {
          getWizard().setMessageText("Nothing to do!");
@@ -120,12 +120,11 @@ public class JWizardProgressPanel<T>
    @Override
    public void onHide() {
       mResults = null;
-      if(mThread != null)
-         if(mThread.isDone())
+      if (mThread != null)
+         if (mThread.isDone())
             try {
                mResults = mThread.get();
-            }
-            catch(final Exception e) {
+            } catch (final Exception e) {
                mResults = null;
             }
          else
@@ -139,7 +138,7 @@ public class JWizardProgressPanel<T>
          public void run() {
             jProgressBar_Progress.setValue(mProgress);
             jLabel_Progress.setText(format(mProgress) + mOutOf);
-            if(mProgress >= jProgressBar_Progress.getMaximum())
+            if (mProgress >= jProgressBar_Progress.getMaximum())
                getWizard().enableFinish(true);
          }
       });

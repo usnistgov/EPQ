@@ -100,8 +100,7 @@ import gov.nist.nanoscalemetrology.JMONSELutils.ULagrangeInterpolation;
  * @version 1.0
  */
 
-public class MeshedRegion
-   extends TransformableRegion {
+public class MeshedRegion extends TransformableRegion {
 
    /**
     * <p>
@@ -120,8 +119,7 @@ public class MeshedRegion
     * @author John Villarrubia
     * @version 1.0
     */
-   public static class DirichletConstraint
-      implements IConstraint {
+   public static class DirichletConstraint implements IConstraint {
       private final long associatedRegionTag;
       private double potential;
       private final int hash;
@@ -130,10 +128,12 @@ public class MeshedRegion
       /**
        * Constructs a DirichletConstraint.
        * 
-       * @param associatedRegionTag -- The tag of the surface or volume elements
-       *           associated with this constraint.
-       * @param potential -- The value of potential to which the tagged elements
-       *           should be constrained.
+       * @param associatedRegionTag
+       *           -- The tag of the surface or volume elements associated with
+       *           this constraint.
+       * @param potential
+       *           -- The value of potential to which the tagged elements should
+       *           be constrained.
        */
       public DirichletConstraint(Mesh mesh, long associatedRegionTag, double potential) {
          super();
@@ -164,11 +164,11 @@ public class MeshedRegion
        */
       @Override
       public boolean equals(Object obj) {
-         if(obj.getClass() != this.getClass())
+         if (obj.getClass() != this.getClass())
             return false;
          final DirichletConstraint cobj = (DirichletConstraint) obj;
 
-         if((cobj.getPotential() != potential) || (cobj.getMesh() != mesh))
+         if ((cobj.getPotential() != potential) || (cobj.getMesh() != mesh))
             return false;
 
          return true;
@@ -243,8 +243,7 @@ public class MeshedRegion
     * @author John Villarrubia
     * @version 1.0
     */
-   public static class FloatingConstraint
-      implements IConstraint {
+   public static class FloatingConstraint implements IConstraint {
       private final long associatedRegionTag;
       private final long volumeTag;
       private final int hash;
@@ -271,10 +270,10 @@ public class MeshedRegion
          this.volumeTag = volumeTag;
          final int n = mesh.getNumberOfElements();
          int surfaceElement = 0;
-         for(int j = 1; j <= n; j++) {
-            if(mesh.getTags(j)[0] == volumeTag)
+         for (int j = 1; j <= n; j++) {
+            if (mesh.getTags(j)[0] == volumeTag)
                volumeElements.add(j);
-            if(mesh.getTags(j)[0] == associatedRegionTag)
+            if (mesh.getTags(j)[0] == associatedRegionTag)
                surfaceElement = j;
          }
          aSurfaceNode = mesh.getNodeIndices(surfaceElement)[0];
@@ -304,8 +303,8 @@ public class MeshedRegion
        */
       public void computeCharge() {
          int charge = 0;
-         for(final int j : volumeElements)
-            if(mesh.getTags(j)[0] == volumeTag)
+         for (final int j : volumeElements)
+            if (mesh.getTags(j)[0] == volumeTag)
                charge += mesh.getChargeNumber(j);
          this.charge = charge;
       }
@@ -321,12 +320,11 @@ public class MeshedRegion
        */
       @Override
       public boolean equals(Object obj) {
-         if(obj.getClass() != this.getClass())
+         if (obj.getClass() != this.getClass())
             return false;
          final FloatingConstraint cobj = (FloatingConstraint) obj;
 
-         if((cobj.getAssociatedRegionTag() != associatedRegionTag) || (cobj.getVolumeTag() != volumeTag)
-               || (cobj.getMesh() != mesh))
+         if ((cobj.getAssociatedRegionTag() != associatedRegionTag) || (cobj.getVolumeTag() != volumeTag) || (cobj.getMesh() != mesh))
             return false;
 
          return true;
@@ -432,10 +430,10 @@ public class MeshedRegion
        */
       public void setVolumePotential() {
          final double v = getPotential();
-         for(final Integer i : volumeElements) {
+         for (final Integer i : volumeElements) {
             final int[] nodes = mesh.getNodeIndices(i);
-            for(final int node : nodes)
-               if(mesh.getNodePotential(node) != v)
+            for (final int node : nodes)
+               if (mesh.getNodePotential(node) != v)
                   mesh.setNodePotential(node, v);
          }
       }
@@ -504,8 +502,7 @@ public class MeshedRegion
     * @author John Villarrubia
     * @version 1.0
     */
-   public static class NeumannConstraint
-      implements IConstraint {
+   public static class NeumannConstraint implements IConstraint {
       private final long associatedRegionTag;
       private final double normalE;
       private final int hash;
@@ -514,9 +511,11 @@ public class MeshedRegion
       /**
        * Constructs a Neumann Constraint.
        * 
-       * @param associatedRegionTag -- The tag of the surface elements
-       *           associated with this constraint.
-       * @param normalE -- The value of normal component of E field to which the
+       * @param associatedRegionTag
+       *           -- The tag of the surface elements associated with this
+       *           constraint.
+       * @param normalE
+       *           -- The value of normal component of E field to which the
        *           tagged elements should be constrained. normalE = E.n, in
        *           volts/meter, where E is the field, n is the normal vector at
        *           the surface and the dot represents the inner product.
@@ -539,12 +538,11 @@ public class MeshedRegion
        */
       @Override
       public boolean equals(Object obj) {
-         if(obj.getClass() != this.getClass())
+         if (obj.getClass() != this.getClass())
             return false;
          final NeumannConstraint cobj = (NeumannConstraint) obj;
 
-         if((cobj.getAssociatedRegionTag() != associatedRegionTag) || (cobj.getNormalE() != normalE)
-               || (cobj.getMesh() != mesh))
+         if ((cobj.getAssociatedRegionTag() != associatedRegionTag) || (cobj.getNormalE() != normalE) || (cobj.getMesh() != mesh))
             return false;
 
          return true;
@@ -643,22 +641,22 @@ public class MeshedRegion
       /**
        * Constructs a RCConnection with constant relaxation time
        * 
-       * @param sourceIndex - index (into the constraintList) of the
-       *           FloatingConstraint or DirichletConstraint that is the source
-       *           for this connection.
-       * @param drainIndex - index (into the constraintList) of the
-       *           FloatingConstraint or DirichletConstraint that is the drain
-       *           for this connection.
-       * @param tau - the relaxation time in seconds.
+       * @param sourceIndex
+       *           - index (into the constraintList) of the FloatingConstraint
+       *           or DirichletConstraint that is the source for this
+       *           connection.
+       * @param drainIndex
+       *           - index (into the constraintList) of the FloatingConstraint
+       *           or DirichletConstraint that is the drain for this connection.
+       * @param tau
+       *           - the relaxation time in seconds.
        */
       public RCConnection(int sourceIndex, int drainIndex, double tau) {
          /*
           * We treat this as a special case of uniformly spaced array, in which
           * there is only a single value in the table.
           */
-         this(sourceIndex, drainIndex, 0., 0., new double[] {
-            tau
-         });
+         this(sourceIndex, drainIndex, 0., 0., new double[]{tau});
       }
 
       /**
@@ -669,17 +667,21 @@ public class MeshedRegion
        * &lt; V0, tauArray[0] is used. For V&gt;V0+(n-1)*deltaV, where n is the
        * length of tauArray, tauArray[n-1] is used.
        * 
-       * @param sourceIndex - index (into the constraintList) of the
-       *           FloatingConstraint or DirichletConstraint that is the source
-       *           for this connection.
-       * @param drainIndex - index (into the constraintList) of the
-       *           FloatingConstraint or DirichletConstraint that is the drain
-       *           for this connection.
-       * @param V0 - the voltage that corresponds to relaxation time tauArray[0]
-       * @param deltaV - the constant voltage interval between provided tauArray
+       * @param sourceIndex
+       *           - index (into the constraintList) of the FloatingConstraint
+       *           or DirichletConstraint that is the source for this
+       *           connection.
+       * @param drainIndex
+       *           - index (into the constraintList) of the FloatingConstraint
+       *           or DirichletConstraint that is the drain for this connection.
+       * @param V0
+       *           - the voltage that corresponds to relaxation time tauArray[0]
+       * @param deltaV
+       *           - the constant voltage interval between provided tauArray
        *           values.
-       * @param tauArray - a 1-d array of tau values such that tauArray[i]
-       *           corresponds to voltage V0+i*deltaV
+       * @param tauArray
+       *           - a 1-d array of tau values such that tauArray[i] corresponds
+       *           to voltage V0+i*deltaV
        */
       public RCConnection(int sourceIndex, int drainIndex, double V0, double deltaV, double[] tauArray) {
          this.sourceIndex = sourceIndex;
@@ -687,7 +689,7 @@ public class MeshedRegion
          this.deltaV = deltaV;
          vMin = V0;
          tauMaxIndex = tauArray.length - 1;
-         if(tauMaxIndex < 3)
+         if (tauMaxIndex < 3)
             interpolationOrder = tauMaxIndex;
          vMax = V0 + (tauMaxIndex * deltaV);
          this.tauArray = tauArray;
@@ -701,29 +703,31 @@ public class MeshedRegion
        * relaxation time vs. voltage dependence is interpolated from the set of
        * discrete points (tauArray[0,i],tauArray[1,i]).
        * 
-       * @param sourceIndex - index (into the constraintList) of the
-       *           FloatingConstraint or DirichletConstraint that is the source
-       *           for this connection.
-       * @param drainIndex - index (into the constraintList) of the
-       *           FloatingConstraint or DirichletConstraint that is the drain
-       *           for this connection.
-       * @param tauArray - a double[2][n] array of voltage and tau values such
-       *           that tauArray[0] is a list of increasing voltages and
-       *           tauArray[1] the corresponding tau values.
+       * @param sourceIndex
+       *           - index (into the constraintList) of the FloatingConstraint
+       *           or DirichletConstraint that is the source for this
+       *           connection.
+       * @param drainIndex
+       *           - index (into the constraintList) of the FloatingConstraint
+       *           or DirichletConstraint that is the drain for this connection.
+       * @param tauArray
+       *           - a double[2][n] array of voltage and tau values such that
+       *           tauArray[0] is a list of increasing voltages and tauArray[1]
+       *           the corresponding tau values.
        */
       public RCConnection(int sourceIndex, int drainIndex, double[][] tauArray) {
          this.sourceIndex = sourceIndex;
          this.drainIndex = drainIndex;
-         if(tauArray.length != 2)
+         if (tauArray.length != 2)
             throw new EPQFatalException("tauArray 1st dimension must = 2");
          this.vArray = tauArray[0];
          tauMaxIndex = vArray.length - 1;
-         if(tauMaxIndex < 3)
+         if (tauMaxIndex < 3)
             interpolationOrder = tauMaxIndex;
          /* Make sure tauArray is increasing */
          vMin = vArray[0];
-         for(int i = 1; i <= tauMaxIndex; i++)
-            if(vArray[i] <= vArray[i - 1])
+         for (int i = 1; i <= tauMaxIndex; i++)
+            if (vArray[i] <= vArray[i - 1])
                throw new EPQFatalException("tauArray[0] must be increasing.");
          vMax = vArray[tauMaxIndex];
          this.tauArray = tauArray[1];
@@ -733,21 +737,19 @@ public class MeshedRegion
 
       private void checkConstraints() {
          numFloats = 0;
-         if(constraintList[sourceIndex] instanceof FloatingConstraint)
+         if (constraintList[sourceIndex] instanceof FloatingConstraint)
             numFloats++;
-         else if(!(constraintList[sourceIndex] instanceof DirichletConstraint))
-            throw new EPQFatalException("constraintList[sourceIndex = " + sourceIndex
-                  + "] is neither a Floating nor a Dirichlet Constraint.");
-         if(constraintList[drainIndex] instanceof FloatingConstraint)
+         else if (!(constraintList[sourceIndex] instanceof DirichletConstraint))
+            throw new EPQFatalException("constraintList[sourceIndex = " + sourceIndex + "] is neither a Floating nor a Dirichlet Constraint.");
+         if (constraintList[drainIndex] instanceof FloatingConstraint)
             numFloats++;
-         else if(!(constraintList[drainIndex] instanceof DirichletConstraint))
-            throw new EPQFatalException("constraintList[drainIndex = " + drainIndex
-                  + "] is neither a Floating nor a Dirichlet Constraint.");
-         if(numFloats < 1)
-            throw new EPQFatalException("At least one of constraintList[sourceIndex = " + sourceIndex
-                  + "] or constraintList[drainIndex = " + drainIndex + "] must be a FloatingConstraint.");
+         else if (!(constraintList[drainIndex] instanceof DirichletConstraint))
+            throw new EPQFatalException("constraintList[drainIndex = " + drainIndex + "] is neither a Floating nor a Dirichlet Constraint.");
+         if (numFloats < 1)
+            throw new EPQFatalException("At least one of constraintList[sourceIndex = " + sourceIndex + "] or constraintList[drainIndex = "
+                  + drainIndex + "] must be a FloatingConstraint.");
 
-         if(constraintList[sourceIndex].equals(constraintList[drainIndex]))
+         if (constraintList[sourceIndex].equals(constraintList[drainIndex]))
             throw new EPQFatalException("Source and Drain constraints may not be the same.");
       }
 
@@ -767,12 +769,12 @@ public class MeshedRegion
          int charge = (int) Math.floor(q);
          final double fractionalCharge = q - charge;
          /* So fractionalCharge>0 and charge + fractionalCharge = q */
-         if(Math2.rgen.nextDouble() < fractionalCharge)
+         if (Math2.rgen.nextDouble() < fractionalCharge)
             charge++;
-         if(charge != 0) {
-            if(constraintList[sourceIndex] instanceof FloatingConstraint)
+         if (charge != 0) {
+            if (constraintList[sourceIndex] instanceof FloatingConstraint)
                ((FloatingConstraint) constraintList[sourceIndex]).incrementCharge(charge);
-            if(constraintList[drainIndex] instanceof FloatingConstraint)
+            if (constraintList[drainIndex] instanceof FloatingConstraint)
                ((FloatingConstraint) constraintList[drainIndex]).incrementCharge(-charge);
             return true;
          }
@@ -789,12 +791,12 @@ public class MeshedRegion
          double sourceV;
          double drainV;
 
-         if(constraintList[sourceIndex] instanceof FloatingConstraint)
+         if (constraintList[sourceIndex] instanceof FloatingConstraint)
             sourceV = ((FloatingConstraint) constraintList[sourceIndex]).getPotential();
          else
             sourceV = ((DirichletConstraint) constraintList[sourceIndex]).getPotential();
 
-         if(constraintList[drainIndex] instanceof FloatingConstraint)
+         if (constraintList[drainIndex] instanceof FloatingConstraint)
             drainV = ((FloatingConstraint) constraintList[drainIndex]).getPotential();
          else
             drainV = ((DirichletConstraint) constraintList[drainIndex]).getPotential();
@@ -856,11 +858,11 @@ public class MeshedRegion
        * @return double
        */
       public double getTau(double v) {
-         if(v <= vMin)
+         if (v <= vMin)
             return tauArray[0];
-         if(v >= vMax)
+         if (v >= vMax)
             return tauArray[tauMaxIndex];
-         if(uniform)
+         if (uniform)
             return ULagrangeInterpolation.d1(tauArray, vMin, deltaV, interpolationOrder, v)[0];
          else
             return NULagrangeInterpolation.d1(tauArray, vArray, interpolationOrder, v)[0];
@@ -905,12 +907,12 @@ public class MeshedRegion
       final IConstraint[] constraintList = new IConstraint[cList.size()];
 
       int i = 0;
-      for(final Object c : cList)
+      for (final Object c : cList)
          constraintList[i++] = (IConstraint) c;
 
       @SuppressWarnings("rawtypes")
       final Set ks = map.keySet();
-      for(final Object k : ks)
+      for (final Object k : ks)
          msmMap.put((Long) k, (IMaterialScatterModel) map.get(k));
 
       mParent = parent;
@@ -918,43 +920,43 @@ public class MeshedRegion
       this.constraintList = constraintList;
 
       /* Load the constraint map */
-      for(final IConstraint c : constraintList)
+      for (final IConstraint c : constraintList)
          constraintMap.put(c.getAssociatedRegionTag(), c);
 
       this.mesh = mesh;
       mScatterModel = null;
       mShape = mesh.getMeshShape();
-      if(mParent != null)
+      if (mParent != null)
          mParent.mSubRegions.add(this);
       /* Find the set of unique tags in the mesh. */
-      for(i = 1; i <= mesh.getNumberOfElements(); i++)
+      for (i = 1; i <= mesh.getNumberOfElements(); i++)
          /*
           * Gmsh volume elements have mesh types in the range 4-7, 11-14, 17-19,
           * or 29-31. Presently the Mesh class only implements the first order
           * tetrahedron (type 4), but we check for all volume-element types in
           * case this gets extended.
           */
-         if(mesh.isVolumeType(i))
+         if (mesh.isVolumeType(i))
             materialTags.add(mesh.getTags(i)[0]); // 1st tag, tag[0], is
                                                   // associated with material
       /* Make sure the msmMap has a Material for each tag */
-      for(final Long tag : materialTags)
-         if(!(msmMap.containsKey(tag)))
-            throw new EPQFatalException("Mesh contains material tag " + tag
-                  + " for which no corresponding IMaterialScatterModel mapping was provided.");
+      for (final Long tag : materialTags)
+         if (!(msmMap.containsKey(tag)))
+            throw new EPQFatalException(
+                  "Mesh contains material tag " + tag + " for which no corresponding IMaterialScatterModel mapping was provided.");
 
       /* Make a list of the constrained nodes */
-      for(i = 1; i <= mesh.getNumberOfElements(); i++) {
+      for (i = 1; i <= mesh.getNumberOfElements(); i++) {
          final IConstraint c = constraintMap.get(mesh.getTags(i)[0]); // constraint
                                                                       // v
          // if there is
          // one
-         if(c != null) {
+         if (c != null) {
             // Register constraints for all nodes of this element
             final int[] nodeIndices = mesh.getNodeIndices(i);
-            for(final int index : nodeIndices) {
+            for (final int index : nodeIndices) {
                final IConstraint existingVal = nodeConstraints.get(index);
-               if((existingVal != null) && !existingVal.equals(c))
+               if ((existingVal != null) && !existingVal.equals(c))
                   // Conflicting constraints
                   throw new EPQFatalException("Conflicting constraints were specified for node # " + Integer.toString(index));
                // No conflict: add constraint
@@ -978,42 +980,42 @@ public class MeshedRegion
       this.constraintList = constraintList;
 
       /* Load the constraint map */
-      for(final IConstraint c : constraintList)
+      for (final IConstraint c : constraintList)
          constraintMap.put(c.getAssociatedRegionTag(), c);
 
       this.mesh = mesh;
       mScatterModel = null;
       mShape = mesh.getMeshShape();
-      if(mParent != null)
+      if (mParent != null)
          mParent.mSubRegions.add(this);
       /* Find the set of unique tags in the mesh. */
       final int nel = mesh.getNumberOfElements();
-      for(int i = 1; i <= nel; i++)
+      for (int i = 1; i <= nel; i++)
          /*
           * Gmsh volume elements have mesh types in the range 4-7, 11-14, 17-19,
           * or 29-31. Presently the Mesh class only implements the first order
           * tetrahedron (type 4), but we check for all volume-element types in
           * case this gets extended.
           */
-         if(mesh.isVolumeType(i))
+         if (mesh.isVolumeType(i))
             materialTags.add(mesh.getTags(i)[0]); // 1st tag, tag[0], is
                                                   // associated with material
       /* Make sure the msmMap has a Material for each tag */
-      for(final Long tag : materialTags)
-         if(!(msmMap.containsKey(tag)))
-            throw new EPQFatalException("Mesh contains material tag " + tag
-                  + " for which no corresponding IMaterialScatterModel mapping was provided.");
+      for (final Long tag : materialTags)
+         if (!(msmMap.containsKey(tag)))
+            throw new EPQFatalException(
+                  "Mesh contains material tag " + tag + " for which no corresponding IMaterialScatterModel mapping was provided.");
 
       /* Make a list of the constrained nodes */
-      for(int i = 1; i <= mesh.getNumberOfElements(); i++) {
+      for (int i = 1; i <= mesh.getNumberOfElements(); i++) {
          final IConstraint c = constraintMap.get(mesh.getTags(i)[0]); // constraint
                                                                       // v
          // if there is
          // one
-         if(c != null) {
+         if (c != null) {
             // Register constraints for all nodes of this element
             final int[] nodeIndices = mesh.getNodeIndices(i);
-            for(final int index : nodeIndices) {
+            for (final int index : nodeIndices) {
                final IConstraint existingVal = nodeConstraints.get(index);
                /*
                 * Our definition of conflicting constraints here may be more
@@ -1025,7 +1027,7 @@ public class MeshedRegion
                 * Floating, but the need has not arisen so this is not presently
                 * implemented.
                 */
-               if((existingVal != null) && !existingVal.equals(c))
+               if ((existingVal != null) && !existingVal.equals(c))
                   // Conflicting constraints
                   throw new EPQFatalException("Conflicting constraints were specified for node # " + Integer.toString(index));
                // No conflict: add constraint
@@ -1039,9 +1041,10 @@ public class MeshedRegion
     * Constructs a MeshedRegion
     * 
     * @param parent
-    * @param msmMap -
-    * @param meshFileName - Name of mesh file from which to read the associated
-    *           mesh
+    * @param msmMap
+    *           -
+    * @param meshFileName
+    *           - Name of mesh file from which to read the associated mesh
     * @throws FileNotFoundException
     */
    public MeshedRegion(Region parent, String meshFileName, HashMap<Long, IMaterialScatterModel> msmMap, IConstraint[] constraintList)
@@ -1054,11 +1057,14 @@ public class MeshedRegion
     * least one of the regions must be subject to a FloatingConstraint. The
     * other may be either another FloatingConstraint or a DirichletConstraint.
     * 
-    * @param sourceIndex - an index into this MeshedRegion's constraintList that
+    * @param sourceIndex
+    *           - an index into this MeshedRegion's constraintList that
     *           designates the source region.
-    * @param drainIndex - an index into this MeshedRegion's constraintList that
+    * @param drainIndex
+    *           - an index into this MeshedRegion's constraintList that
     *           designates the drain region.
-    * @param tau - the time constant in seconds.
+    * @param tau
+    *           - the time constant in seconds.
     */
    public void addConnection(int sourceIndex, int drainIndex, double tau) {
       connectionList.add(new RCConnection(sourceIndex, drainIndex, tau));
@@ -1128,12 +1134,13 @@ public class MeshedRegion
     * Returns the MeshElementRegion that contains the specified point or null if
     * the point is outside this MeshedRegion.
     * 
-    * @param pos double[]
+    * @param pos
+    *           double[]
     * @return RegionBase
     */
    @Override
    protected MeshElementRegion containingSubRegion(double[] pos) {
-      if(mShape.contains(pos)) {
+      if (mShape.contains(pos)) {
          final Mesh.Tetrahedron containingShape = ((Mesh.MeshShape) mShape).containingShape();
          final Long tag = ((Mesh.Element) containingShape).getTags()[0];
          return new MeshElementRegion(this, msmMap.get(tag), containingShape);
@@ -1151,8 +1158,10 @@ public class MeshedRegion
     * Otherwise findEndOfStep returns this. If the segment intersects a new
     * RegionBase, pos1 will be moved to the border of the new RegionBase.
     * 
-    * @param pos0 double[] - The fixed initial point.
-    * @param pos1 double[] - [In] The candidate end point [Out] The actual end
+    * @param pos0
+    *           double[] - The fixed initial point.
+    * @param pos1
+    *           double[] - [In] The candidate end point [Out] The actual end
     *           point
     * @return RegionBase - The RegionBase in which the [Out] pos1 is found
     */
@@ -1170,11 +1179,10 @@ public class MeshedRegion
        */
       /* Find out where we are */
       RegionBase myActualRegion = null;
-      if((mParent != null) && mParent.mShape.contains(pos0))
+      if ((mParent != null) && mParent.mShape.contains(pos0))
          myActualRegion = mParent.containingSubRegion(pos0);
-      if(myActualRegion == null)
-         throw new EPQFatalException("MeshedRegion.findEndOfStep called with pos0 = " + Arrays.toString(pos0)
-               + " in unknown Region.");
+      if (myActualRegion == null)
+         throw new EPQFatalException("MeshedRegion.findEndOfStep called with pos0 = " + Arrays.toString(pos0) + " in unknown Region.");
       return myActualRegion.findEndOfStep(pos0, pos1);
    }
 
@@ -1228,11 +1236,12 @@ public class MeshedRegion
     * number given by the argument if that element is a volume element.
     * Otherwise, it returns an unphysical value of 0.
     * 
-    * @param elemNum - the element number of a region in the mesh.
+    * @param elemNum
+    *           - the element number of a region in the mesh.
     * @return - the relative dielectric constant of the material in that region.
     */
    public double getDielectricConstant(int elemNum) {
-      if(mesh.isVolumeType(elemNum)) {
+      if (mesh.isVolumeType(elemNum)) {
          final long tag = mesh.getTags(elemNum)[0];
          final SEmaterial mat = (SEmaterial) this.getMSM(tag).getMaterial();
          final double eps = mat.getEpsr();
@@ -1250,15 +1259,16 @@ public class MeshedRegion
     * entirely covered by its subregions, this method returns an empty set when
     * recurse = false.
     * 
-    * @param recurse boolean - Whether to recurse into sub-regions when
-    *           determining the element list.
+    * @param recurse
+    *           boolean - Whether to recurse into sub-regions when determining
+    *           the element list.
     * @return Set&lt;Element&gt; - A set of Element objects
     */
    @Override
    protected Set<Element> getElements(boolean recurse) {
       final Set<Element> res = new HashSet<Element>(); // empty set
-      if(recurse)
-         for(final Long tag : materialTags)
+      if (recurse)
+         for (final Long tag : materialTags)
             res.addAll(msmMap.get(tag).getMaterial().getElementSet());
       return res;
    }
@@ -1293,7 +1303,7 @@ public class MeshedRegion
     * @return IMaterialScatterModel
     */
    public IMaterialScatterModel getMSM(long materialTag) {
-      if(msmMap.containsKey(materialTag))
+      if (msmMap.containsKey(materialTag))
          return msmMap.get(materialTag);
       return null;
    }
@@ -1316,15 +1326,15 @@ public class MeshedRegion
     */
    public boolean initializeIfNeeded() {
       final boolean result = mesh.initializeIfNeeded();
-      if(result)
+      if (result)
          mShape = mesh.getMeshShape();
       /*
        * Associated floating constraints have cached values and need to be
        * re-initialized.
        */
-      for(int i = 0; i < constraintList.length; i++) {
+      for (int i = 0; i < constraintList.length; i++) {
          final IConstraint c = constraintList[i];
-         if(c instanceof FloatingConstraint) {
+         if (c instanceof FloatingConstraint) {
             /*
              * Reconstruct the FloatingConstraint to force renewal of cached
              * values and replace its existing instances in constraintList and
@@ -1345,7 +1355,7 @@ public class MeshedRegion
     * @return boolean
     */
    public boolean isConstrained(int elementIndex) {
-      if((elementIndex >= 1) && (elementIndex <= mesh.getNumberOfElements()))
+      if ((elementIndex >= 1) && (elementIndex <= mesh.getNumberOfElements()))
          return constraintMap.containsKey(mesh.getTags(elementIndex)[0]);
       return false;
    }
@@ -1354,7 +1364,8 @@ public class MeshedRegion
     * Returns true only if searchTarget is a member of the mesh associated with
     * this MeshedRegion.
     * 
-    * @param searchTarget - The region to search for
+    * @param searchTarget
+    *           - The region to search for
     * @return - true if searchTarget is a subregion of parent, false otherwise.
     */
    @Override
@@ -1364,7 +1375,7 @@ public class MeshedRegion
        * MeshElementRegion it isn't a subregion. If it IS, then it is a
        * subregion iff it is a member of the same mesh.
        */
-      if(!(searchTarget instanceof MeshElementRegion))
+      if (!(searchTarget instanceof MeshElementRegion))
          return false;
       return ((MeshElementRegion) searchTarget).getMesh() == mesh;
    }
@@ -1384,18 +1395,20 @@ public class MeshedRegion
     * the volume with density less than 100 kg/m^3. The actual number of charges
     * placed is returned.
     * 
-    * @param p0 - [x0,y0,z0] = minimum corner of volume to charge
-    * @param p1 - [x1,y1,z1] = max corner of volume to charge
-    * @param numberDensity - number of charge quanta (units of e) per cubic
-    *           meter.
+    * @param p0
+    *           - [x0,y0,z0] = minimum corner of volume to charge
+    * @param p1
+    *           - [x1,y1,z1] = max corner of volume to charge
+    * @param numberDensity
+    *           - number of charge quanta (units of e) per cubic meter.
     * @return - the number of charges placed, positive for positive charge and
     *         negative for negative charge
     */
    public int preCharge(double[] p0, double[] p1, double numberDensity) {
       final double[] pmin = new double[3];
       final double[] pmax = new double[3];
-      for(int i = 0; i < 3; i++)
-         if(p0[i] < p1[i]) {
+      for (int i = 0; i < 3; i++)
+         if (p0[i] < p1[i]) {
             pmin[i] = p0[i];
             pmax[i] = p1[i];
          } else {
@@ -1413,26 +1426,22 @@ public class MeshedRegion
       final double n = numberDensity * volume; // number of charges to add
       int nint = (int) Math.floor(n); // integer part
       final double frac = n - nint;
-      if(Math2.rgen.nextDouble() < frac)
+      if (Math2.rgen.nextDouble() < frac)
          nint++;
 
       /* Place this many charges at random positions in the volume */
       final int imax = Math.abs(nint);
       int chargesAdded = 0;
-      for(int i = 0; i < imax; i++) {
+      for (int i = 0; i < imax; i++) {
          /* u (next line) is a random position relative to pmin. */
-         final double[] u = new double[] {
-            delta[0] * Math2.rgen.nextDouble(),
-            delta[1] * Math2.rgen.nextDouble(),
-            delta[2] * Math2.rgen.nextDouble()
-         };
+         final double[] u = new double[]{delta[0] * Math2.rgen.nextDouble(), delta[1] * Math2.rgen.nextDouble(), delta[2] * Math2.rgen.nextDouble()};
          final double[] p = Math2.plus(pmin, u);
 
          final MeshElementRegion reg = containingSubRegion(p);
-         if(reg.getMaterial().getDensity() < DENSITY_THRESHOLD)
+         if (reg.getMaterial().getDensity() < DENSITY_THRESHOLD)
             continue;
          final Tetrahedron tet = (Tetrahedron) reg.getShape();
-         if(nint < 0.) {
+         if (nint < 0.) {
             tet.decrementChargeNumber();
             chargesAdded--;
          } else {
@@ -1455,7 +1464,7 @@ public class MeshedRegion
     */
    public void resetElectronRegion(Electron el) {
       final MeshElementRegion csr = containingSubRegion(el.getPosition());
-      if(csr != null)
+      if (csr != null)
          el.setCurrentRegion(csr);
    }
 
@@ -1469,7 +1478,7 @@ public class MeshedRegion
    @Override
    public String toString() {
       String res = mShape.toString() + " of [";
-      for(final Long tag : materialTags)
+      for (final Long tag : materialTags)
          res += msmMap.get(tag).getMaterial().toString() + ", ";
       res += "]";
       return res;
@@ -1486,16 +1495,18 @@ public class MeshedRegion
     * Recursively replace all instances of oldMat with newMat in this
     * MeshedRegion
     * 
-    * @param oldMat - The old IMaterialScatterModel
-    * @param newMat - The new IMaterialScatterModel
+    * @param oldMat
+    *           - The old IMaterialScatterModel
+    * @param newMat
+    *           - The new IMaterialScatterModel
     * @see gov.nist.microanalysis.NISTMonte.MonteCarloSS.RegionBase#updateMaterial(gov.nist.microanalysis.NISTMonte.IMaterialScatterModel,
     *      gov.nist.microanalysis.NISTMonte.IMaterialScatterModel)
     */
    @Override
    public void updateMaterial(IMaterialScatterModel oldMat, IMaterialScatterModel newMat) {
       // Recursively replace all instances of oldMat with newMat
-      for(final Long tag : materialTags)
-         if(msmMap.get(tag) == oldMat)
+      for (final Long tag : materialTags)
+         if (msmMap.get(tag) == oldMat)
             msmMap.put(tag, newMat);
    }
 
@@ -1503,8 +1514,10 @@ public class MeshedRegion
     * Recursively replace all instances of oldMat with newMat in this
     * MeshedRegion
     * 
-    * @param oldMat - The old material
-    * @param newMat - The IMaterialScatterModel for the new material.
+    * @param oldMat
+    *           - The old material
+    * @param newMat
+    *           - The IMaterialScatterModel for the new material.
     * @see gov.nist.microanalysis.NISTMonte.MonteCarloSS.RegionBase#updateMaterial(gov.nist.microanalysis.EPQLibrary.Material,
     *      gov.nist.microanalysis.NISTMonte.IMaterialScatterModel)
     */
@@ -1515,8 +1528,8 @@ public class MeshedRegion
    @Override
    public void updateMaterial(Material oldMat, IMaterialScatterModel newMat) {
       // Recursively replace all instances of oldMat with newMat
-      for(final Long tag : materialTags)
-         if(msmMap.get(tag).getMaterial() == oldMat)
+      for (final Long tag : materialTags)
+         if (msmMap.get(tag).getMaterial() == oldMat)
             msmMap.put(tag, newMat);
    }
 }

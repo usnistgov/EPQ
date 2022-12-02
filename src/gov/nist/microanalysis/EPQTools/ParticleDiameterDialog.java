@@ -37,8 +37,7 @@ import javax.swing.SwingConstants;
  * @version 1.0
  */
 
-public class ParticleDiameterDialog
-   extends JDialog {
+public class ParticleDiameterDialog extends JDialog {
    private static final long serialVersionUID = 0x1;
    JPanel panel_Main = new JPanel();
    BorderLayout borderLayout1 = new BorderLayout();
@@ -67,8 +66,7 @@ public class ParticleDiameterDialog
          pack();
          jTextField_ParticleDiameter.grabFocus();
          jTextField_ParticleDiameter.selectAll();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -80,14 +78,12 @@ public class ParticleDiameterDialog
          pack();
          jTextField_ParticleDiameter.grabFocus();
          jTextField_ParticleDiameter.selectAll();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
 
-   private void jbInit()
-         throws Exception {
+   private void jbInit() throws Exception {
       panel_Main.setLayout(borderLayout1);
       jPanel_Buttons.setPreferredSize(new Dimension(200, 60));
       panel_Main.setPreferredSize(new Dimension(200, 250));
@@ -127,9 +123,7 @@ public class ParticleDiameterDialog
       jLabel_Spacer1.setText("");
       jPanel_Top.setPreferredSize(new Dimension(200, 20));
       jList_Diameters.setForeground(SystemColor.textText);
-      jList_Diameters.setListData(new Object[] {
-         "Your particle diameters will be here"
-      });
+      jList_Diameters.setListData(new Object[]{"Your particle diameters will be here"});
       jPanel_Bottom.setPreferredSize(new Dimension(200, 100));
       jPanel_DiameterEntry.setPreferredSize(new Dimension(200, 25));
       jLabel_ParticleDiameter.setText("Particle Diameter :");
@@ -174,14 +168,13 @@ public class ParticleDiameterDialog
       try {
          final NumberFormat nf = NumberFormat.getInstance();
          final double diameter = nf.parse(jTextField_ParticleDiameter.getText()).doubleValue();
-         if(diameter <= 0.0)
+         if (diameter <= 0.0)
             throw new Exception();
          DiameterList.add(Double.valueOf(diameter));
          jList_Diameters.setListData(DiameterList.toArray());
          ParticleDiameterDialog.this.setTitle(DiameterList.size() + " particle diameters selected");
 
-      }
-      catch(final Exception nfex) {
+      } catch (final Exception nfex) {
       }
       jTextField_ParticleDiameter.grabFocus();
       jTextField_ParticleDiameter.selectAll();
@@ -189,8 +182,7 @@ public class ParticleDiameterDialog
 
    void jButton_Delete_actionPerformed(ActionEvent e) {
       final int selected = jList_Diameters.getSelectedIndex();
-      if((selected != -1)
-            && ((jList_Diameters.getSelectedValue().toString()).compareTo("Your particle diameters will be here") != 0)) {
+      if ((selected != -1) && ((jList_Diameters.getSelectedValue().toString()).compareTo("Your particle diameters will be here") != 0)) {
          DiameterList.remove(selected);
          jList_Diameters.setListData(DiameterList.toArray());
          ParticleDiameterDialog.this.setTitle(DiameterList.size() + " particle diameters selected");
@@ -199,9 +191,7 @@ public class ParticleDiameterDialog
 
    void jButton_Clear_actionPerformed(ActionEvent e) {
       DiameterList = new ArrayList<Double>();
-      jList_Diameters.setListData(new Object[] {
-         "Your particle diameters will be here"
-      });
+      jList_Diameters.setListData(new Object[]{"Your particle diameters will be here"});
       ParticleDiameterDialog.this.setTitle("Enter the particle(s) diameter(s)");
    }
 
@@ -214,12 +204,14 @@ public class ParticleDiameterDialog
     * closes, an event will be triggered so that all listening components can
     * respond appropriately.
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void addWindowClosingListener(ActionListener l) {
-      final ArrayList<ActionListener> v = WindowClosingListeners == null ? new ArrayList<ActionListener>(2)
+      final ArrayList<ActionListener> v = WindowClosingListeners == null
+            ? new ArrayList<ActionListener>(2)
             : new ArrayList<ActionListener>(WindowClosingListeners);
-      if(!v.contains(l)) {
+      if (!v.contains(l)) {
          v.add(l);
          WindowClosingListeners = v;
       }
@@ -228,10 +220,11 @@ public class ParticleDiameterDialog
    /**
     * removeWindowClosingListener - removes the window closing listener
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void removeWindowClosingListener(ActionListener l) {
-      if((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
+      if ((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
          final ArrayList<ActionListener> v = new ArrayList<ActionListener>(WindowClosingListeners);
          v.remove(l);
          WindowClosingListeners = v;
@@ -239,10 +232,10 @@ public class ParticleDiameterDialog
    }
 
    protected void fireWindowClosingEvent(ActionEvent e) {
-      if(WindowClosingListeners != null) {
+      if (WindowClosingListeners != null) {
          final ArrayList<ActionListener> listeners = WindowClosingListeners;
          final int count = listeners.size();
-         for(int i = 0; i < count; i++)
+         for (int i = 0; i < count; i++)
             listeners.get(i).actionPerformed(e);
       }
    }
@@ -252,13 +245,13 @@ public class ParticleDiameterDialog
    }
 
    void jTextField_ParticleDiameter_keyPressed(KeyEvent e) {
-      if(e.getKeyCode() == KeyEvent.VK_ENTER)
+      if (e.getKeyCode() == KeyEvent.VK_ENTER)
          jButton_Add_actionPerformed(new ActionEvent(e.getSource(), e.getID(), e.toString()));
    }
 
    public void setParticleDiameters(double[] Diameters) {
       DiameterList.clear();
-      for(final double diameter : Diameters)
+      for (final double diameter : Diameters)
          DiameterList.add(Double.valueOf(diameter));
       jList_Diameters.setListData(DiameterList.toArray());
    }

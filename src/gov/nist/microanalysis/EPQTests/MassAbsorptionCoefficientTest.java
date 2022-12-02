@@ -22,8 +22,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class MassAbsorptionCoefficientTest
-   extends TestCase {
+public class MassAbsorptionCoefficientTest extends TestCase {
 
    static private double kConvert = 0.1;
 
@@ -31,8 +30,7 @@ public class MassAbsorptionCoefficientTest
       super(test);
    }
 
-   public void testOne()
-         throws EPQException {
+   public void testOne() throws EPQException {
       // Check the MACs against Farthing and Walker's tabulation
       assertEquals(MassAbsorptionCoefficient.Heinrich86.compute(Element.B, ToSI.eV(677.)) / kConvert, 3906., 10.0);
       assertEquals(MassAbsorptionCoefficient.Heinrich86.compute(Element.Ti, ToSI.eV(8639.)) / kConvert, 166.05, 1.0);
@@ -61,11 +59,11 @@ public class MassAbsorptionCoefficientTest
       assertEquals(MassAbsorptionCoefficient.Heinrich86.compute(Element.Os, ToSI.eV(2839.)) / kConvert, 2335.27, 10.0);
       assertEquals(MassAbsorptionCoefficient.Heinrich86.compute(Element.Os, ToSI.eV(2014.)) / kConvert, 1508.97, 10.0);
 
-      assertEquals(MassAbsorptionCoefficient.BastinHeijligers89.compute(Element.Bi, new XRayTransition(Element.O, XRayTransition.KA1))
-            / kConvert, 4430.0, 1.0);
-      assertEquals(MassAbsorptionCoefficient.BastinHeijligers89.compute(Element.Fe, new XRayTransition(Element.N, XRayTransition.KA1))
-            / kConvert, 7190.0, 1.0);
-      assertEquals(MassAbsorptionCoefficient.BastinHeijligers89.compute(Element.Ta, new XRayTransition(Element.C, XRayTransition.KA1))
-            / kConvert, 15350.0, 1.0);
+      assertEquals(MassAbsorptionCoefficient.BastinHeijligers89.compute(Element.Bi, new XRayTransition(Element.O, XRayTransition.KA1)) / kConvert,
+            4430.0, 1.0);
+      assertEquals(MassAbsorptionCoefficient.BastinHeijligers89.compute(Element.Fe, new XRayTransition(Element.N, XRayTransition.KA1)) / kConvert,
+            7190.0, 1.0);
+      assertEquals(MassAbsorptionCoefficient.BastinHeijligers89.compute(Element.Ta, new XRayTransition(Element.C, XRayTransition.KA1)) / kConvert,
+            15350.0, 1.0);
    }
 }

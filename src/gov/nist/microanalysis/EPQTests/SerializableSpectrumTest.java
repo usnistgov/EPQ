@@ -33,9 +33,7 @@ import junit.framework.TestCase;
  * @author nritchie
  * @version 1.0
  */
-public class SerializableSpectrumTest
-   extends
-   TestCase {
+public class SerializableSpectrumTest extends TestCase {
 
    /**
     * Constructs a SerializableSpectrumTest
@@ -46,8 +44,7 @@ public class SerializableSpectrumTest
       super(arg0);
    }
 
-   public void testOne()
-         throws Exception {
+   public void testOne() throws Exception {
       SerializableSpectrum original = null;
       {
          final InputStream is = new FileInputStream(new File(FilterFitTest.class.getResource("TestData/Al_ref1.msa").toURI()));
@@ -58,7 +55,8 @@ public class SerializableSpectrumTest
       // Write the spectrum to a ObjectOutputStream
       {
          final EPQXStream xs = EPQXStream.getInstance();
-         try (final OutputStreamWriter osw = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream("serializableSpectrum.ser")), Charset.forName("UTF-8"))) {
+         try (final OutputStreamWriter osw = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream("serializableSpectrum.ser")),
+               Charset.forName("UTF-8"))) {
             try (final ObjectOutputStream output = xs.createObjectOutputStream(osw)) {
                output.writeObject(original);
             }

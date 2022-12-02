@@ -64,7 +64,8 @@ public class QuantificationPlan {
       private final Set<Element> mStandardFor = new HashSet<Element>();
       private boolean mIsUnknown;
 
-      private Acquisition(final Composition comp, final double dose, final double beamEnergy, final SampleShape ss, final SamplePreparation prep, final RegionOfInterest roi) {
+      private Acquisition(final Composition comp, final double dose, final double beamEnergy, final SampleShape ss, final SamplePreparation prep,
+            final RegionOfInterest roi) {
          mComposition = comp;
          mDose = dose;
          mBeamEnergy = beamEnergy;
@@ -83,7 +84,8 @@ public class QuantificationPlan {
          mIsUnknown = true;
       }
 
-      private Acquisition(final Composition comp, final double dose, final double beamEnergy, final SampleShape ss, final SamplePreparation prep, final Element elm) {
+      private Acquisition(final Composition comp, final double dose, final double beamEnergy, final SampleShape ss, final SamplePreparation prep,
+            final Element elm) {
          mComposition = comp;
          mDose = dose;
          mBeamEnergy = beamEnergy;
@@ -133,19 +135,19 @@ public class QuantificationPlan {
 
       public String getTypeString() {
          final List<String> res = new ArrayList<String>();
-         if(isReference())
+         if (isReference())
             res.add("Reference");
-         if(isStandard())
+         if (isStandard())
             res.add("Standard");
-         if(isUnknown())
+         if (isUnknown())
             res.add("Unknown");
          return TextUtilities.toList(res);
       }
 
       @Override
       public String toString() {
-         return mComposition + " at " + FromSI.keV(mBeamEnergy) + " keV for " + mDose + " nA.s on " + mSampleShape + " "
-               + mSamplePreparation + getTypeString();
+         return mComposition + " at " + FromSI.keV(mBeamEnergy) + " keV for " + mDose + " nA.s on " + mSampleShape + " " + mSamplePreparation
+               + getTypeString();
       }
 
       public boolean isStandard() {
@@ -188,15 +190,14 @@ public class QuantificationPlan {
          return mBeamEnergy;
       }
 
-      private ISpectrumData simulate(SpectrumSimulator ss, final SpectrumProperties sp)
-            throws EPQException {
+      private ISpectrumData simulate(SpectrumSimulator ss, final SpectrumProperties sp) throws EPQException {
          final NumberFormat nf = new HalfUpFormat("0.0");
          sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(mBeamEnergy));
          sp.setNumericProperty(SpectrumProperties.LiveTime, mDose);
          sp.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
          final ISpectrumData res = SpectrumUtils.addNoiseToSpectrum(ss.generateSpectrum(mComposition, sp, true), 1.0);
-         SpectrumUtils.rename(res, "Simulated(" + mComposition.toString() + ", " + nf.format(FromSI.keV(mBeamEnergy)) + " keV, "
-               + nf.format(mDose) + " nA\u00B7s, " + getTypeString() + ")");
+         SpectrumUtils.rename(res, "Simulated(" + mComposition.toString() + ", " + nf.format(FromSI.keV(mBeamEnergy)) + " keV, " + nf.format(mDose)
+               + " nA\u00B7s, " + getTypeString() + ")");
          return res;
       }
 
@@ -226,43 +227,43 @@ public class QuantificationPlan {
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof QuantificationPlan.Acquisition))
+         if (!(obj instanceof QuantificationPlan.Acquisition))
             return false;
          final QuantificationPlan.Acquisition other = (QuantificationPlan.Acquisition) obj;
-         if(Double.doubleToLongBits(mBeamEnergy) != Double.doubleToLongBits(other.mBeamEnergy))
+         if (Double.doubleToLongBits(mBeamEnergy) != Double.doubleToLongBits(other.mBeamEnergy))
             return false;
-         if(mComposition == null) {
-            if(other.mComposition != null)
+         if (mComposition == null) {
+            if (other.mComposition != null)
                return false;
-         } else if(!mComposition.equals(other.mComposition))
+         } else if (!mComposition.equals(other.mComposition))
             return false;
-         if(Double.doubleToLongBits(mDose) != Double.doubleToLongBits(other.mDose))
+         if (Double.doubleToLongBits(mDose) != Double.doubleToLongBits(other.mDose))
             return false;
-         if(mIsUnknown != other.mIsUnknown)
+         if (mIsUnknown != other.mIsUnknown)
             return false;
-         if(mReferenceFor == null) {
-            if(other.mReferenceFor != null)
+         if (mReferenceFor == null) {
+            if (other.mReferenceFor != null)
                return false;
-         } else if(!mReferenceFor.equals(other.mReferenceFor))
+         } else if (!mReferenceFor.equals(other.mReferenceFor))
             return false;
-         if(mSamplePreparation == null) {
-            if(other.mSamplePreparation != null)
+         if (mSamplePreparation == null) {
+            if (other.mSamplePreparation != null)
                return false;
-         } else if(!mSamplePreparation.equals(other.mSamplePreparation))
+         } else if (!mSamplePreparation.equals(other.mSamplePreparation))
             return false;
-         if(mSampleShape == null) {
-            if(other.mSampleShape != null)
+         if (mSampleShape == null) {
+            if (other.mSampleShape != null)
                return false;
-         } else if(!mSampleShape.equals(other.mSampleShape))
+         } else if (!mSampleShape.equals(other.mSampleShape))
             return false;
-         if(mStandardFor == null) {
-            if(other.mStandardFor != null)
+         if (mStandardFor == null) {
+            if (other.mStandardFor != null)
                return false;
-         } else if(!mStandardFor.equals(other.mStandardFor))
+         } else if (!mStandardFor.equals(other.mStandardFor))
             return false;
          return true;
       }
@@ -283,10 +284,9 @@ public class QuantificationPlan {
     * @return {@link QuantificationPlan}
     * @throws EPQException
     */
-   public static QuantificationPlan merge(Collection<QuantificationPlan> plans)
-         throws EPQException {
+   public static QuantificationPlan merge(Collection<QuantificationPlan> plans) throws EPQException {
       QuantificationPlan res = null;
-      for(final QuantificationPlan plan : plans)
+      for (final QuantificationPlan plan : plans)
          res = (res == null ? plan : merge(res, plan));
       return res;
    }
@@ -300,14 +300,13 @@ public class QuantificationPlan {
     * @return {@link QuantificationPlan}
     * @throws EPQException
     */
-   public static QuantificationPlan merge(QuantificationPlan plan1, QuantificationPlan plan2)
-         throws EPQException {
-      if(plan1.mOutline != plan2.mOutline)
+   public static QuantificationPlan merge(QuantificationPlan plan1, QuantificationPlan plan2) throws EPQException {
+      if (plan1.mOutline != plan2.mOutline)
          throw new EPQException("In order to merge acquisition plans, they must be based on the same quantification plan.");
       final QuantificationPlan res = new QuantificationPlan(plan1.mOutline);
-      for(final QuantificationPlan.Acquisition acq : plan1.mAcquisitions)
+      for (final QuantificationPlan.Acquisition acq : plan1.mAcquisitions)
          res.add(acq);
-      for(final QuantificationPlan.Acquisition acq : plan2.mAcquisitions)
+      for (final QuantificationPlan.Acquisition acq : plan2.mAcquisitions)
          res.add(acq);
       return res;
    }
@@ -319,24 +318,22 @@ public class QuantificationPlan {
     * @return Map&lt;QuantificationPlan.Acquisition, ISpectrumData&gt;
     * @throws EPQException
     */
-   public Map<QuantificationPlan.Acquisition, ISpectrumData> simulate(SpectrumSimulator ss)
-         throws EPQException {
+   public Map<QuantificationPlan.Acquisition, ISpectrumData> simulate(SpectrumSimulator ss) throws EPQException {
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setDetector(mOutline.getDetector());
       final HashMap<QuantificationPlan.Acquisition, ISpectrumData> res = new HashMap<QuantificationPlan.Acquisition, ISpectrumData>();
-      for(final QuantificationPlan.Acquisition acq : mAcquisitions)
+      for (final QuantificationPlan.Acquisition acq : mAcquisitions)
          res.put(acq, acq.simulate(ss, sp));
       return res;
    }
 
-   public List<ISpectrumData> simulateUnknown(SpectrumSimulator ss, int duplicates)
-         throws EPQException {
+   public List<ISpectrumData> simulateUnknown(SpectrumSimulator ss, int duplicates) throws EPQException {
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setDetector(mOutline.getDetector());
       final ArrayList<ISpectrumData> res = new ArrayList<ISpectrumData>();
-      for(final QuantificationPlan.Acquisition acq : mAcquisitions)
-         if(acq.isUnknown())
-            for(int i = 0; i < duplicates; ++i) {
+      for (final QuantificationPlan.Acquisition acq : mAcquisitions)
+         if (acq.isUnknown())
+            for (int i = 0; i < duplicates; ++i) {
                final ISpectrumData spec = acq.simulate(ss, sp);
                SpectrumUtils.rename(spec, spec.toString() + "[" + Integer.toString(i + 1) + "]");
                res.add(spec);
@@ -349,17 +346,16 @@ public class QuantificationPlan {
     * @return QuantifyUsingStandards.Result
     * @throws EPQException
     */
-   public QuantifyUsingStandards buildQuantifyUsingStandards(Map<QuantificationPlan.Acquisition, ISpectrumData> specs)
-         throws EPQException {
+   public QuantifyUsingStandards buildQuantifyUsingStandards(Map<QuantificationPlan.Acquisition, ISpectrumData> specs) throws EPQException {
       final QuantifyUsingStandards qus = new QuantifyUsingStandards(mOutline.getDetector(), mOutline.getBeamEnergy());
-      for(final Map.Entry<QuantificationPlan.Acquisition, ISpectrumData> me : specs.entrySet()) {
+      for (final Map.Entry<QuantificationPlan.Acquisition, ISpectrumData> me : specs.entrySet()) {
          final QuantificationPlan.Acquisition acq = me.getKey();
-         for(final Element elm : acq.mStandardFor)
+         for (final Element elm : acq.mStandardFor)
             qus.addStandard(elm, acq.getComposition(), Collections.emptySet(), me.getValue());
-         for(final RegionOfInterest roi : acq.mReferenceFor)
+         for (final RegionOfInterest roi : acq.mReferenceFor)
             qus.addReference(roi, me.getValue(), acq.getComposition());
       }
-      for(final UnmeasuredElementRule uer : mOutline.getUnmeasuredElementRules())
+      for (final UnmeasuredElementRule uer : mOutline.getUnmeasuredElementRules())
          qus.addUnmeasuredElementRule(uer);
       return qus;
    }
@@ -371,8 +367,8 @@ public class QuantificationPlan {
     * @return QuantificationPlan.Acquisition
     */
    public QuantificationPlan.Acquisition find(final Composition comp) {
-      for(final QuantificationPlan.Acquisition acq : mAcquisitions)
-         if(acq.mComposition.equals(comp))
+      for (final QuantificationPlan.Acquisition acq : mAcquisitions)
+         if (acq.mComposition.equals(comp))
             return acq;
       return null;
    }
@@ -387,14 +383,15 @@ public class QuantificationPlan {
    public String toHTML(File path, boolean withOutline) {
       final NumberFormat nf = new HalfUpFormat("0.0");
       final StringBuffer res = new StringBuffer();
-      if(withOutline) {
+      if (withOutline) {
          res.append("<h2>Quantification Outline</h2>\n");
          res.append("<p>" + mOutline.toHTML(path) + "</p>");
       }
       res.append("<h3>Measurement plan</h3>\n");
       res.append("<p><table>");
-      res.append("\t<tr><th>Composition</th><th>Beam Energy<br/>(keV)</th><th>Form</th><th>Preparation</th><th>Dose<br/>(nA&middot;s)</th><th>Type</th></tr>\n");
-      for(final QuantificationPlan.Acquisition acq : mAcquisitions) {
+      res.append(
+            "\t<tr><th>Composition</th><th>Beam Energy<br/>(keV)</th><th>Form</th><th>Preparation</th><th>Dose<br/>(nA&middot;s)</th><th>Type</th></tr>\n");
+      for (final QuantificationPlan.Acquisition acq : mAcquisitions) {
          res.append("\t<tr><td>");
          res.append(acq.mComposition.toHTMLTable());
          res.append("</td><td>");
@@ -420,10 +417,14 @@ public class QuantificationPlan {
     * the sample preparation or increase the dose of pre-existing Acquisition
     * objects when a better/higher dose one comes along.
     * 
-    * @param comp Composition
-    * @param dose nA.s = nC
-    * @param beamEnergy in Joules
-    * @param roi The ROI for which this acquisition is a reference
+    * @param comp
+    *           Composition
+    * @param dose
+    *           nA.s = nC
+    * @param beamEnergy
+    *           in Joules
+    * @param roi
+    *           The ROI for which this acquisition is a reference
     */
    public void add(final Composition comp, final double dose, final double beamEnergy, RegionOfInterest roi) {
       final QuantificationPlan.Acquisition newAcq = new Acquisition(comp, dose, beamEnergy, roi);
@@ -437,10 +438,14 @@ public class QuantificationPlan {
     * the sample preparation or increase the dose of pre-existing Acquisition
     * objects when a better/higher dose one comes along.
     * 
-    * @param comp Composition
-    * @param dose nA.s = nC
-    * @param beamEnergy in Joules
-    * @param elm The element for which this Acquisition is a standard
+    * @param comp
+    *           Composition
+    * @param dose
+    *           nA.s = nC
+    * @param beamEnergy
+    *           in Joules
+    * @param elm
+    *           The element for which this Acquisition is a standard
     */
    public void add(final Composition comp, final double dose, final double beamEnergy, Element elm) {
       final QuantificationPlan.Acquisition newAcq = new Acquisition(comp, dose, beamEnergy, elm);
@@ -454,9 +459,12 @@ public class QuantificationPlan {
     * the sample preparation or increase the dose of pre-existing Acquisition
     * objects when a better/higher dose one comes along.
     * 
-    * @param comp Composition
-    * @param dose nA.s = nC
-    * @param beamEnergy in Joules
+    * @param comp
+    *           Composition
+    * @param dose
+    *           nA.s = nC
+    * @param beamEnergy
+    *           in Joules
     */
    public void add(final Composition comp, final double dose, final double beamEnergy) {
       final QuantificationPlan.Acquisition newAcq = new Acquisition(comp, dose, beamEnergy);
@@ -470,12 +478,12 @@ public class QuantificationPlan {
     */
    private void add(QuantificationPlan.Acquisition newAcq) {
       boolean added = false;
-      for(final QuantificationPlan.Acquisition acq : mAcquisitions) {
+      for (final QuantificationPlan.Acquisition acq : mAcquisitions) {
          final boolean sameMat = acq.getComposition().equals(newAcq.mComposition);
          final boolean sameE0 = Math.abs(acq.getBeamEnergy() - newAcq.mBeamEnergy) < ToSI.eV(0.1);
          // boolean sameShape = acq.getShape().equals(newAcq.getShape());
-         if(sameMat && sameE0) { // && sameShape) {
-            if(newAcq.mDose > acq.mDose)
+         if (sameMat && sameE0) { // && sameShape) {
+            if (newAcq.mDose > acq.mDose)
                acq.mDose = newAcq.mDose;
             acq.mReferenceFor.addAll(newAcq.mReferenceFor);
             acq.mStandardFor.addAll(newAcq.mStandardFor);
@@ -484,7 +492,7 @@ public class QuantificationPlan {
             break;
          }
       }
-      if(!added)
+      if (!added)
          mAcquisitions.add(newAcq);
    }
 

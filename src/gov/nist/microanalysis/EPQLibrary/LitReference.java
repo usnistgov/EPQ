@@ -66,8 +66,8 @@ abstract public class LitReference {
 
       static public String toString(Author[] authors) {
          final StringBuffer sb = new StringBuffer();
-         for(int i = 0; i < authors.length; ++i) {
-            if(i != 0)
+         for (int i = 0; i < authors.length; ++i) {
+            if (i != 0)
                sb.append(i == (authors.length - 1) ? " & " : ", ");
             sb.append(authors[i].getAuthor());
          }
@@ -75,9 +75,9 @@ abstract public class LitReference {
       }
 
       static public String toAbbrev(Author[] authors) {
-         if(authors.length > 1)
+         if (authors.length > 1)
             return authors[0].mLast + " et al";
-         else if(authors.length > 0)
+         else if (authors.length > 0)
             return authors[0].mLast;
          else
             return "";
@@ -130,8 +130,10 @@ abstract public class LitReference {
    static public final Author RFEdgerton = new Author("R. J.", "Edgerton");
    static public final Author Cullen = new Author("Dermott", "Cullen", "Lawrence Livermore National Laboratory");
    static public final Author CPowell = new Author("Cedric", "Powell", "N.I.S.T.");
-   static public final Author FSalvat = new Author("Francesc", "Salvat", "Facultat de FÃ­sica (ECM), Universitat de Barcelona, Diagonal 647, 08028 Barcelona, Spain");
-   static public final Author LSabbatucci = new Author("Sabbatucci", "Lorenzo", "Department of Industrial Engineering (DIN), Laboratory of Montecuccolino, Alma Mater Studiorum University of Bologna, via dei Colli 16, 40136 Bologna, Italy");
+   static public final Author FSalvat = new Author("Francesc", "Salvat",
+         "Facultat de FÃ­sica (ECM), Universitat de Barcelona, Diagonal 647, 08028 Barcelona, Spain");
+   static public final Author LSabbatucci = new Author("Sabbatucci", "Lorenzo",
+         "Department of Industrial Engineering (DIN), Laboratory of Montecuccolino, Alma Mater Studiorum University of Bologna, via dei Colli 16, 40136 Bologna, Italy");
    static public final Author AJablonski = new Author("A", "Jablonksi");
    static public final Author BHenke = new Author("B.L.", "Henke");
    static public final Author EGullikson = new Author("E.M.", "Gullikson");
@@ -139,8 +141,8 @@ abstract public class LitReference {
    static public final Author CSwytThomas = new Author("C.", "Swyt-Thomas", "N.I.H.");
    static public final Author VanGrieken = new Author("Rene", "Van Grieken", "");
    static public final Author Markowicz = new Author("Andrezej", "Markowicz", "");
-   static public final Author Riveros = new Author("Jose", "Riveros","");
-   static public final Author Castellano = new Author("Gustavo", "Castellano","");
+   static public final Author Riveros = new Author("Jose", "Riveros", "");
+   static public final Author Castellano = new Author("Gustavo", "Castellano", "");
 
    /**
     * A class representing a Journal for use in References.
@@ -177,13 +179,12 @@ abstract public class LitReference {
    static public final Journal AtDatNucData = new Journal("Atomic Data and Nuclear Data Tables", "At. Dat. Nucl. Dat. Tables", "Academic Press");
    static public final Journal PhysRevA = new Journal("Physical Review A", "Phys. Rev. A", "American Physical Society");
    static public final Journal ApplPhysLett = new Journal("Applied Physics Letters", "Appl. Phys. Let.", "American Physical Society");
-   static public final Journal RadPhys = new Journal("Radiation Physics and Chemistry", "Rad Phys Chem.","");
+   static public final Journal RadPhys = new Journal("Radiation Physics and Chemistry", "Rad Phys Chem.", "");
 
    /**
     * A type of Reference representing journal articles.
     */
-   static public class JournalArticle
-      extends LitReference {
+   static public class JournalArticle extends LitReference {
       private String mTitle;
       private final Journal mJournal;
       private final String mVolume;
@@ -211,55 +212,32 @@ abstract public class LitReference {
 
       @Override
       public String getShortForm() {
-         return String.format("%s. %s %s p%s (%d)", new Object[] {
-            Author.toAbbrev(mAuthors),
-            mJournal.mAbbreviation,
-            mVolume,
-            mPages,
-            Integer.valueOf(mYear)
-         });
+         return String.format("%s. %s %s p%s (%d)",
+               new Object[]{Author.toAbbrev(mAuthors), mJournal.mAbbreviation, mVolume, mPages, Integer.valueOf(mYear)});
       }
 
       @Override
       public String getLongForm() {
-         return String.format("%s. %s %s %s p%s (%d)", new Object[] {
-            Author.toString(mAuthors),
-            mTitle != null ? mTitle : "",
-            mJournal.mAbbreviation,
-            mVolume,
-            mPages,
-            Integer.valueOf(mYear)
-         });
+         return String.format("%s. %s %s %s p%s (%d)", new Object[]{Author.toString(mAuthors), mTitle != null ? mTitle : "", mJournal.mAbbreviation,
+               mVolume, mPages, Integer.valueOf(mYear)});
       }
    }
 
-   static JournalArticle LoveScott1978 = new JournalArticle(LitReference.JPhysD, "11", "p 1369", 1978, new Author[] {
-      LitReference.GLove,
-      LitReference.VScott
-   });
+   static JournalArticle LoveScott1978 = new JournalArticle(LitReference.JPhysD, "11", "p 1369", 1978,
+         new Author[]{LitReference.GLove, LitReference.VScott});
 
-   static JournalArticle Proza96 = new JournalArticle(LitReference.XRaySpec, "27", "p 3-10", 1998, new Author[] {
-      LitReference.GBastin,
-      LitReference.JDijkstra,
-      LitReference.HHeijligers
-   });
+   static JournalArticle Proza96 = new JournalArticle(LitReference.XRaySpec, "27", "p 3-10", 1998,
+         new Author[]{LitReference.GBastin, LitReference.JDijkstra, LitReference.HHeijligers});
 
-   static JournalArticle Proza96Extended = new JournalArticle(LitReference.XRaySpec, "30", "p 382-387", 2001, new Author[] {
-      LitReference.GBastin,
-      new Author("P. J. T. L.", "Oberndorff", ""),
-      LitReference.JDijkstra,
-      LitReference.HHeijligers
-   });
+   static JournalArticle Proza96Extended = new JournalArticle(LitReference.XRaySpec, "30", "p 382-387", 2001,
+         new Author[]{LitReference.GBastin, new Author("P. J. T. L.", "Oberndorff", ""), LitReference.JDijkstra, LitReference.HHeijligers});
 
-   static final LitReference JTA1982 = new LitReference.BookChapter(LitReference.MicrobeamAnalysis, "175-180", new Author[] {
-      LitReference.JArmstrong
-   });
+   static final LitReference JTA1982 = new LitReference.BookChapter(LitReference.MicrobeamAnalysis, "175-180", new Author[]{LitReference.JArmstrong});
 
    /**
     * A class for representing books.
     */
-   static public class Book
-      extends LitReference {
+   static public class Book extends LitReference {
       private final String mTitle;
       private final String mPublisher;
       private final int mYear;
@@ -274,27 +252,16 @@ abstract public class LitReference {
 
       @Override
       public String getShortForm() {
-         return String.format("%s. %s %s (%d)", new Object[] {
-            Author.toAbbrev(mAuthors),
-            mTitle,
-            mPublisher,
-            Integer.valueOf(mYear)
-         });
+         return String.format("%s. %s %s (%d)", new Object[]{Author.toAbbrev(mAuthors), mTitle, mPublisher, Integer.valueOf(mYear)});
       }
 
       @Override
       public String getLongForm() {
-         return String.format("%s. %s %s (%d)", new Object[] {
-            Author.toString(mAuthors),
-            mTitle,
-            mPublisher,
-            Integer.valueOf(mYear)
-         });
+         return String.format("%s. %s %s (%d)", new Object[]{Author.toString(mAuthors), mTitle, mPublisher, Integer.valueOf(mYear)});
       }
    }
 
-   static public class Program
-      extends LitReference {
+   static public class Program extends LitReference {
       private final String mTitle;
       private final String mVersion;
       private final Author[] mAuthors;
@@ -307,97 +274,54 @@ abstract public class LitReference {
 
       @Override
       public String getShortForm() {
-         return String.format("%s. %s v. %s", new Object[] {
-            Author.toAbbrev(mAuthors),
-            mTitle,
-            mVersion
-         });
+         return String.format("%s. %s v. %s", new Object[]{Author.toAbbrev(mAuthors), mTitle, mVersion});
       }
 
       @Override
       public String getLongForm() {
-         return String.format("%s. %s v. %s", new Object[] {
-            Author.toString(mAuthors),
-            mTitle,
-            mVersion
-         });
+         return String.format("%s. %s v. %s", new Object[]{Author.toString(mAuthors), mTitle, mVersion});
       }
    }
 
-   static public final Program ENDLIB97_Relax = new LitReference.Program("RELAX", "ENDLIB97", new Author[] {
-      Cullen
-   });
+   static public final Program ENDLIB97_Relax = new LitReference.Program("RELAX", "ENDLIB97", new Author[]{Cullen});
 
-   static public final Program DTSA = new LitReference.Program("DTSA", "3.0.1", new Author[] {
-      CFiori,
-      CSwytThomas,
-      RMyklebust
-   });
+   static public final Program DTSA = new LitReference.Program("DTSA", "3.0.1", new Author[]{CFiori, CSwytThomas, RMyklebust});
 
-   static public final Book ElectronProbeQuant = new Book("Electron Probe Quantitation", "Plenum", 1991, new Author[] {
-      KHeinrich,
-      DNewbury
-   });
+   static public final Book ElectronProbeQuant = new Book("Electron Probe Quantitation", "Plenum", 1991, new Author[]{KHeinrich, DNewbury});
 
-   static public final Book Goldstein = new Book("Scanning Electron Microscopy and X-Ray Microanalysis - 3rd edition", "Kluwer Academic/Plenum", 2003, new Author[] {
-      JGoldstein,
-      CLyman,
-      DNewbury,
-      ELifshin,
-      PEchlin,
-      LSawyer,
-      DJoy,
-      JMichael
-   });
-   static public final Book QuantitativeElectronProbeMicroanalysis = new Book("Quantitative Electron Probe Microanalysis - NBS SP 298", "National Bureau of Standards", 1968, new Author[] {
-      KHeinrich
-   });
-   static public final Book ElectronBeamXRayMicroanalysis = new Book("Electron Beam X-Ray Microanalysis", "Van Nostrand Reinhold Company", 1981, new Author[] {
-      KHeinrich
-   });
-   static public final Book EnergyDispersiveXRaySpectrometery = new Book("Energy Dispersive X-Ray Spectrometery - NBS SP 604", "National Bureau of Standards", 1981, new Author[] {
-      KHeinrich,
-      DNewbury,
-      RMyklebust,
-      CFiori
-   });
-   static public final Book CharacterizationOfParticles = new Book("Characterization of Particles NBS SP 533", "National Bureau of Standards", 1978, new Author[] {
-      KHeinrich
-   });
+   static public final Book Goldstein = new Book("Scanning Electron Microscopy and X-Ray Microanalysis - 3rd edition", "Kluwer Academic/Plenum", 2003,
+         new Author[]{JGoldstein, CLyman, DNewbury, ELifshin, PEchlin, LSawyer, DJoy, JMichael});
+   static public final Book QuantitativeElectronProbeMicroanalysis = new Book("Quantitative Electron Probe Microanalysis - NBS SP 298",
+         "National Bureau of Standards", 1968, new Author[]{KHeinrich});
+   static public final Book ElectronBeamXRayMicroanalysis = new Book("Electron Beam X-Ray Microanalysis", "Van Nostrand Reinhold Company", 1981,
+         new Author[]{KHeinrich});
+   static public final Book EnergyDispersiveXRaySpectrometery = new Book("Energy Dispersive X-Ray Spectrometery - NBS SP 604",
+         "National Bureau of Standards", 1981, new Author[]{KHeinrich, DNewbury, RMyklebust, CFiori});
+   static public final Book CharacterizationOfParticles = new Book("Characterization of Particles NBS SP 533", "National Bureau of Standards", 1978,
+         new Author[]{KHeinrich});
 
-   static public final Book FrameBook = new Book("FRAME: An On-Line Correction Procedure for Quantitative Electron Probe Micronanalysis, NBS Tech Note 796", "National Bureau of Standards", 1973, new Author[] {
-      HYakowitz,
-      RMyklebust,
-      KHeinrich
-   });
+   static public final Book FrameBook = new Book(
+         "FRAME: An On-Line Correction Procedure for Quantitative Electron Probe Micronanalysis, NBS Tech Note 796", "National Bureau of Standards",
+         1973, new Author[]{HYakowitz, RMyklebust, KHeinrich});
 
-   static public final Book ElectronMicroprobe = new Book("The Electron Microprobe", "Wiley (New York)", 1966, new Author[] {
-      TMcKinley,
-      KHeinrich,
-      DWittry,
-   });
+   static public final Book ElectronMicroprobe = new Book("The Electron Microprobe", "Wiley (New York)", 1966,
+         new Author[]{TMcKinley, KHeinrich, DWittry,});
 
-   static public final Book MicrobeamAnalysis = new Book("Microbeam Analysis", "San Francisco Press", 1982, new Author[] {
-      KHeinrich
-   });
+   static public final Book MicrobeamAnalysis = new Book("Microbeam Analysis", "San Francisco Press", 1982, new Author[]{KHeinrich});
 
-   static public final Book HandbookOfXRaySpectrometry = new Book("Handbook of X-Ray Spectrometry", "Marcel Dekker", 2002, new Author[] {
-      VanGrieken,
-      Markowicz
+   static public final Book HandbookOfXRaySpectrometry = new Book("Handbook of X-Ray Spectrometry", "Marcel Dekker", 2002,
+         new Author[]{VanGrieken, Markowicz
 
-   });
+         });
 
-   static public LitReference.JournalArticle Henke1993 = new LitReference.JournalArticle("X-ray interactions: photoabsorption, scattering, transmission, and reflection at E=50-30000 eV, Z=1-92", LitReference.AtDatNucData, "54", "181-342", 1993, new LitReference.Author[] {
-      LitReference.BHenke,
-      LitReference.EGullikson,
-      LitReference.JDavis
-   });
+   static public LitReference.JournalArticle Henke1993 = new LitReference.JournalArticle(
+         "X-ray interactions: photoabsorption, scattering, transmission, and reflection at E=50-30000 eV, Z=1-92", LitReference.AtDatNucData, "54",
+         "181-342", 1993, new LitReference.Author[]{LitReference.BHenke, LitReference.EGullikson, LitReference.JDavis});
 
    /**
     * A class for representing chapters within books.
     */
-   static public class BookChapter
-      extends LitReference {
+   static public class BookChapter extends LitReference {
       private final Book mBook;
       private String mPages;
       private final Author[] mAuthors;
@@ -419,35 +343,22 @@ abstract public class LitReference {
 
       @Override
       public String getShortForm() {
-         return String.format("%s in \"%s\" eds. %s %s (%d)", new Object[] {
-            Author.toAbbrev(mAuthors),
-            mBook.mTitle,
-            Author.toAbbrev(mBook.mAuthors),
-            mBook.mPublisher,
-            Integer.valueOf(mBook.mYear)
-         });
+         return String.format("%s in \"%s\" eds. %s %s (%d)", new Object[]{Author.toAbbrev(mAuthors), mBook.mTitle, Author.toAbbrev(mBook.mAuthors),
+               mBook.mPublisher, Integer.valueOf(mBook.mYear)});
       }
 
       @Override
       public String getLongForm() {
-         return String.format("%s in \"%s\" eds. %s %s (%d)", new Object[] {
-            Author.toString(mAuthors),
-            mBook.mTitle,
-            Author.toString(mBook.mAuthors),
-            mBook.mPublisher,
-            Integer.valueOf(mBook.mYear)
-         });
+         return String.format("%s in \"%s\" eds. %s %s (%d)", new Object[]{Author.toString(mAuthors), mBook.mTitle, Author.toString(mBook.mAuthors),
+               mBook.mPublisher, Integer.valueOf(mBook.mYear)});
       }
    }
 
-   static public BookChapter PAPinEPQ = new BookChapter(LitReference.ElectronProbeQuant, "p XXX-XXX", new Author[] {
-      LitReference.JPouchou,
-      LitReference.FPichoir
-   });
-   
-   
-   static public JournalArticle Riveros1993 = new JournalArticle("Review of ϕ(ρz) curves in electron probe microanalysis", XRaySpec, "22", "3-10", 1993,
-         new Author[] { Riveros, Castellano });
+   static public BookChapter PAPinEPQ = new BookChapter(LitReference.ElectronProbeQuant, "p XXX-XXX",
+         new Author[]{LitReference.JPouchou, LitReference.FPichoir});
+
+   static public JournalArticle Riveros1993 = new JournalArticle("Review of ϕ(ρz) curves in electron probe microanalysis", XRaySpec, "22", "3-10",
+         1993, new Author[]{Riveros, Castellano});
 
    static public Date createDate(int yr, int month, int day) {
       final Calendar cal = Calendar.getInstance(Locale.US);
@@ -458,8 +369,7 @@ abstract public class LitReference {
    /**
     * A reference to a WebSite URL.
     */
-   static public class WebSite
-      extends LitReference {
+   static public class WebSite extends LitReference {
       private final String mUrl;
       private final String mTitle;
       private final Date mDate;
@@ -485,8 +395,7 @@ abstract public class LitReference {
    /**
     * A reference which is simply a text string.
     */
-   static public class CrudeReference
-      extends LitReference {
+   static public class CrudeReference extends LitReference {
       private final String mReference;
 
       public CrudeReference(String ref) {

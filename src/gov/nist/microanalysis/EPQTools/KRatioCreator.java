@@ -48,8 +48,7 @@ import javax.swing.SwingConstants;
  * @version 1.0
  */
 
-public class KRatioCreator
-   extends JDialog {
+public class KRatioCreator extends JDialog {
    private static final long serialVersionUID = 0x1;
    private Vector<Element> mElementList = new Vector<Element>();
    private Vector<String> DisplayList = new Vector<String>();
@@ -80,8 +79,7 @@ public class KRatioCreator
          pack();
          jTextField_Element.grabFocus();
          jTextField_Element.selectAll();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -93,14 +91,12 @@ public class KRatioCreator
          pack();
          jTextField_Element.grabFocus();
          jTextField_Element.selectAll();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
 
-   private void initialize()
-         throws Exception {
+   private void initialize() throws Exception {
 
       jButton_Add.setMnemonic('A');
       jButton_Add.setText("Add");
@@ -176,12 +172,8 @@ public class KRatioCreator
       jLabel_Line.setHorizontalAlignment(SwingConstants.RIGHT);
 
       {
-         final String[] lines = {
-            "K",
-            "L",
-            "M"
-         };
-         for(final String line : lines)
+         final String[] lines = {"K", "L", "M"};
+         for (final String line : lines)
             jComboBox_Line.addItem(line);
       }
       jComboBox_Line.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -215,9 +207,7 @@ public class KRatioCreator
       jPanel_ButtonBox.add(jButton_Done, null);
 
       jList_KRatios.setForeground(SystemColor.textText);
-      jList_KRatios.setListData(new String[] {
-         "Your K-Ratios will appear here"
-      });
+      jList_KRatios.setListData(new String[]{"Your K-Ratios will appear here"});
 
       jScrollPane_Center.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
       jScrollPane_Center.getViewport().add(jList_KRatios, null);
@@ -231,11 +221,11 @@ public class KRatioCreator
 
    void jButton_Add_actionPerformed(ActionEvent e) {
       final Element elm = Element.byName(jTextField_Element.getText());
-      if((!elm.equals(Element.None)) && (!mElementList.contains(elm)))
+      if ((!elm.equals(Element.None)) && (!mElementList.contains(elm)))
          try {
             final NumberFormat nf = NumberFormat.getInstance();
             final double KRatio = nf.parse(jTextField_KRatio.getText()).doubleValue();
-            if(KRatio < 0.0)
+            if (KRatio < 0.0)
                throw new NumberFormatException();
             final String Line = jComboBox_Line.getSelectedItem().toString();
 
@@ -247,8 +237,7 @@ public class KRatioCreator
             jList_KRatios.setListData(DisplayList);
             jTextField_Element.grabFocus();
             jTextField_Element.selectAll();
-         }
-         catch(final ParseException nfex) {
+         } catch (final ParseException nfex) {
             jTextField_KRatio.grabFocus();
             jTextField_KRatio.selectAll();
          }
@@ -268,9 +257,7 @@ public class KRatioCreator
    }
 
    void jButton_Clear_actionPerformed(ActionEvent e) {
-      jList_KRatios.setListData(new String[] {
-         "Your K-Ratios will appear here"
-      });
+      jList_KRatios.setListData(new String[]{"Your K-Ratios will appear here"});
       DisplayList = new Vector<String>();
       mElementList = new Vector<Element>();
       ElementToKRatioMap = new HashMap<Element, Double>();
@@ -282,7 +269,7 @@ public class KRatioCreator
    }
 
    void jTextField_Element_keyPressed(KeyEvent e) {
-      if(e.getKeyCode() == KeyEvent.VK_ENTER)
+      if (e.getKeyCode() == KeyEvent.VK_ENTER)
          jButton_Add_actionPerformed(new ActionEvent(e.getSource(), e.getID(), e.toString()));
    }
 
@@ -291,23 +278,24 @@ public class KRatioCreator
    }
 
    void jTextField_KRatio_keyPressed(KeyEvent e) {
-      if(e.getKeyCode() == KeyEvent.VK_ENTER)
+      if (e.getKeyCode() == KeyEvent.VK_ENTER)
          jButton_Add_actionPerformed(new ActionEvent(e.getSource(), e.getID(), e.toString()));
    }
 
    protected void fireWindowClosingEvent(ActionEvent e) {
-      if(WindowClosingListeners != null)
-         for(final ActionListener al : WindowClosingListeners)
+      if (WindowClosingListeners != null)
+         for (final ActionListener al : WindowClosingListeners)
             al.actionPerformed(e);
    }
 
    /**
     * removeWindowClosingListener - removes the window closing listener
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void removeWindowClosingListener(ActionListener l) {
-      if((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
+      if ((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(WindowClosingListeners);
          v.removeElement(l);
          WindowClosingListeners = v;
@@ -319,12 +307,14 @@ public class KRatioCreator
     * closes, an event will be triggered so that all listening components can
     * respond appropriately.
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void addWindowClosingListener(ActionListener l) {
-      final Vector<ActionListener> v = WindowClosingListeners == null ? new Vector<ActionListener>(2)
+      final Vector<ActionListener> v = WindowClosingListeners == null
+            ? new Vector<ActionListener>(2)
             : new Vector<ActionListener>(WindowClosingListeners);
-      if(!v.contains(l)) {
+      if (!v.contains(l)) {
          v.addElement(l);
          WindowClosingListeners = v;
       }
@@ -336,17 +326,17 @@ public class KRatioCreator
 
    public KRatioSet getKRatioSet() {
       final KRatioSet KRatios = new KRatioSet();
-      for(int index = 0; index < mElementList.size(); index++) {
+      for (int index = 0; index < mElementList.size(); index++) {
          final Element elm = mElementList.get(index);
          final double KRatio = ElementToKRatioMap.get(elm).doubleValue();
          final String linestr = ElementToLineMap.get(elm).toString();
 
          int tempShell = AtomicShell.NoShell;
-         if(linestr.compareTo("K") == 0)
+         if (linestr.compareTo("K") == 0)
             tempShell = AtomicShell.K;
-         else if(linestr.compareTo("L") == 0)
+         else if (linestr.compareTo("L") == 0)
             tempShell = AtomicShell.LIII;
-         else if(linestr.compareTo("M") == 0)
+         else if (linestr.compareTo("M") == 0)
             tempShell = AtomicShell.MV;
          final AtomicShell shell = new AtomicShell(elm, tempShell);
          KRatios.addKRatio(new XRayTransitionSet(shell), KRatio, 0.0);
@@ -359,7 +349,7 @@ public class KRatioCreator
    }
 
    void jComboBox_Line_keyPressed(KeyEvent e) {
-      if(e.getKeyCode() == KeyEvent.VK_ENTER)
+      if (e.getKeyCode() == KeyEvent.VK_ENTER)
          jButton_Add_actionPerformed(new ActionEvent(e.getSource(), e.getID(), e.toString()));
    }
 
@@ -369,18 +359,18 @@ public class KRatioCreator
       mElementList = new Vector<Element>();
       DisplayList = new Vector<String>();
 
-      for(final Element elm : KRatios.getElementSet()) {
+      for (final Element elm : KRatios.getElementSet()) {
          mElementList.add(elm);
          final int Family = AtomicShell.parseFamilyName(ElementToLineMap.get(elm).toString());
          AtomicShell shell = null;
-         if(Family == AtomicShell.KFamily)
+         if (Family == AtomicShell.KFamily)
             shell = new AtomicShell(elm, AtomicShell.K);
-         else if(Family == AtomicShell.LFamily)
+         else if (Family == AtomicShell.LFamily)
             shell = new AtomicShell(elm, AtomicShell.LI);
-         else if(Family == AtomicShell.MFamily)
+         else if (Family == AtomicShell.MFamily)
             shell = new AtomicShell(elm, AtomicShell.MI);
 
-         if(shell != null) {
+         if (shell != null) {
             double KRatio = 0.0;
             KRatio = KRatios.getKRatio(new XRayTransitionSet(shell));
             ElementToKRatioMap.put(elm, Double.valueOf(KRatio));

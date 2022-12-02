@@ -51,16 +51,14 @@ final public class SpectrumUtils {
 
    static private final double getMnKa() {
       try {
-         return FromSI.eV((new XRayTransition(Element.Mn, XRayTransition.KA1))
-               .getEnergy());
+         return FromSI.eV((new XRayTransition(Element.Mn, XRayTransition.KA1)).getEnergy());
       } catch (final Exception ex) {
          System.err.println("Using default energy for Mn Ka.");
          return 5898.7;
       }
    }
 
-   static final public XRayTransition MnKA1 = new XRayTransition(Element.Mn,
-         XRayTransition.KA1);
+   static final public XRayTransition MnKA1 = new XRayTransition(Element.Mn, XRayTransition.KA1);
    /**
     * E_MnKa - The energy of the Mn Ka line in eV.
     */
@@ -79,8 +77,7 @@ final public class SpectrumUtils {
     * @return boolean
     */
    public static boolean areCompatible(ISpectrumData sd1, ISpectrumData sd2) {
-      return (sd1.getChannelCount() == sd2.getChannelCount())
-            && (sd1.getChannelWidth() == sd2.getChannelWidth())
+      return (sd1.getChannelCount() == sd2.getChannelCount()) && (sd1.getChannelWidth() == sd2.getChannelWidth())
             && (sd1.getZeroOffset() == sd2.getZeroOffset());
    }
 
@@ -95,17 +92,13 @@ final public class SpectrumUtils {
     *           ISpectrumData
     * @throws EPQException
     */
-   public static void verifyCompatibility(ISpectrumData sd1, ISpectrumData sd2)
-         throws EPQException {
+   public static void verifyCompatibility(ISpectrumData sd1, ISpectrumData sd2) throws EPQException {
       if (sd1.getChannelCount() != sd2.getChannelCount())
-         throw new EPQException("The number of channels in " + sd1.toString()
-               + " and " + sd2.toString() + " don't match.");
+         throw new EPQException("The number of channels in " + sd1.toString() + " and " + sd2.toString() + " don't match.");
       if (sd1.getChannelWidth() != sd2.getChannelWidth())
-         throw new EPQException("The channel widths for " + sd1.toString()
-               + " and " + sd2.toString() + " don't match.");
+         throw new EPQException("The channel widths for " + sd1.toString() + " and " + sd2.toString() + " don't match.");
       if (sd1.getZeroOffset() != sd2.getZeroOffset())
-         throw new EPQException("The zero offsets for " + sd1.toString()
-               + " and " + sd2.toString() + " don't match.");
+         throw new EPQException("The zero offsets for " + sd1.toString() + " and " + sd2.toString() + " don't match.");
    }
 
    /**
@@ -120,16 +113,12 @@ final public class SpectrumUtils {
     *           Nominally 0.01 for calibrated to within 1%
     * @return true if similarly calibrated, false otherwise
     */
-   public static boolean areCalibratedSimilar(SpectrumProperties sp,
-         ISpectrumData sd, double tol) {
-      final double cw1 = sp
-            .getNumericWithDefault(SpectrumProperties.EnergyScale, Double.NaN);
+   public static boolean areCalibratedSimilar(SpectrumProperties sp, ISpectrumData sd, double tol) {
+      final double cw1 = sp.getNumericWithDefault(SpectrumProperties.EnergyScale, Double.NaN);
       final double cw2 = sd.getChannelWidth();
-      final double zo1 = sp
-            .getNumericWithDefault(SpectrumProperties.EnergyOffset, Double.NaN);
+      final double zo1 = sp.getNumericWithDefault(SpectrumProperties.EnergyOffset, Double.NaN);
       final double zo2 = sd.getZeroOffset();
-      return (Math.abs(cw1 - cw2) <= (tol * cw1)) && (Math
-            .abs(zo1 - zo2) <= (0.1 * tol * cw1 * sd.getChannelCount()));
+      return (Math.abs(cw1 - cw2) <= (tol * cw1)) && (Math.abs(zo1 - zo2) <= (0.1 * tol * cw1 * sd.getChannelCount()));
    }
 
    /**
@@ -221,8 +210,7 @@ final public class SpectrumUtils {
     * @return double - The full-width half-maximum in Joules
     */
    public static double linewidth(double e, double fwhmAtE0, double e0) {
-      return ToSI
-            .eV(linewidth_eV(FromSI.eV(e), FromSI.eV(fwhmAtE0), FromSI.eV(e0)));
+      return ToSI.eV(linewidth_eV(FromSI.eV(e), FromSI.eV(fwhmAtE0), FromSI.eV(e0)));
    }
 
    /**
@@ -273,8 +261,7 @@ final public class SpectrumUtils {
     * @return UncertainValue
     */
    public static UncertainValue2 fwhmToGaussianWidth(UncertainValue2 fwhm) {
-      return UncertainValue2.multiply(1.0 / 2.354820045030949382023138652918,
-            fwhm);
+      return UncertainValue2.multiply(1.0 / 2.354820045030949382023138652918, fwhm);
    }
 
    /**
@@ -297,8 +284,7 @@ final public class SpectrumUtils {
     * @return double
     */
    public static UncertainValue2 gaussianWidthToFWHM(UncertainValue2 gaussian) {
-      return UncertainValue2.multiply(2.354820045030949382023138652918,
-            gaussian);
+      return UncertainValue2.multiply(2.354820045030949382023138652918, gaussian);
       // fwhm/(2*sqrt(-2.0*ln(0.5)))
    }
 
@@ -432,11 +418,9 @@ final public class SpectrumUtils {
       final int max = channelForEnergy(sd, maxE);
       double res = sumCounts(sd, bound(sd, min), bound(sd, max));
       if ((min >= 0) && (min < sd.getChannelCount()))
-         res -= (sd.getCounts(min) * (minE - minEnergyForChannel(sd, min)))
-               / sd.getChannelWidth();
+         res -= (sd.getCounts(min) * (minE - minEnergyForChannel(sd, min))) / sd.getChannelWidth();
       if ((max >= 0) && (max < sd.getChannelCount()))
-         res += (sd.getCounts(max) * (maxE - minEnergyForChannel(sd, max)))
-               / sd.getChannelWidth();
+         res += (sd.getCounts(max) * (maxE - minEnergyForChannel(sd, max))) / sd.getChannelWidth();
       return res;
    }
 
@@ -488,8 +472,7 @@ final public class SpectrumUtils {
     */
    public static double getBeamEnergy(ISpectrumData sd) {
       final SpectrumProperties sp = sd.getProperties();
-      double res = sp.getNumericWithDefault(SpectrumProperties.BeamEnergy, -1.0)
-            * 1000.0;
+      double res = sp.getNumericWithDefault(SpectrumProperties.BeamEnergy, -1.0) * 1000.0;
       if (res < 0.0) {
          res = FromSI.eV(DuaneHuntLimit.DefaultDuaneHunt.compute(sd));
          if (Double.isNaN(res)) {
@@ -515,8 +498,7 @@ final public class SpectrumUtils {
     */
    public static double getFWHMAtMnKA(SpectrumProperties sp, double def) {
       double res = sp.getNumericWithDefault(SpectrumProperties.Resolution, def);
-      final double line = sp
-            .getNumericWithDefault(SpectrumProperties.ResolutionLine, E_MnKa);
+      final double line = sp.getNumericWithDefault(SpectrumProperties.ResolutionLine, E_MnKa);
       if (line != SpectrumUtils.E_MnKa)
          res = linewidth_eV(SpectrumUtils.E_MnKa, res, line);
       return res;
@@ -580,8 +562,7 @@ final public class SpectrumUtils {
     *           than spec.getChannelCount)
     * @return double[] An array of count items (0 if index out-of-range)
     */
-   final static public double[] slice(ISpectrumData spec, int lowCh,
-         int count) {
+   final static public double[] slice(ISpectrumData spec, int lowCh, int count) {
       final double[] res = new double[count];
       final int upper = Math.min(count, spec.getChannelCount() - lowCh);
       for (int i = Math.max(0, -lowCh); i < upper; ++i)
@@ -600,8 +581,7 @@ final public class SpectrumUtils {
     *           In x-ray events or similar
     * @return ISpectrumData
     */
-   static public ISpectrumData toSpectrum(double chWidth, double zeroOffset,
-         double[] data) {
+   static public ISpectrumData toSpectrum(double chWidth, double zeroOffset, double[] data) {
       return toSpectrum(chWidth, zeroOffset, data.length, data);
    }
 
@@ -618,22 +598,18 @@ final public class SpectrumUtils {
     *           In x-ray events or similar
     * @return ISpectrumData
     */
-   static public ISpectrumData toSpectrum(double chWidth, double zeroOffset,
-         int nCh, double[] data) {
+   static public ISpectrumData toSpectrum(double chWidth, double zeroOffset, int nCh, double[] data) {
       class NewSpectrum extends BaseSpectrum {
          private final SpectrumProperties mProperties;
          private final double[] mChannels;
 
-         NewSpectrum(double chWidth, double zeroOffset, int nCh,
-               double[] data) {
+         NewSpectrum(double chWidth, double zeroOffset, int nCh, double[] data) {
             super();
             mProperties = new SpectrumProperties();
             setEnergyScale(zeroOffset, chWidth);
             mChannels = new double[nCh];
-            System.arraycopy(data, 0, mChannels, 0,
-                  Math.min(data.length, mChannels.length));
-            mProperties.setTextProperty(SpectrumProperties.SpectrumDisplayName,
-                  "Converted");
+            System.arraycopy(data, 0, mChannels, 0, Math.min(data.length, mChannels.length));
+            mProperties.setTextProperty(SpectrumProperties.SpectrumDisplayName, "Converted");
          }
 
          /**
@@ -745,8 +721,7 @@ final public class SpectrumUtils {
     */
    static public BufferedImage toStrip(ISpectrumData spec, int height) {
       final int cc = spec.getChannelCount();
-      final BufferedImage img = new BufferedImage(cc, height,
-            BufferedImage.TYPE_BYTE_GRAY);
+      final BufferedImage img = new BufferedImage(cc, height, BufferedImage.TYPE_BYTE_GRAY);
       final WritableRaster wr = img.getRaster();
       final DataBufferByte dbb = (DataBufferByte) wr.getDataBuffer();
       final byte[] buffer = dbb.getData();
@@ -754,9 +729,7 @@ final public class SpectrumUtils {
       for (int ch = cc - 1; ch >= 0; ch--)
          // buffer[ch]=(byte)Math2.bound((int) Math.round(255.0 * (1.0 +
          // Math.log10(spec.getCounts(ch)/max))),0,256);
-         buffer[ch] = (byte) Math2.bound(
-               (int) Math.round(255.0 * Math.sqrt(spec.getCounts(ch) / max)), 0,
-               256);
+         buffer[ch] = (byte) Math2.bound((int) Math.round(255.0 * Math.sqrt(spec.getCounts(ch) / max)), 0, 256);
       // buffer[ch]=(byte)Math2.bound((int) Math.round(255.0 *
       // spec.getCounts(ch)/max),0,256);
       for (int h = 1; h < height; ++h)
@@ -781,30 +754,25 @@ final public class SpectrumUtils {
     *           Height of the bitmap in pixels
     * @return BufferedImage
     */
-   static public BufferedImage toStrip(ISpectrumData spec, double eMin,
-         double eMax, int width, int height) {
+   static public BufferedImage toStrip(ISpectrumData spec, double eMin, double eMax, int width, int height) {
       final int chMin = SpectrumUtils.channelForEnergy(spec, eMin);
       final int chMax = SpectrumUtils.channelForEnergy(spec, eMax) + 1;
       final int cc = chMax - chMin;
-      final BufferedImage img = new BufferedImage(width, height,
-            BufferedImage.TYPE_BYTE_GRAY);
+      final BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
       final WritableRaster wr = img.getRaster();
       final DataBufferByte dbb = (DataBufferByte) wr.getDataBuffer();
       final byte[] buffer = dbb.getData();
-      final double max = spec
-            .getCounts(SpectrumUtils.maxChannel(spec, chMin, chMax));
+      final double max = spec.getCounts(SpectrumUtils.maxChannel(spec, chMin, chMax));
       if (cc > width) {
          // More channels than pixels
          int minCh = chMin, maxCh;
          for (int x = 0; x < width; ++x) {
-            maxCh = (int) Math
-                  .round((double) ((x + 1) * cc) / (double) (width - 1));
+            maxCh = (int) Math.round((double) ((x + 1) * cc) / (double) (width - 1));
             double i = 0.0;
             for (int ch = minCh; ch < maxCh; ++ch)
                i += spec.getCounts(ch);
             i /= (maxCh - minCh);
-            buffer[x] = (byte) Math2
-                  .bound((int) Math.round(255.0 * Math.sqrt(i / max)), 0, 256);
+            buffer[x] = (byte) Math2.bound((int) Math.round(255.0 * Math.sqrt(i / max)), 0, 256);
             minCh = maxCh;
          }
       } else {
@@ -814,8 +782,7 @@ final public class SpectrumUtils {
             final double i = spec.getCounts(ch);
             maxPix = (((ch - chMin) + 1) * width) / (chMax - chMin);
             for (int x = minPix; x < maxPix; ++x)
-               buffer[x] = (byte) Math2.bound(
-                     (int) Math.round(255.0 * Math.sqrt(i / max)), 0, 256);
+               buffer[x] = (byte) Math2.bound((int) Math.round(255.0 * Math.sqrt(i / max)), 0, 256);
             minPix = maxPix;
          }
       }
@@ -825,11 +792,9 @@ final public class SpectrumUtils {
       return img;
    }
 
-   static public BufferedImage toStrips(Collection<ISpectrumData> specs,
-         int height) {
+   static public BufferedImage toStrips(Collection<ISpectrumData> specs, int height) {
       final int cc = specs.iterator().next().getChannelCount();
-      final BufferedImage img = new BufferedImage(cc,
-            (specs.size() * (height + 1)) - 1, BufferedImage.TYPE_BYTE_GRAY);
+      final BufferedImage img = new BufferedImage(cc, (specs.size() * (height + 1)) - 1, BufferedImage.TYPE_BYTE_GRAY);
       int p = 0;
       final Graphics2D gr = img.createGraphics();
       for (final ISpectrumData spec : specs) {
@@ -839,8 +804,7 @@ final public class SpectrumUtils {
       return img;
    }
 
-   static public BufferedImage toThumbnail(ISpectrumData spec, int maxCh,
-         int width, int height) {
+   static public BufferedImage toThumbnail(ISpectrumData spec, int maxCh, int width, int height) {
       if (maxCh > spec.getChannelCount())
          maxCh = spec.getChannelCount();
       final double[] min = new double[width], max = new double[width];
@@ -861,8 +825,7 @@ final public class SpectrumUtils {
          }
          j0 = j1;
       }
-      final BufferedImage img = new BufferedImage(width, height,
-            BufferedImage.TYPE_BYTE_GRAY);
+      final BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
       final Graphics2D g = img.createGraphics();
       g.setColor(Color.white);
       g.fillRect(0, 0, width, height);
@@ -880,8 +843,7 @@ final public class SpectrumUtils {
       g.setColor(Color.black);
 
       for (int i = 0; i < width; ++i) {
-         final int maxI = (height - 2)
-               - (int) Math.round((max[i] / allMax) * (height - 2));
+         final int maxI = (height - 2) - (int) Math.round((max[i] / allMax) * (height - 2));
          g.drawLine(i, height - 1, i, maxI);
       }
       g.setColor(Color.gray);
@@ -891,21 +853,17 @@ final public class SpectrumUtils {
       final Composition comp = SpectrumUtils.getComposition(spec);
       if (comp != null) {
          g.setFont(new Font("sans", Font.PLAIN, (32 * width) / 256));
-         final Rectangle r = g.getFontMetrics()
-               .getStringBounds(comp.toString(), g).getBounds();
+         final Rectangle r = g.getFontMetrics().getStringBounds(comp.toString(), g).getBounds();
          hh = Math.min(height, r.height);
          g.drawString(comp.toString(), Math.max(0, width - r.width), hh);
       }
-      final double e0 = spec.getProperties()
-            .getNumericWithDefault(SpectrumProperties.BeamEnergy, Double.NaN);
+      final double e0 = spec.getProperties().getNumericWithDefault(SpectrumProperties.BeamEnergy, Double.NaN);
       if (!Double.isNaN(e0)) {
          final NumberFormat df = new HalfUpFormat("0.0 keV");
          final String tmp = df.format(e0);
          g.setFont(new Font("sans", Font.PLAIN, (24 * width) / 256));
-         final Rectangle r = g.getFontMetrics().getStringBounds(tmp, g)
-               .getBounds();
-         g.drawString(tmp, Math.max(0, width - r.width),
-               Math.min(height, hh + r.height));
+         final Rectangle r = g.getFontMetrics().getStringBounds(tmp, g).getBounds();
+         g.drawString(tmp, Math.max(0, width - r.width), Math.min(height, hh + r.height));
       }
       return img;
    }
@@ -918,8 +876,7 @@ final public class SpectrumUtils {
     * @return In Meters
     */
    static public double energyToWavelength(double energy) {
-      return (PhysicalConstants.PlanckConstant * PhysicalConstants.SpeedOfLight)
-            / energy;
+      return (PhysicalConstants.PlanckConstant * PhysicalConstants.SpeedOfLight) / energy;
    }
 
    /**
@@ -930,8 +887,7 @@ final public class SpectrumUtils {
     * @return Joules
     */
    static public double wavelengthToEnergy(double wavelength) {
-      return (PhysicalConstants.PlanckConstant * PhysicalConstants.SpeedOfLight)
-            / wavelength;
+      return (PhysicalConstants.PlanckConstant * PhysicalConstants.SpeedOfLight) / wavelength;
    }
 
    /**
@@ -942,8 +898,7 @@ final public class SpectrumUtils {
     * @return Meters<sup>-1</sup>
     */
    static public double energyToWavenumber(double energy) {
-      return (2.0 * Math.PI * energy) / (PhysicalConstants.PlanckConstant
-            * PhysicalConstants.SpeedOfLight);
+      return (2.0 * Math.PI * energy) / (PhysicalConstants.PlanckConstant * PhysicalConstants.SpeedOfLight);
    }
 
    /**
@@ -960,21 +915,16 @@ final public class SpectrumUtils {
     *           - Should the string contain the energy for each bin
     * @return String
     */
-   static public String spectrumDataToText(ISpectrumData sd, double eLow,
-         double eHigh, boolean withEnergies) {
+   static public String spectrumDataToText(ISpectrumData sd, double eLow, double eHigh, boolean withEnergies) {
       final StringBuffer sb = new StringBuffer();
-      final int min = SpectrumUtils.bound(sd,
-            SpectrumUtils.channelForEnergy(sd, eLow));
+      final int min = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, eLow));
       // Finds the end (right side) of the highlighted region
-      final int max = SpectrumUtils.bound(sd,
-            SpectrumUtils.channelForEnergy(sd, eHigh));
+      final int max = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, eHigh));
       // for each data point in the region, write out the energy and
       // the count at that specific point
       if (withEnergies)
          for (int i = min; i < max; i++)
-            sb.append(SpectrumUtils.minEnergyForChannel(sd, i) + '\t'
-                  + SpectrumUtils.maxEnergyForChannel(sd, i) + '\t'
-                  + sd.getCounts(i) + '\n');
+            sb.append(SpectrumUtils.minEnergyForChannel(sd, i) + '\t' + SpectrumUtils.maxEnergyForChannel(sd, i) + '\t' + sd.getCounts(i) + '\n');
       else
          for (int i = min; i < max; i++)
             sb.append(sd.getCounts(i) + '\n');
@@ -1031,15 +981,12 @@ final public class SpectrumUtils {
     *            If SpectrumProperties.LiveTime not defined or if liveTime too
     *            large.
     */
-   public static EditableSpectrum subSampleSpectrum(ISpectrumData sd,
-         double liveTime, long seed) throws EPQException {
+   public static EditableSpectrum subSampleSpectrum(ISpectrumData sd, double liveTime, long seed) throws EPQException {
       final int nCh = sd.getChannelCount();
-      final double lt = sd.getProperties()
-            .getNumericProperty(SpectrumProperties.LiveTime);
+      final double lt = sd.getProperties().getNumericProperty(SpectrumProperties.LiveTime);
       final Random r = new Random(seed);
       if (liveTime > lt)
-         throw new EPQException(
-               "The sub-sampled live time must be less than the source spectrum live time.");
+         throw new EPQException("The sub-sampled live time must be less than the source spectrum live time.");
       final EditableSpectrum res = new EditableSpectrum(sd);
       final double k = liveTime / lt;
       for (int i = 0; i < nCh; ++i) {
@@ -1053,11 +1000,9 @@ final public class SpectrumUtils {
       {
          final NumberFormat nf = NumberFormat.getInstance();
          nf.setMaximumFractionDigits(2);
-         res.getProperties().setTextProperty(
-               SpectrumProperties.SpectrumDisplayName, "Subsampled["
-                     + sd.toString() + "," + nf.format(liveTime) + " s]");
-         res.getProperties().setNumericProperty(SpectrumProperties.LiveTime,
-               liveTime);
+         res.getProperties().setTextProperty(SpectrumProperties.SpectrumDisplayName,
+               "Subsampled[" + sd.toString() + "," + nf.format(liveTime) + " s]");
+         res.getProperties().setNumericProperty(SpectrumProperties.LiveTime, liveTime);
       }
       return res;
    }
@@ -1085,8 +1030,7 @@ final public class SpectrumUtils {
     *            If SpectrumProperties.LiveTime not defined or if liveTime too
     *            large.
     */
-   public static EditableSpectrum subSampleSpectrum(ISpectrumData sd,
-         double liveTime) throws EPQException {
+   public static EditableSpectrum subSampleSpectrum(ISpectrumData sd, double liveTime) throws EPQException {
       return subSampleSpectrum(sd, liveTime, System.currentTimeMillis());
    }
 
@@ -1104,24 +1048,20 @@ final public class SpectrumUtils {
     *           A multipler used to linearly rescale the source spectrum data
     * @return EditableSpectrum
     */
-   public static EditableSpectrum addNoiseToSpectrum(ISpectrumData src,
-         double k) {
+   public static EditableSpectrum addNoiseToSpectrum(ISpectrumData src, double k) {
       final EditableSpectrum res = new EditableSpectrum(src);
       final int nCh = res.getChannelCount();
-      final PoissonDeviate pd = new PoissonDeviate(
-            Math.round((Math.random() - 0.5) * Long.MAX_VALUE));
+      final PoissonDeviate pd = new PoissonDeviate(Math.round((Math.random() - 0.5) * Long.MAX_VALUE));
       for (int i = 0; i < nCh; ++i) {
          final double counts = Math.round(k * src.getCounts(i));
          res.setCounts(i, counts > 0.0 ? pd.randomDeviate(counts) : 0.0);
       }
       final SpectrumProperties sp = res.getProperties();
       if (sp.isDefined(SpectrumProperties.LiveTime))
-         sp.setNumericProperty(SpectrumProperties.LiveTime,
-               k * sp.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0));
+         sp.setNumericProperty(SpectrumProperties.LiveTime, k * sp.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0));
       else {
          if (sp.isDefined(SpectrumProperties.ProbeCurrent))
-            sp.setNumericProperty(SpectrumProperties.ProbeCurrent, k * sp
-                  .getNumericWithDefault(SpectrumProperties.ProbeCurrent, 0.0));
+            sp.setNumericProperty(SpectrumProperties.ProbeCurrent, k * sp.getNumericWithDefault(SpectrumProperties.ProbeCurrent, 0.0));
       }
       rename(res, "Noisy[" + src.toString() + "]");
       return res;
@@ -1167,19 +1107,14 @@ final public class SpectrumUtils {
             res[i].setCounts(c, ch[i]);
       }
       final SpectrumProperties sp = src.getProperties();
-      final double lt = sp.getNumericWithDefault(SpectrumProperties.LiveTime,
-            Double.NaN);
-      final double rt = sp.getNumericWithDefault(SpectrumProperties.RealTime,
-            Double.NaN);
+      final double lt = sp.getNumericWithDefault(SpectrumProperties.LiveTime, Double.NaN);
+      final double rt = sp.getNumericWithDefault(SpectrumProperties.RealTime, Double.NaN);
       for (int i = 0; i < nParts; ++i) {
-         rename(res[i],
-               "Partition[" + src.toString() + "," + Integer.toString(i) + "]");
+         rename(res[i], "Partition[" + src.toString() + "," + Integer.toString(i) + "]");
          if (!Double.isNaN(lt))
-            res[i].getProperties()
-                  .setNumericProperty(SpectrumProperties.LiveTime, lt / nParts);
+            res[i].getProperties().setNumericProperty(SpectrumProperties.LiveTime, lt / nParts);
          if (!Double.isNaN(rt))
-            res[i].getProperties()
-                  .setNumericProperty(SpectrumProperties.RealTime, rt / nParts);
+            res[i].getProperties().setNumericProperty(SpectrumProperties.RealTime, rt / nParts);
       }
       return res;
    }
@@ -1200,8 +1135,7 @@ final public class SpectrumUtils {
       final SpectrumProperties sp = spec.getProperties();
       int lld = 0;
       if (sp.isDefined(SpectrumProperties.ZeroPeakDiscriminator)) {
-         final double zpd = sp.getNumericWithDefault(
-               SpectrumProperties.ZeroPeakDiscriminator, 0.0);
+         final double zpd = sp.getNumericWithDefault(SpectrumProperties.ZeroPeakDiscriminator, 0.0);
          lld = SpectrumUtils.channelForEnergy(spec, zpd);
       }
       int res = spec.getChannelCount();
@@ -1247,10 +1181,7 @@ final public class SpectrumUtils {
          final LinearRegression lr = new LinearRegression();
          final int end = SpectrumUtils.bound(spec, min - MIN_BINS);
          for (int ch = min; ch >= end; --ch)
-            lr.addDatum(ch, spec.getCounts(ch),
-                  spec.getCounts(ch) > 1.0
-                        ? Math.sqrt(spec.getCounts(ch))
-                        : 1.0);
+            lr.addDatum(ch, spec.getCounts(ch), spec.getCounts(ch) > 1.0 ? Math.sqrt(spec.getCounts(ch)) : 1.0);
          bestCh = end;
          bestRes = lr.computeY(min);
          bestErr = Math.sqrt(lr.chiSquared()) / lr.getCount();
@@ -1284,8 +1215,7 @@ final public class SpectrumUtils {
             bestErr /= Math.max(1.0, Math.sqrt(bestRes));
          }
       }
-      return new double[]{bestRes, Math.max(1.0, Math.sqrt(bestRes) * bestErr),
-            (min - bestCh) + 1};
+      return new double[]{bestRes, Math.max(1.0, Math.sqrt(bestRes) * bestErr), (min - bestCh) + 1};
    }
 
    /**
@@ -1307,10 +1237,7 @@ final public class SpectrumUtils {
          final LinearRegression lr = new LinearRegression();
          final int end = SpectrumUtils.bound(spec, max + MIN_BINS);
          for (int ch = max; ch <= end; ++ch)
-            lr.addDatum(ch, spec.getCounts(ch),
-                  spec.getCounts(ch) > 1.0
-                        ? Math.sqrt(spec.getCounts(ch))
-                        : 1.0);
+            lr.addDatum(ch, spec.getCounts(ch), spec.getCounts(ch) > 1.0 ? Math.sqrt(spec.getCounts(ch)) : 1.0);
          bestCh = end;
          bestRes = lr.computeY(max);
          bestErr = Math.sqrt(lr.chiSquared()) / lr.getCount();
@@ -1344,8 +1271,7 @@ final public class SpectrumUtils {
             bestErr /= Math.max(1.0, Math.sqrt(bestRes));
          }
       }
-      return new double[]{bestRes, Math.max(1.0, Math.sqrt(bestRes) * bestErr),
-            (bestCh - max) + 1};
+      return new double[]{bestRes, Math.max(1.0, Math.sqrt(bestRes) * bestErr), (bestCh - max) + 1};
    }
 
    /**
@@ -1364,14 +1290,11 @@ final public class SpectrumUtils {
     *         double[1] is estimated error in [0], double[2] is total integral,
     *         double[3] is background integral
     */
-   static public double[] backgroundCorrectedIntegral(ISpectrumData spec,
-         double eLow, double eHigh) {
+   static public double[] backgroundCorrectedIntegral(ISpectrumData spec, double eLow, double eHigh) {
       assert eLow < eHigh;
       // Determine the min and max channels to include in the integral
-      int min = SpectrumUtils.bound(spec,
-            SpectrumUtils.channelForEnergy(spec, eLow));
-      int max = SpectrumUtils.bound(spec,
-            SpectrumUtils.channelForEnergy(spec, eHigh));
+      int min = SpectrumUtils.bound(spec, SpectrumUtils.channelForEnergy(spec, eLow));
+      int max = SpectrumUtils.bound(spec, SpectrumUtils.channelForEnergy(spec, eHigh));
       if (min > max) {
          final int tmp = min;
          min = max;
@@ -1382,10 +1305,7 @@ final public class SpectrumUtils {
          final double[] low = estimateLowBackground(spec, min - 1);
          final double[] high = estimateHighBackground(spec, max + 1);
          a = 0.5 * (low[0] + high[0]) * ((max - min) + 1);
-         da = (low[0] + high[0]) != 0.0
-               ? (Math.sqrt((low[1] * low[1]) + (high[1] * high[1]))
-                     / (low[0] + high[0])) * a
-               : 1.0;
+         da = (low[0] + high[0]) != 0.0 ? (Math.sqrt((low[1] * low[1]) + (high[1] * high[1])) / (low[0] + high[0])) * a : 1.0;
       }
       double i = 0.0;
       for (int ch = min; ch <= max; ++ch)
@@ -1413,8 +1333,7 @@ final public class SpectrumUtils {
     *           - High energy in eV
     * @return ISpectrumData
     */
-   public static ISpectrumData trimSpectrum(ISpectrumData spec, double eLow,
-         double eHigh) {
+   public static ISpectrumData trimSpectrum(ISpectrumData spec, double eLow, double eHigh) {
       int min = SpectrumUtils.bound(spec, channelForEnergy(spec, eLow));
       int max = SpectrumUtils.bound(spec, channelForEnergy(spec, eHigh));
       if (min > max) {
@@ -1428,8 +1347,7 @@ final public class SpectrumUtils {
       for (int ch = min; ch <= max; ++ch)
          res.setCounts(ch, i0 + (((ch - min) * (i1 - i0)) / (max - min)));
       final NumberFormat nf = new HalfUpFormat("0");
-      rename(res, "Trimmed[" + spec.toString() + "," + nf.format(eLow) + " eV,"
-            + nf.format(eHigh) + " eV]");
+      rename(res, "Trimmed[" + spec.toString() + "," + nf.format(eLow) + " eV," + nf.format(eHigh) + " eV]");
       return res;
    }
 
@@ -1456,16 +1374,11 @@ final public class SpectrumUtils {
     *         double[1] -&gt; estimated error in [0], double[2] -&gt; total
     *         integral, double[3] -&gt; background integral
     */
-   static public double[] backgroundCorrectedIntegral(ISpectrumData spec,
-         double ePeakLow, double ePeakHigh, double eLowBkgLow,
-         double eLowBkgHigh, double eHighBkgLow, double eHighBkgHigh) {
-      return backgroundCorrectedIntegral(spec,
-            SpectrumUtils.channelForEnergy(spec, ePeakLow),
-            SpectrumUtils.channelForEnergy(spec, ePeakHigh),
-            SpectrumUtils.channelForEnergy(spec, eLowBkgLow),
-            SpectrumUtils.channelForEnergy(spec, eLowBkgHigh),
-            SpectrumUtils.channelForEnergy(spec, eHighBkgLow),
-            SpectrumUtils.channelForEnergy(spec, eHighBkgHigh));
+   static public double[] backgroundCorrectedIntegral(ISpectrumData spec, double ePeakLow, double ePeakHigh, double eLowBkgLow, double eLowBkgHigh,
+         double eHighBkgLow, double eHighBkgHigh) {
+      return backgroundCorrectedIntegral(spec, SpectrumUtils.channelForEnergy(spec, ePeakLow), SpectrumUtils.channelForEnergy(spec, ePeakHigh),
+            SpectrumUtils.channelForEnergy(spec, eLowBkgLow), SpectrumUtils.channelForEnergy(spec, eLowBkgHigh),
+            SpectrumUtils.channelForEnergy(spec, eHighBkgLow), SpectrumUtils.channelForEnergy(spec, eHighBkgHigh));
    }
 
    /**
@@ -1491,8 +1404,7 @@ final public class SpectrumUtils {
     *         double[1] -&gt; estimated error in [0], double[2] -&gt; total
     *         integral, double[3] -&gt; background integral
     */
-   static public double[] backgroundCorrectedIntegral(ISpectrumData spec,
-         int chPeakLow, int chPeakHigh, int chLowBkgLow, int chLowBkgHigh,
+   static public double[] backgroundCorrectedIntegral(ISpectrumData spec, int chPeakLow, int chPeakHigh, int chLowBkgLow, int chLowBkgHigh,
          int chHighBkgLow, int chHighBkgHigh) {
       UncertainValue2 i = null;
       { // Peak integral
@@ -1522,9 +1434,7 @@ final public class SpectrumUtils {
          double tmp = 0.0;
          for (int ch = chLowBkgLow; ch <= chLowBkgHigh; ++ch)
             tmp += spec.getCounts(ch);
-         bLow = UncertainValue2.divide(
-               new UncertainValue2(tmp, "Cl", Math.sqrt(tmp)),
-               (chLowBkgHigh - chLowBkgLow) + 1);
+         bLow = UncertainValue2.divide(new UncertainValue2(tmp, "Cl", Math.sqrt(tmp)), (chLowBkgHigh - chLowBkgLow) + 1);
       }
       UncertainValue2 bHigh = null;
       { // Peak integral
@@ -1539,21 +1449,13 @@ final public class SpectrumUtils {
          double tmp = 0.0;
          for (int ch = chHighBkgLow; ch <= chHighBkgHigh; ++ch)
             tmp += spec.getCounts(ch);
-         bHigh = UncertainValue2.divide(
-               new UncertainValue2(tmp, "Ch", Math.sqrt(tmp)),
-               (chHighBkgHigh - chHighBkgLow) + 1);
+         bHigh = UncertainValue2.divide(new UncertainValue2(tmp, "Ch", Math.sqrt(tmp)), (chHighBkgHigh - chHighBkgLow) + 1);
       }
-      final double cLow = 0.5 * (chLowBkgLow + chLowBkgHigh),
-            cHigh = 0.5 * (chHighBkgLow + chHighBkgHigh),
-            cPeak = 0.5 * (chPeakLow + chPeakHigh);
-      final UncertainValue2 a = UncertainValue2
-            .multiply(((chPeakHigh - chPeakLow) + 1),
-                  UncertainValue2.add(UncertainValue2.multiply(
-                        (cPeak - cLow) / (cHigh - cLow),
-                        UncertainValue2.subtract(bHigh, bLow)), bLow));
+      final double cLow = 0.5 * (chLowBkgLow + chLowBkgHigh), cHigh = 0.5 * (chHighBkgLow + chHighBkgHigh), cPeak = 0.5 * (chPeakLow + chPeakHigh);
+      final UncertainValue2 a = UncertainValue2.multiply(((chPeakHigh - chPeakLow) + 1),
+            UncertainValue2.add(UncertainValue2.multiply((cPeak - cLow) / (cHigh - cLow), UncertainValue2.subtract(bHigh, bLow)), bLow));
       final UncertainValue2 ima = UncertainValue2.subtract(i, a);
-      final double[] res = new double[]{ima.doubleValue(), ima.uncertainty(),
-            i.doubleValue(), a.doubleValue()};
+      final double[] res = new double[]{ima.doubleValue(), ima.uncertainty(), i.doubleValue(), a.doubleValue()};
       return res;
    }
 
@@ -1610,10 +1512,8 @@ final public class SpectrumUtils {
     */
    public static double getSolidAngle(SpectrumProperties props, double def) {
       double res = def;
-      final double area = props
-            .getNumericWithDefault(SpectrumProperties.DetectorArea, 10.0);
-      assert (area > 1.0e-6) && (area < 1000.0)
-            : Double.toString(area) + " mm^2";
+      final double area = props.getNumericWithDefault(SpectrumProperties.DetectorArea, 10.0);
+      assert (area > 1.0e-6) && (area < 1000.0) : Double.toString(area) + " mm^2";
       final double[] pos = getDetectorPosition(props);
       if (pos != null) {
          final double[] sample = getSamplePosition(props);
@@ -1656,8 +1556,7 @@ final public class SpectrumUtils {
     * @param spec
     * @return A scaled ISpectrumData object
     */
-   static public BaseSpectrum scale(double scale, double offset,
-         ISpectrumData spec) {
+   static public BaseSpectrum scale(double scale, double offset, ISpectrumData spec) {
       class ScaledSpectrum extends BaseSpectrum {
          private final double[] mChannels;
          private final SpectrumProperties mProperties;
@@ -1667,9 +1566,7 @@ final public class SpectrumUtils {
             mChannels = new double[spec.getChannelCount()];
             for (int i = 0; i < mChannels.length; ++i)
                mChannels[i] = (scale * spec.getCounts(i)) + offset;
-            final String name = (scale != 1.0
-                  ? Double.toString(scale) + '\u00D7'
-                  : "") + spec.toString()
+            final String name = (scale != 1.0 ? Double.toString(scale) + '\u00D7' : "") + spec.toString()
                   + (offset != 0.0 ? "+" + Double.toString(offset) : "");
             mProperties = spec.getProperties().clone();
             SpectrumUtils.rename(this, name);
@@ -1719,8 +1616,7 @@ final public class SpectrumUtils {
    static public int getZeroStrobeDiscriminatorChannel(ISpectrumData spec) {
       final SpectrumProperties sp = spec.getProperties();
       if (sp.isDefined(SpectrumProperties.ZeroPeakDiscriminator)) {
-         final double zpd = sp.getNumericWithDefault(
-               SpectrumProperties.ZeroPeakDiscriminator, 0.0);
+         final double zpd = sp.getNumericWithDefault(SpectrumProperties.ZeroPeakDiscriminator, 0.0);
          return SpectrumUtils.channelForEnergy(spec, zpd);
       }
       return 0;
@@ -1734,8 +1630,7 @@ final public class SpectrumUtils {
     * @param lldCh
     * @return ISpectrumData
     */
-   static public ISpectrumData applyZeroPeakDiscriminator(ISpectrumData spec,
-         int lldCh) {
+   static public ISpectrumData applyZeroPeakDiscriminator(ISpectrumData spec, int lldCh) {
       for (int i = 0; i < lldCh; ++i)
          if (spec.getCounts(i) != 0.0) {
             final EditableSpectrum es = new EditableSpectrum(spec);
@@ -1754,12 +1649,10 @@ final public class SpectrumUtils {
     * @param spec
     * @return ISpectrumData
     */
-   static public ISpectrumData scaleWithLiveTime(double scale,
-         ISpectrumData spec) {
+   static public ISpectrumData scaleWithLiveTime(double scale, ISpectrumData spec) {
       final ISpectrumData res = scale(scale, spec);
       final SpectrumProperties sp = res.getProperties();
-      sp.setNumericProperty(SpectrumProperties.LiveTime, scale
-            * sp.getNumericWithDefault(SpectrumProperties.LiveTime, 60.0));
+      sp.setNumericProperty(SpectrumProperties.LiveTime, scale * sp.getNumericWithDefault(SpectrumProperties.LiveTime, 60.0));
       return res;
    }
 
@@ -1772,8 +1665,7 @@ final public class SpectrumUtils {
     * @return double[]
     */
    static public double[] getSurfaceNormal(SpectrumProperties props) {
-      final SampleShape ss = props.getSampleShapeWithDefault(
-            SpectrumProperties.SampleShape, new SampleShape.Bulk());
+      final SampleShape ss = props.getSampleShapeWithDefault(SpectrumProperties.SampleShape, new SampleShape.Bulk());
       return ss.getOrientation();
    }
 
@@ -1793,17 +1685,13 @@ final public class SpectrumUtils {
     */
    static public double getTakeOffAngle(SpectrumProperties props) {
       if (props.isDefined(SpectrumProperties.DetectorPosition)
-            && (props.isDefined(SpectrumProperties.WorkingDistance)
-                  || props.isDefined(SpectrumProperties.DetectorOptWD))) {
-         final double[] vec = Math2.minus(getDetectorPosition(props),
-               getSamplePosition(props));
+            && (props.isDefined(SpectrumProperties.WorkingDistance) || props.isDefined(SpectrumProperties.DetectorOptWD))) {
+         final double[] vec = Math2.minus(getDetectorPosition(props), getSamplePosition(props));
          return (Math.PI / 2.0) - Math2.angleBetween(vec, Math2.MINUS_Z_AXIS);
       } else if (props.isDefined(SpectrumProperties.TakeOffAngle))
-         return Math.toRadians(props.getNumericWithDefault(
-               SpectrumProperties.TakeOffAngle, Double.NaN));
+         return Math.toRadians(props.getNumericWithDefault(SpectrumProperties.TakeOffAngle, Double.NaN));
       else
-         return Math.toRadians(props.getNumericWithDefault(
-               SpectrumProperties.Elevation, Double.NaN));
+         return Math.toRadians(props.getNumericWithDefault(SpectrumProperties.Elevation, Double.NaN));
    }
 
    /**
@@ -1814,9 +1702,8 @@ final public class SpectrumUtils {
     * @return double[] in meters!!!!
     */
    static public double[] getSamplePosition(SpectrumProperties props) {
-      final double wd = 1.0e-3 * props.getNumericWithDefault(
-            SpectrumProperties.WorkingDistance,
-            props.getNumericWithDefault(SpectrumProperties.DetectorOptWD, 0.0));
+      final double wd = 1.0e-3
+            * props.getNumericWithDefault(SpectrumProperties.WorkingDistance, props.getNumericWithDefault(SpectrumProperties.DetectorOptWD, 0.0));
       return Math2.multiply(wd, Math2.Z_AXIS);
    }
 
@@ -1828,21 +1715,14 @@ final public class SpectrumUtils {
     * @return double[3] in meters!
     */
    static public double[] getDetectorPosition(SpectrumProperties props) {
-      double[] pos = props
-            .getArrayWithDefault(SpectrumProperties.DetectorPosition, null);
+      double[] pos = props.getArrayWithDefault(SpectrumProperties.DetectorPosition, null);
       if (pos == null) {
-         final double el = props
-               .getNumericWithDefault(SpectrumProperties.Elevation, 40.0);
-         final double az = props
-               .getNumericWithDefault(SpectrumProperties.Azimuth, 0.0);
-         final double dist = props.getNumericWithDefault(
-               SpectrumProperties.DetectorDistance, 60.0);
-         final double optWd = props
-               .getNumericWithDefault(SpectrumProperties.DetectorOptWD, 20.0);
-         props.setDetectorPosition(Math.toRadians(el), Math.toRadians(az),
-               1.0e-3 * dist, 1.0e-3 * optWd);
-         pos = props.getArrayWithDefault(SpectrumProperties.DetectorPosition,
-               null);
+         final double el = props.getNumericWithDefault(SpectrumProperties.Elevation, 40.0);
+         final double az = props.getNumericWithDefault(SpectrumProperties.Azimuth, 0.0);
+         final double dist = props.getNumericWithDefault(SpectrumProperties.DetectorDistance, 60.0);
+         final double optWd = props.getNumericWithDefault(SpectrumProperties.DetectorOptWD, 20.0);
+         props.setDetectorPosition(Math.toRadians(el), Math.toRadians(az), 1.0e-3 * dist, 1.0e-3 * optWd);
+         pos = props.getArrayWithDefault(SpectrumProperties.DetectorPosition, null);
          assert pos != null;
       }
       return Math2.multiply(1.0e-3, pos);
@@ -1855,8 +1735,7 @@ final public class SpectrumUtils {
     * @return double[3]
     */
    static public double[] getDetectorAxis(SpectrumProperties props) {
-      return Math2.normalize(
-            Math2.minus(getDetectorPosition(props), getSamplePosition(props)));
+      return Math2.normalize(Math2.minus(getDetectorPosition(props), getSamplePosition(props)));
    }
 
    /**
@@ -1876,25 +1755,16 @@ final public class SpectrumUtils {
     * @return double
     * @throws EPQException
     */
-   static public double getExitAngle(SpectrumProperties props)
-         throws EPQException {
+   static public double getExitAngle(SpectrumProperties props) throws EPQException {
       if (props.isDefined(SpectrumProperties.DetectorPosition)
-            && (props.isDefined(SpectrumProperties.WorkingDistance)
-                  || props.isDefined(SpectrumProperties.DetectorOptWD))) {
+            && (props.isDefined(SpectrumProperties.WorkingDistance) || props.isDefined(SpectrumProperties.DetectorOptWD))) {
          // Vector from sample to the detector
-         final double[] vec = Math2.minus(getDetectorPosition(props),
-               getSamplePosition(props));
-         final double res = (Math.PI / 2.0)
-               - Math2.angleBetween(vec, getSurfaceNormal(props));
-         assert (Math2.distance(getSurfaceNormal(props),
-               Math2.MINUS_Z_AXIS) > 0.01)
-               || (Math.abs(res - Math.toRadians(props.getNumericWithDefault(
-                     SpectrumProperties.Elevation, Math.toDegrees(res)))) < Math
-                           .toRadians(5.0))
+         final double[] vec = Math2.minus(getDetectorPosition(props), getSamplePosition(props));
+         final double res = (Math.PI / 2.0) - Math2.angleBetween(vec, getSurfaceNormal(props));
+         assert (Math2.distance(getSurfaceNormal(props), Math2.MINUS_Z_AXIS) > 0.01) || (Math
+               .abs(res - Math.toRadians(props.getNumericWithDefault(SpectrumProperties.Elevation, Math.toDegrees(res)))) < Math.toRadians(5.0))
                : "The computed TOA and default TOA differ by "
-                     + Double.toString(Math.toDegrees(res) - props
-                           .getNumericWithDefault(SpectrumProperties.Elevation,
-                                 Math.toDegrees(res)))
+                     + Double.toString(Math.toDegrees(res) - props.getNumericWithDefault(SpectrumProperties.Elevation, Math.toDegrees(res)))
                      + "\u00B0";
          return res;
       } else
@@ -1908,10 +1778,8 @@ final public class SpectrumUtils {
     * @return double The distance in meters
     * @throws EPQException
     */
-   static public double getDetectorDistance(SpectrumProperties props)
-         throws EPQException {
-      return Math2.magnitude(
-            Math2.minus(getDetectorPosition(props), getSamplePosition(props)));
+   static public double getDetectorDistance(SpectrumProperties props) throws EPQException {
+      return Math2.magnitude(Math2.minus(getDetectorPosition(props), getSamplePosition(props)));
    }
 
    /**
@@ -1924,8 +1792,7 @@ final public class SpectrumUtils {
     *           The default current to return in nA
     * @return The current in nA
     */
-   static public double getAverageFaradayCurrent(SpectrumProperties props,
-         double def) {
+   static public double getAverageFaradayCurrent(SpectrumProperties props, double def) {
       return props.getNumericWithDefault(SpectrumProperties.ProbeCurrent, def);
    }
 
@@ -1938,8 +1805,7 @@ final public class SpectrumUtils {
       final double fc = getAverageFaradayCurrent(props, 0.0);
       if (fc <= 0.0)
          throw new EPQException("The probe current is unavailable.");
-      final double lt = props.getNumericWithDefault(SpectrumProperties.LiveTime,
-            0.0);
+      final double lt = props.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0);
       if (lt <= 0.0)
          throw new EPQException("The live-time is unavailable.");
       return lt * fc;
@@ -1952,15 +1818,11 @@ final public class SpectrumUtils {
     * @return the mass-thickness in &mu;g/cm<sup>2</sup>
     */
    static public double getMassThickness(SpectrumProperties props) {
-      final SampleShape ss = props
-            .getSampleShapeWithDefault(SpectrumProperties.SampleShape, null);
-      final Composition comp = props.getCompositionWithDefault(
-            SpectrumProperties.StandardComposition, null);
+      final SampleShape ss = props.getSampleShapeWithDefault(SpectrumProperties.SampleShape, null);
+      final Composition comp = props.getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
       if ((ss instanceof SampleShape.ThinFilm) && (comp instanceof Material))
-         return FromSI.ugPcm2(((SampleShape.ThinFilm) ss).getThickness()
-               * ((Material) comp).getDensity()).doubleValue();
-      return props.getNumericWithDefault(SpectrumProperties.MassThickness,
-            Double.NaN);
+         return FromSI.ugPcm2(((SampleShape.ThinFilm) ss).getThickness() * ((Material) comp).getDensity()).doubleValue();
+      return props.getNumericWithDefault(SpectrumProperties.MassThickness, Double.NaN);
    }
 
    /**
@@ -1971,16 +1833,14 @@ final public class SpectrumUtils {
     * @return double
     */
    static public double deltaCounts(ISpectrumData spec1, ISpectrumData spec2) {
-      final int max = Math.min(spec1.getChannelCount(),
-            spec2.getChannelCount());
+      final int max = Math.min(spec1.getChannelCount(), spec2.getChannelCount());
       double res = 0.0;
       for (int i = 0; i < max; ++i)
          res += spec1.getCounts(i) - spec2.getCounts(i);
       return res;
    }
 
-   static public DerivedSpectrum getSlice(ISpectrumData spec, int lowCh,
-         int highCh) {
+   static public DerivedSpectrum getSlice(ISpectrumData spec, int lowCh, int highCh) {
       class Slice extends DerivedSpectrum {
          private final int mLowCh;
          private final int mHighCh;
@@ -1993,9 +1853,7 @@ final public class SpectrumUtils {
 
          @Override
          public double getCounts(int i) {
-            return (i >= mLowCh) && (i < mHighCh)
-                  ? getBaseSpectrum().getCounts(i)
-                  : 0.0;
+            return (i >= mLowCh) && (i < mHighCh) ? getBaseSpectrum().getCounts(i) : 0.0;
          }
       }
       return new Slice(spec, lowCh, highCh);
@@ -2015,24 +1873,20 @@ final public class SpectrumUtils {
     * @return Map&lt;XRayTransition, Double&gt;
     * @throws EPQException
     */
-   static public Map<XRayTransition, Double> roughEnergyCalibration(
-         Collection<XRayTransition> xrts, Collection<Double> peakPositions,
-         double tol) throws EPQException {
+   static public Map<XRayTransition, Double> roughEnergyCalibration(Collection<XRayTransition> xrts, Collection<Double> peakPositions, double tol)
+         throws EPQException {
       if (xrts.size() < 3)
-         throw new EPQException(
-               "Too few transitions in the rough energy calibration.");
+         throw new EPQException("Too few transitions in the rough energy calibration.");
       Map<XRayTransition, Double> res = null;
       // Sort the peaks low to high...
       final ArrayList<Double> peaks = new ArrayList<Double>(peakPositions);
       Collections.sort(peaks);
-      final ArrayList<XRayTransition> trans = new ArrayList<XRayTransition>(
-            xrts);
+      final ArrayList<XRayTransition> trans = new ArrayList<XRayTransition>(xrts);
       Collections.sort(trans, new Comparator<XRayTransition>() {
          @Override
          public int compare(XRayTransition o1, XRayTransition o2) {
             try {
-               return (int) Math
-                     .round(Math.signum(o1.getEnergy() - o2.getEnergy()));
+               return (int) Math.round(Math.signum(o1.getEnergy() - o2.getEnergy()));
             } catch (final EPQException e) {
                e.printStackTrace();
                return 0;
@@ -2056,10 +1910,8 @@ final public class SpectrumUtils {
                   if ((scale < 0.5) || (scale > 2.0))
                      continue;
                   final double offset = low.getEnergy() - (scale * lowPeak);
-                  assert Math.abs(((scale * lowPeak) + offset)
-                        - low.getEnergy()) < ToSI.eV(1.0);
-                  assert Math.abs(((scale * highPeak) + offset)
-                        - high.getEnergy()) < ToSI.eV(1.0);
+                  assert Math.abs(((scale * lowPeak) + offset) - low.getEnergy()) < ToSI.eV(1.0);
+                  assert Math.abs(((scale * highPeak) + offset) - high.getEnergy()) < ToSI.eV(1.0);
                   final Map<XRayTransition, Double> map = new TreeMap<XRayTransition, Double>();
                   map.put(low, lowPeak);
                   map.put(high, highPeak);
@@ -2086,9 +1938,7 @@ final public class SpectrumUtils {
                      }
                   }
                   // Use a metric that favors more and better matches
-                  if ((res == null) || (map.size() > res.size())
-                        || ((map.size() == res.size())
-                              && (chiSq < bestMetric))) {
+                  if ((res == null) || (map.size() > res.size()) || ((map.size() == res.size()) && (chiSq < bestMetric))) {
                      bestMetric = chiSq;
                      res = map;
                   }
@@ -2113,11 +1963,9 @@ final public class SpectrumUtils {
     * @return The best map between XRayTransition objects and peaks
     * @throws EPQException
     */
-   static public Map<XRayTransition, Double> roughEnergyCalibration(
-         Collection<Element> elms, Collection<Double> peakPositions, double e0,
+   static public Map<XRayTransition, Double> roughEnergyCalibration(Collection<Element> elms, Collection<Double> peakPositions, double e0,
          double eLow, double tol) throws EPQException {
-      final int[] lines = new int[]{XRayTransition.KA1, XRayTransition.LA1,
-            XRayTransition.MA1};
+      final int[] lines = new int[]{XRayTransition.KA1, XRayTransition.LA1, XRayTransition.MA1};
       final Set<XRayTransition> xrts = new TreeSet<XRayTransition>();
       for (final Element elm : elms)
          for (final int line : lines) {
@@ -2145,19 +1993,16 @@ final public class SpectrumUtils {
     * @return A LinearRegression object containing the best fit in Joules
     * @throws EPQException
     */
-   static public LinearRegression linearEnergyCalibration(
-         Collection<Element> elms, Collection<Double> peakPositions, double e0,
-         double eLow, double tol) throws EPQException {
-      final Map<XRayTransition, Double> res = roughEnergyCalibration(elms,
-            peakPositions, e0, eLow, tol);
+   static public LinearRegression linearEnergyCalibration(Collection<Element> elms, Collection<Double> peakPositions, double e0, double eLow,
+         double tol) throws EPQException {
+      final Map<XRayTransition, Double> res = roughEnergyCalibration(elms, peakPositions, e0, eLow, tol);
       final LinearRegression lr = new LinearRegression();
       for (final Map.Entry<XRayTransition, Double> me : res.entrySet())
          lr.addDatum(me.getKey().getEnergy(), me.getValue());
       return lr;
    }
 
-   static public Set<Double> peakPositions(ISpectrumData spec,
-         int typicalPeakWidth, double thresh) {
+   static public Set<Double> peakPositions(ISpectrumData spec, int typicalPeakWidth, double thresh) {
       final double[] filtered = filterSpectrum(spec, typicalPeakWidth);
       final TreeSet<Double> pp = new TreeSet<Double>();
       double max = 0.0;
@@ -2167,8 +2012,7 @@ final public class SpectrumUtils {
          if (filtered[i] > (thresh * max))
             for (++i; i < filtered.length; ++i)
                if (filtered[i] < 0) {
-                  pp.add(ToSI.eV(SpectrumUtils.avgEnergyForChannel(spec,
-                        Integer.valueOf(i))));
+                  pp.add(ToSI.eV(SpectrumUtils.avgEnergyForChannel(spec, Integer.valueOf(i))));
                   break;
                }
       return pp;
@@ -2184,15 +2028,13 @@ final public class SpectrumUtils {
     * @param ch
     * @return double
     */
-   static public double applyFilter(ISpectrumData spec, double[] filter,
-         int ch) {
+   static public double applyFilter(ISpectrumData spec, double[] filter, int ch) {
       assert (filter.length % 2) == 1;
       double res = 0.0;
       final int maxCh = spec.getChannelCount() - 1;
       final int offset = ch - (filter.length / 2);
       for (int i = 0; i < filter.length; ++i)
-         res += filter[i]
-               * spec.getCounts(Math.min(Math.max(0, offset + i), maxCh));
+         res += filter[i] * spec.getCounts(Math.min(Math.max(0, offset + i), maxCh));
       return res;
    }
 
@@ -2204,8 +2046,7 @@ final public class SpectrumUtils {
     * @param typicalPeakWidth
     * @return double[]
     */
-   static public double[] filterSpectrum(ISpectrumData spec,
-         int typicalPeakWidth) {
+   static public double[] filterSpectrum(ISpectrumData spec, int typicalPeakWidth) {
       final double[] filter = new double[(2 * typicalPeakWidth) + 1];
       {
          final double sc = 2.0 / ((1.0 + typicalPeakWidth) * typicalPeakWidth);
@@ -2216,11 +2057,8 @@ final public class SpectrumUtils {
             filter[filter.length - i] = v;
          }
          assert Math.abs(Math2.sum(filter)) < 1.0e-6;
-         assert Math.abs(Math2.sum(Math2.slice(filter, 0, typicalPeakWidth))
-               + 1.0) < 1.0e-6;
-         assert Math.abs(Math2
-               .sum(Math2.slice(filter, typicalPeakWidth + 1, typicalPeakWidth))
-               - 1.0) < 1.0e-6;
+         assert Math.abs(Math2.sum(Math2.slice(filter, 0, typicalPeakWidth)) + 1.0) < 1.0e-6;
+         assert Math.abs(Math2.sum(Math2.slice(filter, typicalPeakWidth + 1, typicalPeakWidth)) - 1.0) < 1.0e-6;
       }
       final double[] filtered = new double[spec.getChannelCount()];
       for (int i = filtered.length - 1; i >= 0; --i)
@@ -2238,11 +2076,9 @@ final public class SpectrumUtils {
    static public Composition getComposition(ISpectrumData spec) {
       Composition res = null;
       final SpectrumProperties sp = spec.getProperties();
-      res = sp.getCompositionWithDefault(SpectrumProperties.StandardComposition,
-            null);
+      res = sp.getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
       if (res == null)
-         res = sp.getCompositionWithDefault(
-               SpectrumProperties.MicroanalyticalComposition, null);
+         res = sp.getCompositionWithDefault(SpectrumProperties.MicroanalyticalComposition, null);
       return res;
    }
 
@@ -2281,8 +2117,7 @@ final public class SpectrumUtils {
     * @return The Gaussian width in eV
     */
    static public double resolution(double fano, double noise, double eV) {
-      return ENERGY_PER_EH_PAIR
-            * Math.sqrt((noise * noise) + ((eV * fano) / ENERGY_PER_EH_PAIR));
+      return ENERGY_PER_EH_PAIR * Math.sqrt((noise * noise) + ((eV * fano) / ENERGY_PER_EH_PAIR));
    }
 
    /**
@@ -2297,13 +2132,9 @@ final public class SpectrumUtils {
     *           The x-ray detection energy in eV
     * @return The Gaussian width in eV
     */
-   static public UncertainValue2 resolutionU(UncertainValue2 fano,
-         UncertainValue2 noise, double eV) {
+   static public UncertainValue2 resolutionU(UncertainValue2 fano, UncertainValue2 noise, double eV) {
       return UncertainValue2.multiply(ENERGY_PER_EH_PAIR,
-            UncertainValue2
-                  .add(UncertainValue2.multiply(noise, noise),
-                        UncertainValue2.multiply(eV / ENERGY_PER_EH_PAIR, fano))
-                  .sqrt());
+            UncertainValue2.add(UncertainValue2.multiply(noise, noise), UncertainValue2.multiply(eV / ENERGY_PER_EH_PAIR, fano)).sqrt());
    }
 
    /**
@@ -2318,10 +2149,8 @@ final public class SpectrumUtils {
     *           The energy at which gRes was measured in ev
     * @return The noise term in eV
     */
-   static public double noiseFromResolution(double fano, double gRes,
-         double eV) {
-      return Math.sqrt(Math2.sqr(gRes / ENERGY_PER_EH_PAIR)
-            - ((eV * fano) / ENERGY_PER_EH_PAIR));
+   static public double noiseFromResolution(double fano, double gRes, double eV) {
+      return Math.sqrt(Math2.sqr(gRes / ENERGY_PER_EH_PAIR) - ((eV * fano) / ENERGY_PER_EH_PAIR));
    }
 
    /**
@@ -2336,11 +2165,8 @@ final public class SpectrumUtils {
     *           The energy at which gRes was measured in ev
     * @return The noise term
     */
-   static public UncertainValue2 noiseFromResolution(UncertainValue2 fano,
-         UncertainValue2 gRes, double eV) {
-      return UncertainValue2.sqrt(UncertainValue2.subtract(
-            UncertainValue2.sqr(
-                  UncertainValue2.multiply(1.0 / ENERGY_PER_EH_PAIR, gRes)),
+   static public UncertainValue2 noiseFromResolution(UncertainValue2 fano, UncertainValue2 gRes, double eV) {
+      return UncertainValue2.sqrt(UncertainValue2.subtract(UncertainValue2.sqr(UncertainValue2.multiply(1.0 / ENERGY_PER_EH_PAIR, gRes)),
             UncertainValue2.multiply(eV / ENERGY_PER_EH_PAIR, fano)));
    }
 
@@ -2352,8 +2178,7 @@ final public class SpectrumUtils {
     *           The default returned if the detector position not available
     * @return double Meters
     */
-   static public double sampleToDetectorDistance(SpectrumProperties props,
-         double def) {
+   static public double sampleToDetectorDistance(SpectrumProperties props, double def) {
       double res = def;
       final double[] pos = getDetectorPosition(props);
       if (pos != null) {
@@ -2395,28 +2220,22 @@ final public class SpectrumUtils {
             return mData[i];
          }
       }
-      return spec.getChannelCount() == nChannels
-            ? spec
-            : new RemapSpectrum(spec, nChannels);
+      return spec.getChannelCount() == nChannels ? spec : new RemapSpectrum(spec, nChannels);
    }
 
-   static public ISpectrumData remap(ISpectrumData spec, double zero,
-         double chWidth) {
-      final double dE = SpectrumUtils.maxEnergyForChannel(spec,
-            spec.getChannelCount() - 1) - zero;
+   static public ISpectrumData remap(ISpectrumData spec, double zero, double chWidth) {
+      final double dE = SpectrumUtils.maxEnergyForChannel(spec, spec.getChannelCount() - 1) - zero;
       final int nCh = (int) (dE / chWidth);
       return remap(spec, zero, chWidth, nCh);
    }
 
-   static public ISpectrumData remap(ISpectrumData spec, double zero,
-         double chWidth, int nChannels) {
+   static public ISpectrumData remap(ISpectrumData spec, double zero, double chWidth, int nChannels) {
       class RemapSpectrum extends BaseSpectrum {
 
          final SpectrumProperties mProperties;
          final double[] mData;
 
-         RemapSpectrum(double zeroOff, double chWidth, int nCh,
-               ISpectrumData spec) {
+         RemapSpectrum(double zeroOff, double chWidth, int nCh, ISpectrumData spec) {
             mProperties = spec.getProperties().clone();
             setEnergyScale(zeroOff, chWidth);
             mData = new double[nCh];
@@ -2424,10 +2243,8 @@ final public class SpectrumUtils {
             for (int ch = 0; ch < nCh; ++ch) {
                final double eMin = eMax;
                eMax = zeroOff + ((ch + 1) * chWidth);
-               final double chMin = (eMin - spec.getZeroOffset())
-                     / spec.getChannelWidth();
-               final double chMax = (eMax - spec.getZeroOffset())
-                     / spec.getChannelWidth();
+               final double chMin = (eMin - spec.getZeroOffset()) / spec.getChannelWidth();
+               final double chMax = (eMax - spec.getZeroOffset()) / spec.getChannelWidth();
                final int iMin = (int) Math.ceil(chMin);
                final int iMax = (int) Math.floor(chMax);
                double sum = 0.0;
@@ -2435,17 +2252,14 @@ final public class SpectrumUtils {
                   sum += (iMin - chMin) * spec.getCounts(iMin - 1);
                if ((iMax > 0) && (iMax < spec.getChannelCount()))
                   sum += (chMax - iMax) * spec.getCounts(iMax);
-               for (int i = SpectrumUtils.bound(spec, iMin); i < SpectrumUtils
-                     .bound(spec, iMax); ++i)
+               for (int i = SpectrumUtils.bound(spec, iMin); i < SpectrumUtils.bound(spec, iMax); ++i)
                   sum += spec.getCounts(i);
                mData[ch] = sum;
             }
             final NumberFormat df4 = new HalfUpFormat("0.0000");
             final NumberFormat df1 = new HalfUpFormat("0.0");
             SpectrumUtils.rename(this,
-                  "Remap[" + spec.toString() + "," + df4.format(chWidth)
-                        + " eV/ch," + df1.format(zeroOff) + "eV,"
-                        + Integer.toString(nCh) + "]");
+                  "Remap[" + spec.toString() + "," + df4.format(chWidth) + " eV/ch," + df1.format(zeroOff) + "eV," + Integer.toString(nCh) + "]");
          }
 
          @Override
@@ -2478,12 +2292,9 @@ final public class SpectrumUtils {
     * @param chWidth
     *           double
     */
-   public final static ISpectrumData linearizeSpectrum(ISpectrumData spec,
-         double[] eScale, double chWidth) {
-      final double minE = Math2.polynomial(eScale,
-            SpectrumUtils.minEnergyForChannel(spec, 0));
-      final double maxE = Math2.polynomial(eScale,
-            SpectrumUtils.minEnergyForChannel(spec, spec.getChannelCount()));
+   public final static ISpectrumData linearizeSpectrum(ISpectrumData spec, double[] eScale, double chWidth) {
+      final double minE = Math2.polynomial(eScale, SpectrumUtils.minEnergyForChannel(spec, 0));
+      final double maxE = Math2.polynomial(eScale, SpectrumUtils.minEnergyForChannel(spec, spec.getChannelCount()));
       final int nCh = (int) Math.ceil((maxE - minE) / chWidth);
       final EditableSpectrum res = new EditableSpectrum(nCh, chWidth, minE);
       double lowE = SpectrumUtils.minEnergyForChannel(spec, 0);
@@ -2492,8 +2303,7 @@ final public class SpectrumUtils {
          res.setCounts(ch, SpectrumUtils.integrate(spec, lowE, highE));
          lowE = highE;
       }
-      SpectrumUtils.rename(res, "Linearized[" + spec.toString() + ","
-            + Arrays.toString(eScale) + "]");
+      SpectrumUtils.rename(res, "Linearized[" + spec.toString() + "," + Arrays.toString(eScale) + "]");
       return SpectrumUtils.copy(res);
    }
 
@@ -2510,35 +2320,27 @@ final public class SpectrumUtils {
     *           double
     * @throws EPQException
     */
-   public final static ISpectrumData linearizeSpectrum2(ISpectrumData spec,
-         double[] scale, double chWidth) throws EPQException {
+   public final static ISpectrumData linearizeSpectrum2(ISpectrumData spec, double[] scale, double chWidth) throws EPQException {
       final double minE = Math2.polynomial(scale, 0.0);
       final double maxE = Math2.polynomial(scale, spec.getChannelCount());
       final int nCh = (int) Math.ceil((maxE - minE) / chWidth);
       final EditableSpectrum res = new EditableSpectrum(nCh, chWidth, minE);
-      final double[] xx = Math2.solvePoly(scale,
-            SpectrumUtils.minEnergyForChannel(res, 0));
+      final double[] xx = Math2.solvePoly(scale, SpectrumUtils.minEnergyForChannel(res, 0));
       double oldLowCh = xx != null ? Math2.closestTo(xx, 0.0) : 0.0;
       for (int ch = 0; ch < nCh; ++ch) {
-         final double oldHighCh = Math2.closestTo(Math2.solvePoly(scale,
-               SpectrumUtils.maxEnergyForChannel(res, ch)), oldLowCh);
-         final double oldLowE = spec.getZeroOffset()
-               + (spec.getChannelWidth() * oldLowCh);
-         final double oldHighE = spec.getZeroOffset()
-               + (spec.getChannelWidth() * oldHighCh);
+         final double oldHighCh = Math2.closestTo(Math2.solvePoly(scale, SpectrumUtils.maxEnergyForChannel(res, ch)), oldLowCh);
+         final double oldLowE = spec.getZeroOffset() + (spec.getChannelWidth() * oldLowCh);
+         final double oldHighE = spec.getZeroOffset() + (spec.getChannelWidth() * oldHighCh);
          res.setCounts(ch, SpectrumUtils.integrate(spec, oldLowE, oldHighE));
          oldLowCh = oldHighCh;
       }
-      SpectrumUtils.rename(res, "Linearized2[" + spec.toString() + ","
-            + Arrays.toString(scale) + "]");
+      SpectrumUtils.rename(res, "Linearized2[" + spec.toString() + "," + Arrays.toString(scale) + "]");
       return SpectrumUtils.copy(res);
    }
 
-   public final static ISpectrumData applyEDSDetector(EDSDetector det,
-         ISpectrumData spec) {
+   public final static ISpectrumData applyEDSDetector(EDSDetector det, ISpectrumData spec) {
       ISpectrumData res;
-      if ((det != null) && ((spec.getProperties().getDetector() != det)
-            || (spec.getChannelCount() != det.getChannelCount()))) {
+      if ((det != null) && ((spec.getProperties().getDetector() != det) || (spec.getChannelCount() != det.getChannelCount()))) {
          res = remap(spec, det.getChannelCount());
          res.getProperties().setDetector(det);
       } else
@@ -2554,10 +2356,8 @@ final public class SpectrumUtils {
     * @param spec
     * @return double
     */
-   public static double computeSignalToNoise(
-         RegionOfInterestSet.RegionOfInterest roi, ISpectrumData spec) {
-      final double[] specInt = backgroundCorrectedIntegral(spec,
-            FromSI.eV(roi.lowEnergy()), FromSI.eV(roi.highEnergy()));
+   public static double computeSignalToNoise(RegionOfInterestSet.RegionOfInterest roi, ISpectrumData spec) {
+      final double[] specInt = backgroundCorrectedIntegral(spec, FromSI.eV(roi.lowEnergy()), FromSI.eV(roi.highEnergy()));
       return specInt[0] / specInt[1];
    }
 
@@ -2592,43 +2392,33 @@ final public class SpectrumUtils {
       return SpectrumUtils.copy(res);
    }
 
-   public static double chiSqr(ISpectrumData spec1, ISpectrumData spec2,
-         Collection<Interval> intervals) throws EPQException {
+   public static double chiSqr(ISpectrumData spec1, ISpectrumData spec2, Collection<Interval> intervals) throws EPQException {
       double k1 = 1.0 / SpectrumUtils.getDose(spec1.getProperties());
       double k2 = 1.0 / SpectrumUtils.getDose(spec2.getProperties());
       double d = 0.0, su = 0.0;
       for (Interval ii : intervals)
          for (int i = ii.min(); i < ii.max(); ++i) {
             d += Math2.sqr(k1 * spec1.getCounts(i) - k2 * spec2.getCounts(i));
-            su += k1 * k1 * Math.max(1.0, spec1.getCounts(i))
-                  + k2 * k2 * Math.max(1.0, spec2.getCounts(i));
+            su += k1 * k1 * Math.max(1.0, spec1.getCounts(i)) + k2 * k2 * Math.max(1.0, spec2.getCounts(i));
          }
       return (d / su);
    }
 
-   public static SortedSet<Interval> asIntervals(ISpectrumData spec,
-         RegionOfInterestSet rois) {
+   public static SortedSet<Interval> asIntervals(ISpectrumData spec, RegionOfInterestSet rois) {
       final double e0 = SpectrumUtils.getBeamEnergy(spec);
       SortedSet<Interval> intervals = new TreeSet<Interval>();
       for (RegionOfInterestSet.RegionOfInterest roi : rois) {
          if (roi.lowEnergy() < e0) {
-            final Interval i = new Interval(
-                  SpectrumUtils.channelForEnergy(spec,
-                        FromSI.eV(roi.lowEnergy())),
-                  SpectrumUtils.channelForEnergy(spec,
-                        Math.min(FromSI.eV(roi.highEnergy()), e0)));
+            final Interval i = new Interval(SpectrumUtils.channelForEnergy(spec, FromSI.eV(roi.lowEnergy())),
+                  SpectrumUtils.channelForEnergy(spec, Math.min(FromSI.eV(roi.highEnergy()), e0)));
             intervals = Interval.add(intervals, i);
          }
       }
       return intervals;
    }
 
-   public static double measureDissimilarity(ISpectrumData spec,
-         Collection<ISpectrumData> specs, RegionOfInterestSet rois)
-         throws EPQException {
+   public static double measureDissimilarity(ISpectrumData spec, Collection<ISpectrumData> specs, RegionOfInterestSet rois) throws EPQException {
       assert !specs.contains(spec);
-      return specs.size() == 0
-            ? 1.0
-            : chiSqr(spec, sum(specs), asIntervals(spec, rois));
+      return specs.size() == 0 ? 1.0 : chiSqr(spec, sum(specs), asIntervals(spec, rois));
    }
 }

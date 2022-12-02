@@ -21,8 +21,7 @@ import Jama.Matrix;
  * @author nritchie
  * @version 1.0
  */
-public class LevenbergMarquardtConstrained
-   extends LevenbergMarquardt2 {
+public class LevenbergMarquardtConstrained extends LevenbergMarquardt2 {
 
    /**
     * <p>
@@ -53,8 +52,7 @@ public class LevenbergMarquardtConstrained
     * @author nritchie
     * @version 1.0
     */
-   public static class ConstrainedFitFunction
-      implements FitFunction {
+   public static class ConstrainedFitFunction implements FitFunction {
 
       private final Constraint[] mConstraints;
       private final FitFunction mFitFunction;
@@ -63,12 +61,14 @@ public class LevenbergMarquardtConstrained
        * Constructs a ConstrainedFitFunction in which the <code>paramDim</code>
        * parameters are unconstrained (<code>Constraint.None</code>).
        * 
-       * @param ff The fit function assuming domain space parameters.
-       * @param paramDim The number of parameters in the fit
+       * @param ff
+       *           The fit function assuming domain space parameters.
+       * @param paramDim
+       *           The number of parameters in the fit
        */
       public ConstrainedFitFunction(FitFunction ff, int paramDim) {
          mConstraints = new Constraint[paramDim];
-         for(int i = 0; i < paramDim; ++i)
+         for (int i = 0; i < paramDim; ++i)
             mConstraints[i] = new Constraint.None();
          mFitFunction = ff;
       }
@@ -77,8 +77,10 @@ public class LevenbergMarquardtConstrained
        * Specify the constraint associated with the <code>paramIdx</code>
        * <sup>th</sup> parameter.
        * 
-       * @param paramIdx int
-       * @param c {@link Constraint}
+       * @param paramIdx
+       *           int
+       * @param c
+       *           {@link Constraint}
        */
       public void setConstraint(int paramIdx, Constraint c) {
          mConstraints[paramIdx] = c;
@@ -87,7 +89,7 @@ public class LevenbergMarquardtConstrained
       public Matrix realToConstrained(Matrix rParams) {
          assert rParams.getColumnDimension() == 1;
          final Matrix params = new Matrix(rParams.getRowDimension(), 1);
-         for(int i = rParams.getRowDimension() - 1; i >= 0; --i)
+         for (int i = rParams.getRowDimension() - 1; i >= 0; --i)
             params.set(i, 0, mConstraints[i].realToConstrained(rParams.get(i, 0)));
          return params;
       }
@@ -95,7 +97,7 @@ public class LevenbergMarquardtConstrained
       public Matrix constrainedToReal(Matrix rParams) {
          assert rParams.getColumnDimension() == 1;
          final Matrix params = new Matrix(rParams.getRowDimension(), 1);
-         for(int i = rParams.getRowDimension() - 1; i >= 0; --i)
+         for (int i = rParams.getRowDimension() - 1; i >= 0; --i)
             params.set(i, 0, mConstraints[i].constrainedToReal(rParams.get(i, 0)));
          return params;
       }
@@ -104,9 +106,9 @@ public class LevenbergMarquardtConstrained
       public Matrix partials(Matrix rParams) {
          final Matrix tmp = mFitFunction.partials(realToConstrained(rParams));
          assert tmp.getColumnDimension() == rParams.getRowDimension();
-         for(int c = 0; c < tmp.getColumnDimension(); ++c) {
+         for (int c = 0; c < tmp.getColumnDimension(); ++c) {
             final double dp = mConstraints[c].derivative(rParams.get(c, 0));
-            for(int r = 0; r < tmp.getRowDimension(); ++r)
+            for (int r = 0; r < tmp.getRowDimension(); ++r)
                tmp.set(r, c, tmp.get(r, c) * dp);
          }
          return tmp;
@@ -121,23 +123,24 @@ public class LevenbergMarquardtConstrained
        * Transform the FitResults from (-&infin;,&infin;) to the constrained
        * problem space domain.
        * 
-       * @param fr {@link FitResult}
+       * @param fr
+       *           {@link FitResult}
        * @return FitResult
        */
       public FitResult realToConstrained(FitResult fr) {
          final FitResult res = fr.getModel().new FitResult(mFitFunction);
          res.mBestParams = new UncertainValue2[mConstraints.length];
-         for(int i = 0; i < mConstraints.length; ++i)
+         for (int i = 0; i < mConstraints.length; ++i)
             res.mBestParams[i] = mConstraints[i].getResult(fr.mBestParams[i]);
          res.mBestY = fr.mBestY.clone();
          res.mChiSq = fr.mChiSq;
          {
             final Matrix covar = fr.mCovariance.copy();
             final double[] dp = new double[mConstraints.length];
-            for(int i = 0; i < dp.length; ++i)
+            for (int i = 0; i < dp.length; ++i)
                dp[i] = mConstraints[i].derivative(fr.mBestParams[i].doubleValue());
-            for(int c = 0; c < covar.getColumnDimension(); ++c)
-               for(int r = 0; r < covar.getRowDimension(); ++r)
+            for (int c = 0; c < covar.getColumnDimension(); ++c)
+               for (int r = 0; r < covar.getRowDimension(); ++r)
                   covar.set(r, c, fr.mCovariance.get(r, c) * dp[r] * dp[c]);
             res.mCovariance = covar;
          }
@@ -155,9 +158,8 @@ public class LevenbergMarquardtConstrained
    }
 
    @Override
-   public FitResult compute(FitFunction ff, Matrix yData, Matrix sigma, Matrix p0)
-         throws EPQException {
-      if(ff instanceof ConstrainedFitFunction) {
+   public FitResult compute(FitFunction ff, Matrix yData, Matrix sigma, Matrix p0) throws EPQException {
+      if (ff instanceof ConstrainedFitFunction) {
          final ConstrainedFitFunction cff = (ConstrainedFitFunction) ff;
          final FitResult tmp = super.compute(cff, yData, sigma, cff.constrainedToReal(p0));
          return cff.realToConstrained(tmp);

@@ -46,11 +46,11 @@ public class ConductiveCoating {
     */
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final ConductiveCoating other = (ConductiveCoating) obj;
       return Objects.equals(mMaterial, other.mMaterial) && //
@@ -66,7 +66,8 @@ public class ConductiveCoating {
    /**
     * Build a carbon layer of 2.0 g/cm<sup>3</sup>
     *
-    * @param thickness Typically around 10 nm
+    * @param thickness
+    *           Typically around 10 nm
     * @return ConductiveCoating
     */
    public static ConductiveCoating buildAmorphousCarbon(double thickness) {
@@ -113,9 +114,12 @@ public class ConductiveCoating {
    /**
     * Build a single element coating
     *
-    * @param elm An Element
-    * @param density In g/cm<sup>3</sup>
-    * @param thickness In meters
+    * @param elm
+    *           An Element
+    * @param density
+    *           In g/cm<sup>3</sup>
+    * @param thickness
+    *           In meters
     * @return {@link ConductiveCoating}
     */
    public static ConductiveCoating build(Element elm, double density, double thickness) {
@@ -126,8 +130,10 @@ public class ConductiveCoating {
    /**
     * Build a single element from the enumerated list in CCMaterial
     *
-    * @param mat A CCMaterial
-    * @param thickness In meters
+    * @param mat
+    *           A CCMaterial
+    * @param thickness
+    *           In meters
     * @return {@link ConductiveCoating}
     */
    public static ConductiveCoating build(CCMaterial mat, double thickness) {
@@ -169,8 +175,7 @@ public class ConductiveCoating {
    public double computeTransmission(double toa, XRayTransition xr) {
       try {
          return computeTransmission(toa, xr.getEnergy());
-      }
-      catch(EPQException e) {
+      } catch (EPQException e) {
          return 1.0;
       }
    }
@@ -187,13 +192,14 @@ public class ConductiveCoating {
     * Computes the kinetic energy lost in traversing the conductive coating
     * layer
     *
-    * @param e0 In Joules
+    * @param e0
+    *           In Joules
     * @return In Joules
     */
    public double computeEnergyLoss(double e0) {
       // See Heinrich 1981 pp 226-227
       double res = 0.0;
-      for(final Element el : mMaterial.getElementSet())
+      for (final Element el : mMaterial.getElementSet())
          res += AlgorithmUser.getDefaultBetheEnergyLoss().compute(el, e0) * mMaterial.weightFraction(el, true);
       return res * mMaterial.getDensity() * mThickness;
    }
@@ -201,8 +207,7 @@ public class ConductiveCoating {
    @Override
    public String toString() {
       HalfUpFormat nf = new HalfUpFormat("0.0");
-      return nf.format(mThickness * 1.0e9) + " nm of " + mMaterial.toString() + " ("
-            + nf.format(FromSI.gPerCC(mMaterial.getDensity())) + " g/cc)";
+      return nf.format(mThickness * 1.0e9) + " nm of " + mMaterial.toString() + " (" + nf.format(FromSI.gPerCC(mMaterial.getDensity())) + " g/cc)";
    }
 
    public String toParsableFormat() {
@@ -212,16 +217,15 @@ public class ConductiveCoating {
 
    public static ConductiveCoating parse(String ss) {
       int i = ss.indexOf("nm of");
-      if(i != -1) {
+      if (i != -1) {
          String thick = ss.substring(0, i).trim();
          String matStr = ss.substring(i + 6).trim();
          try {
             final double thicknessNm = Double.parseDouble(thick);
             Composition mat = Material.fromParsableFormat(matStr);
-            if((mat != null) && (mat instanceof Material) && (thicknessNm > 0.0))
+            if ((mat != null) && (mat instanceof Material) && (thicknessNm > 0.0))
                return new ConductiveCoating((Material) mat, 1.0e-9 * thicknessNm);
-         }
-         catch(NumberFormatException nex) {
+         } catch (NumberFormatException nex) {
             System.out.println(thick);
          }
       }

@@ -66,7 +66,7 @@ public class SpectrumRenamer {
 
       private String replace(SpectrumProperties sp, String str) {
          final int pos = str.indexOf(mToken, 0);
-         if(pos >= 0)
+         if (pos >= 0)
             return str.replace(mToken, sp.getTextWithDefault(mReplacement, "Unknown"));
          else
             return str;
@@ -87,9 +87,9 @@ public class SpectrumRenamer {
 
    public String computerizer(SpectrumProperties sp) {
       String res = mRule;
-      for(Rule rule : Rule.values())
+      for (Rule rule : Rule.values())
          res = rule.replace(sp, res);
-      if(res.indexOf("$I$") >= 0) {
+      if (res.indexOf("$I$") >= 0) {
          res = res.replace("$I$", Integer.toString(mCount));
          ++mCount;
       }

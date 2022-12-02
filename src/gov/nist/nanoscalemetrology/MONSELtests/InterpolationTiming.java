@@ -25,15 +25,12 @@ public class InterpolationTiming {
       this.xinc = xinc;
       this.order = order;
       xsamp = new double[f.length];
-      for(int i = 0; i < f.length; i++)
+      for (int i = 0; i < f.length; i++)
          xsamp[i] = x0 + (i * xinc);
    }
 
    public double[] interptest(double x) {
-      return new double[] {
-         ULagrangeInterpolation.d1(f, x0, xinc, order, x)[0],
-         NULagrangeInterpolation.d1(f, xsamp, order, x)[0]
-      };
+      return new double[]{ULagrangeInterpolation.d1(f, x0, xinc, order, x)[0], NULagrangeInterpolation.d1(f, xsamp, order, x)[0]};
    }
 
    public double[] timetest(long repeats) {
@@ -41,45 +38,43 @@ public class InterpolationTiming {
       long t1, t2, tf;
       @SuppressWarnings("unused")
       final double deltat = 0.;
-      double[] interpresult = {
-         0.,
-         0.
-      };
+      double[] interpresult = {0., 0.};
       final double twopi = 2. * Math.PI;
       double r;
 
       // A dummy loop to time overhead
       t0 = System.currentTimeMillis();
-      for(long i = 0; i < repeats; i++) {
+      for (long i = 0; i < repeats; i++) {
          r = Math.random() * twopi;
          interpresult[0] = r;
       }
 
       t1 = System.currentTimeMillis();
 
-      for(long i = 0; i < repeats; i++) {
+      for (long i = 0; i < repeats; i++) {
          r = Math.random() * twopi;
          interpresult = ULagrangeInterpolation.d1(f, x0, xinc, order, r);
       }
 
       t2 = System.currentTimeMillis();
 
-      for(long i = 0; i < repeats; i++) {
+      for (long i = 0; i < repeats; i++) {
          r = Math.random() * twopi;
          interpresult = NULagrangeInterpolation.d1(f, xsamp, order, r);
       }
 
       tf = System.currentTimeMillis();
 
-      return new double[] {
-         t1 - t0, // Time in ms for null loop
-         t2 - t1, // Time in ms for uniform interpolation
-         tf - t2, // Time in ms for nonuniform interpolation
-         (1000. * ((t2 + t0) - (2 * t1))) / repeats, // Net time in us for each
-         // uniform evaluation
-         (1000. * ((tf - t2 - t1) + t0)) / repeats, // Net time in us for each
-         // nonuniform evaluation
-         (1000. * ((tf - (2 * t2)) + t1)) / repeats // Time difference per
+      return new double[]{t1 - t0, // Time in ms for null loop
+            t2 - t1, // Time in ms for uniform interpolation
+            tf - t2, // Time in ms for nonuniform interpolation
+            (1000. * ((t2 + t0) - (2 * t1))) / repeats, // Net time in us for
+                                                        // each
+            // uniform evaluation
+            (1000. * ((tf - t2 - t1) + t0)) / repeats, // Net time in us for
+                                                       // each
+            // nonuniform evaluation
+            (1000. * ((tf - (2 * t2)) + t1)) / repeats // Time difference per
             // evaluation in us
       };
 

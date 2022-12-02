@@ -66,39 +66,14 @@ import gov.nist.microanalysis.Utility.Math2;
  * @version 1.0, 02/21/2012
  */
 
-public class NormalHeightMapShape
-   implements NormalShape, TrajectoryVRML.IRender {
+public class NormalHeightMapShape implements NormalShape, TrajectoryVRML.IRender {
 
-   private final double nPosX[] = {
-      1.0,
-      0.0,
-      0.0
-   };
-   private final double nNegX[] = {
-      -1.0,
-      0.0,
-      0.0
-   };
-   private final double nPosY[] = {
-      0.0,
-      1.0,
-      0.0
-   };
-   private final double nNegY[] = {
-      0.0,
-      -1.0,
-      0.0
-   };
-   private final double nPosZ[] = {
-      0.0,
-      0.0,
-      1.0
-   };
-   private final double nNegZ[] = {
-      0.0,
-      0.0,
-      -1.0
-   };
+   private final double nPosX[] = {1.0, 0.0, 0.0};
+   private final double nNegX[] = {-1.0, 0.0, 0.0};
+   private final double nPosY[] = {0.0, 1.0, 0.0};
+   private final double nNegY[] = {0.0, -1.0, 0.0};
+   private final double nPosZ[] = {0.0, 0.0, 1.0};
+   private final double nNegZ[] = {0.0, 0.0, -1.0};
 
    private double[] result = null;
 
@@ -187,16 +162,15 @@ public class NormalHeightMapShape
     * @param HeightMapFileName
     * @throws FileNotFoundException
     */
-   public NormalHeightMapShape(String HeightMapFileName)
-         throws FileNotFoundException {
+   public NormalHeightMapShape(String HeightMapFileName) throws FileNotFoundException {
       final Scanner s = new Scanner(new BufferedReader(new FileReader(HeightMapFileName)));
       s.useLocale(Locale.US);
       try {
          final String str = s.next();
-         if(!str.equals("$HeightMapFormat"))
+         if (!str.equals("$HeightMapFormat"))
             throw new EPQFatalException("1st token of  file was not $HeightMapFormat");
          boolean isBelowHT = true;
-         if(s.nextDouble() == 0.)
+         if (s.nextDouble() == 0.)
             isBelowHT = false;
          final double x0 = s.nextDouble();
          final double y0 = s.nextDouble();
@@ -207,8 +181,8 @@ public class NormalHeightMapShape
          final double zunit = s.nextDouble();
          final double data[][] = new double[htX][htY];
 
-         for(int j = 0; j < htY; j++)
-            for(int i = 0; i < htX; i++)
+         for (int j = 0; j < htY; j++)
+            for (int i = 0; i < htX; i++)
                /*
                 * Next line, Bin's original, mirror's the Y axis. Not sure why
                 * he did that. I removed it.
@@ -218,9 +192,8 @@ public class NormalHeightMapShape
          init(x0, y0, dX, dY, data, isBelowHT);
 
          s.close();
-      }
-      finally {
-         if(s != null)
+      } finally {
+         if (s != null)
             s.close();
       }
    }
@@ -233,7 +206,7 @@ public class NormalHeightMapShape
    @Override
    public boolean contains(double[] pos) {
       final int[] idx = getXYIndices(pos);
-      if(getBlock(idx[0], idx[1], 0, isShapeBelow).contains(pos) || getBlock(idx[0], idx[1], 1, isShapeBelow).contains(pos))
+      if (getBlock(idx[0], idx[1], 0, isShapeBelow).contains(pos) || getBlock(idx[0], idx[1], 1, isShapeBelow).contains(pos))
          return true;
       return false;
    }
@@ -248,8 +221,7 @@ public class NormalHeightMapShape
    @Override
    public boolean contains(double[] pos0, double[] pos1) {
       final int[] idx = getXYIndices(pos0);
-      if(getBlock(idx[0], idx[1], 0, isShapeBelow).contains(pos0, pos1)
-            || getBlock(idx[0], idx[1], 1, isShapeBelow).contains(pos0, pos1))
+      if (getBlock(idx[0], idx[1], 0, isShapeBelow).contains(pos0, pos1) || getBlock(idx[0], idx[1], 1, isShapeBelow).contains(pos0, pos1))
          return true;
       return false;
    }
@@ -269,16 +241,16 @@ public class NormalHeightMapShape
    private void createNodeBlocks(int iB, int jB, boolean lo) {
       int i = iB - 1;
       int j = jB - 1;
-      if(iB == 0)
+      if (iB == 0)
          i = 0;
-      if(jB == 0)
+      if (jB == 0)
          j = 0;
-      if(iB == (htXlength - 1))
+      if (iB == (htXlength - 1))
          i = htXlength - 3;
-      if(jB == (htYlength - 1))
+      if (jB == (htYlength - 1))
          j = htYlength - 3;
 
-      if(!(bX1D || bY1D)) {
+      if (!(bX1D || bY1D)) {
          // the two NormalMultiPlaneShape objects associated with each node
          // on the NormalHeightMapShape,
          // each with a triangular top plane
@@ -292,26 +264,10 @@ public class NormalHeightMapShape
 
          // calculating the four "nodes" in a square top cell on the
          // NormalHeightMapShape
-         final double node1[] = {
-            htOrigin[0] + (i * htDeltaX),
-            htOrigin[1] + (j * htDeltaY),
-            htData[i][j]
-         };
-         final double node2[] = {
-            htOrigin[0] + ((i + 1) * htDeltaX),
-            htOrigin[1] + (j * htDeltaY),
-            htData[i + 1][j]
-         };
-         final double node3[] = {
-            htOrigin[0] + (i * htDeltaX),
-            htOrigin[1] + ((j + 1) * htDeltaY),
-            htData[i][j + 1]
-         };
-         final double node4[] = {
-            htOrigin[0] + ((i + 1) * htDeltaX),
-            htOrigin[1] + ((j + 1) * htDeltaY),
-            htData[i + 1][j + 1]
-         };
+         final double node1[] = {htOrigin[0] + (i * htDeltaX), htOrigin[1] + (j * htDeltaY), htData[i][j]};
+         final double node2[] = {htOrigin[0] + ((i + 1) * htDeltaX), htOrigin[1] + (j * htDeltaY), htData[i + 1][j]};
+         final double node3[] = {htOrigin[0] + (i * htDeltaX), htOrigin[1] + ((j + 1) * htDeltaY), htData[i][j + 1]};
+         final double node4[] = {htOrigin[0] + ((i + 1) * htDeltaX), htOrigin[1] + ((j + 1) * htDeltaY), htData[i + 1][j + 1]};
 
          // calculating the four vectors between the four nodes
          final double vector12[] = Math2.minus(node2, node1);
@@ -327,14 +283,10 @@ public class NormalHeightMapShape
 
          final double[] nPlane1o = Math2.negative(nPlane1);
          final double[] nPlane2o = Math2.negative(nPlane2);
-         final double nPlane_in_between[] = {
-            vector23[1],
-            -vector23[0],
-            0.
-         };
+         final double nPlane_in_between[] = {vector23[1], -vector23[0], 0.};
          final double[] nminusPlane_in_between = Math2.negative(nPlane_in_between);
 
-         if(lo) {
+         if (lo) {
             // adding four planes to each one of two blocks
             // (NormalMultiPlaneShape objects)
 
@@ -374,9 +326,9 @@ public class NormalHeightMapShape
          // following will construct the appropriate "edge" and
          // possibly "corner" blocks. They are located at the (B)ottom,
          // (T)op, (L)eft, and (R)ight positions.
-         if(i == 0) {
-            if(j == 0)
-               if(lo) {
+         if (i == 0) {
+            if (j == 0)
+               if (lo) {
                   // add the bottom left corner block
                   final NormalMultiPlaneShape blockDownBottomLeftCorner = new NormalMultiPlaneShape();
                   blockDownBottomLeftCorner.addPlane(nPosZ, node1);
@@ -390,8 +342,8 @@ public class NormalHeightMapShape
                   blockUpBottomLeftCorner.addPlane(nPosY, node1);
                   upperBlocks[0][0][0] = upperBlocks[0][0][1] = blockUpBottomLeftCorner;
                }
-            if(j == (htYlength - 3))
-               if(lo) {
+            if (j == (htYlength - 3))
+               if (lo) {
                   // add the top left corner block
                   final NormalMultiPlaneShape blockDownTopLeftCorner = new NormalMultiPlaneShape();
                   blockDownTopLeftCorner.addPlane(nPosZ, node3);
@@ -406,13 +358,9 @@ public class NormalHeightMapShape
                   upperBlocks[0][htYlength - 1][0] = upperBlocks[0][htYlength - 1][1] = blockUpTopLeftCorner;
                }
             // add the "edge" blocks at the leftmost column
-            final double n13EdgeUp[] = {
-               0.,
-               -vector13[2],
-               vector13[1]
-            };
+            final double n13EdgeUp[] = {0., -vector13[2], vector13[1]};
 
-            if(lo) {
+            if (lo) {
                final NormalMultiPlaneShape blockDownLeftEdge = new NormalMultiPlaneShape();
                blockDownLeftEdge.addPlane(n13EdgeUp, node1);
                blockDownLeftEdge.addPlane(nPosX, node1);
@@ -429,9 +377,9 @@ public class NormalHeightMapShape
                upperBlocks[0][j + 1][0] = upperBlocks[0][j + 1][1] = blockUpLeftEdge;
             }
          }
-         if(i == (htXlength - 3)) {
-            if(j == 0)
-               if(lo) {
+         if (i == (htXlength - 3)) {
+            if (j == 0)
+               if (lo) {
                   // add the bottom right corner block
                   final NormalMultiPlaneShape blockDownBottomRightCorner = new NormalMultiPlaneShape();
                   blockDownBottomRightCorner.addPlane(nPosZ, node2);
@@ -445,30 +393,24 @@ public class NormalHeightMapShape
                   blockUpBottomRightCorner.addPlane(nPosY, node2);
                   upperBlocks[htXlength - 1][0][0] = upperBlocks[htXlength - 1][0][1] = blockUpBottomRightCorner;
                }
-            if(j == (htYlength - 3))
-               if(lo) {
+            if (j == (htYlength - 3))
+               if (lo) {
                   // add the top right corner block
                   final NormalMultiPlaneShape blockDownTopRightCorner = new NormalMultiPlaneShape();
                   blockDownTopRightCorner.addPlane(nPosZ, node4);
                   blockDownTopRightCorner.addPlane(nNegX, node4);
                   blockDownTopRightCorner.addPlane(nNegY, node4);
-                  lowerBlocks[htXlength - 1][htYlength
-                        - 1][0] = lowerBlocks[htXlength - 1][htYlength - 1][1] = blockDownTopRightCorner;
+                  lowerBlocks[htXlength - 1][htYlength - 1][0] = lowerBlocks[htXlength - 1][htYlength - 1][1] = blockDownTopRightCorner;
                } else {
                   final NormalMultiPlaneShape blockUpTopRightCorner = new NormalMultiPlaneShape();
                   blockUpTopRightCorner.addPlane(nNegZ, node4);
                   blockUpTopRightCorner.addPlane(nNegX, node4);
                   blockUpTopRightCorner.addPlane(nNegY, node4);
-                  upperBlocks[htXlength - 1][htYlength
-                        - 1][0] = upperBlocks[htXlength - 1][htYlength - 1][1] = blockUpTopRightCorner;
+                  upperBlocks[htXlength - 1][htYlength - 1][0] = upperBlocks[htXlength - 1][htYlength - 1][1] = blockUpTopRightCorner;
                }
             // add the "edge" blocks at the rightmost column
-            final double n24EdgeUp[] = {
-               0.,
-               -vector24[2],
-               vector24[1]
-            };
-            if(lo) {
+            final double n24EdgeUp[] = {0., -vector24[2], vector24[1]};
+            if (lo) {
                final NormalMultiPlaneShape blockDownRightEdge = new NormalMultiPlaneShape();
                blockDownRightEdge.addPlane(n24EdgeUp, node2);
                blockDownRightEdge.addPlane(nNegX, node2);
@@ -487,13 +429,9 @@ public class NormalHeightMapShape
          }
 
          // now add the "edge" blocks of the bottom and top rows
-         if(j == 0) {
-            final double n12EdgeUp[] = {
-               -vector12[2],
-               0.,
-               vector12[0]
-            };
-            if(lo) {
+         if (j == 0) {
+            final double n12EdgeUp[] = {-vector12[2], 0., vector12[0]};
+            if (lo) {
                final NormalMultiPlaneShape blockDownBottomEdge = new NormalMultiPlaneShape();
                blockDownBottomEdge.addPlane(n12EdgeUp, node1);
                blockDownBottomEdge.addPlane(nNegX, node1);
@@ -510,13 +448,9 @@ public class NormalHeightMapShape
                upperBlocks[i + 1][0][0] = upperBlocks[i + 1][0][1] = blockUpBottomEdge;
             }
          }
-         if(j == (htYlength - 3)) {
-            final double n34EdgeUp[] = {
-               -vector34[2],
-               0.,
-               vector34[0]
-            };
-            if(lo) {
+         if (j == (htYlength - 3)) {
+            final double n34EdgeUp[] = {-vector34[2], 0., vector34[0]};
+            if (lo) {
                final NormalMultiPlaneShape blockDownTopEdge = new NormalMultiPlaneShape();
                blockDownTopEdge.addPlane(n34EdgeUp, node3);
                blockDownTopEdge.addPlane(nNegX, node3);
@@ -533,25 +467,13 @@ public class NormalHeightMapShape
                upperBlocks[i + 1][htYlength - 1][0] = upperBlocks[i + 1][htYlength - 1][1] = blockUpTopEdge;
             }
          }
-      } else if(bX1D && !bY1D) {
+      } else if (bX1D && !bY1D) {
          // a one-dimensional cross section in the X direction
-         final double node1[] = {
-            htOrigin[0] + (i * htDeltaX),
-            htOrigin[1],
-            htData[i][0]
-         };
-         final double node2[] = {
-            htOrigin[0] + ((i + 1) * htDeltaX),
-            htOrigin[1],
-            htData[i + 1][0]
-         };
+         final double node1[] = {htOrigin[0] + (i * htDeltaX), htOrigin[1], htData[i][0]};
+         final double node2[] = {htOrigin[0] + ((i + 1) * htDeltaX), htOrigin[1], htData[i + 1][0]};
          final double vector12[] = Math2.minus(node2, node1);
-         final double n12EdgeUp[] = {
-            -vector12[2],
-            0.,
-            vector12[0]
-         };
-         if(lo) {
+         final double n12EdgeUp[] = {-vector12[2], 0., vector12[0]};
+         if (lo) {
             final NormalMultiPlaneShape blockDownBottomEdge = new NormalMultiPlaneShape();
             blockDownBottomEdge.addPlane(n12EdgeUp, node1);
             blockDownBottomEdge.addPlane(nNegX, node1);
@@ -581,8 +503,8 @@ public class NormalHeightMapShape
             blockUpTopEdge.addPlane(nNegY, node1);
             upperBlocks[i + 1][1][0] = upperBlocks[i + 1][1][1] = blockUpTopEdge;
          }
-         if(i == 0)
-            if(lo) {
+         if (i == 0)
+            if (lo) {
                // add the two left corner blocks
                final NormalMultiPlaneShape blockDownBottomLeftCorner = new NormalMultiPlaneShape();
                blockDownBottomLeftCorner.addPlane(nPosZ, node1);
@@ -608,8 +530,8 @@ public class NormalHeightMapShape
                blockUpTopLeftCorner.addPlane(nNegY, node1);
                upperBlocks[0][1][0] = upperBlocks[0][1][1] = blockUpTopLeftCorner;
             }
-         if(i == (htXlength - 3))
-            if(lo) {
+         if (i == (htXlength - 3))
+            if (lo) {
                // add the two right corner blocks
                final NormalMultiPlaneShape blockDownBottomRightCorner = new NormalMultiPlaneShape();
                blockDownBottomRightCorner.addPlane(nPosZ, node2);
@@ -635,25 +557,13 @@ public class NormalHeightMapShape
                blockUpTopRightCorner.addPlane(nNegY, node2);
                upperBlocks[htXlength - 1][1][0] = upperBlocks[htXlength - 1][1][1] = blockUpTopRightCorner;
             }
-      } else if(bY1D && !bX1D) {
+      } else if (bY1D && !bX1D) {
          // a one-dimensional cross section in the Y direction
-         final double node1[] = {
-            htOrigin[0],
-            htOrigin[1] + (j * htDeltaY),
-            htData[0][j]
-         };
-         final double node3[] = {
-            htOrigin[0],
-            htOrigin[1] + ((j + 1) * htDeltaY),
-            htData[0][j + 1]
-         };
+         final double node1[] = {htOrigin[0], htOrigin[1] + (j * htDeltaY), htData[0][j]};
+         final double node3[] = {htOrigin[0], htOrigin[1] + ((j + 1) * htDeltaY), htData[0][j + 1]};
          final double vector13[] = Math2.minus(node3, node1);
-         final double n13EdgeUp[] = {
-            0.,
-            -vector13[2],
-            vector13[1]
-         };
-         if(lo) {
+         final double n13EdgeUp[] = {0., -vector13[2], vector13[1]};
+         if (lo) {
             final NormalMultiPlaneShape blockDownLeftEdge = new NormalMultiPlaneShape();
             blockDownLeftEdge.addPlane(n13EdgeUp, node1);
             blockDownLeftEdge.addPlane(nPosX, node1);
@@ -683,8 +593,8 @@ public class NormalHeightMapShape
             blockUpRightEdge.addPlane(nNegY, node1);
             upperBlocks[1][j + 1][0] = upperBlocks[1][j + 1][1] = blockUpRightEdge;
          }
-         if(j == 0)
-            if(lo) {
+         if (j == 0)
+            if (lo) {
                // add the two bottom corner blocks
                final NormalMultiPlaneShape blockDownBottomLeftCorner = new NormalMultiPlaneShape();
                blockDownBottomLeftCorner.addPlane(nPosZ, node1);
@@ -710,8 +620,8 @@ public class NormalHeightMapShape
                blockUpBottomRightCorner.addPlane(nPosY, node1);
                upperBlocks[1][0][0] = upperBlocks[1][0][1] = blockUpBottomRightCorner;
             }
-         if(j == (htYlength - 3))
-            if(lo) {
+         if (j == (htYlength - 3))
+            if (lo) {
                // add the two top corner blocks
                final NormalMultiPlaneShape blockDownTopLeftCorner = new NormalMultiPlaneShape();
                blockDownTopLeftCorner.addPlane(nPosZ, node3);
@@ -739,12 +649,8 @@ public class NormalHeightMapShape
             }
       } else {
          // one dimension in both X and Y, i.e., a single data point
-         final double node1[] = {
-            htOrigin[0],
-            htOrigin[1],
-            htData[0][0]
-         };
-         if(lo) {
+         final double node1[] = {htOrigin[0], htOrigin[1], htData[0][0]};
+         if (lo) {
             final NormalMultiPlaneShape blockDownBottomLeftCorner = new NormalMultiPlaneShape();
             blockDownBottomLeftCorner.addPlane(nPosZ, node1);
             blockDownBottomLeftCorner.addPlane(nPosX, node1);
@@ -808,12 +714,12 @@ public class NormalHeightMapShape
     * @return
     */
    public NormalMultiPlaneShape getBlock(int iB, int jB, int wB, boolean lower) {
-      if(lower) {
-         if(lowerBlocks[iB][jB][wB] == null)
+      if (lower) {
+         if (lowerBlocks[iB][jB][wB] == null)
             createNodeBlocks(iB, jB, true);
          return lowerBlocks[iB][jB][wB];
       } else {
-         if(upperBlocks[iB][jB][wB] == null)
+         if (upperBlocks[iB][jB][wB] == null)
             createNodeBlocks(iB, jB, false);
          return upperBlocks[iB][jB][wB];
       }
@@ -822,12 +728,7 @@ public class NormalHeightMapShape
    private int[] getBlockIndex(double[] curr, double[] p1, boolean ifpush) {
       boolean xBoundary, yBoundary, xyDiagonalBoundary;
       xBoundary = yBoundary = xyDiagonalBoundary = false;
-      final int[] idx = {
-         Integer.MAX_VALUE,
-         Integer.MAX_VALUE,
-         Integer.MAX_VALUE,
-         0
-      };
+      final int[] idx = {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, 0};
 
       // normalized x, y positions
       final double xpos = (curr[0] - htOrigin[0]) / htDeltaX;
@@ -838,25 +739,25 @@ public class NormalHeightMapShape
 
       // if no push is intended, then we simply assign the indices by the
       // coordinates of curr[]
-      if(!ifpush) {
+      if (!ifpush) {
          idx[0] = xval;
          idx[1] = yval;
-         if(idx[0] < 0)
+         if (idx[0] < 0)
             idx[0] = 0;
-         if(idx[0] > (htXlength - 1))
+         if (idx[0] > (htXlength - 1))
             idx[0] = htXlength - 1;
-         if(idx[1] < 0)
+         if (idx[1] < 0)
             idx[1] = 0;
-         if(idx[1] > (htYlength - 1))
+         if (idx[1] > (htYlength - 1))
             idx[1] = htYlength - 1;
 
          idx[2] = (((xpos + ypos) - xval - yval) + 1) > 0 ? 1 : 0;
 
-         if((xval - xpos - 1) == 0.)
+         if ((xval - xpos - 1) == 0.)
             idx[3] += 1;
-         if((yval - ypos - 1) == 0.)
+         if ((yval - ypos - 1) == 0.)
             idx[3] += 2;
-         if((((xpos + ypos) - xval - yval) + 1) == 0.)
+         if ((((xpos + ypos) - xval - yval) + 1) == 0.)
             idx[3] += 4;
          return idx;
       }
@@ -865,25 +766,25 @@ public class NormalHeightMapShape
       int v = 0;
       final double deltax = p1[0] - curr[0];
       final double deltay = p1[1] - curr[1];
-      if(deltax > 0)
+      if (deltax > 0)
          v |= 1;
-      if(deltay > 0)
+      if (deltay > 0)
          v |= 2;
-      if((deltax + deltay) > 0)
+      if ((deltax + deltay) > 0)
          v |= 4;
 
       // flags are set when xpos or ypos is evaluated to be within rounding
       // errors of a node or a boundary plane
-      if((xpos - Math.floor(xpos)) < RETOLERANCE)
+      if ((xpos - Math.floor(xpos)) < RETOLERANCE)
          xBoundary = true;
-      else if((Math.ceil(xpos) - xpos) < RETOLERANCE) {
+      else if ((Math.ceil(xpos) - xpos) < RETOLERANCE) {
          xBoundary = true;
          xval += 1;
       }
 
-      if((ypos - Math.floor(ypos)) < RETOLERANCE)
+      if ((ypos - Math.floor(ypos)) < RETOLERANCE)
          yBoundary = true;
-      else if((Math.ceil(ypos) - ypos) < RETOLERANCE) {
+      else if ((Math.ceil(ypos) - ypos) < RETOLERANCE) {
          yBoundary = true;
          yval += 1;
       }
@@ -891,46 +792,46 @@ public class NormalHeightMapShape
       final double xnode = ((xval - 1) * htDeltaX) + htOrigin[0];
       final double ynode = ((yval - 1) * htDeltaY) + htOrigin[1];
 
-      if(xBoundary && yBoundary)
+      if (xBoundary && yBoundary)
          // mapping sections around a node, clockwise from the top right
          // quadrant
-         switch(v) {
-            case 7:
+         switch (v) {
+            case 7 :
                idx[0] = xval;
                idx[1] = yval;
                idx[2] = 0;
                curr[0] = xnode + push;
                curr[1] = ynode + push;
                break;
-            case 5:
+            case 5 :
                idx[0] = xval;
                idx[1] = yval - 1;
                idx[2] = 1;
                curr[0] = xnode + (2 * push);
                curr[1] = ynode - push;
                break;
-            case 1:
+            case 1 :
                idx[0] = xval;
                idx[1] = yval - 1;
                idx[2] = 0;
                curr[0] = xnode + push;
                curr[1] = ynode - (2 * push);
                break;
-            case 0:
+            case 0 :
                idx[0] = xval - 1;
                idx[1] = yval - 1;
                idx[2] = 1;
                curr[0] = xnode - push;
                curr[1] = ynode - push;
                break;
-            case 2:
+            case 2 :
                idx[0] = xval - 1;
                idx[1] = yval;
                idx[2] = 0;
                curr[0] = xnode - (2 * push);
                curr[1] = ynode + push;
                break;
-            case 6:
+            case 6 :
                idx[0] = xval - 1;
                idx[1] = yval;
                idx[2] = 1;
@@ -938,34 +839,34 @@ public class NormalHeightMapShape
                curr[1] = ynode + (2 * push);
                break;
             // default should not happen
-            default:
+            default :
                idx[0] = -1;
                idx[1] = -1;
                idx[2] = -1;
                break;
          }
-      else if(xBoundary) {
+      else if (xBoundary) {
          v &= 1;
-         if(v == 1) {
+         if (v == 1) {
             idx[0] = xval;
             idx[1] = yval;
             idx[2] = 0;
             curr[0] = xnode + push;
 
-         } else if(v == 0) {
+         } else if (v == 0) {
             idx[0] = xval - 1;
             idx[1] = yval;
             idx[2] = 1;
             curr[0] = xnode - push;
          }
-      } else if(yBoundary) {
+      } else if (yBoundary) {
          v &= 2;
-         if(v == 2) {
+         if (v == 2) {
             idx[0] = xval;
             idx[1] = yval;
             idx[2] = 0;
             curr[1] = ynode + push;
-         } else if(v == 0) {
+         } else if (v == 0) {
             idx[0] = xval;
             idx[1] = yval - 1;
             idx[2] = 1;
@@ -973,17 +874,17 @@ public class NormalHeightMapShape
          }
       }
       // not at a node, but along a diagonal block boundary
-      else if((Math.abs(((xpos + ypos) - xval - yval) + 1) < RETOLERANCE) && (xpos > 0) && (xpos < (htXlength - 2))
-            && (ypos > 0) && (ypos < (htYlength - 2))) {
+      else if ((Math.abs(((xpos + ypos) - xval - yval) + 1) < RETOLERANCE) && (xpos > 0) && (xpos < (htXlength - 2)) && (ypos > 0)
+            && (ypos < (htYlength - 2))) {
          xyDiagonalBoundary = true;
          v &= 4;
-         if(v == 4) {
+         if (v == 4) {
             idx[0] = xval;
             idx[1] = yval;
             idx[2] = 1;
             curr[1] = (((xval + yval) - 1 - xpos) * htDeltaY) + htOrigin[1] + push;
             curr[0] += push;
-         } else if(v == 0) {
+         } else if (v == 0) {
             idx[0] = xval;
             idx[1] = yval;
             idx[2] = 0;
@@ -992,29 +893,29 @@ public class NormalHeightMapShape
          }
       }
       // the last two cases don't involve any boundary scenarios
-      else if((((xpos + ypos) - xval - yval) + 1) > 0) {
+      else if ((((xpos + ypos) - xval - yval) + 1) > 0) {
          idx[0] = xval;
          idx[1] = yval;
          idx[2] = 1;
-      } else if((((xpos + ypos) - xval - yval) + 1) < 0) {
+      } else if ((((xpos + ypos) - xval - yval) + 1) < 0) {
          idx[0] = xval;
          idx[1] = yval;
          idx[2] = 0;
       }
-      if(idx[0] < 0)
+      if (idx[0] < 0)
          idx[0] = 0;
-      if(idx[0] > (htXlength - 1))
+      if (idx[0] > (htXlength - 1))
          idx[0] = htXlength - 1;
-      if(idx[1] < 0)
+      if (idx[1] < 0)
          idx[1] = 0;
-      if(idx[1] > (htYlength - 1))
+      if (idx[1] > (htYlength - 1))
          idx[1] = htYlength - 1;
-      if(xBoundary || yBoundary || xyDiagonalBoundary) {
-         if(xBoundary)
+      if (xBoundary || yBoundary || xyDiagonalBoundary) {
+         if (xBoundary)
             idx[3] += 1;
-         if(yBoundary)
+         if (yBoundary)
             idx[3] += 2;
-         if(xyDiagonalBoundary)
+         if (xyDiagonalBoundary)
             idx[3] += 4;
       }
       return idx;
@@ -1041,12 +942,7 @@ public class NormalHeightMapShape
     */
    @Override
    public double[] getFirstNormal(double[] pos0, double[] pos1) {
-      result = new double[] {
-         .0,
-         .0,
-         .0,
-         Double.MAX_VALUE
-      };
+      result = new double[]{.0, .0, .0, Double.MAX_VALUE};
 
       final double currIntersect[] = pos0.clone();
       final double intersectAtBoundary[] = pos0.clone();
@@ -1056,7 +952,7 @@ public class NormalHeightMapShape
       // flag to indicate whether the electron originally starts from
       // below or above the height map shape
       final boolean ifStartBelow = currBlock.contains(currIntersect, pos1);
-      if(!ifStartBelow)
+      if (!ifStartBelow)
          currBlock = getBlock(currIndex[0], currIndex[1], currIndex[2], false);
 
       // In case pos0 and pos1 belong to the same internal block, and the
@@ -1064,50 +960,50 @@ public class NormalHeightMapShape
       // loop may ensue. Here we find out the original block where pos0 belongs
       // (without the push), and return before a possible infinite loop.
       final int[] pos0Index = getBlockIndex(pos0, pos1, false);
-      if((currIndex[0] != pos0Index[0]) || (currIndex[1] != pos0Index[1]) || (currIndex[2] != pos0Index[2])) {
+      if ((currIndex[0] != pos0Index[0]) || (currIndex[1] != pos0Index[1]) || (currIndex[2] != pos0Index[2])) {
          // we have to be more careful if pos0 sits exactly on any
          // internal boundaries
-         if(pos0Index[3] != 0)
+         if (pos0Index[3] != 0)
             // pos0 is on a node on the x-y plane
-            if((pos0Index[3] & 3) == 3) {
-               if(getBlock(pos0Index[0], pos0Index[1] - 1, 1, ifStartBelow).contains(pos0, pos1)) {
+            if ((pos0Index[3] & 3) == 3) {
+               if (getBlock(pos0Index[0], pos0Index[1] - 1, 1, ifStartBelow).contains(pos0, pos1)) {
                   pos0Index[1] -= 1;
                   pos0Index[2] = 1;
-               } else if(getBlock(pos0Index[0], pos0Index[1] - 1, 0, ifStartBelow).contains(pos0, pos1)) {
+               } else if (getBlock(pos0Index[0], pos0Index[1] - 1, 0, ifStartBelow).contains(pos0, pos1)) {
                   pos0Index[1] -= 1;
                   pos0Index[2] = 0;
-               } else if(getBlock(pos0Index[0] - 1, pos0Index[1] - 1, 1, ifStartBelow).contains(pos0, pos1)) {
+               } else if (getBlock(pos0Index[0] - 1, pos0Index[1] - 1, 1, ifStartBelow).contains(pos0, pos1)) {
                   pos0Index[0] -= 1;
                   pos0Index[1] -= 1;
                   pos0Index[2] = 1;
-               } else if(getBlock(pos0Index[0] - 1, pos0Index[1], 0, ifStartBelow).contains(pos0, pos1)) {
+               } else if (getBlock(pos0Index[0] - 1, pos0Index[1], 0, ifStartBelow).contains(pos0, pos1)) {
                   pos0Index[0] -= 1;
                   pos0Index[2] = 0;
-               } else if(getBlock(pos0Index[0] - 1, pos0Index[1], 1, ifStartBelow).contains(pos0, pos1)) {
+               } else if (getBlock(pos0Index[0] - 1, pos0Index[1], 1, ifStartBelow).contains(pos0, pos1)) {
                   pos0Index[0] -= 1;
                   pos0Index[2] = 1;
                }
                // pos0 is on an internal boundary where x is fixed
-            } else if((pos0Index[3] & 1) == 1) {
-               if(getBlock(pos0Index[0] - 1, pos0Index[1], 1, ifStartBelow).contains(pos0, pos1)) {
+            } else if ((pos0Index[3] & 1) == 1) {
+               if (getBlock(pos0Index[0] - 1, pos0Index[1], 1, ifStartBelow).contains(pos0, pos1)) {
                   pos0Index[0] -= 1;
                   pos0Index[2] = 1;
                }
                // pos0 is on an internal boundary where y is fixed
-            } else if((pos0Index[3] & 2) == 2) {
-               if(getBlock(pos0Index[0], pos0Index[1] - 1, 1, ifStartBelow).contains(pos0, pos1)) {
+            } else if ((pos0Index[3] & 2) == 2) {
+               if (getBlock(pos0Index[0], pos0Index[1] - 1, 1, ifStartBelow).contains(pos0, pos1)) {
                   pos0Index[1] -= 1;
                   pos0Index[2] = 1;
                }
                // pos0 is on a diagonal internal boundary on the x-y plane
-            } else if((pos0Index[3] & 4) == 4)
-               if(getBlock(pos0Index[0], pos0Index[1], 0, ifStartBelow).contains(pos0, pos1))
+            } else if ((pos0Index[3] & 4) == 4)
+               if (getBlock(pos0Index[0], pos0Index[1], 0, ifStartBelow).contains(pos0, pos1))
                   pos0Index[2] = 0;
-               else if(getBlock(pos0Index[0], pos0Index[1], 1, ifStartBelow).contains(pos0, pos1))
+               else if (getBlock(pos0Index[0], pos0Index[1], 1, ifStartBelow).contains(pos0, pos1))
                   pos0Index[2] = 1;
          final NormalMultiPlaneShape pos0Block = getBlock(pos0Index[0], pos0Index[1], pos0Index[2], ifStartBelow);
          final double[] result0 = pos0Block.getFirstNormal(pos0, pos1);
-         if((result0[3] < 0.) || (result0[3] >= 1.0)) {
+         if ((result0[3] < 0.) || (result0[3] >= 1.0)) {
             result = result0;
             return result;
          }
@@ -1115,12 +1011,12 @@ public class NormalHeightMapShape
 
       double deltaIntersect = 0.;
       double delta = 0.;
-      for(int nCount = 0;; nCount++) {
+      for (int nCount = 0;; nCount++) {
          result = currBlock.getFirstNormal(currIntersect, pos1);
 
-         if((result[3] < 0.) || (result[3] > 1.0)) {
+         if ((result[3] < 0.) || (result[3] > 1.0)) {
             // return if there is no intersection
-            if(currBlock.contains(currIntersect, pos1))
+            if (currBlock.contains(currIntersect, pos1))
                return result;
             // in the event the electron is found outside the current
             // block, we "trace back" toward the intersect point before
@@ -1132,18 +1028,18 @@ public class NormalHeightMapShape
             // first time, there is an ever slight possibility that it will
             // continue its trajectory back inside the shape, so we "nudge"
             // it inside the shape for only one time
-            if((result[3] > 0.) && (result[3] < 1.0)) {
-               for(int i = 0; i < 3; i++)
+            if ((result[3] > 0.) && (result[3] < 1.0)) {
+               for (int i = 0; i < 3; i++)
                   currIntersect[i] = currIntersect[i] + (((result[3] + 1) / 2) * (intersectAtBoundary[i] - currIntersect[i]));
                result = currBlock.getFirstNormal(currIntersect, pos1);
             }
-            if((result[3] < 0.) || (result[3] > 1.0)) {
-               for(int i = 0; i < 3; i++)
+            if ((result[3] < 0.) || (result[3] > 1.0)) {
+               for (int i = 0; i < 3; i++)
                   result[i] = (ifStartBelow ^ isShapeBelow) ? -currBlock.getNormal(0)[i] : currBlock.getNormal(0)[i];
                final double uPushedOut = currOppositeBlock.getFirstNormal(pos0, posPushedOut)[3];
                // if((uPushedOut < 0.) || (uPushedOut > 1.0))
                // uPushedOut = 1.;
-               for(int i = 0; i < 3; i++) {
+               for (int i = 0; i < 3; i++) {
                   deltaIntersect += (posPushedOut[i] - pos0[i]) * uPushedOut * result[i];
                   delta += (pos1[i] - pos0[i]) * result[i];
                }
@@ -1159,28 +1055,28 @@ public class NormalHeightMapShape
          // from the top plane of currBlock by checking the Z component of the
          // plane normal. This applies to the outside to inside transition, and
          // inside to outside as well
-         if(result[2] != 0.) {
-            for(int i = 0; i < 3; i++) {
+         if (result[2] != 0.) {
+            for (int i = 0; i < 3; i++) {
                deltaIntersect += ((currIntersect[i] - pos0[i]) + (result[3] * (pos1[i] - currIntersect[i]))) * result[i];
                delta += (pos1[i] - pos0[i]) * result[i];
             }
-            if((deltaIntersect / delta) > 1.)
+            if ((deltaIntersect / delta) > 1.)
                nCount = nCount + 0;
-            else if((deltaIntersect / delta) < 0)
+            else if ((deltaIntersect / delta) < 0)
                result[3] = 0.;
             else
                result[3] = deltaIntersect / delta;
             // if it's an outside to inside transition, then the sign of
             // the
             // normal needs to be inverted
-            if(ifStartBelow ^ isShapeBelow)
-               for(int i = 0; i < 3; i++)
+            if (ifStartBelow ^ isShapeBelow)
+               for (int i = 0; i < 3; i++)
                   result[i] = -result[i];
             return result;
          }
 
          // the intersecting point becomes the current starting point
-         for(int i = 0; i < 3; i++) {
+         for (int i = 0; i < 3; i++) {
             // currIntersect[i] = currIntersect[i] + (result[3] * (pos1[i] -
             // currIntersect[i]));
             currIntersect[i] = currIntersect[i] + (result[3] * (pos1[i] - currIntersect[i])) + result[i] * push;
@@ -1237,17 +1133,17 @@ public class NormalHeightMapShape
    private int[] getXYIndices(double[] posr) {
       final int idx[] = new int[2];
       double xypos = (posr[0] - htOrigin[0]) / htDeltaX;
-      if(xypos < 0)
+      if (xypos < 0)
          idx[0] = 0;
-      else if(xypos > (htXlength - 2))
+      else if (xypos > (htXlength - 2))
          idx[0] = htXlength - 1;
       else
          idx[0] = (int) Math.floor(xypos) + 1;
 
       xypos = (posr[1] - htOrigin[1]) / htDeltaY;
-      if(xypos < 0)
+      if (xypos < 0)
          idx[1] = 0;
-      else if(xypos > (htYlength - 2))
+      else if (xypos > (htYlength - 2))
          idx[1] = htYlength - 1;
       else
          idx[1] = (int) Math.floor(xypos) + 1;
@@ -1277,14 +1173,14 @@ public class NormalHeightMapShape
       // We consider the height map to be one dimensional in X or Y
       // if (1) the supplied data is one dimensional
       // or (2) dX or dY is zero in value
-      if((htYlength == 2) || (dY == 0.)) {
+      if ((htYlength == 2) || (dY == 0.)) {
          // a dummy non-zero value
          htDeltaY = 1.;
          // one dimension along X
          htYlength = 2;
          bX1D = true;
       }
-      if((htXlength == 2) || (dX == 0.)) {
+      if ((htXlength == 2) || (dX == 0.)) {
          // a dummy non-zero value
          htDeltaX = 1.;
          htXlength = 2;
@@ -1306,8 +1202,7 @@ public class NormalHeightMapShape
     *      java.io.Writer)
     */
    @Override
-   public void render(RenderContext rc, Writer wr)
-         throws IOException {
+   public void render(RenderContext rc, Writer wr) throws IOException {
       // Configure the number format
       final NumberFormat nf = NumberFormat.getInstance(Locale.US);
       nf.setMaximumFractionDigits(3);
@@ -1323,9 +1218,9 @@ public class NormalHeightMapShape
       wr.append("  coord Coordinate {\n");
       wr.append("   point [ ");
 
-      for(int i = 0; i < (htXlength - 1); i++)
-         for(int j = 0; j < (htYlength - 1); j++) {
-            if((i != 0) || (j != 0))
+      for (int i = 0; i < (htXlength - 1); i++)
+         for (int j = 0; j < (htYlength - 1); j++) {
+            if ((i != 0) || (j != 0))
                wr.append(", \n");
             // three points on a plane, CCW
             wr.append(nf.format((htOrigin[0] + (i * htDeltaX)) / TrajectoryVRML.SCALE));
@@ -1337,14 +1232,13 @@ public class NormalHeightMapShape
       wr.append(" ]\n");
       wr.append("  }\n");
       wr.append("  coordIndex [ ");
-      for(int i = 0; i < (htXlength - 2); i++)
-         for(int j = 0; j < (htYlength - 2); j++) {
-            if((i != 0) || (j != 0))
+      for (int i = 0; i < (htXlength - 2); i++)
+         for (int j = 0; j < (htYlength - 2); j++) {
+            if ((i != 0) || (j != 0))
                wr.append(" -1 \n");
-            wr.append(Integer.toString(((htYlength - 1) * i) + j) + " " + Integer.toString(((htYlength - 1) * (i + 1)) + j)
-                  + " " + Integer.toString(((htYlength - 1) * i) + j + 1) + " -1 ");
-            wr.append(Integer.toString(((htYlength - 1) * (i + 1)) + j) + " "
-                  + Integer.toString(((htYlength - 1) * (i + 1)) + j + 1) + " "
+            wr.append(Integer.toString(((htYlength - 1) * i) + j) + " " + Integer.toString(((htYlength - 1) * (i + 1)) + j) + " "
+                  + Integer.toString(((htYlength - 1) * i) + j + 1) + " -1 ");
+            wr.append(Integer.toString(((htYlength - 1) * (i + 1)) + j) + " " + Integer.toString(((htYlength - 1) * (i + 1)) + j + 1) + " "
                   + Integer.toString(((htYlength - 1) * i) + (j + 1)));
          }
       wr.append(" ]\n");

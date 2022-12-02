@@ -51,7 +51,7 @@ public class Oxidizer {
       final CSVReader cr = new CSVReader.ResourceReader("OxidizationState.csv", false);
       final double[][] res = cr.getResource(getClass());
       mOxidationState = new int[res.length];
-      for(int i = 0; i < mOxidationState.length; ++i) {
+      for (int i = 0; i < mOxidationState.length; ++i) {
          mOxidationState[i] = (int) Math.round(res[i][1]);
          assert i == (Element.elmO - 1) ? mOxidationState[i] == -2 : mOxidationState[i] >= 0;
       }
@@ -83,9 +83,9 @@ public class Oxidizer {
       int o = getOxidationState(Element.O);
       int e = getOxidationState(elm);
       final Composition comp = new Composition();
-      if(e > 0) {
+      if (e > 0) {
          final int gcd = (int) Math2.gcd(e, o);
-         if(gcd > 1) {
+         if (gcd > 1) {
             e /= gcd;
             o /= gcd;
          }
@@ -109,20 +109,20 @@ public class Oxidizer {
       int o = getOxidationState(Element.O);
       int e = getOxidationState(elm);
       final StringBuffer sb = new StringBuffer();
-      if(e > 0) {
+      if (e > 0) {
          final int gcd = (int) Math2.gcd(e, o);
-         if(gcd > 1) {
+         if (gcd > 1) {
             e /= gcd;
             o /= gcd;
          }
          sb.append(elm.toAbbrev());
-         if(o < -1) {
+         if (o < -1) {
             sb.append("<sub>");
             sb.append(Integer.toString(-o));
             sb.append("</sub>");
          }
          sb.append("O");
-         if(e > 1) {
+         if (e > 1) {
             sb.append("<sub>");
             sb.append(Integer.toString(e));
             sb.append("</sub>");
@@ -137,12 +137,12 @@ public class Oxidizer {
       final PrintWriter pw = new PrintWriter(sb);
       pw.println("<TABLE>");
       pw.println("<TR><TH>Spectrum</TH><TH>As Oxides</TH></TR>");
-      for(final Composition comp : comps) {
+      for (final Composition comp : comps) {
          pw.print("<TD>" + comp.toString() + "</TD>");
          pw.print("<TD><TABLE><TH>Oxide</TH><TH>Mass Fraction</TH><TH>Normalized</TH></TR>");
          final Map<Composition, UncertainValue2> map = toOxideFraction(comp);
          final UncertainValue2 sum = UncertainValue2.add(map.values());
-         for(final Map.Entry<Composition, UncertainValue2> me : map.entrySet()) {
+         for (final Map.Entry<Composition, UncertainValue2> me : map.entrySet()) {
             pw.print("<TD>" + me.getKey().toString() + "</TD>");
             pw.print("<TD>" + me.getValue().format(nf4) + "</TD>");
             pw.print("<TD>" + UncertainValue2.divide(me.getValue(), sum).format(nf4) + "</TD>");
@@ -162,40 +162,40 @@ public class Oxidizer {
       final PrintWriter pw = new PrintWriter(sb);
       final Map<Composition, Map<Composition, UncertainValue2>> allComps = new TreeMap<Composition, Map<Composition, UncertainValue2>>();
       final Set<Composition> oxides = new TreeSet<Composition>();
-      for(final Composition comp : comps) {
+      for (final Composition comp : comps) {
          final Map<Composition, UncertainValue2> map = toOxideFraction(comp);
          allComps.put(comp, map);
          oxides.addAll(map.keySet());
       }
       pw.print("<TABLE>");
       pw.print("<TR><TH>Oxide</TH>");
-      for(final Composition comp : allComps.keySet())
+      for (final Composition comp : allComps.keySet())
          pw.print("<TH>" + comp.toString() + "</TH>");
-      if(oxides.size() > 1)
+      if (oxides.size() > 1)
          pw.print("<TH>Average</TH>");
-      if(oxides.size() > 2)
+      if (oxides.size() > 2)
          pw.print("<TH>Std Dev</TH>");
       pw.println("</TR>");
-      for(final Composition oxide : oxides) {
+      for (final Composition oxide : oxides) {
          pw.print("<TR><TD>");
          pw.print(oxide.toString());
          pw.print("</TD><TD>");
          final DescriptiveStatistics ds = new DescriptiveStatistics();
-         for(final Composition comp : allComps.keySet()) {
+         for (final Composition comp : allComps.keySet()) {
             final Map<Composition, UncertainValue2> map = allComps.get(comp);
             UncertainValue2 uv = map.get(oxide);
-            if(uv == null)
+            if (uv == null)
                uv = UncertainValue2.ZERO;
             ds.add(uv.doubleValue());
             pw.print("\t" + nf4.format(uv.doubleValue()));
             pw.print("</TD>");
          }
-         if(oxides.size() > 1) {
+         if (oxides.size() > 1) {
             pw.print("<TD>");
             pw.print(nf4.format(ds.average()));
             pw.print("</TD>");
          }
-         if(oxides.size() > 2) {
+         if (oxides.size() > 2) {
             pw.print("<TD>");
             pw.print(nf4.format(ds.standardDeviation()));
             pw.print("</TD>");
@@ -211,22 +211,22 @@ public class Oxidizer {
       final PrintWriter pw = new PrintWriter(sb);
       final Map<Composition, Map<Composition, UncertainValue2>> allComps = new TreeMap<Composition, Map<Composition, UncertainValue2>>();
       final Set<Composition> oxides = new TreeSet<Composition>();
-      for(final Composition comp : comps) {
+      for (final Composition comp : comps) {
          final Map<Composition, UncertainValue2> map = toOxideFraction(comp);
          allComps.put(comp, map);
          oxides.addAll(map.keySet());
       }
       pw.print("Oxide\t");
-      for(final Composition comp : allComps.keySet())
+      for (final Composition comp : allComps.keySet())
          pw.print("\t" + comp.toString());
       pw.println("\tAverage\tStd Dev");
-      for(final Composition oxide : oxides) {
+      for (final Composition oxide : oxides) {
          pw.print(oxide.toString());
          final DescriptiveStatistics ds = new DescriptiveStatistics();
-         for(final Composition comp : allComps.keySet()) {
+         for (final Composition comp : allComps.keySet()) {
             final Map<Composition, UncertainValue2> map = allComps.get(comp);
             UncertainValue2 uv = map.get(oxide);
-            if(uv == null)
+            if (uv == null)
                uv = UncertainValue2.ZERO;
             ds.add(uv.doubleValue());
             pw.print("\t" + nf4.format(uv.doubleValue()));
@@ -251,14 +251,14 @@ public class Oxidizer {
       final Map<Composition, UncertainValue2> res = new TreeMap<Composition, UncertainValue2>();
       final Element elmO = Element.O;
       UncertainValue2 oxy = comp.weightFractionU(elmO, false);
-      for(final Element elm : comp.getElementSet())
-         if(elm.getAtomicNumber() != Element.elmO) {
+      for (final Element elm : comp.getElementSet())
+         if (elm.getAtomicNumber() != Element.elmO) {
             final Composition cc = getComposition(elm);
             final UncertainValue2 q = UncertainValue2.divide(comp.weightFractionU(elm, false), cc.weightFractionU(elm, false));
             oxy = UncertainValue2.subtract(oxy, UncertainValue2.multiply(q, cc.weightFractionU(elmO, false)));
             res.put(cc, q);
          }
-      if(Math.abs(oxy.doubleValue()) > 1.0e-6)
+      if (Math.abs(oxy.doubleValue()) > 1.0e-6)
          res.put(OXYGEN, oxy);
       return res;
    }
@@ -267,19 +267,20 @@ public class Oxidizer {
     * Takes the initial composition and replaces the current oxygen quantity
     * with the quantity assuming the oxide for specified in this Oxidizer.
     * 
-    * @param start Initial Composition
+    * @param start
+    *           Initial Composition
     * @return Composition
     */
    public Composition compute(Composition start) {
       final Composition res = new Composition();
       UncertainValue2 oxy = UncertainValue2.ZERO;
-      for(final Element elm : start.getElementSet())
-         if(!elm.equals(Element.O)) {
+      for (final Element elm : start.getElementSet())
+         if (!elm.equals(Element.O)) {
             final UncertainValue2 val = start.weightFractionU(elm, false);
             res.addElement(elm, val);
             final Composition oxide = getComposition(elm);
-            oxy = UncertainValue2.add(oxy, UncertainValue2.multiply(oxide.weightFraction(Element.O, false)
-                  / oxide.weightFraction(elm, false), val.reduced(elm.toAbbrev())));
+            oxy = UncertainValue2.add(oxy,
+                  UncertainValue2.multiply(oxide.weightFraction(Element.O, false) / oxide.weightFraction(elm, false), val.reduced(elm.toAbbrev())));
          }
       res.addElement(Element.O, oxy);
       return res;
@@ -290,29 +291,30 @@ public class Oxidizer {
     * quantity with the quantity assuming the oxide for specified in this
     * Oxidizer.
     * 
-    * @param start Initial ParticleSignature
+    * @param start
+    *           Initial ParticleSignature
     * @return ParticleSignature
     */
    public ParticleSignature compute(ParticleSignature start) {
       final ParticleSignature res = new ParticleSignature();
       UncertainValue2 oxy = UncertainValue2.ZERO;
-      for(final Element elm : start.getUnstrippedElementSet())
-         if(!elm.equals(Element.O)) {
+      for (final Element elm : start.getUnstrippedElementSet())
+         if (!elm.equals(Element.O)) {
             final UncertainValue2 val = start.getU(elm);
             res.add(elm, val);
             final Composition oxide = getComposition(elm);
-            oxy = UncertainValue2.add(oxy, UncertainValue2.multiply(oxide.weightFraction(Element.O, false)
-                  / oxide.weightFraction(elm, false), val.reduced(elm.toAbbrev())));
+            oxy = UncertainValue2.add(oxy,
+                  UncertainValue2.multiply(oxide.weightFraction(Element.O, false) / oxide.weightFraction(elm, false), val.reduced(elm.toAbbrev())));
          }
       res.add(Element.O, oxy);
       return res;
    }
 
    public boolean equals(Oxidizer ox) {
-      if(!super.equals(ox))
+      if (!super.equals(ox))
          return false;
-      for(int i = 0; i < mOxidationState.length; ++i)
-         if(mOxidationState[i] != ox.mOxidationState[i])
+      for (int i = 0; i < mOxidationState.length; ++i)
+         if (mOxidationState[i] != ox.mOxidationState[i])
             return false;
       return true;
 

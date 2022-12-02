@@ -29,8 +29,7 @@ import javax.swing.table.AbstractTableModel;
  * @version 1.0
  */
 
-public class SpectrumPropertiesTableModel
-   extends AbstractTableModel {
+public class SpectrumPropertiesTableModel extends AbstractTableModel {
 
    static public final long serialVersionUID = 0x1;
 
@@ -39,10 +38,10 @@ public class SpectrumPropertiesTableModel
 
    public SpectrumPropertiesTableModel(Collection<ISpectrumData> specs) {
       SpectrumProperties res = null;
-      for(final ISpectrumData sd : specs)
+      for (final ISpectrumData sd : specs)
          res = (res == null ? sd.getProperties() : SpectrumProperties.merge(res, sd.getProperties()));
       mProperties = res != null ? res : new SpectrumProperties();
-      if(res != null)
+      if (res != null)
          mNames = res.getPropertySet().toArray(new SpectrumProperties.PropertyId[res.getPropertySet().size()]);
       else
          mNames = new SpectrumProperties.PropertyId[0];
@@ -50,7 +49,7 @@ public class SpectrumPropertiesTableModel
 
    public SpectrumPropertiesTableModel(SpectrumProperties sp) {
       mProperties = sp;
-      if(mProperties != null)
+      if (mProperties != null)
          mNames = sp.getPropertySet().toArray(new SpectrumProperties.PropertyId[sp.getPropertySet().size()]);
       else
          mNames = new SpectrumProperties.PropertyId[0];
@@ -78,14 +77,13 @@ public class SpectrumPropertiesTableModel
    @Override
    public Object getValueAt(int rowIndex, int columnIndex) {
       Object res = "";
-      if(columnIndex == 0)
+      if (columnIndex == 0)
          res = mNames[rowIndex].toString();
       else
          try {
             res = mProperties.getObjectProperty(mNames[rowIndex]);
             return res instanceof Composition ? res : mProperties.getTextProperty(mNames[rowIndex]);
-         }
-         catch(final EPQException ex) {
+         } catch (final EPQException ex) {
             res = ex.getMessage();
          }
       return res;

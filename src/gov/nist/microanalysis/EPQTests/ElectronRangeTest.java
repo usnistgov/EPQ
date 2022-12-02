@@ -26,9 +26,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class ElectronRangeTest
-   extends
-   TestCase {
+public class ElectronRangeTest extends TestCase {
 
    /**
     * Constructs a ElectronRangeTest
@@ -46,23 +44,11 @@ public class ElectronRangeTest
    public void testOne() {
       final List<AlgorithmClass> all = ElectronRange.Default.getAllImplementations();
       final Material mat = (Material) MaterialFactory.createMaterial(MaterialFactory.K3189);
-      final double[] e0s = {
-         ToSI.keV(2.0),
-         ToSI.keV(4.0),
-         ToSI.keV(8.0),
-         ToSI.keV(16.0),
-         ToSI.keV(32.0)
-      };
-      final double[] errs = {
-         0.5,
-         0.2,
-         0.2,
-         0.2,
-         0.2
-      };
-      for(final AlgorithmClass ac : all) {
+      final double[] e0s = {ToSI.keV(2.0), ToSI.keV(4.0), ToSI.keV(8.0), ToSI.keV(16.0), ToSI.keV(32.0)};
+      final double[] errs = {0.5, 0.2, 0.2, 0.2, 0.2};
+      for (final AlgorithmClass ac : all) {
          final ElectronRange impl = (ElectronRange) ac;
-         for(int j = 0; j < e0s.length; ++j) {
+         for (int j = 0; j < e0s.length; ++j) {
             final double e0 = e0s[j];
             final double val = FromSI.MICROMETER * impl.computeMeters(mat, e0);
             final double def = FromSI.MICROMETER * ElectronRange.Default.computeMeters(mat, e0);

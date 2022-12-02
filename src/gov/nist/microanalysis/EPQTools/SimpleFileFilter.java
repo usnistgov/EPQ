@@ -20,14 +20,13 @@ import javax.swing.filechooser.FileFilter;
  * @version 1.0
  */
 
-public class SimpleFileFilter
-   extends FileFilter {
+public class SimpleFileFilter extends FileFilter {
    private final String[] mExtensions;
    private final String mDescription;
 
    public SimpleFileFilter(String[] exts, String desc) {
       mExtensions = new String[exts.length];
-      for(int i = exts.length - 1; i >= 0; --i)
+      for (int i = exts.length - 1; i >= 0; --i)
          mExtensions[i] = "." + exts[i].toLowerCase();
       mDescription = desc;
    }
@@ -40,11 +39,11 @@ public class SimpleFileFilter
 
    @Override
    public boolean accept(File f) {
-      if(f.isDirectory())
+      if (f.isDirectory())
          return true;
       final String name = f.getName().toLowerCase();
-      for(int i = mExtensions.length - 1; i >= 0; --i)
-         if(name.endsWith(mExtensions[i]))
+      for (int i = mExtensions.length - 1; i >= 0; --i)
+         if (name.endsWith(mExtensions[i]))
             return true;
       return false;
    }
@@ -64,8 +63,8 @@ public class SimpleFileFilter
 
    public File forceExtension(File f) {
       final String name = f.getName().toLowerCase();
-      for(final String mExtension : mExtensions)
-         if(name.endsWith(mExtension))
+      for (final String mExtension : mExtensions)
+         if (name.endsWith(mExtension))
             return f;
       return new File(f.getParent(), f.getName() + mExtensions[0]);
    }

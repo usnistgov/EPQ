@@ -22,27 +22,18 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class SphereTest
-   extends TestCase {
+public class SphereTest extends TestCase {
 
    private final double SCALE = 1.0e-5;
    private final int ITERATIONS = 1000;
    private final Random mRandom = new Random(0x1234);
 
    private double[] makeCenter() {
-      return new double[] {
-         (mRandom.nextDouble() - 0.5) * SCALE,
-         (mRandom.nextDouble() - 0.5) * SCALE,
-         (mRandom.nextDouble() - 0.5) * SCALE
-      };
+      return new double[]{(mRandom.nextDouble() - 0.5) * SCALE, (mRandom.nextDouble() - 0.5) * SCALE, (mRandom.nextDouble() - 0.5) * SCALE};
    }
 
    private double[] makeNormal() {
-      return Math2.normalize(new double[] {
-         mRandom.nextDouble(),
-         mRandom.nextDouble(),
-         mRandom.nextDouble()
-      });
+      return Math2.normalize(new double[]{mRandom.nextDouble(), mRandom.nextDouble(), mRandom.nextDouble()});
    }
 
    /**
@@ -50,7 +41,7 @@ public class SphereTest
     * {@link gov.nist.microanalysis.NISTMonte.Sphere#contains(double[])}.
     */
    public void testContains() {
-      for(int i = 0; i < ITERATIONS; ++i) {
+      for (int i = 0; i < ITERATIONS; ++i) {
          final double[] center = makeCenter();
          final double r = (mRandom.nextDouble() * SCALE) + (SCALE / 100.0);
          final Sphere sphere = new Sphere(center, r);
@@ -71,7 +62,7 @@ public class SphereTest
     * .
     */
    public void testGetFirstIntersection() {
-      for(int i = 0; i < ITERATIONS; ++i) {
+      for (int i = 0; i < ITERATIONS; ++i) {
          final double[] center = makeCenter();
          final double r = (mRandom.nextDouble() * SCALE) + (SCALE / 100.0);
          final Sphere sphere = new Sphere(center, r);

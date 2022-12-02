@@ -48,7 +48,8 @@ public class BrowningEmpiricalCrossSection {
     * totalCrossSection - Computes the total cross section for an electron of
     * the specified energy.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - in square meters
     */
    final public double totalCrossSection(double energy) {
@@ -63,7 +64,8 @@ public class BrowningEmpiricalCrossSection {
     * electron of specified energy on an atom of the element represented by the
     * instance of this class.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - an angle in radians
     */
    final public double randomScatteringAngle(double energy) {
@@ -71,7 +73,7 @@ public class BrowningEmpiricalCrossSection {
       final double z = mElement.getAtomicNumber();
       final double e = FromSI.keV(energy);
       final double r = ((300.0 * e) / z) + (mZp3 / (3.0e5 * e));
-      if(r1 <= (r / (r + 1))) {
+      if (r1 <= (r / (r + 1))) {
          // Screened Rutherford scattering
          final double alpha = 7.0e-3 / e;
          return Math.acos(1.0 - ((2.0 * alpha * r2) / ((alpha - r2) + 1)));

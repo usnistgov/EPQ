@@ -28,9 +28,7 @@ import gov.nist.microanalysis.EPQLibrary.ToSI;
  * @author Nicholas W. M. Ritchie
  * @version 1.0
  */
-public class XRayWindow
-   implements
-   IXRayWindowProperties {
+public class XRayWindow implements IXRayWindowProperties {
 
    transient int mHash = Integer.MAX_VALUE;
 
@@ -39,8 +37,7 @@ public class XRayWindow
    private static Material createMaterial(String comp, double density) {
       try {
          return MaterialFactory.createCompound(comp, density);
-      }
-      catch(final EPQException e) {
+      } catch (final EPQException e) {
          throw new EPQFatalException(e);
       }
    }
@@ -79,7 +76,7 @@ public class XRayWindow
        */
       @Override
       public int hashCode() {
-         if(mHash == Integer.MAX_VALUE) {
+         if (mHash == Integer.MAX_VALUE) {
             // Make sure it does not change...
             final int PRIME = 31;
             int result = 1;
@@ -87,7 +84,7 @@ public class XRayWindow
             long temp;
             temp = Double.doubleToLongBits(mThickness);
             result = (PRIME * result) + (int) (temp ^ (temp >>> 32));
-            if(result == Integer.MAX_VALUE)
+            if (result == Integer.MAX_VALUE)
                result = Integer.MIN_VALUE;
             mHash = result;
          }
@@ -99,19 +96,19 @@ public class XRayWindow
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(getClass() != obj.getClass())
+         if (getClass() != obj.getClass())
             return false;
          final Layer other = (Layer) obj;
-         if(mMaterial == null) {
-            if(other.mMaterial != null)
+         if (mMaterial == null) {
+            if (other.mMaterial != null)
                return false;
-         } else if(!mMaterial.equals(other.mMaterial))
+         } else if (!mMaterial.equals(other.mMaterial))
             return false;
-         if(Double.doubleToLongBits(mThickness) != Double.doubleToLongBits(other.mThickness))
+         if (Double.doubleToLongBits(mThickness) != Double.doubleToLongBits(other.mThickness))
             return false;
          return true;
       }
@@ -139,7 +136,8 @@ public class XRayWindow
     * Creates an x-ray window with the specified open area fraction. The
     * fraction that is not open is assumed to be blocked 100%.
     * 
-    * @param openAreaFrac double - The open area fraction (0,1.0]
+    * @param openAreaFrac
+    *           double - The open area fraction (0,1.0]
     */
    public XRayWindow(double openAreaFrac) {
       assert openAreaFrac > 0.0;
@@ -163,45 +161,47 @@ public class XRayWindow
    /**
     * addLayer - Add a new material layer to the window.
     * 
-    * @param mat Material
-    * @param thickness double
+    * @param mat
+    *           Material
+    * @param thickness
+    *           double
     */
    public void addLayer(Material mat, double thickness) {
       assert (mat.getDensity() > 0.0);
       mLayers.add(new Layer(mat, thickness));
-      if(mat.weightFraction(Element.Be, true) == 1.0)
+      if (mat.weightFraction(Element.Be, true) == 1.0)
          updateProperty(SpectrumProperties.BerylliumWindow, FromSI.micrometer(thickness));
-      if(mat.weightFraction(Element.Al, true) == 1.0)
+      if (mat.weightFraction(Element.Al, true) == 1.0)
          updateProperty(SpectrumProperties.AluminumWindow, FromSI.nanometer(thickness));
-      else if(mat.weightFraction(Element.Au, true) == 1.0)
+      else if (mat.weightFraction(Element.Au, true) == 1.0)
          updateProperty(SpectrumProperties.GoldLayer, FromSI.nanometer(thickness));
-      else if(mat.weightFraction(Element.Ni, true) == 1.0)
+      else if (mat.weightFraction(Element.Ni, true) == 1.0)
          updateProperty(SpectrumProperties.NickelLayer, FromSI.nanometer(thickness));
-      else if(mat == DEFAULT_MOXTEK)
+      else if (mat == DEFAULT_MOXTEK)
          updateProperty(SpectrumProperties.MoxtekWindow, FromSI.micrometer(thickness));
-      else if(mat.equals(PARYLENE))
+      else if (mat.equals(PARYLENE))
          updateProperty(SpectrumProperties.ParaleneWindow, FromSI.micrometer(thickness));
-      else if(mat.equals(BORON_NITRIDE))
+      else if (mat.equals(BORON_NITRIDE))
          updateProperty(SpectrumProperties.BoronNitrideWindow, FromSI.micrometer(thickness));
-      else if(mat.equals(DIAMOND))
+      else if (mat.equals(DIAMOND))
          updateProperty(SpectrumProperties.DiamondWindow, FromSI.micrometer(thickness));
-      else if(mat.equals(MYLAR))
+      else if (mat.equals(MYLAR))
          updateProperty(SpectrumProperties.MylarWindow, FromSI.micrometer(thickness));
-      else if(mat.equals(PARYLENE))
+      else if (mat.equals(PARYLENE))
          updateProperty(SpectrumProperties.PyroleneWindow, FromSI.micrometer(thickness));
-      else if(mat.equals(SILICON_NITRIDE))
+      else if (mat.equals(SILICON_NITRIDE))
          updateProperty(SpectrumProperties.SiliconNitrideWindow, FromSI.micrometer(thickness));
-      else if(mat.equals(ICE))
+      else if (mat.equals(ICE))
          updateProperty(SpectrumProperties.IceThickness, FromSI.micrometer(thickness));
    }
 
    /**
     * addIce - Add a layer of ice of the specified thickness to the window.
     * 
-    * @param thickness double
+    * @param thickness
+    *           double
     */
-   public void addIce(double thickness)
-         throws EPQException {
+   public void addIce(double thickness) throws EPQException {
       addLayer(ICE, thickness);
    }
 
@@ -209,12 +209,13 @@ public class XRayWindow
     * massAbsorptionCoefficient - Gets the mass absorption coefficient for the
     * full window at the specified energy.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double
     */
    private double massAbsorptionCoefficient(double energy) {
       double mac = 0.0;
-      for(final Layer l : mLayers)
+      for (final Layer l : mLayers)
          mac += l.massAbsorptionCoefficient(energy);
       return mac;
    }
@@ -223,7 +224,8 @@ public class XRayWindow
     * transmission - Computest the fraction of incident photons of the specified
     * energy that will be transmitted through the window.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double
     */
    @Override
@@ -235,7 +237,8 @@ public class XRayWindow
     * absorption - Computest the fraction of incident photons of the specified
     * energy that will be absorbed by the window.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double
     */
    public final double absorption(double energy) {
@@ -255,7 +258,8 @@ public class XRayWindow
    /**
     * Sets the value assigned to name.
     * 
-    * @param name The value to which to set name.
+    * @param name
+    *           The value to which to set name.
     */
    @Override
    public void setName(String name) {
@@ -269,7 +273,7 @@ public class XRayWindow
 
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE) {
+      if (mHash == Integer.MAX_VALUE) {
          final int prime = 31;
          int result = 1;
          long temp;
@@ -280,7 +284,7 @@ public class XRayWindow
          temp = Double.doubleToLongBits(mOpenFraction);
          result = (prime * result) + (int) (temp ^ (temp >>> 32));
          result = (prime * result) + ((mProperties == null) ? 0 : mProperties.hashCode());
-         if(result == Integer.MAX_VALUE)
+         if (result == Integer.MAX_VALUE)
             result = Integer.MIN_VALUE;
          mHash = result;
       }
@@ -289,31 +293,31 @@ public class XRayWindow
 
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final XRayWindow other = (XRayWindow) obj;
-      if(Double.doubleToLongBits(mCoverage) != Double.doubleToLongBits(other.mCoverage))
+      if (Double.doubleToLongBits(mCoverage) != Double.doubleToLongBits(other.mCoverage))
          return false;
-      if(mLayers == null) {
-         if(other.mLayers != null)
+      if (mLayers == null) {
+         if (other.mLayers != null)
             return false;
-      } else if(!mLayers.equals(other.mLayers))
+      } else if (!mLayers.equals(other.mLayers))
          return false;
-      if(mName == null) {
-         if(other.mName != null)
+      if (mName == null) {
+         if (other.mName != null)
             return false;
-      } else if(!mName.equals(other.mName))
+      } else if (!mName.equals(other.mName))
          return false;
-      if(Double.doubleToLongBits(mOpenFraction) != Double.doubleToLongBits(other.mOpenFraction))
+      if (Double.doubleToLongBits(mOpenFraction) != Double.doubleToLongBits(other.mOpenFraction))
          return false;
-      if(mProperties == null) {
-         if(other.mProperties != null)
+      if (mProperties == null) {
+         if (other.mProperties != null)
             return false;
-      } else if(!mProperties.equals(other.mProperties))
+      } else if (!mProperties.equals(other.mProperties))
          return false;
       return true;
    }

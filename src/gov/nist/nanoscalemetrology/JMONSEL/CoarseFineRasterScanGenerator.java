@@ -56,8 +56,7 @@ package gov.nist.nanoscalemetrology.JMONSEL;
  * @version 1.0
  */
 
-public class CoarseFineRasterScanGenerator
-   extends ScanGenerator {
+public class CoarseFineRasterScanGenerator extends ScanGenerator {
 
    private final double x0;
    private final double y0;
@@ -94,7 +93,8 @@ public class CoarseFineRasterScanGenerator
     * @param retraceTime
     * @param passSettleTime
     */
-   public CoarseFineRasterScanGenerator(double x0, double y0, double z, double deltaX, double deltaY, int ncX, int ncY, int nfX, int nfY, double t0, double pixelDwell, double retraceTime, double passSettleTime) {
+   public CoarseFineRasterScanGenerator(double x0, double y0, double z, double deltaX, double deltaY, int ncX, int ncY, int nfX, int nfY, double t0,
+         double pixelDwell, double retraceTime, double passSettleTime) {
       super();
 
       this.x0 = x0;
@@ -123,13 +123,8 @@ public class CoarseFineRasterScanGenerator
     */
    @Override
    public double[] get(int i) {
-      if(i < 0)
-         return new double[] {
-            Double.NaN,
-            Double.NaN,
-            Double.NaN,
-            Double.NaN
-         };
+      if (i < 0)
+         return new double[]{Double.NaN, Double.NaN, Double.NaN, Double.NaN};
       final int frameNum = i / pixelsPerFrame;
       final int iframe = i % pixelsPerFrame;
       final int passNum = iframe / coarsePixelsPerPass;
@@ -138,12 +133,8 @@ public class CoarseFineRasterScanGenerator
       final int jc = ipass / ncX;
       final int ifine = passNum % nfX;
       final int jfine = passNum / nfX;
-      final double[] temp = new double[] {
-         x0 + (ic * coarseXSize) + (ifine * deltaX),
-         y0 + (jc * coarseYSize) + (jfine * deltaY),
-         z,
-         t0 + (ic * pixelDwell) + (jc * totalLineTime) + (passNum * passTime) + (frameNum * totalFrameTime)
-      };
+      final double[] temp = new double[]{x0 + (ic * coarseXSize) + (ifine * deltaX), y0 + (jc * coarseYSize) + (jfine * deltaY), z,
+            t0 + (ic * pixelDwell) + (jc * totalLineTime) + (passNum * passTime) + (frameNum * totalFrameTime)};
       return temp;
    }
 

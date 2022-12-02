@@ -21,8 +21,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class XRayTransitionSetTest
-   extends TestCase {
+public class XRayTransitionSetTest extends TestCase {
 
    /**
     * Constructs a XRayTransitionSetTest
@@ -33,8 +32,7 @@ public class XRayTransitionSetTest
       super(arg0);
    }
 
-   public void testOne()
-         throws EPQException {
+   public void testOne() throws EPQException {
       {
          final XRayTransitionSet xrts = new XRayTransitionSet(Element.Ba, XRayTransitionSet.L_ALPHA);
          assertEquals(XRayTransitionSet.parseString(xrts.toParseable()), xrts);

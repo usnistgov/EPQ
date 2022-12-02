@@ -39,8 +39,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Daniel "Ooblioob" Davis
  * @version 1.0
  */
-public class MRUFileBox
-   extends JPanel {
+public class MRUFileBox extends JPanel {
    private static final long serialVersionUID = 0x100;
 
    private final JComboBox<String> mFileDirectory = new JComboBox<String>();
@@ -71,7 +70,7 @@ public class MRUFileBox
 
       final Preferences pref = Preferences.userNodeForPackage(MRUFileBox.class);
       mDefaultDirectory = pref.get(mDefaultDir, System.getProperty("user.home"));
-      if(!(new File(mDefaultDirectory).exists())) {
+      if (!(new File(mDefaultDirectory).exists())) {
          mDefaultDirectory = System.getProperty("user.home");
          pref.put(mDefaultDir, mDefaultDirectory);
       }
@@ -80,12 +79,12 @@ public class MRUFileBox
       mFileDirectory.removeAllItems();
       mVectorList.clear();
       final StringBuffer newList = new StringBuffer();
-      while(tok.hasMoreTokens()) {
+      while (tok.hasMoreTokens()) {
          final String temp2 = tok.nextToken().trim();
          final File file = new File(temp2);
-         if(file.exists()) {
+         if (file.exists()) {
             // Ensures that only the most recent items will be list
-            if(mVectorList.size() == MAX_SIZE) {
+            if (mVectorList.size() == MAX_SIZE) {
                final Object item = mVectorList.remove(0);
                mFileDirectory.removeItem(item);
             }
@@ -97,8 +96,8 @@ public class MRUFileBox
       }
       // Write back those that really exist...
       pref.put(mMRUFiles, newList.toString());
-      if(mVectorList.size() > 0)
-         if(mVectorList.contains(mDefaultDirectory)) {
+      if (mVectorList.size() > 0)
+         if (mVectorList.contains(mDefaultDirectory)) {
             mFileDirectory.setSelectedItem(mDefaultDirectory);
             mFileDirectory.setToolTipText(mDefaultDirectory);
          } else {
@@ -112,7 +111,7 @@ public class MRUFileBox
          @Override
          public void actionPerformed(ActionEvent e) {
             mFileDirectory.setToolTipText((String) mFileDirectory.getSelectedItem());
-            for(int index = 0; index < mListeners.size(); index++) {
+            for (int index = 0; index < mListeners.size(); index++) {
                final ActionListener list = mListeners.get(index);
                list.actionPerformed(e);
             }
@@ -124,7 +123,7 @@ public class MRUFileBox
 
          @Override
          public void actionPerformed(ActionEvent e) {
-            if(mFileChooser == null)
+            if (mFileChooser == null)
                mFileChooser = new JFileChooser() {
                   private static final long serialVersionUID = -8441838196501709700L;
 
@@ -139,13 +138,13 @@ public class MRUFileBox
             mFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             mFileChooser.setMultiSelectionEnabled(false);
             final int result = mFileChooser.showOpenDialog((Component) e.getSource());
-            if(result == JFileChooser.APPROVE_OPTION) {
+            if (result == JFileChooser.APPROVE_OPTION) {
                final File selectedFile = mFileChooser.getSelectedFile();
-               if(selectedFile != null) {
+               if (selectedFile != null) {
                   final String filePath = selectedFile.getAbsolutePath();
                   addItem(filePath);
                }
-               for(int index = 0; index < mListeners.size(); index++) {
+               for (int index = 0; index < mListeners.size(); index++) {
                   final ActionListener list = mListeners.get(index);
                   list.actionPerformed(e);
                }
@@ -156,9 +155,9 @@ public class MRUFileBox
 
    private void addItem(String filePath) {
       final Preferences pref = Preferences.userNodeForPackage(MRUFileBox.class);
-      if(!mVectorList.contains(filePath)) {
+      if (!mVectorList.contains(filePath)) {
          // Ensures that only the most recent items will be list
-         if(mVectorList.size() == MAX_SIZE) {
+         if (mVectorList.size() == MAX_SIZE) {
             final Object item = mVectorList.remove(0);
             mFileDirectory.removeItem(item);
          }
@@ -168,7 +167,7 @@ public class MRUFileBox
       }
       mFileDirectory.setSelectedItem(filePath);
       mFileDirectory.setToolTipText(filePath);
-      if((filePath.compareToIgnoreCase(mDefaultDirectory) != 0) && (new File(filePath).exists())) {
+      if ((filePath.compareToIgnoreCase(mDefaultDirectory) != 0) && (new File(filePath).exists())) {
          mDefaultDirectory = filePath;
          pref.put(mDefaultDir, mDefaultDirectory);
       }
@@ -181,7 +180,7 @@ public class MRUFileBox
 
    private String getVectorFileStr() {
       final StringBuffer buf = new StringBuffer();
-      for(int index = 0; index < mVectorList.size(); index++)
+      for (int index = 0; index < mVectorList.size(); index++)
          buf.append(mVectorList.get(index) + ",");
       return buf.toString();
    }
@@ -199,7 +198,7 @@ public class MRUFileBox
    }
 
    public void setErrorColorsOn(boolean error) {
-      if(error) {
+      if (error) {
          mFileDirectory.setBackground(Color.PINK);
          mFileDirectory.getEditor().getEditorComponent().setBackground(Color.PINK);
          mFileDirectory.requestFocusInWindow();

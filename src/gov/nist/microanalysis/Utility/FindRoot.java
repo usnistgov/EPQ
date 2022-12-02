@@ -27,7 +27,8 @@ abstract public class FindRoot {
     * function - Implement this. This is the function for which the root will be
     * found.
     * 
-    * @param x0 double
+    * @param x0
+    *           double
     * @return double
     */
    abstract public double function(double x0);
@@ -39,7 +40,8 @@ abstract public class FindRoot {
     * initialization. Otherwise it would not be possible to call the
     * initialization function through a reference to FindRoot.
     * 
-    * @param vars double[]
+    * @param vars
+    *           double[]
     */
    public void initialize(double[] vars) {
    }
@@ -69,45 +71,50 @@ abstract public class FindRoot {
    /**
     * perform - Implements the root find algorithm.
     * 
-    * @param x0 double - The lower bound of the range
-    * @param x2 double - The upper bound of the range
-    * @param eps double - The absolute error goal
-    * @param iMax double - The maximum number of iterations
-    * @throws IllegalArgumentException - If function(x0)*function(x1)&gt;0.0
-    * @throws ArithmeticException - If the root finder has not converged after
-    *            iMax iterations.
+    * @param x0
+    *           double - The lower bound of the range
+    * @param x2
+    *           double - The upper bound of the range
+    * @param eps
+    *           double - The absolute error goal
+    * @param iMax
+    *           double - The maximum number of iterations
+    * @throws IllegalArgumentException
+    *            - If function(x0)*function(x1)&gt;0.0
+    * @throws ArithmeticException
+    *            - If the root finder has not converged after iMax iterations.
     * @return double
     */
    public double perform(double x0, double x2, double eps, int iMax) {
       double y0, y2, xmlast = x0;
       mNEvals = 1;
       y0 = function(x0);
-      if(y0 == 0.0) {
+      if (y0 == 0.0) {
          mBestX = x0;
          mBestY = y0;
          return x0;
       }
       y2 = function(x2);
       ++mNEvals;
-      if(y2 == 0.0) {
+      if (y2 == 0.0) {
          mBestX = x2;
          mBestY = y2;
          return x2;
       }
-      if((y2 * y0) > 0.0)
+      if ((y2 * y0) > 0.0)
          throw new IllegalArgumentException("Input range does not straddle a zero in FindRoot.perform()");
-      for(int i = 0; i < iMax; i++) {
+      for (int i = 0; i < iMax; i++) {
          final double x1 = 0.5 * (x2 + x0);
          final double y1 = function(x1);
          ++mNEvals;
-         if(y1 == 0.0)
+         if (y1 == 0.0)
             return x1;
-         if(Math.abs(x1 - x0) < eps) {
+         if (Math.abs(x1 - x0) < eps) {
             mBestX = x1;
             mBestY = y1;
             return x1;
          }
-         if((y1 * y0) > 0.0) {
+         if ((y1 * y0) > 0.0) {
             double temp = x0;
             x0 = x2;
             x2 = temp;
@@ -118,7 +125,7 @@ abstract public class FindRoot {
          final double y10 = y1 - y0;
          final double y21 = y2 - y1;
          final double y20 = y2 - y0;
-         if((y2 * y20) < (2.0 * y1 * y10)) {
+         if ((y2 * y20) < (2.0 * y1 * y10)) {
             x2 = x1;
             y2 = y1;
          } else {
@@ -127,15 +134,15 @@ abstract public class FindRoot {
             final double xm = x0 - (b * y0 * (1.0 - (c * y1)));
             final double ym = function(xm);
             ++mNEvals;
-            if(ym == 0.0)
+            if (ym == 0.0)
                return xm;
-            if(Math.abs(xm - xmlast) < eps) {
+            if (Math.abs(xm - xmlast) < eps) {
                mBestX = xm;
                mBestY = ym;
                return xm;
             }
             xmlast = xm;
-            if((ym * y0) < 0.0) {
+            if ((ym * y0) < 0.0) {
                x2 = xm;
                y2 = ym;
             } else {

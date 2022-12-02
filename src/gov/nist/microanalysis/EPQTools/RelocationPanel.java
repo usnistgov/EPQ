@@ -56,10 +56,10 @@ public class RelocationPanel extends JPanel {
 
    private final JTextField xTranslation_Field = new JTextField();
    private final JTextField yTranslation_Field = new JTextField();
-   private final JTextField rotation_Field     = new JTextField();
-   private final JTextField xScale_Field       = new JTextField();
-   private final JTextField yScale_Field       = new JTextField();
-   private final JTextField error_Field        = new JTextField();
+   private final JTextField rotation_Field = new JTextField();
+   private final JTextField xScale_Field = new JTextField();
+   private final JTextField yScale_Field = new JTextField();
+   private final JTextField error_Field = new JTextField();
 
    private final JTextField x0_Field = new JTextField();
    private final JTextField y0_Field = new JTextField();
@@ -68,9 +68,9 @@ public class RelocationPanel extends JPanel {
 
    private final JLabel text_Label = new JLabel("Add relocated points to calibrate the transformation.");
 
-   private final JButton add_Button    = new JButton("Add");
+   private final JButton add_Button = new JButton("Add");
    private final JButton remove_Button = new JButton("Remove");
-   private final JButton clear_Button  = new JButton("Clear");
+   private final JButton clear_Button = new JButton("Clear");
 
    private final JTable points_Table = new JTable();
 
@@ -96,8 +96,7 @@ public class RelocationPanel extends JPanel {
    }
 
    private void initialize() throws Exception {
-      final Border border = BorderFactory.createCompoundBorder(SwingUtils.createDefaultBorder(),
-            BorderFactory.createEmptyBorder(4, 4, 4, 4));
+      final Border border = BorderFactory.createCompoundBorder(SwingUtils.createDefaultBorder(), BorderFactory.createEmptyBorder(4, 4, 4, 4));
       JPanel transformPanel;
 
       backgroundColor = x0_Field.getBackground();
@@ -294,14 +293,13 @@ public class RelocationPanel extends JPanel {
    }
 
    private void updateTable() {
-      final DefaultTableModel tm = new DefaultTableModel(new String[] { "Number", "<HTML>X<sub>0</sub>",
-            "<HTML>Y<sub>0</sub>", "<HTML>X<sub>1</sub>", "<HTML>Y<sub>1</sub>" }, 0);
+      final DefaultTableModel tm = new DefaultTableModel(
+            new String[]{"Number", "<HTML>X<sub>0</sub>", "<HTML>Y<sub>0</sub>", "<HTML>X<sub>1</sub>", "<HTML>Y<sub>1</sub>"}, 0);
       final NumberFormat nf = new HalfUpFormat("0.####");
       final NumberFormat nf2 = new HalfUpFormat("0.#");
       int i = 0;
       for (final Translate2D.CalibrationPoint cp : mPoints)
-         tm.addRow(new Object[] { Integer.toString(++i), nf.format(cp.getX0()), nf.format(cp.getY0()),
-               nf.format(cp.getX1()), nf.format(cp.getY1()) });
+         tm.addRow(new Object[]{Integer.toString(++i), nf.format(cp.getX0()), nf.format(cp.getY0()), nf.format(cp.getX1()), nf.format(cp.getY1())});
       points_Table.setModel(tm);
       mTransform.calibrate(mPoints);
       xTranslation_Field.setText(nf.format(mTransform.getXOffset()));

@@ -64,91 +64,88 @@ public class RegularTableSplineInterpolation {
     * input variable varying most rapidly, the N-1st next, and so on, with the
     * 1st varying most slowly.
     *
-    * @param tableFileName - A String providing the name of the resource (data
-    *           file) that stores the table to be interpolated.
+    * @param tableFileName
+    *           - A String providing the name of the resource (data file) that
+    *           stores the table to be interpolated.
     */
-   public RegularTableSplineInterpolation(String tableFileName)
-         throws FileNotFoundException {
+   public RegularTableSplineInterpolation(String tableFileName) throws FileNotFoundException {
       this.tableFileName = tableFileName;
       ReadTable(tableFileName);
    }
 
    public double interpolate(double[] xval) {
-      if(xval.length < dim)
-         throw new IllegalArgumentException("Attempt to interpolate " + tableFileName + " at x with " + String.valueOf(dim)
-               + "dimensions");
-      switch(dim) {
-         case 1:
+      if (xval.length < dim)
+         throw new IllegalArgumentException("Attempt to interpolate " + tableFileName + " at x with " + String.valueOf(dim) + "dimensions");
+      switch (dim) {
+         case 1 :
             return spline1d.interpolate(xval[0]);
-         case 2:
+         case 2 :
             return spline2d.interpolate(xval[0], xval[1]);
-         case 3:
+         case 3 :
             return spline3d.interpolate(xval[0], xval[1], xval[2]);
-         case 4:
+         case 4 :
             return spline4d.interpolate(xval[0], xval[1], xval[2], xval[3]);
-         default:
+         default :
             throw new IllegalArgumentException("Table dimensions must be 1<=dim<=4");
       }
    }
 
-   private void ReadTable(String tableFileName)
-         throws FileNotFoundException {
+   private void ReadTable(String tableFileName) throws FileNotFoundException {
       final InputStream is = RegularTableSplineInterpolation.class.getResourceAsStream(tableFileName);
-      if(is == null)
+      if (is == null)
          throw new FileNotFoundException("Could not locate " + tableFileName);
       final Scanner s = new Scanner(is);
       s.useLocale(Locale.US);
       try {
          dim = s.nextInt();
-         if((dim < 1) || (dim > 4))
+         if ((dim < 1) || (dim > 4))
             throw new IllegalArgumentException("Table dimensions must be 1<=dim<=4");
          nPoints = new int[dim];
          xinc = new double[dim];
          final double[][] x = new double[dim][];
          xmin = new double[dim];
 
-         for(int i = 0; i < dim; i++) {
+         for (int i = 0; i < dim; i++) {
             nPoints[i] = s.nextInt();
             xmin[i] = s.nextDouble();
             xinc[i] = s.nextDouble();
             x[i] = new double[nPoints[i]];
-            for(int j = 0; j < nPoints[i]; j++)
+            for (int j = 0; j < nPoints[i]; j++)
                x[i][j] = xmin[i] + (j * xinc[i]);
          }
-         switch(dim) {
-            case 1:
+         switch (dim) {
+            case 1 :
                final double[] table1d = new double[nPoints[0]];
-               for(int i = 0; i < nPoints[0]; i++)
+               for (int i = 0; i < nPoints[0]; i++)
                   table1d[i] = s.nextDouble();
                spline1d = new CubicSpline(x[0], table1d);
                break;
-            case 2:
+            case 2 :
                final double[][] table2d = new double[nPoints[0]][nPoints[1]];
-               for(int i = 0; i < nPoints[0]; i++)
-                  for(int j = 0; j < nPoints[1]; j++)
+               for (int i = 0; i < nPoints[0]; i++)
+                  for (int j = 0; j < nPoints[1]; j++)
                      table2d[i][j] = s.nextDouble();
                spline2d = new BiCubicSpline(x[0], x[1], table2d);
                break;
-            case 3:
+            case 3 :
                final double[][][] table3d = new double[nPoints[0]][nPoints[1]][nPoints[2]];
-               for(int i = 0; i < nPoints[0]; i++)
-                  for(int j = 0; j < nPoints[1]; j++)
-                     for(int k = 0; k < nPoints[2]; k++)
+               for (int i = 0; i < nPoints[0]; i++)
+                  for (int j = 0; j < nPoints[1]; j++)
+                     for (int k = 0; k < nPoints[2]; k++)
                         table3d[i][j][k] = s.nextDouble();
                spline3d = new TriCubicSpline(x[0], x[1], x[2], table3d);
                break;
-            case 4:
+            case 4 :
                final double[][][][] table4d = new double[nPoints[0]][nPoints[1]][nPoints[2]][nPoints[3]];
-               for(int i = 0; i < nPoints[0]; i++)
-                  for(int j = 0; j < nPoints[1]; j++)
-                     for(int k = 0; k < nPoints[2]; k++)
-                        for(int m = 0; m < nPoints[3]; m++)
+               for (int i = 0; i < nPoints[0]; i++)
+                  for (int j = 0; j < nPoints[1]; j++)
+                     for (int k = 0; k < nPoints[2]; k++)
+                        for (int m = 0; m < nPoints[3]; m++)
                            table4d[i][j][k][m] = s.nextDouble();
                spline4d = new QuadriCubicSpline(x[0], x[1], x[2], x[3], table4d);
                break;
          }
-      }
-      finally {
+      } finally {
          s.close();
       }
    }

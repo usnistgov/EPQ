@@ -31,8 +31,7 @@ public class PandPDatabase {
     * 
     * @throws IOException
     */
-   public PandPDatabase()
-         throws IOException {
+   public PandPDatabase() throws IOException {
       final CSVReader cr = new CSVReader.ResourceReader("PandPdb.csv", false);
       mData = cr.getResource(PandPDatabase.class);
       assert (mData.length == 826);
@@ -52,7 +51,8 @@ public class PandPDatabase {
     * createMaterial - Creates the material defined by the index-th item in the
     * database.
     * 
-    * @param index int
+    * @param index
+    *           int
     * @return Material
     */
    public Material createMaterial(int index) {
@@ -72,7 +72,8 @@ public class PandPDatabase {
    /**
     * elementA - Returns the Element on which the measurement was performed.
     * 
-    * @param index int
+    * @param index
+    *           int
     * @return Element
     */
    public Element elementA(int index) {
@@ -82,7 +83,8 @@ public class PandPDatabase {
    /**
     * elementB - Returns the other element in the matrix.
     * 
-    * @param index int
+    * @param index
+    *           int
     * @return Element
     */
    public Element elementB(int index) {
@@ -93,12 +95,12 @@ public class PandPDatabase {
     * createStandard - Create a Material representing element A (the element to
     * be measured.)
     * 
-    * @param index int
+    * @param index
+    *           int
     * @throws EPQException
     * @return Material
     */
-   public Material createStandard(int index)
-         throws EPQException {
+   public Material createStandard(int index) throws EPQException {
       return MaterialFactory.createPureElement(elementA(index));
    }
 
@@ -106,7 +108,8 @@ public class PandPDatabase {
     * kRatio - Returns the k-ration (dimensionless) of the index-th item in the
     * database.
     * 
-    * @param index int
+    * @param index
+    *           int
     * @return double
     */
    public double kRatio(int index) {
@@ -117,7 +120,8 @@ public class PandPDatabase {
     * takeOffAngle - Returns the take off angle (in radians) of the index-th
     * item in the database.
     * 
-    * @param index int
+    * @param index
+    *           int
     * @return double
     */
    public double takeOffAngle(int index) {
@@ -128,7 +132,8 @@ public class PandPDatabase {
     * beamEnergy - Returns the beam energy (in Joules) of the index-th item in
     * the database.
     * 
-    * @param index int
+    * @param index
+    *           int
     * @return double
     */
    public double beamEnergy(int index) {
@@ -139,7 +144,8 @@ public class PandPDatabase {
     * transition - Returns the x-ray transition associated with the index-th
     * item in the database.
     * 
-    * @param index int
+    * @param index
+    *           int
     * @return XRayTransition
     */
    public XRayTransition transition(int index) {

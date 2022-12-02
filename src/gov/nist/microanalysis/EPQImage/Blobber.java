@@ -103,8 +103,9 @@ public class Blobber {
 
    }
 
-   public static void loadMe() {}
-   
+   public static void loadMe() {
+   }
+
    private final ImageProxy mImage;
    private final ArrayList<Blob> mBlobs = new ArrayList<>();
 
@@ -121,37 +122,37 @@ public class Blobber {
       final ArrayList<Set<Integer>> alias = new ArrayList<>();
       int prev = 0; // Index of blob index of last pixel
       int next = 1; // Value for the next blob index
-      for(int y = 0; y < imgH; ++y)
-         for(int x = 0; x < imgW; ++x)
-            if(thresh.meets(mImage.get(x, y))) {
+      for (int y = 0; y < imgH; ++y)
+         for (int x = 0; x < imgW; ++x)
+            if (thresh.meets(mImage.get(x, y))) {
                // prev is what it was at the end of the previous pixel
-               if(y > 0) {
+               if (y > 0) {
                   // Check above...
-                  if(prev == 0)
+                  if (prev == 0)
                      prev = ip2.get(x, y - 1);
                   else {
                      // Check if we should renumber...
                      final int above = ip2.get(x, y - 1);
-                     if((above != 0) && (above != prev)) {
+                     if ((above != 0) && (above != prev)) {
                         assert prev != 0;
                         // These are the same regions with different indexes
                         int ia = -1, ip = -1;
                         final Integer iia = Integer.valueOf(above);
                         final Integer iip = Integer.valueOf(prev);
-                        for(int i = 0; i < alias.size(); ++i) {
+                        for (int i = 0; i < alias.size(); ++i) {
                            final Set<Integer> si = alias.get(i);
-                           if(si.contains(iia)) {
+                           if (si.contains(iia)) {
                               assert ia == -1;
                               ia = i;
                            }
-                           if(si.contains(iip)) {
+                           if (si.contains(iip)) {
                               assert ip == -1;
                               ip = i;
                            }
                         }
                         assert ia != -1;
                         assert ip != -1;
-                        if(ia != ip) {
+                        if (ia != ip) {
                            // Merge them
                            alias.get(ia).addAll(alias.get(ip));
                            alias.remove(ip);
@@ -160,7 +161,7 @@ public class Blobber {
                      }
                   }
                }
-               if(prev == 0) {
+               if (prev == 0) {
                   // Get the next available blob index
                   prev = next;
                   ++next;
@@ -174,26 +175,26 @@ public class Blobber {
                prev = 0;
       // Second pass combine the adjacent indices
       final int[] idx = new int[next];
-      for(int i = 0; i < alias.size(); ++i)
-         for(final int id : alias.get(i))
+      for (int i = 0; i < alias.size(); ++i)
+         for (final int id : alias.get(i))
             idx[id] = i + 1;
       final Rectangle[] rects = new Rectangle[alias.size() + 1];
-      for(int y = 0; y < imgH; ++y)
-         for(int x = 0; x < imgW; ++x) {
+      for (int y = 0; y < imgH; ++y)
+         for (int x = 0; x < imgW; ++x) {
             final int vip2 = ip2.get(x, y);
-            if(vip2 > 0) {
+            if (vip2 > 0) {
                final int id = idx[vip2];
-               if(rects[id] != null) {
-                  if(!rects[id].contains(x, y))
+               if (rects[id] != null) {
+                  if (!rects[id].contains(x, y))
                      rects[id].add(x + 1, y + 1);
                } else
                   rects[id] = new Rectangle(x, y, 1, 1);
                ip2.set(x, y, id);
             }
          }
-      for(int id = 0; id < rects.length; ++id) {
+      for (int id = 0; id < rects.length; ++id) {
          final Rectangle rect = rects[id];
-         if(rect != null)
+         if (rect != null)
             mBlobs.add(new Blob(rect, ip2.get(rect, id, 255)));
       }
    }
@@ -205,8 +206,8 @@ public class Blobber {
    public Blob getLargest() {
       Blob largest = mBlobs.get(0);
       int lCount = largest.getCount();
-      for(Blob bl : mBlobs)
-         if(bl.getCount() > lCount) {
+      for (Blob bl : mBlobs)
+         if (bl.getCount() > lCount) {
             largest = bl;
             lCount = largest.getCount();
          }
@@ -225,7 +226,7 @@ public class Blobber {
 
    public List<Blob> getRankedBlobs(Scorer scorer) {
       List<Pair<Double, Blob>> scores = new ArrayList<>();
-      for(Blob bl : mBlobs)
+      for (Blob bl : mBlobs)
          scores.add(Pair.create(scorer.score(bl, mImage), bl));
       scores.sort(new Comparator<Pair<Double, Blob>>() {
 
@@ -235,7 +236,7 @@ public class Blobber {
          }
       });
       List<Blob> res = new ArrayList<>();
-      for(Pair<Double, Blob> pr : scores)
+      for (Pair<Double, Blob> pr : scores)
          res.add(pr.second);
       return res;
    }
@@ -249,14 +250,13 @@ public class Blobber {
          File path = new File(userHome, "Desktop\\Blob_Test1");
          path.mkdirs();
          int i = 1;
-         for(Blob b : bl.getBlobs()) {
+         for (Blob b : bl.getBlobs()) {
             ImageIO.write(b.getMask(), "png", new File(path, "blob" + i + ".png"));
             System.out.println(b.toString() + "\t" + b.getCount() + "\t" + b.getCenterOfMass() //
                   + "\t" + b.getPerimeter() + "\t" + (Math.PI * b.getEquivalentCircularDiameter()));
             ++i;
          }
-      }
-      catch(IOException e) {
+      } catch (IOException e) {
          // TODO Auto-generated catch block
          e.printStackTrace();
       }

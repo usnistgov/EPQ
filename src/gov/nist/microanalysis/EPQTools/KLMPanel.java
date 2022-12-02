@@ -62,9 +62,7 @@ import gov.nist.microanalysis.EPQTools.KLMActionEvent.KLMAction;
  * @version 1.0
  */
 
-public class KLMPanel
-   extends
-   JPanel {
+public class KLMPanel extends JPanel {
 
    private static final long serialVersionUID = 4697281684102338236L;
 
@@ -91,18 +89,18 @@ public class KLMPanel
          final SortedSet<KLMLine> res = new TreeSet<KLMLine>();
          final int mode = (mVisibleAllPeaksSelected ? ALL_LINES : MAJOR_LINES);
          res.addAll(getTransitionLines(family, mode, mElement));
-         if(mVisibleEdgesSelected)
+         if (mVisibleEdgesSelected)
             res.addAll(getEdges(family, mode, mElement));
          return res;
       }
 
       public SortedSet<KLMLine> getVisibleLines() {
          final SortedSet<KLMLine> res = new TreeSet<KLMLine>();
-         if(mKLineSelected)
+         if (mKLineSelected)
             res.addAll(getVisibleLines(AtomicShell.KFamily));
-         if(mLLineSelected)
+         if (mLLineSelected)
             res.addAll(getVisibleLines(AtomicShell.LFamily));
-         if(mMLineSelected)
+         if (mMLineSelected)
             res.addAll(getVisibleLines(AtomicShell.MFamily));
          return res;
       }
@@ -115,19 +113,19 @@ public class KLMPanel
        */
       public SortedSet<KLMLine> getAllDelta() {
          final SortedSet<KLMLine> res = new TreeSet<KLMLine>();
-         if(mKLineSelected) {
+         if (mKLineSelected) {
             res.addAll(getTransitionLines(AtomicShell.KFamily, ALL_LINES, mElement));
-            for(final KLMLine ml : getTransitionLines(AtomicShell.KFamily, MAJOR_LINES, mElement))
+            for (final KLMLine ml : getTransitionLines(AtomicShell.KFamily, MAJOR_LINES, mElement))
                res.remove(ml);
          }
-         if(mLLineSelected) {
+         if (mLLineSelected) {
             res.addAll(getTransitionLines(AtomicShell.LFamily, ALL_LINES, mElement));
-            for(final KLMLine ml : getTransitionLines(AtomicShell.LFamily, MAJOR_LINES, mElement))
+            for (final KLMLine ml : getTransitionLines(AtomicShell.LFamily, MAJOR_LINES, mElement))
                res.remove(ml);
          }
-         if(mMLineSelected) {
+         if (mMLineSelected) {
             res.addAll(getTransitionLines(AtomicShell.MFamily, ALL_LINES, mElement));
-            for(final KLMLine ml : getTransitionLines(AtomicShell.MFamily, MAJOR_LINES, mElement))
+            for (final KLMLine ml : getTransitionLines(AtomicShell.MFamily, MAJOR_LINES, mElement))
                res.remove(ml);
          }
          return res;
@@ -143,12 +141,12 @@ public class KLMPanel
          ss.addAll(getTransitionLines(AtomicShell.KFamily, mode, mElement));
          ss.addAll(getTransitionLines(AtomicShell.LFamily, mode, mElement));
          ss.addAll(getTransitionLines(AtomicShell.MFamily, mode, mElement));
-         if(mTemporaryEdgesSelected) {
+         if (mTemporaryEdgesSelected) {
             ss.addAll(getEdges(AtomicShell.KFamily, mode, mElement));
             ss.addAll(getEdges(AtomicShell.LFamily, mode, mElement));
             ss.addAll(getEdges(AtomicShell.MFamily, mode, mElement));
          }
-         if(mTemporaryEscapesSelected)
+         if (mTemporaryEscapesSelected)
             ss.addAll(getEscapes(mElement));
          return ss;
       }
@@ -161,11 +159,7 @@ public class KLMPanel
    private static final int ALL_LINES = 1;
    private static final int MAJOR_LINES = 2;
    // The least tightly bound edge
-   private static final int[] MajorEdges = {
-      AtomicShell.K,
-      AtomicShell.LIII,
-      AtomicShell.MV
-   };
+   private static final int[] MajorEdges = {AtomicShell.K, AtomicShell.LIII, AtomicShell.MV};
 
    private int mCurrentZ = Element.elmH;
    private KLMProperties[] mElementsArray;
@@ -228,22 +222,23 @@ public class KLMPanel
     * getTransitionLines - Returns a SortedSet containing KLMLine objects for
     * each line in transitions list that actually occurs
     * 
-    * @param family int - The family of lines to get
-    * @param mode int -
-    * @param atomicNumber int - The atomic number of the element
+    * @param family
+    *           int - The family of lines to get
+    * @param mode
+    *           int -
+    * @param atomicNumber
+    *           int - The atomic number of the element
     * @return SortedSet - Containing KLMLine objects
     */
    private static SortedSet<KLMLine> getTransitionLines(int family, int mode, Element elm) {
       final TreeSet<KLMLine> temp = new TreeSet<KLMLine>();
       assert ((mode == MAJOR_LINES) || (mode == ALL_LINES));
       final double wgt = (mode == MAJOR_LINES ? MIN_WEIGHT_MAJOR : MIN_WEIGHT_ALL);
-      for(int xrt = XRayTransition.KA1; xrt < XRayTransition.Last; ++xrt)
-         if((XRayTransition.getFamily(xrt) == family)
-               && (XRayTransition.getWeight(elm, xrt, XRayTransition.NormalizeKLM) >= wgt))
+      for (int xrt = XRayTransition.KA1; xrt < XRayTransition.Last; ++xrt)
+         if ((XRayTransition.getFamily(xrt) == family) && (XRayTransition.getWeight(elm, xrt, XRayTransition.NormalizeKLM) >= wgt))
             try {
                temp.add(new KLMLine.Transition(new XRayTransition(elm, xrt)));
-            }
-            catch(final EPQException e) {
+            } catch (final EPQException e) {
                // Ignore it..
             }
       return temp;
@@ -252,21 +247,24 @@ public class KLMPanel
    /**
     * getEdges - Returns a SortedSet containing KLMLine objects for each edge
     * 
-    * @param family int - The family of lines to get
-    * @param mode int -
-    * @param atomicNumber int - The atomic number of the element
+    * @param family
+    *           int - The family of lines to get
+    * @param mode
+    *           int -
+    * @param atomicNumber
+    *           int - The atomic number of the element
     * @return SortedSet - Containing KLMLine objects
     */
    private static SortedSet<KLMLine> getEdges(int family, int mode, Element elm) {
       final TreeSet<KLMLine> temp = new TreeSet<KLMLine>();
       assert ((mode == MAJOR_LINES) || (mode == ALL_LINES));
-      if(mode == ALL_LINES) {
-         for(int sh = AtomicShell.K; sh <= AtomicShell.MV; sh++)
-            if((AtomicShell.getFamily(sh) == family) && showFamily(elm, family))
+      if (mode == ALL_LINES) {
+         for (int sh = AtomicShell.K; sh <= AtomicShell.MV; sh++)
+            if ((AtomicShell.getFamily(sh) == family) && showFamily(elm, family))
                temp.add(new KLMLine.Edge(new AtomicShell(elm, sh)));
       } else
-         for(final int majorEdge : MajorEdges) {
-            if((AtomicShell.getFamily(majorEdge) == family) && showFamily(elm, family))
+         for (final int majorEdge : MajorEdges) {
+            if ((AtomicShell.getFamily(majorEdge) == family) && showFamily(elm, family))
                temp.add(new KLMLine.Edge(new AtomicShell(elm, majorEdge)));
          }
       return temp;
@@ -276,11 +274,10 @@ public class KLMPanel
       super(new FormLayout("pref, 3dlu, 50dlu, 3dlu, pref", "pref"));
       try {
          mElementsArray = new KLMProperties[XRayTransition.lastWeights().getAtomicNumber() + 1];
-         for(int z = Element.elmH; z < mElementsArray.length; z++)
+         for (int z = Element.elmH; z < mElementsArray.length; z++)
             mElementsArray[z] = new KLMProperties(Element.byAtomicNumber(z));
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -296,7 +293,7 @@ public class KLMPanel
     * @return true to display this family check box
     */
    private static boolean showFamily(Element elm, int family) {
-      return (XRayTransition.getBrightestTransition(elm, family)!=null)
+      return (XRayTransition.getBrightestTransition(elm, family) != null)
             && (XRayTransition.getBrightestTransition(elm, family).getEdgeEnergy() < ToSI.keV(25.0))
             && (XRayTransition.getBrightestTransition(elm, family).getEdgeEnergy() > ToSI.keV(0.1));
    }
@@ -307,11 +304,11 @@ public class KLMPanel
    private void updateAllSelected() {
       boolean all = true;
       final KLMProperties kp = mElementsArray[mCurrentZ];
-      if(showFamily(AtomicShell.KFamily))
+      if (showFamily(AtomicShell.KFamily))
          all &= kp.mKLineSelected;
-      if(showFamily(AtomicShell.LFamily))
+      if (showFamily(AtomicShell.LFamily))
          all &= kp.mLLineSelected;
-      if(showFamily(AtomicShell.MFamily))
+      if (showFamily(AtomicShell.MFamily))
          all &= kp.mMLineSelected;
       kp.mAllLinesSelected = all;
       jCheckBox_AllLines.setSelected(all);
@@ -320,16 +317,15 @@ public class KLMPanel
    private Set<Element> parseElementField(String text) {
       final String[] items = text.split("[ \\t\\n\\x0B\\f\\r,]");
       final TreeSet<Element> elms = new TreeSet<Element>();
-      for(String item : items) {
+      for (String item : items) {
          final Element elm = Element.byName(item);
-         if(!elm.equals(Element.None))
+         if (!elm.equals(Element.None))
             elms.add(elm);
       }
       return elms;
    }
 
-   private void initialize()
-         throws Exception {
+   private void initialize() throws Exception {
       // Define jPanel_LineChecks
       jCheckBox_KLine.setAlignmentY((float) 0.0);
       jCheckBox_KLine.setMnemonic(KeyEvent.VK_K);
@@ -391,17 +387,17 @@ public class KLMPanel
          public void actionPerformed(ActionEvent e) {
             final boolean selected = jCheckBox_AllLines.isSelected();
             final SortedSet<KLMLine> ss = new TreeSet<KLMLine>();
-            if(showFamily(AtomicShell.KFamily) && (mElementsArray[mCurrentZ].mKLineSelected != selected)) {
+            if (showFamily(AtomicShell.KFamily) && (mElementsArray[mCurrentZ].mKLineSelected != selected)) {
                mElementsArray[mCurrentZ].mKLineSelected = selected;
                ss.addAll(mElementsArray[mCurrentZ].getVisibleLines(AtomicShell.KFamily));
                jCheckBox_KLine.setSelected(selected);
             }
-            if(showFamily(AtomicShell.LFamily) && (mElementsArray[mCurrentZ].mLLineSelected != selected)) {
+            if (showFamily(AtomicShell.LFamily) && (mElementsArray[mCurrentZ].mLLineSelected != selected)) {
                mElementsArray[mCurrentZ].mLLineSelected = selected;
                ss.addAll(mElementsArray[mCurrentZ].getVisibleLines(AtomicShell.LFamily));
                jCheckBox_LLine.setSelected(selected);
             }
-            if(showFamily(AtomicShell.MFamily) && (mElementsArray[mCurrentZ].mMLineSelected != selected)) {
+            if (showFamily(AtomicShell.MFamily) && (mElementsArray[mCurrentZ].mMLineSelected != selected)) {
                mElementsArray[mCurrentZ].mMLineSelected = selected;
                ss.addAll(mElementsArray[mCurrentZ].getVisibleLines(AtomicShell.MFamily));
                jCheckBox_MLine.setSelected(selected);
@@ -434,12 +430,10 @@ public class KLMPanel
          public void actionPerformed(ActionEvent e) {
             try {
                setAtomicNumber(Element.byName(jTextField_Element.getText()).getAtomicNumber());
-            }
-            catch(final Exception jTextField1ReadError) {
+            } catch (final Exception jTextField1ReadError) {
                try {
                   setAtomicNumber(Integer.parseInt(jTextField_Element.getText()));
-               }
-               catch(final Exception jTextFieldReadError2) {
+               } catch (final Exception jTextFieldReadError2) {
                   jTextField_Element.setText(Element.toAbbrev(getAtomicNumber()));
                }
             }
@@ -452,12 +446,11 @@ public class KLMPanel
          public void focusLost(FocusEvent e) {
             final String txt = jTextField_Element.getText();
             Element el = Element.byName(txt);
-            if(!el.isValid())
+            if (!el.isValid())
                try {
                   final int z = Integer.parseInt(txt);
                   el = Element.byAtomicNumber(z);
-               }
-               catch(final Exception ex) {
+               } catch (final Exception ex) {
                   // Ignore any errors
                }
             setElement(el);
@@ -469,17 +462,17 @@ public class KLMPanel
          @Override
          public void keyTyped(KeyEvent arg0) {
             int inc = 0;
-            switch(arg0.getKeyChar()) {
-               case '+':
+            switch (arg0.getKeyChar()) {
+               case '+' :
                   inc = 1;
                   break;
-               case '-':
+               case '-' :
                   inc = -1;
                   break;
-               default:
+               default :
                   break;
             }
-            if(inc != 0) {
+            if (inc != 0) {
                arg0.consume();
                setAtomicNumber(getAtomicNumber() + inc);
             }
@@ -487,9 +480,9 @@ public class KLMPanel
 
          @Override
          public void keyReleased(KeyEvent arg0) {
-            if((arg0.getKeyCode() == KeyEvent.VK_ENTER) && arg0.isControlDown()) {
+            if ((arg0.getKeyCode() == KeyEvent.VK_ENTER) && arg0.isControlDown()) {
                final Set<Element> elms = parseElementField(jTextField_Element.getText());
-               for(final Element elm : elms) {
+               for (final Element elm : elms) {
                   setAtomicNumber(elm.getAtomicNumber());
                   jCheckBox_AllLines.doClick();
                }
@@ -527,8 +520,8 @@ public class KLMPanel
       jButton_TempLines.addActionListener(new java.awt.event.ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            jPopupMenu_TempLines.show(jPanel_Button, jButton_TempLines.getLocation().x, jButton_TempLines.getLocation().y
-                  + jButton_TempLines.getSize().height);
+            jPopupMenu_TempLines.show(jPanel_Button, jButton_TempLines.getLocation().x,
+                  jButton_TempLines.getLocation().y + jButton_TempLines.getSize().height);
          }
       });
       jButton_SelectedLines.setMargin(new Insets(2, 2, 2, 2));
@@ -536,8 +529,8 @@ public class KLMPanel
       jButton_SelectedLines.addActionListener(new java.awt.event.ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            jPopupMenu_SelectedLines.show(jPanel_Button, jButton_SelectedLines.getLocation().x, jButton_SelectedLines.getLocation().y
-                  + jButton_SelectedLines.getSize().height);
+            jPopupMenu_SelectedLines.show(jPanel_Button, jButton_SelectedLines.getLocation().x,
+                  jButton_SelectedLines.getLocation().y + jButton_SelectedLines.getSize().height);
          }
       });
       jButton_ClearAll.setMargin(new Insets(2, 2, 2, 2));
@@ -546,7 +539,7 @@ public class KLMPanel
       jButton_ClearAll.addActionListener(new java.awt.event.ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            for(int z = Element.elmH; z < mElementsArray.length; z++)
+            for (int z = Element.elmH; z < mElementsArray.length; z++)
                mElementsArray[z] = new KLMProperties(Element.byAtomicNumber(z));
             setAtomicNumber(Element.elmH);
             redraw();
@@ -573,8 +566,8 @@ public class KLMPanel
          @Override
          public void actionPerformed(ActionEvent e) {
             mTemporaryEscapesSelected = jCheckBoxMenuItem_Escapes.isSelected();
-            for(int z = Element.elmH; z < mElementsArray.length; ++z)
-               if(!areAnyCheckBoxesChecked(z))
+            for (int z = Element.elmH; z < mElementsArray.length; ++z)
+               if (!areAnyCheckBoxesChecked(z))
                   mElementsArray[z].mVisibleEscapesSelected = mTemporaryEscapesSelected;
             redraw();
          }
@@ -585,8 +578,8 @@ public class KLMPanel
          @Override
          public void actionPerformed(ActionEvent e) {
             mTemporaryEdgesSelected = jCheckBoxMenuItem_Edges.isSelected();
-            for(int z = Element.elmH; z < mElementsArray.length; ++z)
-               if(!areAnyCheckBoxesChecked(z))
+            for (int z = Element.elmH; z < mElementsArray.length; ++z)
+               if (!areAnyCheckBoxesChecked(z))
                   mElementsArray[z].mVisibleEdgesSelected = mTemporaryEdgesSelected;
             redraw();
             fireTemporaryLinesActionPerformed(e);
@@ -603,8 +596,8 @@ public class KLMPanel
             mTemporaryMajorPeaksSelected = jRadioButtonMenuItem_Majors.isSelected();
             mTemporaryAllPeaksSelected = jRadioButtonMenuItem_All.isSelected();
 
-            for(int z = Element.elmH; z < mElementsArray.length; ++z)
-               if(!areAnyCheckBoxesChecked(z))
+            for (int z = Element.elmH; z < mElementsArray.length; ++z)
+               if (!areAnyCheckBoxesChecked(z))
                   mElementsArray[z].mVisibleAllPeaksSelected = mTemporaryAllPeaksSelected;
             redraw();
             fireTemporaryLinesActionPerformed(e);
@@ -622,8 +615,8 @@ public class KLMPanel
             mTemporaryAllPeaksSelected = jRadioButtonMenuItem_All.isSelected();
             mTemporaryMajorPeaksSelected = jRadioButtonMenuItem_Majors.isSelected();
 
-            for(int z = Element.elmH; z < mElementsArray.length; ++z)
-               if(!areAnyCheckBoxesChecked(z))
+            for (int z = Element.elmH; z < mElementsArray.length; ++z)
+               if (!areAnyCheckBoxesChecked(z))
                   mElementsArray[z].mVisibleAllPeaksSelected = mTemporaryAllPeaksSelected;
             redraw();
             fireTemporaryLinesActionPerformed(e);
@@ -647,7 +640,7 @@ public class KLMPanel
             jRadioButtonMenuItem_SelAll.setSelected(true);
             // Add those in all not in major
             final SortedSet<KLMLine> ss = new TreeSet<KLMLine>();
-            for(int z = Element.elmH; z < mElementsArray.length; ++z) {
+            for (int z = Element.elmH; z < mElementsArray.length; ++z) {
                ss.addAll(mElementsArray[z].getAllDelta());
                mElementsArray[z].mVisibleAllPeaksSelected = true;
             }
@@ -663,7 +656,7 @@ public class KLMPanel
             jRadioButtonMenuItem_SelMajor.setSelected(true);
             // Add those in all not in major
             final SortedSet<KLMLine> ss = new TreeSet<KLMLine>();
-            for(int z = Element.elmH; z < mElementsArray.length; ++z) {
+            for (int z = Element.elmH; z < mElementsArray.length; ++z) {
                ss.addAll(mElementsArray[z].getAllDelta());
                mElementsArray[z].mVisibleAllPeaksSelected = true;
             }
@@ -729,14 +722,14 @@ public class KLMPanel
    }
 
    private boolean areAnyCheckBoxesChecked(int index) {
-      return ((((mElementsArray[index].mKLineSelected) || (mElementsArray[index].mLLineSelected))
-            || (mElementsArray[index].mMLineSelected)) || (mElementsArray[index].mAllLinesSelected));
+      return ((((mElementsArray[index].mKLineSelected) || (mElementsArray[index].mLLineSelected)) || (mElementsArray[index].mMLineSelected))
+            || (mElementsArray[index].mAllLinesSelected));
    }
 
    private void redraw() {
       assert mCurrentZ >= Element.elmH;
       assert mCurrentZ < mElementsArray.length;
-      if(mCurrentZ != Element.elmNone) {
+      if (mCurrentZ != Element.elmNone) {
          final KLMProperties CurrentElement = mElementsArray[mCurrentZ];
          assert CurrentElement != null;
          jCheckBox_KLine.setSelected(CurrentElement.mKLineSelected);
@@ -757,20 +750,19 @@ public class KLMPanel
 
          try {
             jTextField_Element.setText(CurrentElement.mElement.toAbbrev());
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             System.err.println("Warning: Unable to read current element!");
          }
       }
    }
 
    protected void fireTemporaryLinesActionPerformed(ActionEvent e) {
-      for(final ActionListener al : mTemporaryLinesActionListeners)
+      for (final ActionListener al : mTemporaryLinesActionListeners)
          al.actionPerformed(e);
    }
 
    public synchronized void removeTemporaryLinesActionListener(ActionListener l) {
-      if(mTemporaryLinesActionListeners.contains(l)) {
+      if (mTemporaryLinesActionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(mTemporaryLinesActionListeners);
          v.removeElement(l);
          mTemporaryLinesActionListeners = v;
@@ -778,7 +770,7 @@ public class KLMPanel
    }
 
    public synchronized void addTemporaryLinesActionListener(ActionListener l) {
-      if(!mTemporaryLinesActionListeners.contains(l)) {
+      if (!mTemporaryLinesActionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(mTemporaryLinesActionListeners);
          v.addElement(l);
          mTemporaryLinesActionListeners = v;
@@ -786,12 +778,12 @@ public class KLMPanel
    }
 
    protected void fireVisibleLinesActionPerformed(KLMActionEvent e) {
-      for(final ActionListener al : mVisibleLinesActionListeners)
+      for (final ActionListener al : mVisibleLinesActionListeners)
          al.actionPerformed(e);
    }
 
    public synchronized void removeVisibleLinesActionListener(ActionListener l) {
-      if(mVisibleLinesActionListeners.contains(l)) {
+      if (mVisibleLinesActionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(mVisibleLinesActionListeners);
          v.removeElement(l);
          mVisibleLinesActionListeners = v;
@@ -799,7 +791,7 @@ public class KLMPanel
    }
 
    public synchronized void addVisibleLinesActionListener(ActionListener l) {
-      if(!mVisibleLinesActionListeners.contains(l)) {
+      if (!mVisibleLinesActionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(mVisibleLinesActionListeners);
          v.addElement(l);
          mVisibleLinesActionListeners = v;
@@ -834,13 +826,13 @@ public class KLMPanel
 
    public void setElement(Element elm) {
       final int newZ = elm.getAtomicNumber();
-      if((mCurrentZ != newZ) && (newZ >= Element.elmH) && (newZ < mElementsArray.length)) {
+      if ((mCurrentZ != newZ) && (newZ >= Element.elmH) && (newZ < mElementsArray.length)) {
          mCurrentZ = elm.getAtomicNumber();
          jCheckBox_KLine.setEnabled((mCurrentZ != Element.elmNone) && showFamily(AtomicShell.KFamily));
          jCheckBox_LLine.setEnabled((mCurrentZ != Element.elmNone) && showFamily(AtomicShell.LFamily));
          jCheckBox_MLine.setEnabled((mCurrentZ != Element.elmNone) && showFamily(AtomicShell.MFamily));
          jCheckBox_AllLines.setEnabled((mCurrentZ != Element.elmNone) && showFamily(AtomicShell.KFamily));
-         if(jScrollBar_Element.getValue() != mCurrentZ)
+         if (jScrollBar_Element.getValue() != mCurrentZ)
             jScrollBar_Element.setValue(mCurrentZ);
          redraw();
          fireTemporaryLinesActionPerformed(new ActionEvent(this, 0, "setAtomicNumber"));
@@ -869,7 +861,7 @@ public class KLMPanel
     */
    public SortedSet<KLMLine> getVisibleLines() {
       mVisibleLines.clear();
-      for(int z = Element.elmH; z < mElementsArray.length; ++z)
+      for (int z = Element.elmH; z < mElementsArray.length; ++z)
          mVisibleLines.addAll(mElementsArray[z].getVisibleLines());
       return mVisibleLines;
    }

@@ -67,9 +67,7 @@ import gov.nist.microanalysis.EPQLibrary.Detector.IXRayDetector;
 /**
  * A panel for displaying and editing common properties of spectra.
  */
-public class SpectrumPropertyPanel
-   extends
-   JPanel {
+public class SpectrumPropertyPanel extends JPanel {
    static private final long serialVersionUID = 0x42;
 
    public static final String DESCRIPTIVE_PANEL = "Description";
@@ -112,8 +110,7 @@ public class SpectrumPropertyPanel
       assert mSession != null;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace(System.err);
       }
    }
@@ -121,7 +118,7 @@ public class SpectrumPropertyPanel
    private static String repeat(String str, int n) {
       final StringBuilder sb = new StringBuilder((str.length() + 3) * n);
       sb.append(str);
-      for(int i = 0; i < n; ++i) {
+      for (int i = 0; i < n; ++i) {
          sb.append(", ");
          sb.append(str);
       }
@@ -131,10 +128,11 @@ public class SpectrumPropertyPanel
    /**
     * Determines which pane is displayed as open.
     * 
-    * @param pane - One of CONDITIONS_PANEL or DESCRIPTIVE_PANEL
+    * @param pane
+    *           - One of CONDITIONS_PANEL or DESCRIPTIVE_PANEL
     */
    public void showPane(String pane) {
-      if(pane.equals(CONDITIONS_PANEL))
+      if (pane.equals(CONDITIONS_PANEL))
          mTabs.setSelectedIndex(0);
       else
          mTabs.setSelectedIndex(1);
@@ -197,7 +195,7 @@ public class SpectrumPropertyPanel
          mInstrument = new JComboBox<Object>();
          final DefaultComboBoxModel<Object> dcbm = new DefaultComboBoxModel<Object>();
          dcbm.addElement(NONE);
-         for(final ElectronProbe ep : mSession.getCurrentProbes())
+         for (final ElectronProbe ep : mSession.getCurrentProbes())
             dcbm.addElement(ep);
          dcbm.setSelectedItem(NONE);
          mInstrument.addActionListener(new ActionListener() {
@@ -291,13 +289,13 @@ public class SpectrumPropertyPanel
     * @param sp
     */
    public void addSpectrumProperties(SpectrumProperties sp) {
-      if(mSpectrumProperties == null) {
+      if (mSpectrumProperties == null) {
          mSpectrumProperties = sp.clone();
          mEarliestDate = sp.getTimestampWithDefault(SpectrumProperties.AcquisitionTime, new Date(System.currentTimeMillis()));
       } else {
          mSpectrumProperties = SpectrumProperties.merge(mSpectrumProperties, sp);
          final Date dt = sp.getTimestampWithDefault(SpectrumProperties.AcquisitionTime, new Date(System.currentTimeMillis()));
-         if(dt.before(mEarliestDate))
+         if (dt.before(mEarliestDate))
             mEarliestDate = dt;
       }
       updateSpectrumProperties();
@@ -336,7 +334,7 @@ public class SpectrumPropertyPanel
       mWorkingDistance.setText(sp.getTextWithDefault_NoUnit(SpectrumProperties.WorkingDistance, ""));
       mWorkingDistance.selectAll();
       final ConductiveCoating cc = (ConductiveCoating) sp.getObjectWithDefault(SpectrumProperties.ConductiveCoating, null);
-      if(cc != null) {
+      if (cc != null) {
          mCoatingMaterial.setSelectedItem(cc.getMaterial());
          mCoatingThickness.setValue(cc.getThickness() * 1.0e9);
       } else {
@@ -345,16 +343,16 @@ public class SpectrumPropertyPanel
       }
 
       mSpecimenName.requestFocusInWindow();
-      if(sp.isDefined(SpectrumProperties.Detector)) {
+      if (sp.isDefined(SpectrumProperties.Detector)) {
          final IXRayDetector det = sp.getDetector();
-         if(det != null)
+         if (det != null)
             setDetector(det);
       }
       updateControls();
    }
 
    public void setDetector(IXRayDetector det) {
-      if(det != null) {
+      if (det != null) {
          mInstrument.setSelectedItem(det.getDetectorProperties().getOwner());
          updateDetector();
          mDetector.setSelectedItem(det.getDetectorProperties());
@@ -364,23 +362,22 @@ public class SpectrumPropertyPanel
 
    private void addIfDifferent(JTextField jtf, SpectrumProperties.PropertyId pid, SpectrumProperties sp) {
       final String str = jtf.getText();
-      if(str.length() > 0)
-         if(!mSpectrumProperties.getTextWithDefault(pid, "").equals(str))
+      if (str.length() > 0)
+         if (!mSpectrumProperties.getTextWithDefault(pid, "").equals(str))
             sp.setTextProperty(pid, str);
    }
 
    private void addIfDifferentNumber(JTextField jtf, SpectrumProperties.PropertyId pid, SpectrumProperties sp) {
       final String str = jtf.getText();
-      if(str.length() > 0) {
+      if (str.length() > 0) {
          double n;
          try {
             final NumberFormat nf = NumberFormat.getInstance();
             n = nf.parse(str).doubleValue();
-            if(mSpectrumProperties.getNumericWithDefault(pid, Double.NaN) != n)
+            if (mSpectrumProperties.getNumericWithDefault(pid, Double.NaN) != n)
                sp.setNumericProperty(pid, n);
             updateControl(jtf, pid);
-         }
-         catch(final ParseException e) {
+         } catch (final ParseException e) {
             jtf.setBackground(Color.pink);
          }
       }
@@ -391,13 +388,13 @@ public class SpectrumPropertyPanel
       double thickness = thick.getValue();
       ConductiveCoating cc = (ConductiveCoating) mSpectrumProperties.getObjectWithDefault(pid, null);
       ConductiveCoating newCC = null;
-      if((material != null) && (!material.equals(Material.Null)) && (thickness > 0.0))
+      if ((material != null) && (!material.equals(Material.Null)) && (thickness > 0.0))
          newCC = new ConductiveCoating(material, 1.0e-9 * thickness);
-      if(cc == null) {
-         if(newCC != null)
+      if (cc == null) {
+         if (newCC != null)
             sp.setObjectProperty(SpectrumProperties.ConductiveCoating, newCC);
       } else {
-         if(newCC == null)
+         if (newCC == null)
             sp.clear(SpectrumProperties.ConductiveCoating);
          else
             sp.setObjectProperty(SpectrumProperties.ConductiveCoating, newCC);
@@ -413,9 +410,9 @@ public class SpectrumPropertyPanel
       addIfDifferent(mInstrumentOperator, SpectrumProperties.InstrumentOperator, sp);
       addIfDifferent(mSpectrumComment, SpectrumProperties.SpectrumComment, sp);
       addIfDifferent(mClientName, SpectrumProperties.ClientName, sp);
-      if((mDetector.getSelectedItem() instanceof DetectorProperties)
-            && (mCalibration.getSelectedItem() instanceof EDSCalibration))
-         sp.setDetector(EDSDetector.createDetector((DetectorProperties) mDetector.getSelectedItem(), (EDSCalibration) mCalibration.getSelectedItem()));
+      if ((mDetector.getSelectedItem() instanceof DetectorProperties) && (mCalibration.getSelectedItem() instanceof EDSCalibration))
+         sp.setDetector(
+               EDSDetector.createDetector((DetectorProperties) mDetector.getSelectedItem(), (EDSCalibration) mCalibration.getSelectedItem()));
       addIfDifferentNumber(mFaradayBegin, SpectrumProperties.ProbeCurrent, sp);
       addIfDifferentNumber(mLiveTime, SpectrumProperties.LiveTime, sp);
       addIfDifferentNumber(mBeamEnergy, SpectrumProperties.BeamEnergy, sp);
@@ -433,10 +430,10 @@ public class SpectrumPropertyPanel
       final Object instSel = mInstrument.getSelectedItem();
       final DefaultComboBoxModel<Object> dcmb = new DefaultComboBoxModel<Object>();
       final Object detSel = mDetector.getSelectedItem();
-      if(instSel instanceof ElectronProbe) {
+      if (instSel instanceof ElectronProbe) {
          final ElectronProbe ep = (ElectronProbe) instSel;
          final Set<DetectorProperties> dps = mSession.getDetectors(ep);
-         for(final DetectorProperties dp : dps)
+         for (final DetectorProperties dp : dps)
             dcmb.addElement(dp);
          dcmb.setSelectedItem((!dps.isEmpty()) ? (dps.contains(detSel) ? detSel : dps.iterator().next()) : null);
       } else {
@@ -451,15 +448,14 @@ public class SpectrumPropertyPanel
       final Object sel = mDetector.getSelectedItem();
       Object calSel = NONE;
       final DefaultComboBoxModel<Object> dcmb = new DefaultComboBoxModel<Object>();
-      if(sel instanceof DetectorProperties) {
+      if (sel instanceof DetectorProperties) {
          calSel = mCalibration.getSelectedItem();
          final DetectorProperties dp = (DetectorProperties) sel;
          final List<DetectorCalibration> dcs = mSession.getCalibrations(dp);
-         for(final DetectorCalibration dc : dcs)
+         for (final DetectorCalibration dc : dcs)
             dcmb.addElement(dc);
-         if(!dcs.contains(calSel))
-            calSel = mSession.getSuitableCalibration(dp, mEarliestDate != null ? mEarliestDate
-                  : new Date(System.currentTimeMillis()));
+         if (!dcs.contains(calSel))
+            calSel = mSession.getSuitableCalibration(dp, mEarliestDate != null ? mEarliestDate : new Date(System.currentTimeMillis()));
          assert dcs.contains(calSel);
       } else
          dcmb.addElement(NONE);
@@ -475,7 +471,7 @@ public class SpectrumPropertyPanel
 
    private void updateControl(JTextField jtf, SpectrumProperties.PropertyId pid) {
       final boolean b = (mRequiredProperties != null) && mRequiredProperties.contains(pid);
-      if(b) {
+      if (b) {
          jtf.setBackground(Color.cyan);
          jtf.setToolTipText("Required property...");
       } else {
@@ -506,11 +502,11 @@ public class SpectrumPropertyPanel
 
    private boolean definedRequiredProperties(SpectrumProperties sp) {
       boolean res = true;
-      if(mRequiredProperties != null) {
+      if (mRequiredProperties != null) {
          final SpectrumProperties dup = new SpectrumProperties(mSpectrumProperties);
          dup.addAll(sp);
-         for(final SpectrumProperties.PropertyId pid : mRequiredProperties)
-            if(pid == SpectrumProperties.ProbeCurrent)
+         for (final SpectrumProperties.PropertyId pid : mRequiredProperties)
+            if (pid == SpectrumProperties.ProbeCurrent)
                res &= dup.isDefined(SpectrumProperties.ProbeCurrent);
             else
                res &= dup.isDefined(pid);
@@ -518,9 +514,7 @@ public class SpectrumPropertyPanel
       return res;
    }
 
-   public static class PropertyDialog
-      extends
-      JDialog {
+   public static class PropertyDialog extends JDialog {
       private static final String DIALOG_TITLE = "Edit the spectrum properties";
       private static final long serialVersionUID = -6959469022738667049L;
       private SpectrumPropertyPanel mPanel;
@@ -532,8 +526,7 @@ public class SpectrumPropertyPanel
          mSession = ses;
          try {
             initialize();
-         }
-         catch(final RuntimeException ex) {
+         } catch (final RuntimeException ex) {
          }
       }
 
@@ -542,8 +535,7 @@ public class SpectrumPropertyPanel
          mSession = ses;
          try {
             initialize();
-         }
-         catch(final RuntimeException ex) {
+         } catch (final RuntimeException ex) {
          }
       }
 
@@ -583,30 +575,30 @@ public class SpectrumPropertyPanel
 
             @Override
             public void actionPerformed(ActionEvent e) {
-               if(mPanel.definedRequiredProperties(mPanel.getSpectrumProperties())) {
+               if (mPanel.definedRequiredProperties(mPanel.getSpectrumProperties())) {
                   mOk = true;
                   setVisible(false);
                } else {
                   final StringBuffer required = new StringBuffer();
                   boolean firstPc = true;
-                  for(final SpectrumProperties.PropertyId pid : mPanel.mRequiredProperties) {
+                  for (final SpectrumProperties.PropertyId pid : mPanel.mRequiredProperties) {
                      String app = null;
-                     if(pid == SpectrumProperties.ProbeCurrent)  {
-                        if(firstPc) {
+                     if (pid == SpectrumProperties.ProbeCurrent) {
+                        if (firstPc) {
                            app = "Probe Current";
                            firstPc = false;
                         }
                      } else
                         app = pid.toString();
-                     if(app != null) {
-                        if(required.length() > 0)
+                     if (app != null) {
+                        if (required.length() > 0)
                            required.append(", ");
                         required.append(app);
                      }
                   }
-                  final int res = JOptionPane.showConfirmDialog(SpectrumPropertyPanel.PropertyDialog.this, "You must specified a value for each of\n"
-                        + required.toString(), "Spectrum properties", JOptionPane.OK_CANCEL_OPTION);
-                  if(res == JOptionPane.CANCEL_OPTION) {
+                  final int res = JOptionPane.showConfirmDialog(SpectrumPropertyPanel.PropertyDialog.this,
+                        "You must specified a value for each of\n" + required.toString(), "Spectrum properties", JOptionPane.OK_CANCEL_OPTION);
+                  if (res == JOptionPane.CANCEL_OPTION) {
                      mOk = false;
                      setVisible(false);
                   }

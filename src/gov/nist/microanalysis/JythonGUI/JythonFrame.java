@@ -33,15 +33,14 @@ import javax.swing.JToolBar;
  * A simple GUI for running Jython scripts
  * </p>
  * <p>
- * Not copyright: In the public domain * 
+ * Not copyright: In the public domain *
  * </p>
  * 
  * @author Nicholas W. M. Ritchie
  * @version 1.0
  */
 
-public class JythonFrame
-   extends JFrame {
+public class JythonFrame extends JFrame {
    private static final long serialVersionUID = 0x1;
    JPanel contentPane;
    JMenuBar jMenuBar1 = new JMenuBar();
@@ -72,18 +71,16 @@ public class JythonFrame
       try {
          jbInit();
          restorePosition();
-      }
-      catch(Exception e) {
+      } catch (Exception e) {
          e.printStackTrace();
       }
       mExecutive = new JythonExecutive(jCmdLine);
-      mExecutive.getInteractiveInterpreter().set("Frame",this);
+      mExecutive.getInteractiveInterpreter().set("Frame", this);
       jCmdLine.setCommandExecutive(mExecutive);
    }
 
    // Component initialization
-   private void jbInit()
-         throws Exception {
+   private void jbInit() throws Exception {
       contentPane = (JPanel) this.getContentPane();
       contentPane.setLayout(borderLayout1);
       this.setSize(new Dimension(400, 300));
@@ -203,7 +200,8 @@ public class JythonFrame
 
    private void restorePosition() {
       Preferences userPref = Preferences.userNodeForPackage(JythonFrame.class);
-      setBounds(userPref.getInt("Main window\\top", (int) getBounds().getX()), userPref.getInt("Main window\\left", (int) getBounds().getY()), userPref.getInt("Main window\\width", getWidth()), userPref.getInt("Main window\\height", getHeight()));
+      setBounds(userPref.getInt("Main window\\top", (int) getBounds().getX()), userPref.getInt("Main window\\left", (int) getBounds().getY()),
+            userPref.getInt("Main window\\width", getWidth()), userPref.getInt("Main window\\height", getHeight()));
    }
 
    // Help | About action performed
@@ -221,7 +219,7 @@ public class JythonFrame
    // Overridden so we can exit when window is closed
    protected void processWindowEvent(WindowEvent e) {
       super.processWindowEvent(e);
-      if(e.getID() == WindowEvent.WINDOW_CLOSING) {
+      if (e.getID() == WindowEvent.WINDOW_CLOSING) {
          jMenuFileExit_actionPerformed(null);
       }
    }
@@ -239,7 +237,7 @@ public class JythonFrame
    }
 
    void jCmdLine_mousePressed(MouseEvent e) {
-      if(e.isPopupTrigger()) {
+      if (e.isPopupTrigger()) {
          jPopupMenu1.show(jCmdLine, e.getX(), e.getY());
       }
    }
@@ -248,24 +246,23 @@ public class JythonFrame
       jCmdLine_mousePressed(e);
    }
 
-   public class SimpleFileFilter
-      extends FileFilter {
+   public class SimpleFileFilter extends FileFilter {
       private String[] mExtensions;
       private String mDescription;
 
       public SimpleFileFilter(String[] exts, String desc) {
          mExtensions = new String[exts.length];
-         for(int i = exts.length - 1; i >= 0; --i)
+         for (int i = exts.length - 1; i >= 0; --i)
             mExtensions[i] = "." + exts[i].toLowerCase();
          mDescription = desc;
       }
 
       public boolean accept(File f) {
-         if(f.isDirectory())
+         if (f.isDirectory())
             return true;
          String name = f.getName().toLowerCase();
-         for(int i = mExtensions.length - 1; i >= 0; --i)
-            if(name.endsWith(mExtensions[i]))
+         for (int i = mExtensions.length - 1; i >= 0; --i)
+            if (name.endsWith(mExtensions[i]))
                return true;
          return false;
       }
@@ -276,52 +273,49 @@ public class JythonFrame
    }
 
    void jMenuFileOpen_actionPerformed(ActionEvent e) {
-      final String prefPath="Open Directory";
+      final String prefPath = "Open Directory";
       Preferences userPref = Preferences.userNodeForPackage(JythonFrame.class);
-      String dir=userPref.get(prefPath,System.getProperty("user.home"));
+      String dir = userPref.get(prefPath, System.getProperty("user.home"));
       JFileChooser fc = new JFileChooser(dir);
-      SimpleFileFilter filter=new SimpleFileFilter(new String[] { "py" }, "Jython Script");
+      SimpleFileFilter filter = new SimpleFileFilter(new String[]{"py"}, "Jython Script");
       fc.setFileFilter(filter);
       fc.setAcceptAllFileFilterUsed(true);
-      if(fc.showOpenDialog(this)==JFileChooser.APPROVE_OPTION){
-         File f=fc.getSelectedFile();
-         userPref.put(prefPath,f.getParent());
+      if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+         File f = fc.getSelectedFile();
+         userPref.put(prefPath, f.getParent());
          try {
             executeFile(f);
             mLastScript = f;
             goButton.setEnabled(true);
-         }
-         catch(Exception ex) {
+         } catch (Exception ex) {
             statusBar.setText(ex.toString());
          }
       }
    }
 
    void jMenuFileSave_actionPerformed(ActionEvent e) {
-      final String prefPath="Save Directory";
+      final String prefPath = "Save Directory";
       Preferences userPref = Preferences.userNodeForPackage(JythonFrame.class);
-      String dir=userPref.get(prefPath,System.getProperty("user.home"));
+      String dir = userPref.get(prefPath, System.getProperty("user.home"));
       JFileChooser fc = new JFileChooser(dir);
-      SimpleFileFilter filter=new SimpleFileFilter(new String[] { "txt" }, "Text File");
+      SimpleFileFilter filter = new SimpleFileFilter(new String[]{"txt"}, "Text File");
       fc.setFileFilter(filter);
       fc.setAcceptAllFileFilterUsed(true);
-      if(fc.showSaveDialog(this)==JFileChooser.APPROVE_OPTION){
-         File f=fc.getSelectedFile();
+      if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+         File f = fc.getSelectedFile();
          try {
             FileWriter fw = new FileWriter(f);
-            userPref.put(prefPath,f.getParent());
+            userPref.put(prefPath, f.getParent());
             fw.write(jCmdLine.getText());
             fw.close();
             statusBar.setText(f.getName() + " written.");
-         }
-         catch(IOException ex) {
+         } catch (IOException ex) {
             statusBar.setText("ERROR: " + ex.toString());
          }
       }
    }
 
-   public void executeFile(File f)
-         throws Exception {
+   public void executeFile(File f) throws Exception {
       jCmdLine.writeCommand("Executing " + f.toString() + "\n");
       mExecutive.setScriptSource(f);
       FileInputStream fis = new FileInputStream(f);
@@ -332,10 +326,9 @@ public class JythonFrame
 
    void goButton_actionPerformed(ActionEvent e) {
       try {
-         if(mLastScript != null)
+         if (mLastScript != null)
             executeFile(mLastScript);
-      }
-      catch(Exception ex) {
+      } catch (Exception ex) {
          statusBar.setText(ex.toString());
       }
    }

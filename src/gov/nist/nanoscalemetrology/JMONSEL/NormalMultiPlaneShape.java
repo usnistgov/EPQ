@@ -26,11 +26,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author John Villarrubia
  * @version 1.0
  */
-public class NormalMultiPlaneShape
-   extends
-   MultiPlaneShape
-   implements
-   NormalShape {
+public class NormalMultiPlaneShape extends MultiPlaneShape implements NormalShape {
 
    /*
     * The following local data are used to locally cache information about the
@@ -72,7 +68,7 @@ public class NormalMultiPlaneShape
       carray = new double[numPlanes][];
       int i;
       ListIterator<Plane> it;
-      for(i = 0, it = mPlanes.listIterator(); it.hasNext(); i++) {
+      for (i = 0, it = mPlanes.listIterator(); it.hasNext(); i++) {
          final Plane p = it.next(); // Get next plane
          narray[i] = p.getNormal(); // This plane's normal vector
          carray[i] = p.getPoint(); // A point in this plane
@@ -128,26 +124,13 @@ public class NormalMultiPlaneShape
       int minindex = -1; // Stores index of plane responsible for umin
       int maxindex = -1; // Same for umax. Initial values are illegal
       // indices.
-      result = new double[] {
-         0.,
-         0.,
-         0.,
-         Double.MAX_VALUE
-      }; // Initial value
+      result = new double[]{0., 0., 0., Double.MAX_VALUE}; // Initial value
       // designates
       // no intersection
 
-      final double[] delta = {
-         pos1[0] - pos0[0],
-         pos1[1] - pos0[1],
-         pos1[2] - pos0[2]
-      };
-      for(int i = 0; i < numPlanes; i++) {
-         final double[] pos0minusc = {
-            pos0[0] - carray[i][0],
-            pos0[1] - carray[i][1],
-            pos0[2] - carray[i][2]
-         };
+      final double[] delta = {pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2]};
+      for (int i = 0; i < numPlanes; i++) {
+         final double[] pos0minusc = {pos0[0] - carray[i][0], pos0[1] - carray[i][1], pos0[2] - carray[i][2]};
          /*
           * Note significance of the sign of the next two variables numerator<0
           * means pos0 is inside the current plane; numerator>0 means it's
@@ -156,10 +139,9 @@ public class NormalMultiPlaneShape
           * outside->inside transition. denominator>0 means the opposite.
           * denominator==0 means the trajectory is parallel to the plane.
           */
-         final double numerator = (pos0minusc[0] * narray[i][0]) + (pos0minusc[1] * narray[i][1])
-               + (pos0minusc[2] * narray[i][2]);
+         final double numerator = (pos0minusc[0] * narray[i][0]) + (pos0minusc[1] * narray[i][1]) + (pos0minusc[2] * narray[i][2]);
          final double denominator = (delta[0] * narray[i][0]) + (delta[1] * narray[i][1]) + (delta[2] * narray[i][2]);
-         if(denominator == 0) {
+         if (denominator == 0) {
             /*
              * If the trajectory is parallel to the plane there are no
              * intersections. If it starts inside it's always inside. If it
@@ -169,15 +151,15 @@ public class NormalMultiPlaneShape
              * intersections with other planes of this shape. Otherwise, we
              * return u>1.
              */
-            if((numerator < 0) || ((numerator == 0) && containsTieBreak(narray[i])))
+            if ((numerator < 0) || ((numerator == 0) && containsTieBreak(narray[i])))
                continue;
             return result;
          }
          u = -numerator / denominator; // Compute intersection point
-         if(denominator > 0) { // This is an insidethisplane->outside
+         if (denominator > 0) { // This is an insidethisplane->outside
             // transition. It changes umax.
-            if(u < umax) {
-               if((u < 0)
+            if (u < umax) {
+               if ((u < 0)
                      || (u <= umin)) /*
                                       * If the new umax is < 0 the "inside" is
                                       * behind our line segment If the new umax
@@ -195,14 +177,14 @@ public class NormalMultiPlaneShape
                umax = u;
                maxindex = i; // remember index of this plane
             }
-         } else if(u > umin) { /*
-                                * It changes umin. If the new umin is > 1 the
-                                * "inside" is beyond the end of our line
-                                * segment. If it is >umax this plane's inside
-                                * and an earlier one are disjoint. Return
-                                * "no intersection" in either case.
-                                */
-            if((u > 1) || (u >= umax))
+         } else if (u > umin) { /*
+                                 * It changes umin. If the new umin is > 1 the
+                                 * "inside" is beyond the end of our line
+                                 * segment. If it is >umax this plane's inside
+                                 * and an earlier one are disjoint. Return
+                                 * "no intersection" in either case.
+                                 */
+            if ((u > 1) || (u >= umax))
                return result;
             umin = u;
             minindex = i; // Remember index of this plane
@@ -211,14 +193,14 @@ public class NormalMultiPlaneShape
 
       // When we arrive here [umin,umax] defines the completed intersection
       // interval
-      if(umin > 0) { // Our boundary crossing is outside -> inside at umin
+      if (umin > 0) { // Our boundary crossing is outside -> inside at umin
          result[3] = umin;
          result[0] = narray[minindex][0];
          result[1] = narray[minindex][1];
          result[2] = narray[minindex][2];
          return result;
       } // Otherwise our starting position was already inside
-      if((umax <= 1) && (umax > 0.)) { // Our boundary crossing is inside ->
+      if ((umax <= 1) && (umax > 0.)) { // Our boundary crossing is inside ->
          // outside at umax<1
          result[3] = umax;
          result[0] = narray[maxindex][0];
@@ -245,28 +227,20 @@ public class NormalMultiPlaneShape
       double p0cdotn;
       double[] delta = null;
       // Loop over all planes in the shape
-      for(int i = 0; i < numPlanes; i++) {
-         final double p0c[] = {
-            pos0[0] - carray[i][0],
-            pos0[1] - carray[i][1],
-            pos0[2] - carray[i][2]
-         };
+      for (int i = 0; i < numPlanes; i++) {
+         final double p0c[] = {pos0[0] - carray[i][0], pos0[1] - carray[i][1], pos0[2] - carray[i][2]};
          p0cdotn = (p0c[0] * narray[i][0]) + (p0c[1] * narray[i][1]) + (p0c[2] * narray[i][2]);
-         if(p0cdotn > 0.)
+         if (p0cdotn > 0.)
             return false;
-         if(p0cdotn == 0.) {
-            if(!didDelta) {
-               delta = new double[] {
-                  pos1[0] - pos0[0],
-                  pos1[1] - pos0[1],
-                  pos1[2] - pos0[2]
-               };
+         if (p0cdotn == 0.) {
+            if (!didDelta) {
+               delta = new double[]{pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2]};
                didDelta = true;
             }
             final double deltadotn = (delta[0] * narray[i][0]) + (delta[1] * narray[i][1]) + (delta[2] * narray[i][2]);
-            if(deltadotn > 0.)
+            if (deltadotn > 0.)
                return false;
-            if((deltadotn == 0.) && !containsTieBreak(narray[i]))
+            if ((deltadotn == 0.) && !containsTieBreak(narray[i]))
                return false;
          }
       }
@@ -278,17 +252,18 @@ public class NormalMultiPlaneShape
     * arbitrarily assigns containment based on a tie-break algorithm that is a
     * function of the plane normal, which is supplied as a parameter.
     *
-    * @param normal - the plane's normal vector
+    * @param normal
+    *           - the plane's normal vector
     * @return - true if the plane contains the point, false otherwise.
     */
    private boolean containsTieBreak(double[] normal) {
-      if(normal[0] < 0.)
+      if (normal[0] < 0.)
          return false;
-      if(normal[0] == 0.) {
-         if(normal[1] < 0.)
+      if (normal[0] == 0.) {
+         if (normal[1] < 0.)
             return false;
-         if(normal[1] == 0.)
-            if(normal[2] < 0.)
+         if (normal[1] == 0.)
+            if (normal[2] < 0.)
                return false;
       }
       return true;
@@ -306,14 +281,16 @@ public class NormalMultiPlaneShape
     * which out. The points should be given in order clockwise when viewed from
     * inside the plane, counterclockwise when viewed from outside the plane.
     *
-    * @param p1 double[]
-    * @param p2 double[]
-    * @param p3 double[]
+    * @param p1
+    *           double[]
+    * @param p2
+    *           double[]
+    * @param p3
+    *           double[]
     */
-   public void addPlane(double[] p1, double[] p2, double[] p3)
-         throws EPQFatalException {
+   public void addPlane(double[] p1, double[] p2, double[] p3) throws EPQFatalException {
       final double[] normal = Math2.cross(Math2.minus(p2, p1), Math2.minus(p3, p1));
-      if(Math2.magnitude(normal) == 0.)
+      if (Math2.magnitude(normal) == 0.)
          throw new EPQFatalException("addPlane: 3 supplied points must be non-colinear.");
       addPlane(normal, p1);
    }
@@ -346,7 +323,8 @@ public class NormalMultiPlaneShape
     * for the plane of this shape specified by the given index. n is the
     * outward-pointing normal vector of the plane.
     *
-    * @param index - The index of the plane
+    * @param index
+    *           - The index of the plane
     * @return - the outward-pointing normal vector of the indexed plane
     */
    public double[] getNormal(int index) {

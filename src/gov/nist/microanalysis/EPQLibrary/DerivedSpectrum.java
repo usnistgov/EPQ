@@ -23,11 +23,9 @@ package gov.nist.microanalysis.EPQLibrary;
  * @version 1.0
  */
 
-abstract public class DerivedSpectrum
-   extends BaseSpectrum {
+abstract public class DerivedSpectrum extends BaseSpectrum {
 
-   static class BasicDerivedSpectrum
-      extends DerivedSpectrum {
+   static class BasicDerivedSpectrum extends DerivedSpectrum {
 
       private final double[] mData;
 
@@ -57,7 +55,8 @@ abstract public class DerivedSpectrum
     * DerivedSpectrum - Create a new DerivedSpectrum based on the specified
     * source spectrum.
     * 
-    * @param src ISpectrumData
+    * @param src
+    *           ISpectrumData
     */
    public DerivedSpectrum(ISpectrumData src) {
       super();
@@ -110,19 +109,20 @@ abstract public class DerivedSpectrum
     * (Recursively checks the whole chain of derivation if this derived spectrum
     * is derived from yet another.)
     * 
-    * @param spec ISpectrumData
+    * @param spec
+    *           ISpectrumData
     * @return boolean
     */
    public boolean isDerivedFrom(ISpectrumData spec) {
-      if(mSource == spec)
+      if (mSource == spec)
          return true;
-      if(mSource instanceof DerivedSpectrum)
+      if (mSource instanceof DerivedSpectrum)
          return ((DerivedSpectrum) mSource).isDerivedFrom(spec);
       return false;
    }
 
    public static ISpectrumData ultimateSource(ISpectrumData spec) {
-      if(spec instanceof DerivedSpectrum)
+      if (spec instanceof DerivedSpectrum)
          return ultimateSource(((DerivedSpectrum) spec).mSource);
       else
          return spec;
@@ -134,16 +134,17 @@ abstract public class DerivedSpectrum
     * some modification of the original. Derived spectra are not considered
     * equal to there base regardless.
     * 
-    * @param obj Object
+    * @param obj
+    *           Object
     * @return boolean
     */
    @Override
    public boolean equals(Object obj) {
-      if(obj instanceof DerivedSpectrum) {
+      if (obj instanceof DerivedSpectrum) {
          final DerivedSpectrum ds = (DerivedSpectrum) obj;
-         if((ds.mSource == mSource) && (mProperties.equals(ds.mProperties))) {
-            for(int ch = getChannelCount() - 1; ch >= 0; --ch)
-               if(ds.getCounts(ch) != getCounts(ch))
+         if ((ds.mSource == mSource) && (mProperties.equals(ds.mProperties))) {
+            for (int ch = getChannelCount() - 1; ch >= 0; --ch)
+               if (ds.getCounts(ch) != getCounts(ch))
                   return false;
             return true;
          } else
@@ -157,14 +158,15 @@ abstract public class DerivedSpectrum
     * from a class from which it is already derived. An example would be the
     * NormalizedSpectrum - Normalizing a spectrum twice is probably an error.
     * 
-    * @param cls Class
+    * @param cls
+    *           Class
     * @return boolean
     */
    public boolean isAlreadyDerivedFrom(Class<?> cls) {
       assert (DerivedSpectrum.class.isAssignableFrom(cls));
-      if(mSource.getClass().isAssignableFrom(cls))
+      if (mSource.getClass().isAssignableFrom(cls))
          return true;
-      if(mSource instanceof DerivedSpectrum)
+      if (mSource instanceof DerivedSpectrum)
          return ((DerivedSpectrum) mSource).isAlreadyDerivedFrom(cls);
       return false;
    }

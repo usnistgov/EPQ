@@ -51,15 +51,12 @@ import gov.nist.nanoscalemetrology.JMONSELutils.ULagrangeInterpolation;
  * TODO: Consider revising to reuse Nicholas's EPQLibrary routine of the same
  * name for the energy range above 20 eV. Possibly I should also make an
  * interface with contract specifying that the routine is valid for all energies
- * 0 &lt; E &lt; infinity, so code can distinguish those that do from those that don't.
+ * 0 &lt; E &lt; infinity, so code can distinguish those that do from those that
+ * don't.
  */
-public class NISTMottRS
-   extends
-   RandomizedScatter {
+public class NISTMottRS extends RandomizedScatter {
 
-   public static class NISTMottRSFactory
-      extends
-      RandomizedScatterFactory {
+   public static class NISTMottRSFactory extends RandomizedScatterFactory {
 
       private int extrapMethod = 1;
 
@@ -99,8 +96,7 @@ public class NISTMottRS
       @Override
       public NISTMottRS get(Element elm) {
          final int z = elm.getAtomicNumber();
-         if(mScatter[z] == null || mScatter[z].getExtrapMethod() != extrapMethod
-               || mScatter[z].getMinEforTable() != minEforTable) {
+         if (mScatter[z] == null || mScatter[z].getExtrapMethod() != extrapMethod || mScatter[z].getMinEforTable() != minEforTable) {
             mScatter[z] = new NISTMottRS(elm);
             mScatter[z].setExtrapMethod(extrapMethod);
             mScatter[z].setMinEforTable(minEforTable);
@@ -144,7 +140,7 @@ public class NISTMottRS
        * @param extrapMethod
        */
       public void setExtrapMethod(int extrapMethod) {
-         if((extrapMethod == 1) || (extrapMethod == 2))
+         if ((extrapMethod == 1) || (extrapMethod == 2))
             this.extrapMethod = extrapMethod;
          else
             throw new IllegalArgumentException("extrapMethod must be either 1 or 2.");
@@ -155,22 +151,21 @@ public class NISTMottRS
        * that fall within the range of tabulated values, but the lower limit can
        * be increased from the default value with this setter.
        * 
-       * @param minEforTable in Joules
+       * @param minEforTable
+       *           in Joules
        */
       public void setMinEforTable(double minEforTable) {
-         if(minEforTable >= MIN_NISTMOTT)
+         if (minEforTable >= MIN_NISTMOTT)
             this.minEforTable = minEforTable;
          else
-            throw new IllegalArgumentException("minEforTable must be >= " + Double.toString(MIN_NISTMOTT) + " J ("
-                  + Double.toString(FromSI.eV(MIN_NISTMOTT)) + " eV).");
+            throw new IllegalArgumentException(
+                  "minEforTable must be >= " + Double.toString(MIN_NISTMOTT) + " J (" + Double.toString(FromSI.eV(MIN_NISTMOTT)) + " eV).");
       }
    }
 
-   static private final LitReference.WebSite mReference = new LitReference.WebSite("http://www.nist.gov/srd/nist64.htm", "NIST Electron Elastic-Scattering Cross-Section Database version 3.1", LitReference.createDate(2007, Calendar.AUGUST, 24), new LitReference.Author[] {
-      LitReference.CPowell,
-      LitReference.FSalvat,
-      LitReference.AJablonski
-   });
+   static private final LitReference.WebSite mReference = new LitReference.WebSite("http://www.nist.gov/srd/nist64.htm",
+         "NIST Electron Elastic-Scattering Cross-Section Database version 3.1", LitReference.createDate(2007, Calendar.AUGUST, 24),
+         new LitReference.Author[]{LitReference.CPowell, LitReference.FSalvat, LitReference.AJablonski});
 
    /**
     * Returns a NISTMottRSFactory that uses minEforTable = 50 eV and
@@ -246,14 +241,16 @@ public class NISTMottRS
     * interpolation between 0 at 0 eV and the tabulated value at minEforTable.
     * </p>
     *
-    * @param elm Element
+    * @param elm
+    *           Element
     */
    public NISTMottRS(Element elm) {
       super("NIST Elastic cross-section", mReference);
       assert (elm != null);
       mElement = elm;
       try {
-         final String name = elm.getAtomicNumber() < 10 ? "NistXSec/E0" + Integer.toString(elm.getAtomicNumber()) + ".D64"
+         final String name = elm.getAtomicNumber() < 10
+               ? "NistXSec/E0" + Integer.toString(elm.getAtomicNumber()) + ".D64"
                : "NistXSec/E" + Integer.toString(elm.getAtomicNumber()) + ".D64";
          final InputStream is = gov.nist.microanalysis.EPQLibrary.NISTMottScatteringAngle.class.getResourceAsStream(name);
          final InputStreamReader isr = new InputStreamReader(is, "US-ASCII");
@@ -261,9 +258,9 @@ public class NISTMottRS
          // To ensure that numbers are parsed correctly regardless of locale
          final NumberFormat nf = NumberFormat.getInstance(Locale.US);
          br.readLine();
-         for(int j = 0; j < SPWEM_LEN; ++j) {
+         for (int j = 0; j < SPWEM_LEN; ++j) {
             mSpwem[j] = nf.parse(br.readLine().trim()).doubleValue();
-            for(int i = 0; i < X1_LEN; ++i)
+            for (int i = 0; i < X1_LEN; ++i)
                mX1[j][i] = nf.parse(br.readLine().trim()).doubleValue();
          }
          /*
@@ -272,8 +269,7 @@ public class NISTMottRS
           * is a 2-d table of q vs Log(E) and random #. j indexes log(E). i
           * indexes r. q is related to cos(theta) by 1-2*q*q=cos(theta).
           */
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          throw new EPQFatalException("Unable to construct NISTMottRS: " + ex.toString());
       }
       MottXSatMinEnergy = this.totalCrossSection(minEforTable);
@@ -301,7 +297,8 @@ public class NISTMottRS
     * electron of specified energy on an atom of the element represented by the
     * instance of this class.
     *
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - an angle in radians
     */
    @Override
@@ -310,27 +307,19 @@ public class NISTMottRS
        * Even in extrapMethod 2 (linear interpolation) we use Browning for the
        * angular distribution.
        */
-      if(energy < minEforTable) {
-         if(mBrowning == null) {
+      if (energy < minEforTable) {
+         if (mBrowning == null) {
             mBrowning = new BrowningEmpiricalCrossSection(mElement);
-            sfBrowning = this.totalCrossSection(MIN_NISTMOTT)/mBrowning.totalCrossSection(MIN_NISTMOTT);
+            sfBrowning = this.totalCrossSection(MIN_NISTMOTT) / mBrowning.totalCrossSection(MIN_NISTMOTT);
          }
          return mBrowning.randomScatteringAngle(energy);
-      } else if(energy < MAX_NISTMOTT) {
-         final double q = ULagrangeInterpolation.d2(mX1, new double[] {
-            DL50,
-            0.
-         }, new double[] {
-            PARAM,
-            0.005
-         }, qINTERPOLATIONORDER, new double[] {
-            Math.log(energy),
-            Math2.rgen.nextDouble()
-         })[0];
+      } else if (energy < MAX_NISTMOTT) {
+         final double q = ULagrangeInterpolation.d2(mX1, new double[]{DL50, 0.}, new double[]{PARAM, 0.005}, qINTERPOLATIONORDER,
+               new double[]{Math.log(energy), Math2.rgen.nextDouble()})[0];
          final double com = 1.0 - (2.0 * q * q);
          return com > -1.0 ? (com < 1.0 ? Math.acos(com) : 0.0) : Math.PI;
       } else {
-         if(mRutherford == null)
+         if (mRutherford == null)
             mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
          return mRutherford.randomScatteringAngle(energy);
       }
@@ -344,7 +333,7 @@ public class NISTMottRS
     * @param method
     */
    public void setExtrapMethod(int method) {
-      if((method == 1) || (method == 2))
+      if ((method == 1) || (method == 2))
          extrapMethod = method;
       else
          throw new IllegalArgumentException("setExtrapMethod must be called with method = 1 or 2.");
@@ -356,15 +345,16 @@ public class NISTMottRS
     * keV). The lower limit can be increased from the default value with this
     * setter.
     * 
-    * @param minEforTable in Joules
+    * @param minEforTable
+    *           in Joules
     */
    public void setMinEforTable(double minEforTable) {
-      if(minEforTable >= MIN_NISTMOTT) {
+      if (minEforTable >= MIN_NISTMOTT) {
          this.minEforTable = minEforTable;
          MottXSatMinEnergy = this.totalCrossSection(minEforTable);
       } else
-         throw new IllegalArgumentException("minEforTable must be >= " + Double.toString(MIN_NISTMOTT) + " J ("
-               + Double.toString(FromSI.eV(MIN_NISTMOTT)) + " eV).");
+         throw new IllegalArgumentException(
+               "minEforTable must be >= " + Double.toString(MIN_NISTMOTT) + " J (" + Double.toString(FromSI.eV(MIN_NISTMOTT)) + " eV).");
    }
 
    /**
@@ -382,7 +372,8 @@ public class NISTMottRS
     * totalCrossSection - Computes the total cross section for an electron of
     * the specified energy.
     *
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - in square meters
     */
    @Override
@@ -395,20 +386,20 @@ public class NISTMottRS
        * should be accurate. At low energy, it's not clear that any model is
        * accurate. We use the Browning interpolation here.
        */
-      if(energy < minEforTable) {
-         if(extrapMethod == 2)
+      if (energy < minEforTable) {
+         if (extrapMethod == 2)
             return (MottXSatMinEnergy * energy) / minEforTable;
          else { // Browning interpolation
-            if(mBrowning == null) {
+            if (mBrowning == null) {
                mBrowning = new BrowningEmpiricalCrossSection(mElement);
                sfBrowning = MottXSatMinEnergy / mBrowning.totalCrossSection(minEforTable);
             }
             return sfBrowning * mBrowning.totalCrossSection(energy);
          }
-      } else if(energy < MAX_NISTMOTT)
+      } else if (energy < MAX_NISTMOTT)
          return scale * ULagrangeInterpolation.d1(mSpwem, DL50, PARAM, sigmaINTERPOLATIONORDER, Math.log(energy))[0];
       else {
-         if(mRutherford == null)
+         if (mRutherford == null)
             mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
          return mRutherford.totalCrossSection(energy);
       }

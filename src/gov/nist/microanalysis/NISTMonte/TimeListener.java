@@ -16,8 +16,7 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @author ppinard
  * @author nritchie
  */
-public class TimeListener
-   implements ActionListener {
+public class TimeListener implements ActionListener {
 
    /** Monte Carlo simulator. */
    private final MonteCarloSS mMcss;
@@ -37,10 +36,11 @@ public class TimeListener
    /**
     * Creates a new <code>TimeListener</code>.
     * 
-    * @param mcss Monte Carlo simulator
+    * @param mcss
+    *           Monte Carlo simulator
     */
    public TimeListener(MonteCarloSS mcss) {
-      if(mcss == null)
+      if (mcss == null)
          throw new NullPointerException("mcss == null");
       this.mMcss = mcss;
    }
@@ -50,22 +50,22 @@ public class TimeListener
       assert (ae.getSource() instanceof MonteCarloSS);
       assert (ae.getSource() == mMcss);
 
-      switch(ae.getID()) {
-         case MonteCarloSS.FirstTrajectoryEvent:
+      switch (ae.getID()) {
+         case MonteCarloSS.FirstTrajectoryEvent :
             mStartSimulationTime = System.currentTimeMillis();
             mElapsedTime = 0;
             mStats = new DescriptiveStatistics();
             break;
-         case MonteCarloSS.LastTrajectoryEvent:
+         case MonteCarloSS.LastTrajectoryEvent :
             mElapsedTime = System.currentTimeMillis() - mStartSimulationTime;
             break;
-         case MonteCarloSS.TrajectoryStartEvent:
+         case MonteCarloSS.TrajectoryStartEvent :
             mStartTrajectoryTime = System.currentTimeMillis();
             break;
-         case MonteCarloSS.TrajectoryEndEvent:
+         case MonteCarloSS.TrajectoryEndEvent :
             final long trajectoryTime = System.currentTimeMillis() - mStartTrajectoryTime;
             mStats.add(0.001 * trajectoryTime);
-         default:
+         default :
             break;
       }
 
@@ -102,19 +102,19 @@ public class TimeListener
    /**
     * Writes the simulation and trajectory time in the specified file.
     * 
-    * @param outputFile output file
-    * @throws IOException if an error occurs while writing the file
+    * @param outputFile
+    *           output file
+    * @throws IOException
+    *            if an error occurs while writing the file
     */
-   public void dumpToFile(File outputFile)
-         throws IOException {
+   public void dumpToFile(File outputFile) throws IOException {
       final FileWriter writer = new FileWriter(outputFile);
       final String eol = System.getProperty("line.separator");
 
       writer.append("Simulation time: " + getSimulationTime() + " s" + eol);
 
       final UncertainValue2 trajTime = getMeanTrajectoryTime();
-      writer.append("Average trajectory time: " + 1000.0 * trajTime.doubleValue() + " +- " + 1000.0 * trajTime.uncertainty()
-            + " ms");
+      writer.append("Average trajectory time: " + 1000.0 * trajTime.doubleValue() + " +- " + 1000.0 * trajTime.uncertainty() + " ms");
 
       writer.close();
    }

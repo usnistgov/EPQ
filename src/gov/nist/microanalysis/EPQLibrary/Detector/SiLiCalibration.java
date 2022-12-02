@@ -31,9 +31,7 @@ import gov.nist.microanalysis.Utility.HalfUpFormat;
  * @author nritchie
  * @version 1.0
  */
-public class SiLiCalibration
-   extends
-   EDSCalibration {
+public class SiLiCalibration extends EDSCalibration {
 
    protected static final double MIN_OVERVOLTAGE = 1.1;
    private transient double[] mEfficiency;
@@ -47,8 +45,7 @@ public class SiLiCalibration
    private static Material createMaterial(Element elm) {
       try {
          return MaterialFactory.createPureElement(elm);
-      }
-      catch(final EPQException e) {
+      } catch (final EPQException e) {
          e.printStackTrace();
       }
       return null;
@@ -93,7 +90,7 @@ public class SiLiCalibration
     */
    @Override
    public double[] getEfficiency(DetectorProperties dp) {
-      if(mEfficiency == null) {
+      if (mEfficiency == null) {
          mEfficiency = new double[dp.getChannelCount()];
          final SpectrumProperties sp = dp.getProperties();
          final double goldLayer = sp.getNumericWithDefault(SpectrumProperties.GoldLayer, 0.0) * 1.0e-9;
@@ -119,10 +116,9 @@ public class SiLiCalibration
          final double deadMassThickness = si.getDensity() * deadLayer;
          final double detMassThickness = si.getDensity() * thickness;
          final double oo4pi = 1.0 / (4.0 * Math.PI);
-         for(int i = 0; i < mEfficiency.length; ++i) {
+         for (int i = 0; i < mEfficiency.length; ++i) {
             final double e = ToSI.eV((scale * (i + 0.5)) + offset);
-            mEfficiency[i] = (wind != null ? wind.transmission(e) : 1.0)
-                  * (mContamination != null ? mContamination.transmission(e) : 1.0) * area
+            mEfficiency[i] = (wind != null ? wind.transmission(e) : 1.0) * (mContamination != null ? mContamination.transmission(e) : 1.0) * area
                   * Math.exp(-mac.compute(ni, e) * niMassThickness) * Math.exp(-mac.compute(gold, e) * goldMassThickness)
                   * Math.exp(-mac.compute(al, e) * alMassThickness) * Math.exp(-mac.compute(si, e) * deadMassThickness)
                   * (1.0 - Math.exp(-mac.compute(si, e) * detMassThickness)) * oo4pi;
@@ -133,23 +129,23 @@ public class SiLiCalibration
 
    public Element getFirstVisible(int family) {
       Element res = null;
-      switch(family) {
-         case AtomicShell.KFamily:
+      switch (family) {
+         case AtomicShell.KFamily :
             res = Element.byAtomicNumber(mFirstKElement);
-            if(res.equals(Element.None))
+            if (res.equals(Element.None))
                res = Element.B;
             break;
-         case AtomicShell.LFamily:
+         case AtomicShell.LFamily :
             res = Element.byAtomicNumber(mFirstLElement);
-            if(res.equals(Element.None))
+            if (res.equals(Element.None))
                res = Element.Sc;
             break;
-         case AtomicShell.MFamily:
+         case AtomicShell.MFamily :
             res = Element.byAtomicNumber(mFirstMElement);
-            if(res.equals(Element.None))
+            if (res.equals(Element.None))
                res = Element.La;
             break;
-         default:
+         default :
             res = Element.Uub;
       }
       return res;
@@ -157,20 +153,20 @@ public class SiLiCalibration
    }
 
    public void setFirstVisible(int family, Element elm) {
-      switch(family) {
-         case AtomicShell.KFamily:
+      switch (family) {
+         case AtomicShell.KFamily :
             mFirstKElement = elm.getAtomicNumber();
             break;
-         case AtomicShell.LFamily:
+         case AtomicShell.LFamily :
             mFirstLElement = elm.getAtomicNumber();
             break;
-         case AtomicShell.MFamily:
+         case AtomicShell.MFamily :
             mFirstMElement = elm.getAtomicNumber();
             break;
-         case AtomicShell.NFamily:
+         case AtomicShell.NFamily :
             mFirstNElement = elm.getAtomicNumber();
             break;
-         default:
+         default :
             assert false;
       }
    }
@@ -181,16 +177,16 @@ public class SiLiCalibration
     */
    @Override
    public boolean isVisible(XRayTransition xrt, double eBeam) {
-      switch(xrt.getFamily()) {
-         case AtomicShell.KFamily:
+      switch (xrt.getFamily()) {
+         case AtomicShell.KFamily :
             return (xrt.getElement().getAtomicNumber() >= mFirstKElement) && (xrt.getEdgeEnergy() < (eBeam / MIN_OVERVOLTAGE));
-         case AtomicShell.LFamily:
+         case AtomicShell.LFamily :
             return (xrt.getElement().getAtomicNumber() >= mFirstLElement) && (xrt.getEdgeEnergy() < (eBeam / MIN_OVERVOLTAGE));
-         case AtomicShell.MFamily:
+         case AtomicShell.MFamily :
             return (xrt.getElement().getAtomicNumber() >= mFirstMElement) && (xrt.getEdgeEnergy() < (eBeam / MIN_OVERVOLTAGE));
-         case AtomicShell.NFamily:
+         case AtomicShell.NFamily :
             return (xrt.getElement().getAtomicNumber() >= mFirstNElement) && (xrt.getEdgeEnergy() < (eBeam / MIN_OVERVOLTAGE));
-         default:
+         default :
             return false;
       }
    }
@@ -208,13 +204,13 @@ public class SiLiCalibration
       mHash = Integer.MAX_VALUE;
       // THese were selected as the first element that has shells which can
       // contribute to these families.
-      if(mFirstKElement < Element.elmLi)
+      if (mFirstKElement < Element.elmLi)
          mFirstKElement = Element.elmB;
-      if(mFirstLElement < Element.elmAl)
+      if (mFirstLElement < Element.elmAl)
          mFirstLElement = Element.elmSc;
-      if(mFirstMElement < Element.elmSr)
+      if (mFirstMElement < Element.elmSr)
          mFirstMElement = Element.elmLa;
-      if(mFirstNElement < Element.elmU)
+      if (mFirstNElement < Element.elmU)
          mFirstNElement = Element.elmU;
       return this;
    }
@@ -224,7 +220,7 @@ public class SiLiCalibration
     */
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE)
+      if (mHash == Integer.MAX_VALUE)
          mHash = Objects.hash(super.hashCode(), mEfficiency, mFirstKElement, mFirstLElement, mFirstMElement, mFWHM);
       // System.out.println("SiLi.hashCode()=" + Integer.toString(mHash));
       return mHash;
@@ -235,11 +231,11 @@ public class SiLiCalibration
     */
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
-      if(!super.equals(obj))
+      if (!super.equals(obj))
          return false;
       final SiLiCalibration other = (SiLiCalibration) obj;
       return Arrays.equals(mEfficiency, other.mEfficiency) && Objects.equals(mFirstKElement, other.mFirstKElement)

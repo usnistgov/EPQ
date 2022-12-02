@@ -24,8 +24,7 @@ import java.util.List;
  * elastic scattering cross sections and to generate randomized angles generated
  * from the partial cross section.
  */
-abstract public class RandomizedScatter
-   extends AlgorithmClass {
+abstract public class RandomizedScatter extends AlgorithmClass {
 
    protected RandomizedScatter(String name, LitReference ref) {
       super("Elastic cross-section", name, ref);
@@ -44,7 +43,8 @@ abstract public class RandomizedScatter
     * totalCrossSection - Computes the total cross section for an electron of
     * the specified energy.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - in square meters
     */
    abstract public double totalCrossSection(double energy);
@@ -55,7 +55,8 @@ abstract public class RandomizedScatter
     * electron of specified energy on an atom of the element represented by the
     * instance of this class.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - an angle in radians
     */
    abstract public double randomScatteringAngle(double energy);

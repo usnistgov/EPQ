@@ -35,9 +35,12 @@ public class ScatterMechanismTest {
     * scatter rates for various energies in the range specified by the input
     * arguments. This can be compared to independent calculation.
     *
-    * @param minE -- double, the minimum energy at which to compute
-    * @param maxE -- double, the maximum energy at which to compute
-    * @param n -- int, the number of intervals into which the energy is to be
+    * @param minE
+    *           -- double, the minimum energy at which to compute
+    * @param maxE
+    *           -- double, the maximum energy at which to compute
+    * @param n
+    *           -- int, the number of intervals into which the energy is to be
     *           divided
     * @return -- an array double[n] of scatter rates at the corresponding
     *         energies
@@ -51,11 +54,15 @@ public class ScatterMechanismTest {
     * scatter rates for various energies in the range specified by the input
     * arguments. This can be compared to independent calculation.
     *
-    * @param minE -- double, the minimum energy at which to compute
-    * @param maxE -- double, the maximum energy at which to compute
-    * @param n -- int, the number of intervals into which the energy is to be
+    * @param minE
+    *           -- double, the minimum energy at which to compute
+    * @param maxE
+    *           -- double, the maximum energy at which to compute
+    * @param n
+    *           -- int, the number of intervals into which the energy is to be
     *           divided
-    * @param repeats -- int, the number of times to repeat the n intervals
+    * @param repeats
+    *           -- int, the number of times to repeat the n intervals
     *           calculation for timing purposes. Default = 1.
     * @return -- an array double[n] of scatter rates at the corresponding
     *         energies
@@ -65,25 +72,21 @@ public class ScatterMechanismTest {
       long t0, tf, tint;
 
       final double[] sr = new double[n];
-      final Electron el = new Electron(new double[] {
-         0.,
-         0.,
-         0.
-      }, 0.);
+      final Electron el = new Electron(new double[]{0., 0., 0.}, 0.);
 
       final double inc = (maxE - minE) / (n - 1);
 
       t0 = System.currentTimeMillis(); // Start the "stopwatch"
-      for(int j = 0; j < repeats; j++)
-         for(int i = 0; i < n; i++) {
+      for (int j = 0; j < repeats; j++)
+         for (int i = 0; i < n; i++) {
             el.setEnergy(minE + (i * inc)); // Set electron energy to test value
             sr[i] = sm.scatterRate(el); // Load output of scatterRate method
          }
       tint = System.currentTimeMillis();
 
       // Run a null loop to subtract loop overhead time
-      for(int j = 0; j < repeats; j++)
-         for(int i = 0; i < n; i++)
+      for (int j = 0; j < repeats; j++)
+         for (int i = 0; i < n; i++)
 
             el.setEnergy(minE + (i * inc)); // Set electron energy to test value
       tf = System.currentTimeMillis();
@@ -105,11 +108,16 @@ public class ScatterMechanismTest {
     * Constructs histograms of SE energies resulting from calls to the scatter
     * method.
     *
-    * @param n -- long, the number of scatter events to simulate
-    * @param kE -- double, the PE kinetic energy
-    * @param minE -- double, the energy of the minimum bin in the histogram
-    * @param maxE -- double, the energy of the maximum bin in the histogram
-    * @param nbins -- int, the number of bins in the histogram
+    * @param n
+    *           -- long, the number of scatter events to simulate
+    * @param kE
+    *           -- double, the PE kinetic energy
+    * @param minE
+    *           -- double, the energy of the minimum bin in the histogram
+    * @param maxE
+    *           -- double, the energy of the maximum bin in the histogram
+    * @param nbins
+    *           -- int, the number of bins in the histogram
     * @return -- an array long[nbins] of counts at the correponding energies
     */
    public long[] SE_kE_Histogram(long n, double kE, double minE, double maxE, int nbins) {
@@ -117,39 +125,31 @@ public class ScatterMechanismTest {
       long t0, tf, tint;
 
       final long[] hist = new long[nbins];
-      final Electron el = new Electron(new double[] {
-         0.,
-         0.,
-         0.
-      }, kE);
+      final Electron el = new Electron(new double[]{0., 0., 0.}, kE);
       Electron se;
-      final Electron se2 = new Electron(new double[] {
-         0.,
-         0.,
-         0.
-      }, kE);
+      final Electron se2 = new Electron(new double[]{0., 0., 0.}, kE);
       final double binsize = (maxE - minE) / (nbins - 1);
       int binnum;
       @SuppressWarnings("unused")
       long total = 0;
 
       t0 = System.currentTimeMillis(); // Start the "stopwatch"
-      for(long i = 0; i < (n - 1); i++) {
+      for (long i = 0; i < (n - 1); i++) {
          se = sm.scatter(el); // Do the scatter & get a SE
-         if(se != null) {
+         if (se != null) {
             // Determine bin number and increment it
             binnum = (int) ((se.getEnergy() - minE) / binsize);
-            if((binnum >= 0) && (binnum < nbins))
+            if ((binnum >= 0) && (binnum < nbins))
                hist[binnum]++;
          }
          el.setEnergy(kE); // Restore el energy
       }
       tint = System.currentTimeMillis();
-      for(long i = 0; i < (n - 1); i++) {
-         if(se2 != null) {
+      for (long i = 0; i < (n - 1); i++) {
+         if (se2 != null) {
             // Determine bin number and increment it
             binnum = (int) ((se2.getEnergy() - minE) / binsize);
-            if((binnum >= 0) && (binnum < nbins))
+            if ((binnum >= 0) && (binnum < nbins))
                total++;
          }
          el.setEnergy(kE); // Restore el energy
@@ -174,13 +174,18 @@ public class ScatterMechanismTest {
     * Constructs histograms of PE angles resulting from calls to the scatter
     * method.
     *
-    * @param n -- long, the number of scatter events to simulate
-    * @param kE -- double, the PE kinetic energy
-    * @param minTheta -- double, the angle of the minimum bin in the histogram
+    * @param n
+    *           -- long, the number of scatter events to simulate
+    * @param kE
+    *           -- double, the PE kinetic energy
+    * @param minTheta
+    *           -- double, the angle of the minimum bin in the histogram
     *           (radians)
-    * @param maxTheta -- double, the angle of the maximum bin in the histogram
+    * @param maxTheta
+    *           -- double, the angle of the maximum bin in the histogram
     *           (radians)
-    * @param nbins -- int, the number of bins in the histogram
+    * @param nbins
+    *           -- int, the number of bins in the histogram
     * @return -- an array long[nbins] of counts at the correponding angles
     */
    public long[] PE_Theta_Histogram(long n, double kE, double minTheta, double maxTheta, int nbins) {
@@ -188,11 +193,7 @@ public class ScatterMechanismTest {
       long t0, tf, tint;
 
       final long[] hist = new long[nbins];
-      final Electron el = new Electron(new double[] {
-         0.,
-         0.,
-         0.
-      }, kE);
+      final Electron el = new Electron(new double[]{0., 0., 0.}, kE);
       @SuppressWarnings("unused")
       Electron se;
 
@@ -202,18 +203,18 @@ public class ScatterMechanismTest {
       long total = 0;
 
       t0 = System.currentTimeMillis(); // Start the "stopwatch"
-      for(long i = 0; i < (n - 1); i++) {
+      for (long i = 0; i < (n - 1); i++) {
          se = sm.scatter(el); // Do the scatter & get a SE
          binnum = (int) ((el.getTheta() - minTheta) / binsize);
-         if((binnum >= 0) && (binnum < nbins))
+         if ((binnum >= 0) && (binnum < nbins))
             hist[binnum]++;
          el.setDirection(0., 0.); // Reset direction before next sim
       }
       tint = System.currentTimeMillis();
-      for(long i = 0; i < (n - 1); i++) {
+      for (long i = 0; i < (n - 1); i++) {
          // Determine bin number and increment it
          binnum = (int) ((el.getTheta() - minTheta) / binsize);
-         if((binnum >= 0) && (binnum < nbins))
+         if ((binnum >= 0) && (binnum < nbins))
             total++;
          el.setDirection(0., 0.);
       }

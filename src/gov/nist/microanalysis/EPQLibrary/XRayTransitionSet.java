@@ -33,11 +33,7 @@ import java.util.TreeSet;
  * XRayTransitionSet represents a set of XRayTransition objects along with logic
  * to assign the set a common shorthand name.
  */
-public class XRayTransitionSet
-   implements
-   Comparable<XRayTransitionSet>,
-   Cloneable,
-   Iterable<XRayTransition> {
+public class XRayTransitionSet implements Comparable<XRayTransitionSet>, Cloneable, Iterable<XRayTransition> {
    /**
     * A single transition
     */
@@ -169,190 +165,54 @@ public class XRayTransitionSet
    private final Set<XRayTransition> mSet = new TreeSet<XRayTransition>();
    private final double mMinWeight;
 
-   private static final int[] KAlphaTransitions = {
-      XRayTransition.KA1,
-      XRayTransition.KA2
+   private static final int[] KAlphaTransitions = {XRayTransition.KA1, XRayTransition.KA2};
+
+   private static final int[] KBetaTransitions = {XRayTransition.KB1, XRayTransition.KB2, XRayTransition.KB3, XRayTransition.KB4, XRayTransition.KB5};
+
+   private static final int[] LAlphaTransitions = {XRayTransition.LA1, XRayTransition.LA2};
+   private static final int[] LBetaTransitions = {XRayTransition.LB15, // 14
+         XRayTransition.LB2, // 15
+         XRayTransition.LB5, // 16
+         XRayTransition.LB6, // 17
+         XRayTransition.LB7, // 18
+         XRayTransition.LB1, // 31
+         XRayTransition.LB17, // 32
+         XRayTransition.LB10, // 44
+         XRayTransition.LB3, // 45
+         XRayTransition.LB4, // 46
+         XRayTransition.LB9, // 47
    };
 
-   private static final int[] KBetaTransitions = {
-      XRayTransition.KB1,
-      XRayTransition.KB2,
-      XRayTransition.KB3,
-      XRayTransition.KB4,
-      XRayTransition.KB5
-   };
+   private static final int[] LGammaTransitions = {XRayTransition.LG1, XRayTransition.LG5, XRayTransition.LG6, XRayTransition.LG8, XRayTransition.LG2,
+         XRayTransition.LG11, XRayTransition.LG3, XRayTransition.LG4, XRayTransition.LG4p};
 
-   private static final int[] LAlphaTransitions = {
-      XRayTransition.LA1,
-      XRayTransition.LA2
-   };
-   private static final int[] LBetaTransitions = {
-      XRayTransition.LB15, // 14
-      XRayTransition.LB2, // 15
-      XRayTransition.LB5, // 16
-      XRayTransition.LB6, // 17
-      XRayTransition.LB7, // 18
-      XRayTransition.LB1, // 31
-      XRayTransition.LB17, // 32
-      XRayTransition.LB10, // 44
-      XRayTransition.LB3, // 45
-      XRayTransition.LB4, // 46
-      XRayTransition.LB9, // 47
-   };
-
-   private static final int[] LGammaTransitions = {
-      XRayTransition.LG1,
-      XRayTransition.LG5,
-      XRayTransition.LG6,
-      XRayTransition.LG8,
-      XRayTransition.LG2,
-      XRayTransition.LG11,
-      XRayTransition.LG3,
-      XRayTransition.LG4,
-      XRayTransition.LG4p
-   };
-
-   private static final int[] LOtherTransitions = {
-      XRayTransition.L3N2,
-      XRayTransition.L3N3,
-      XRayTransition.L3O2,
-      XRayTransition.L3O3,
-      XRayTransition.L3P1,
-      XRayTransition.Ll,
-      XRayTransition.Ls,
-      XRayTransition.Lt,
-      XRayTransition.Lu,
-      XRayTransition.L2M2,
-      XRayTransition.L2M5,
-      XRayTransition.L2N2,
-      XRayTransition.L2N3,
-      XRayTransition.L2N5,
-      XRayTransition.L2O2,
-      XRayTransition.L2O3,
-      XRayTransition.L2P2,
-      XRayTransition.Ln,
-      XRayTransition.Lv,
-      XRayTransition.L1M1,
-      XRayTransition.L1N1,
-      XRayTransition.L1N4,
-      XRayTransition.L1O1,
-      XRayTransition.L1O4
-   };
-   private static final int[] MAlphaTransitions = {
-      XRayTransition.MA1,
-      XRayTransition.MA2
-   };
-   private static final int[] MBetaTransitions = {
-      XRayTransition.MB
-   };
-   private static final int[] MGammaTransitions = {
-      XRayTransition.MG
-   };
-   private static final int[] MOtherTransitions = {
-      XRayTransition.M1N2,
-      XRayTransition.M1N3,
-      XRayTransition.M2M4,
-      XRayTransition.M2N1,
-      XRayTransition.M2N4,
-      XRayTransition.M2O4,
-      XRayTransition.M3M4,
-      XRayTransition.M3M5,
-      XRayTransition.M3N1,
-      XRayTransition.M3N4,
-      XRayTransition.M3O1,
-      XRayTransition.M3O4,
-      XRayTransition.M3O5,
-      XRayTransition.M4N3,
-      XRayTransition.M4O2,
-      XRayTransition.MZ2,
-      XRayTransition.M5O3,
-      XRayTransition.MZ1
-   };
-   private static final int[] KFamily = {
-      XRayTransition.KA1,
-      XRayTransition.KA2,
-      XRayTransition.KB1,
-      XRayTransition.KB2,
-      XRayTransition.KB3,
-      XRayTransition.KB4,
-      XRayTransition.KB5
-   };
-   private static final int[] LFamily = {
-      XRayTransition.L3N2,
-      XRayTransition.L3N3,
-      XRayTransition.L3O2,
-      XRayTransition.L3O3,
-      XRayTransition.L3P1,
-      XRayTransition.LA1,
-      XRayTransition.LA2,
-      XRayTransition.LB15,
-      XRayTransition.LB2,
-      XRayTransition.LB5,
-      XRayTransition.LB6,
-      XRayTransition.LB7,
-      XRayTransition.Ll,
-      XRayTransition.Ls,
-      XRayTransition.Lt,
-      XRayTransition.Lu,
-      XRayTransition.L2M2,
-      XRayTransition.L2M5,
-      XRayTransition.L2N2,
-      XRayTransition.L2N3,
-      XRayTransition.L2N5,
-      XRayTransition.L2O2,
-      XRayTransition.L2O3,
-      XRayTransition.L2P2,
-      XRayTransition.LB1,
-      XRayTransition.LB17,
-      XRayTransition.LG1,
-      XRayTransition.LG5,
-      XRayTransition.LG6,
-      XRayTransition.LG8,
-      XRayTransition.Ln,
-      XRayTransition.Lv,
-      XRayTransition.L1M1,
-      XRayTransition.L1N1,
-      XRayTransition.L1N4,
-      XRayTransition.L1O1,
-      XRayTransition.L1O4,
-      XRayTransition.LB10,
-      XRayTransition.LB3,
-      XRayTransition.LB4,
-      XRayTransition.LB9,
-      XRayTransition.LG2,
-      XRayTransition.LG11,
-      XRayTransition.LG3,
-      XRayTransition.LG4,
-      XRayTransition.LG4p
-   };
-   static private final int[] MFamily = {
-      XRayTransition.M1N2,
-      XRayTransition.M1N3,
-      XRayTransition.M2M4,
-      XRayTransition.M2N1,
-      XRayTransition.M2N4,
-      XRayTransition.M2O4,
-      XRayTransition.M3M4,
-      XRayTransition.M3M5,
-      XRayTransition.M3N1,
-      XRayTransition.M3N4,
-      XRayTransition.M3O1,
-      XRayTransition.M3O4,
-      XRayTransition.M3O5,
-      XRayTransition.MG,
-      XRayTransition.M4N3,
-      XRayTransition.M4O2,
-      XRayTransition.MB,
-      XRayTransition.MZ2,
-      XRayTransition.M5O3,
-      XRayTransition.MA1,
-      XRayTransition.MA2,
-      XRayTransition.MZ1
-   };
-   static private final int[] NFamily = {
-      XRayTransition.N4N6,
-      XRayTransition.N5N6
-   };
+   private static final int[] LOtherTransitions = {XRayTransition.L3N2, XRayTransition.L3N3, XRayTransition.L3O2, XRayTransition.L3O3,
+         XRayTransition.L3P1, XRayTransition.Ll, XRayTransition.Ls, XRayTransition.Lt, XRayTransition.Lu, XRayTransition.L2M2, XRayTransition.L2M5,
+         XRayTransition.L2N2, XRayTransition.L2N3, XRayTransition.L2N5, XRayTransition.L2O2, XRayTransition.L2O3, XRayTransition.L2P2,
+         XRayTransition.Ln, XRayTransition.Lv, XRayTransition.L1M1, XRayTransition.L1N1, XRayTransition.L1N4, XRayTransition.L1O1,
+         XRayTransition.L1O4};
+   private static final int[] MAlphaTransitions = {XRayTransition.MA1, XRayTransition.MA2};
+   private static final int[] MBetaTransitions = {XRayTransition.MB};
+   private static final int[] MGammaTransitions = {XRayTransition.MG};
+   private static final int[] MOtherTransitions = {XRayTransition.M1N2, XRayTransition.M1N3, XRayTransition.M2M4, XRayTransition.M2N1,
+         XRayTransition.M2N4, XRayTransition.M2O4, XRayTransition.M3M4, XRayTransition.M3M5, XRayTransition.M3N1, XRayTransition.M3N4,
+         XRayTransition.M3O1, XRayTransition.M3O4, XRayTransition.M3O5, XRayTransition.M4N3, XRayTransition.M4O2, XRayTransition.MZ2,
+         XRayTransition.M5O3, XRayTransition.MZ1};
+   private static final int[] KFamily = {XRayTransition.KA1, XRayTransition.KA2, XRayTransition.KB1, XRayTransition.KB2, XRayTransition.KB3,
+         XRayTransition.KB4, XRayTransition.KB5};
+   private static final int[] LFamily = {XRayTransition.L3N2, XRayTransition.L3N3, XRayTransition.L3O2, XRayTransition.L3O3, XRayTransition.L3P1,
+         XRayTransition.LA1, XRayTransition.LA2, XRayTransition.LB15, XRayTransition.LB2, XRayTransition.LB5, XRayTransition.LB6, XRayTransition.LB7,
+         XRayTransition.Ll, XRayTransition.Ls, XRayTransition.Lt, XRayTransition.Lu, XRayTransition.L2M2, XRayTransition.L2M5, XRayTransition.L2N2,
+         XRayTransition.L2N3, XRayTransition.L2N5, XRayTransition.L2O2, XRayTransition.L2O3, XRayTransition.L2P2, XRayTransition.LB1,
+         XRayTransition.LB17, XRayTransition.LG1, XRayTransition.LG5, XRayTransition.LG6, XRayTransition.LG8, XRayTransition.Ln, XRayTransition.Lv,
+         XRayTransition.L1M1, XRayTransition.L1N1, XRayTransition.L1N4, XRayTransition.L1O1, XRayTransition.L1O4, XRayTransition.LB10,
+         XRayTransition.LB3, XRayTransition.LB4, XRayTransition.LB9, XRayTransition.LG2, XRayTransition.LG11, XRayTransition.LG3, XRayTransition.LG4,
+         XRayTransition.LG4p};
+   static private final int[] MFamily = {XRayTransition.M1N2, XRayTransition.M1N3, XRayTransition.M2M4, XRayTransition.M2N1, XRayTransition.M2N4,
+         XRayTransition.M2O4, XRayTransition.M3M4, XRayTransition.M3M5, XRayTransition.M3N1, XRayTransition.M3N4, XRayTransition.M3O1,
+         XRayTransition.M3O4, XRayTransition.M3O5, XRayTransition.MG, XRayTransition.M4N3, XRayTransition.M4O2, XRayTransition.MB, XRayTransition.MZ2,
+         XRayTransition.M5O3, XRayTransition.MA1, XRayTransition.MA2, XRayTransition.MZ1};
+   static private final int[] NFamily = {XRayTransition.N4N6, XRayTransition.N5N6};
    static private final int[] KShell = XRayTransition.transitionsIntoShell(AtomicShell.K);
    static private final int[] LIShell = XRayTransition.transitionsIntoShell(AtomicShell.LI);
    static private final int[] LIIShell = XRayTransition.transitionsIntoShell(AtomicShell.LII);
@@ -367,34 +227,9 @@ public class XRayTransitionSet
 
    private static final TreeMap<String, int[]> mNameToTransitions = initializeMapping();
 
-   private static final String[] mPrecidence = {
-      ELEMENT,
-      K_FAMILY,
-      L_FAMILY,
-      M_FAMILY,
-      N_FAMILY,
-      K_ALPHA,
-      K_BETA,
-      L_ALPHA,
-      L_BETA,
-      L_GAMMA,
-      L_OTHER,
-      M_ALPHA,
-      M_BETA,
-      M_GAMMA,
-      M_OTHER,
-      K_SHELL,
-      LI_SHELL,
-      LII_SHELL,
-      LIII_SHELL,
-      MI_SHELL,
-      MII_SHELL,
-      MIII_SHELL,
-      MIV_SHELL,
-      MV_SHELL,
-      NIV_SHELL,
-      NV_SHELL,
-   };
+   private static final String[] mPrecidence = {ELEMENT, K_FAMILY, L_FAMILY, M_FAMILY, N_FAMILY, K_ALPHA, K_BETA, L_ALPHA, L_BETA, L_GAMMA, L_OTHER,
+         M_ALPHA, M_BETA, M_GAMMA, M_OTHER, K_SHELL, LI_SHELL, LII_SHELL, LIII_SHELL, MI_SHELL, MII_SHELL, MIII_SHELL, MIV_SHELL, MV_SHELL, NIV_SHELL,
+         NV_SHELL,};
 
    static private TreeMap<String, int[]> initializeMapping() {
       final TreeMap<String, int[]> res = new TreeMap<String, int[]>();
@@ -432,16 +267,17 @@ public class XRayTransitionSet
     * the specified transition (it exists for the current element) but does not.
     * Returns true otherwise (transition doesn't exist or is in set).
     * 
-    * @param xrt An integer in the range [XRayTransitonSet.KA1,
+    * @param xrt
+    *           An integer in the range [XRayTransitonSet.KA1,
     *           XRayTransitionSet.Last)
     * @return boolean
     */
    public boolean containsExisting(int xrt) {
       assert (XRayTransition.isWellKnown(xrt));
       boolean res = false;
-      if((getElement() != Element.None) && XRayTransition.exists(getElement(), xrt)) {
-         for(final XRayTransition sx : mSet)
-            if(sx.getTransitionIndex() == xrt) {
+      if ((getElement() != Element.None) && XRayTransition.exists(getElement(), xrt)) {
+         for (final XRayTransition sx : mSet)
+            if (sx.getTransitionIndex() == xrt) {
                res = true;
                break;
             }
@@ -459,13 +295,13 @@ public class XRayTransitionSet
     */
    protected boolean containsAllExistingTransitions(int[] xrts) {
       int exists = 0;
-      if(mSet.size() > xrts.length)
+      if (mSet.size() > xrts.length)
          return false;
       // Note: mSet can be smaller than xrts
-      for(int i = 0; i < xrts.length; ++i) {
-         if(XRayTransition.exists(getElement(), xrts[i]))
+      for (int i = 0; i < xrts.length; ++i) {
+         if (XRayTransition.exists(getElement(), xrts[i]))
             ++exists;
-         if(!containsExisting(xrts[i]))
+         if (!containsExisting(xrts[i]))
             return false;
       }
       return exists == mSet.size();
@@ -474,11 +310,11 @@ public class XRayTransitionSet
    private boolean approximateMatch(int[] xrts) {
       final Element elm = getElement();
       int cx = 0;
-      for(final int xrt : xrts) {
+      for (final int xrt : xrts) {
          final double w = XRayTransition.getWeight(elm, xrt, XRayTransition.NormalizeFamily);
-         if(w > mMinWeight) {
+         if (w > mMinWeight) {
             ++cx;
-            if(find(xrt) == null)
+            if (find(xrt) == null)
                return false;
          }
       }
@@ -487,42 +323,42 @@ public class XRayTransitionSet
 
    private void updateMode() {
       mMode = EMPTY;
-      if(!mSet.isEmpty()) {
+      if (!mSet.isEmpty()) {
          mMode = COLLECTION;
-         for(final String element2 : mPrecidence) {
+         for (final String element2 : mPrecidence) {
             final int[] xrts = mNameToTransitions.get(element2);
-            if(approximateMatch(xrts)) {
+            if (approximateMatch(xrts)) {
                mMode = element2;
                return;
             }
          }
-         if(mSet.size() == 1)
+         if (mSet.size() == 1)
             mMode = TRANSITION;
       }
    }
 
    public static String getClassNameForTransition(int tr) {
-      if(Arrays.binarySearch(KAlphaTransitions, tr) >= 0)
+      if (Arrays.binarySearch(KAlphaTransitions, tr) >= 0)
          return K_ALPHA;
-      if(Arrays.binarySearch(KBetaTransitions, tr) >= 0)
+      if (Arrays.binarySearch(KBetaTransitions, tr) >= 0)
          return K_BETA;
-      if(Arrays.binarySearch(LAlphaTransitions, tr) >= 0)
+      if (Arrays.binarySearch(LAlphaTransitions, tr) >= 0)
          return L_ALPHA;
-      if(Arrays.binarySearch(LBetaTransitions, tr) >= 0)
+      if (Arrays.binarySearch(LBetaTransitions, tr) >= 0)
          return L_BETA;
-      if(Arrays.binarySearch(LGammaTransitions, tr) >= 0)
+      if (Arrays.binarySearch(LGammaTransitions, tr) >= 0)
          return L_GAMMA;
-      if(Arrays.binarySearch(LOtherTransitions, tr) >= 0)
+      if (Arrays.binarySearch(LOtherTransitions, tr) >= 0)
          return L_OTHER;
-      if(Arrays.binarySearch(MAlphaTransitions, tr) >= 0)
+      if (Arrays.binarySearch(MAlphaTransitions, tr) >= 0)
          return M_ALPHA;
-      if(Arrays.binarySearch(MBetaTransitions, tr) >= 0)
+      if (Arrays.binarySearch(MBetaTransitions, tr) >= 0)
          return M_BETA;
-      if(Arrays.binarySearch(MGammaTransitions, tr) >= 0)
+      if (Arrays.binarySearch(MGammaTransitions, tr) >= 0)
          return M_GAMMA;
-      if(Arrays.binarySearch(MOtherTransitions, tr) >= 0)
+      if (Arrays.binarySearch(MOtherTransitions, tr) >= 0)
          return M_OTHER;
-      if(Arrays.binarySearch(NFamily, tr) >= 0)
+      if (Arrays.binarySearch(NFamily, tr) >= 0)
          return "N";
       return "";
    }
@@ -531,22 +367,24 @@ public class XRayTransitionSet
     * Constructs a XRayTransitionSet consisting of all transitions for the
     * specified element between the energy e0 and e1;
     * 
-    * @param el The element
-    * @param e0 The lower energy bound
-    * @param e1 The upper energy bound
+    * @param el
+    *           The element
+    * @param e0
+    *           The lower energy bound
+    * @param e1
+    *           The upper energy bound
     */
    public XRayTransitionSet(Element el, double e0, double e1) {
       super();
       assert (e0 < e1);
       mMinWeight = 0.0;
-      for(int tr = XRayTransition.KA1; tr < XRayTransition.Last; ++tr)
-         if(XRayTransition.exists(el, tr))
+      for (int tr = XRayTransition.KA1; tr < XRayTransition.Last; ++tr)
+         if (XRayTransition.exists(el, tr))
             try {
                final double e = XRayTransition.getEnergy(el, tr);
-               if((e >= e0) && (e <= e1))
+               if ((e >= e0) && (e <= e1))
                   mSet.add(new XRayTransition(el, tr));
-            }
-            catch(final EPQException e) {
+            } catch (final EPQException e) {
                // never happens...
             }
       updateMode();
@@ -556,8 +394,10 @@ public class XRayTransitionSet
     * Constructs an XRayTransitionSet for the specified element and specific
     * line set. All lines with weights greater than zero are included
     * 
-    * @param el The elemnt
-    * @param type One of x_FAMILY, x_SHELL etc.
+    * @param el
+    *           The elemnt
+    * @param type
+    *           One of x_FAMILY, x_SHELL etc.
     */
    public XRayTransitionSet(Element el, String type) {
       this(el, type, 0.0);
@@ -569,18 +409,21 @@ public class XRayTransitionSet
     * <code>XRayTransition.getWeight(el, xrts[i],XRayTransition.NormalizeKLM)</code>
     * ) must be greater than or equal to minWeight
     * 
-    * @param el The elemnt
-    * @param type One of x_FAMILY, x_SHELL etc.
-    * @param minWeight The minimum KLM line weight to include
+    * @param el
+    *           The elemnt
+    * @param type
+    *           One of x_FAMILY, x_SHELL etc.
+    * @param minWeight
+    *           The minimum KLM line weight to include
     */
    public XRayTransitionSet(Element el, String type, double minWeight) {
       super();
       mMinWeight = minWeight;
       final int[] xrts = mNameToTransitions.get(type);
-      if(xrts == null)
+      if (xrts == null)
          throw new EPQFatalException("Unexpected type in XRayTransitionSet constructor.");
-      for(final int xrt : xrts)
-         if(XRayTransition.exists(el, xrt) && (XRayTransition.getWeight(el, xrt, XRayTransition.NormalizeKLM) > minWeight))
+      for (final int xrt : xrts)
+         if (XRayTransition.exists(el, xrt) && (XRayTransition.getWeight(el, xrt, XRayTransition.NormalizeKLM) > minWeight))
             mSet.add(new XRayTransition(el, xrt));
       updateMode();
       assert (minWeight >= 0) || mMode.equals(type);
@@ -592,24 +435,28 @@ public class XRayTransitionSet
     * <code>XRayTransition.getWeight(el, xrts[i],XRayTransition.NormalizeKLM)</code>
     * ) must be greater than or equal to minWeight
     * 
-    * @param el The elemnt
-    * @param type One of x_FAMILY, x_SHELL etc.
-    * @param minWeight The minimum KLM line weight to include
-    * @param minE maximum edge energy to include
-    * @param maxE maximum edge energy to include
+    * @param el
+    *           The elemnt
+    * @param type
+    *           One of x_FAMILY, x_SHELL etc.
+    * @param minWeight
+    *           The minimum KLM line weight to include
+    * @param minE
+    *           maximum edge energy to include
+    * @param maxE
+    *           maximum edge energy to include
     */
-   public XRayTransitionSet(Element el, String type, double minWeight, double minE, double maxE)
-         throws EPQException {
+   public XRayTransitionSet(Element el, String type, double minWeight, double minE, double maxE) throws EPQException {
       super();
       mMinWeight = minWeight;
       final int[] xrts = mNameToTransitions.get(type);
-      if(xrts == null)
+      if (xrts == null)
          throw new EPQFatalException("Unexpected type in XRayTransitionSet constructor.");
-      for(final int xrt2 : xrts)
-         if(XRayTransition.exists(el, xrt2)) {
+      for (final int xrt2 : xrts)
+         if (XRayTransition.exists(el, xrt2)) {
             final XRayTransition xrt = new XRayTransition(el, xrt2);
             final double ee = xrt.getEdgeEnergy();
-            if((ee > minE) && (ee < maxE) && (xrt.getWeight(XRayTransition.NormalizeKLM) > minWeight))
+            if ((ee > minE) && (ee < maxE) && (xrt.getWeight(XRayTransition.NormalizeKLM) > minWeight))
                mSet.add(xrt);
          }
       updateMode();
@@ -621,13 +468,16 @@ public class XRayTransitionSet
     * <code>XRayTransition.getWeight(el, xrts[i],XRayTransition.NormalizeKLM)</code>
     * ) must be greater than or equal to minWeight
     * 
-    * @param el The elemnt
-    * @param type One of x_FAMILY, x_SHELL etc.
-    * @param minWeight The minimum KLM line weight to include
-    * @param maxE maximum edge energy to include
+    * @param el
+    *           The elemnt
+    * @param type
+    *           One of x_FAMILY, x_SHELL etc.
+    * @param minWeight
+    *           The minimum KLM line weight to include
+    * @param maxE
+    *           maximum edge energy to include
     */
-   public XRayTransitionSet(Element el, String type, double minWeight, double maxE)
-         throws EPQException {
+   public XRayTransitionSet(Element el, String type, double minWeight, double maxE) throws EPQException {
       this(el, type, minWeight, 0.0, maxE);
    }
 
@@ -640,12 +490,12 @@ public class XRayTransitionSet
    public XRayTransitionSet(Collection<XRayTransition> c) {
       super();
       mMinWeight = 0.0;
-      if(!c.isEmpty()) {
+      if (!c.isEmpty()) {
          final Element elm = c.iterator().next().getElement();
-         for(final XRayTransition xrt : c) {
-            if(!xrt.getElement().equals(elm))
+         for (final XRayTransition xrt : c) {
+            if (!xrt.getElement().equals(elm))
                throw new EPQFatalException(MIXED_MESSAGE);
-            if(xrt.exists())
+            if (xrt.exists())
                mSet.add(xrt);
          }
       }
@@ -660,47 +510,47 @@ public class XRayTransitionSet
       super();
       mMinWeight = 0.0;
       String name = null;
-      switch(shell.getShell()) {
-         case AtomicShell.K:
+      switch (shell.getShell()) {
+         case AtomicShell.K :
             name = K_SHELL;
             break;
-         case AtomicShell.LI:
+         case AtomicShell.LI :
             name = LI_SHELL;
             break;
-         case AtomicShell.LII:
+         case AtomicShell.LII :
             name = LII_SHELL;
             break;
-         case AtomicShell.LIII:
+         case AtomicShell.LIII :
             name = LIII_SHELL;
             break;
-         case AtomicShell.MI:
+         case AtomicShell.MI :
             name = MI_SHELL;
             break;
-         case AtomicShell.MII:
+         case AtomicShell.MII :
             name = MII_SHELL;
             break;
-         case AtomicShell.MIII:
+         case AtomicShell.MIII :
             name = MIII_SHELL;
             break;
-         case AtomicShell.MIV:
+         case AtomicShell.MIV :
             name = MIV_SHELL;
             break;
-         case AtomicShell.MV:
+         case AtomicShell.MV :
             name = MV_SHELL;
             break;
-         case AtomicShell.NIV:
+         case AtomicShell.NIV :
             name = NIV_SHELL;
             break;
-         case AtomicShell.NV:
+         case AtomicShell.NV :
             name = NV_SHELL;
             break;
       }
-      if(name == null)
+      if (name == null)
          throw new EPQFatalException("Unexpected shell in XRayTransitionSet constructor.");
       final int[] xrts = mNameToTransitions.get(name);
       assert xrts != null;
-      for(final int xrt : xrts)
-         if(XRayTransition.exists(shell.getElement(), xrt))
+      for (final int xrt : xrts)
+         if (XRayTransition.exists(shell.getElement(), xrt))
             mSet.add(new XRayTransition(shell.getElement(), xrt));
       updateMode();
    }
@@ -714,26 +564,26 @@ public class XRayTransitionSet
       mMinWeight = 0.0;
       assert (AtomicShell.isLineFamily(family));
       String name = null;
-      switch(family) {
-         case AtomicShell.KFamily:
+      switch (family) {
+         case AtomicShell.KFamily :
             name = K_FAMILY;
             break;
-         case AtomicShell.LFamily:
+         case AtomicShell.LFamily :
             name = L_FAMILY;
             break;
-         case AtomicShell.MFamily:
+         case AtomicShell.MFamily :
             name = M_FAMILY;
             break;
-         case AtomicShell.NFamily:
+         case AtomicShell.NFamily :
             name = N_FAMILY;
             break;
       }
-      if(name == null)
+      if (name == null)
          throw new EPQFatalException("Unexpected shell in XRayTransitionSet constructor.");
       final int[] xrts = mNameToTransitions.get(name);
       assert xrts != null;
-      for(final int xrt : xrts)
-         if(XRayTransition.exists(el, xrt))
+      for (final int xrt : xrts)
+         if (XRayTransition.exists(el, xrt))
             mSet.add(new XRayTransition(el, xrt));
       updateMode();
    }
@@ -744,7 +594,7 @@ public class XRayTransitionSet
    public XRayTransitionSet(XRayTransition xrt) {
       super();
       mMinWeight = 0.0;
-      if(xrt.exists())
+      if (xrt.exists())
          mSet.add(xrt);
       updateMode();
    }
@@ -756,8 +606,8 @@ public class XRayTransitionSet
    public XRayTransitionSet(Element el) {
       super();
       mMinWeight = 0.0;
-      for(int tr = XRayTransition.KA1; tr < XRayTransition.Last; ++tr)
-         if(XRayTransition.exists(el, tr))
+      for (int tr = XRayTransition.KA1; tr < XRayTransition.Last; ++tr)
+         if (XRayTransition.exists(el, tr))
             mSet.add(new XRayTransition(el, tr));
       updateMode();
    }
@@ -777,19 +627,19 @@ public class XRayTransitionSet
    }
 
    public void add(XRayTransition xrt) {
-      if((mSet.size() > 0) && (!getElement().equals(xrt.getElement())))
+      if ((mSet.size() > 0) && (!getElement().equals(xrt.getElement())))
          throw new EPQFatalException(MIXED_MESSAGE);
-      if((!mSet.contains(xrt)) && xrt.exists()) {
+      if ((!mSet.contains(xrt)) && xrt.exists()) {
          mSet.add(xrt);
          updateMode();
       }
    }
 
    public void add(Collection<XRayTransition> xrts) {
-      for(final XRayTransition xrt : xrts) {
-         if((mSet.size() > 0) && (!getElement().equals(xrt.getElement())))
+      for (final XRayTransition xrt : xrts) {
+         if ((mSet.size() > 0) && (!getElement().equals(xrt.getElement())))
             throw new EPQFatalException(MIXED_MESSAGE);
-         if((!mSet.contains(xrt)) && xrt.exists())
+         if ((!mSet.contains(xrt)) && xrt.exists())
             mSet.add(xrt);
       }
       updateMode();
@@ -812,12 +662,12 @@ public class XRayTransitionSet
     */
    public void removeAll(XRayTransitionSet xrts) {
       boolean modified = false;
-      for(final XRayTransition xrt : xrts)
-         if(mSet.contains(xrt)) {
+      for (final XRayTransition xrt : xrts)
+         if (mSet.contains(xrt)) {
             mSet.remove(xrt);
             modified = true;
          }
-      if(modified)
+      if (modified)
          updateMode();
    }
 
@@ -827,13 +677,13 @@ public class XRayTransitionSet
     * @param xrts
     */
    public void add(XRayTransitionSet xrts) {
-      if(xrts.size() == 0)
+      if (xrts.size() == 0)
          return;
-      if((mSet.size() > 0) && (!getElement().equals(xrts.getElement())))
+      if ((mSet.size() > 0) && (!getElement().equals(xrts.getElement())))
          throw new EPQFatalException(MIXED_MESSAGE);
       final int sz = mSet.size();
       mSet.addAll(xrts.mSet);
-      if(mSet.size() > sz)
+      if (mSet.size() > sz)
          updateMode();
    }
 
@@ -877,8 +727,8 @@ public class XRayTransitionSet
     * @return XRayTransition or null
     */
    public XRayTransition find(int transition) {
-      for(final XRayTransition xrt : mSet)
-         if(xrt.getTransitionIndex() == transition)
+      for (final XRayTransition xrt : mSet)
+         if (xrt.getTransitionIndex() == transition)
             return xrt;
       return null;
    }
@@ -910,23 +760,23 @@ public class XRayTransitionSet
    @Override
    public String toString() {
       // Note: Update parseString to reflect any changes to toString()
-      if(mMode == EMPTY)
+      if (mMode == EMPTY)
          return "";
-      if(mMode == TRANSITION)
+      if (mMode == TRANSITION)
          return mSet.iterator().next().toString();
-      if(mMode == COLLECTION) {
+      if (mMode == COLLECTION) {
          final XRayTransition weighiest = getWeighiestTransition();
          return weighiest.getIUPACName() + " + " + Integer.toString(mSet.size() - 1) + " others";
       }
       assert (mNameToTransitions.get(mMode) != null);
       return getElement().toAbbrev() + " " + mMode;
    }
-   
+
    public String toParseable() {
-	   ArrayList<String> strs = new ArrayList<String>();
-	   for(XRayTransition xrt : mSet)
-		   strs.add(xrt.toString());
-	   return String.join(", ", strs);
+      ArrayList<String> strs = new ArrayList<String>();
+      for (XRayTransition xrt : mSet)
+         strs.add(xrt.toString());
+      return String.join(", ", strs);
    }
 
    /**
@@ -936,10 +786,10 @@ public class XRayTransitionSet
     * @return An XRayTransitionSet representing the contents of str
     */
    public static XRayTransitionSet parseString(String str) {
-      if(str.length() == 0)
+      if (str.length() == 0)
          return new XRayTransitionSet();
-      for(final String name : mNameToTransitions.keySet())
-         if(str.endsWith(name)) {
+      for (final String name : mNameToTransitions.keySet())
+         if (str.endsWith(name)) {
             final Element el = Element.byName(str.substring(0, str.length() - name.length()).trim());
             assert (el.isValid());
             return new XRayTransitionSet(el, name);
@@ -951,11 +801,11 @@ public class XRayTransitionSet
          do {
             final int begin = end + 2;
             end = str.indexOf(", ", begin);
-            if(end == -1)
+            if (end == -1)
                end = str.length();
             final XRayTransition xrt = XRayTransition.parseString(str.substring(begin, end).trim());
             xrts.add(xrt);
-         } while(end != str.length());
+         } while (end != str.length());
          return new XRayTransitionSet(xrts);
       }
    }
@@ -987,12 +837,11 @@ public class XRayTransitionSet
     */
    public XRayTransition minEnergy() {
       XRayTransition res = null;
-      for(final XRayTransition xrt : mSet)
+      for (final XRayTransition xrt : mSet)
          try {
-            if((res == null) || (xrt.getEnergy() < res.getEnergy()))
+            if ((res == null) || (xrt.getEnergy() < res.getEnergy()))
                res = xrt;
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             // ignore it..
          }
       return res;
@@ -1005,12 +854,11 @@ public class XRayTransitionSet
     */
    public XRayTransition maxEnergy() {
       XRayTransition res = null;
-      for(final XRayTransition xrt : mSet)
+      for (final XRayTransition xrt : mSet)
          try {
-            if((res == null) || (xrt.getEnergy() > res.getEnergy()))
+            if ((res == null) || (xrt.getEnergy() > res.getEnergy()))
                res = xrt;
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             // ignore it..
          }
       return res;
@@ -1031,11 +879,11 @@ public class XRayTransitionSet
     */
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(obj instanceof XRayTransitionSet) {
+      if (obj instanceof XRayTransitionSet) {
          final XRayTransitionSet xrts = (XRayTransitionSet) obj;
          return toString().equals(xrts.toString());
       }
@@ -1048,16 +896,16 @@ public class XRayTransitionSet
    @Override
    public int compareTo(XRayTransitionSet xrts) {
       int res = getElement().compareTo(xrts.getElement());
-      if(res == 0) {
+      if (res == 0) {
          // Both sets are kept in sorted order so..
          final Iterator<XRayTransition> i = mSet.iterator();
          final Iterator<XRayTransition> j = xrts.mSet.iterator();
-         while((i.hasNext()) && (j.hasNext())) {
+         while ((i.hasNext()) && (j.hasNext())) {
             res = i.next().compareTo(j.next());
-            if(res != 0)
+            if (res != 0)
                break;
          }
-         if(res == 0)
+         if (res == 0)
             res = (i.hasNext() ? 1 : (j.hasNext() ? -1 : 0));
       }
       return res;
@@ -1084,9 +932,11 @@ public class XRayTransitionSet
     * are normalized by the weightiest transition in the set (mode==NORMALIZED)
     * or not (mode==ABSOLUTE).
     * 
-    * @param weight In [0.0,1.0] (0.0-&gt;All, 1.0 &amp; NORMALIZED -&gt;
+    * @param weight
+    *           In [0.0,1.0] (0.0-&gt;All, 1.0 &amp; NORMALIZED -&gt;
     *           Weightiest)
-    * @param mode One of NORMALIZED or ABSOLUTE
+    * @param mode
+    *           One of NORMALIZED or ABSOLUTE
     * @return XRayTransitionSet
     */
    public XRayTransitionSet getWeightiestTransitions(double weight, NormalizeMode mode) {
@@ -1094,24 +944,24 @@ public class XRayTransitionSet
       assert (weight <= 1.0);
       final TreeSet<XRayTransition> ts = new TreeSet<XRayTransition>();
       double norm = 1.0;
-      if(mode == NormalizeMode.NORMALIZED) {
+      if (mode == NormalizeMode.NORMALIZED) {
          norm = 0.0;
-         for(final XRayTransition xrt : this) {
+         for (final XRayTransition xrt : this) {
             final double w = xrt.getWeight(XRayTransition.NormalizeFamily);
-            if(w > norm)
+            if (w > norm)
                norm = w;
          }
       }
-      if(norm > 0.0)
-         for(final XRayTransition xrt : this)
-            if((xrt.getWeight(XRayTransition.NormalizeFamily) / norm) >= weight)
+      if (norm > 0.0)
+         for (final XRayTransition xrt : this)
+            if ((xrt.getWeight(XRayTransition.NormalizeFamily) / norm) >= weight)
                ts.add(xrt);
       return new XRayTransitionSet(ts);
    }
 
    public double sumWeight() {
       double sum = 0.0;
-      for(final XRayTransition xrt : this)
+      for (final XRayTransition xrt : this)
          sum += xrt.getWeight(XRayTransition.NormalizeFamily);
       return sum;
    }
@@ -1133,9 +983,9 @@ public class XRayTransitionSet
    public XRayTransition getWeighiestTransition() {
       double max = 0.0;
       XRayTransition res = null;
-      for(final XRayTransition xrt : mSet) {
+      for (final XRayTransition xrt : mSet) {
          final double w = xrt.getWeight(XRayTransition.NormalizeFamily);
-         if(w >= max) {
+         if (w >= max) {
             max = w;
             res = xrt;
          }
@@ -1150,7 +1000,7 @@ public class XRayTransitionSet
     */
    public double getSumWeight() {
       double sum = 0.0;
-      for(final XRayTransition xrt : mSet)
+      for (final XRayTransition xrt : mSet)
          sum += xrt.getWeight(XRayTransition.NormalizeFamily);
       return sum;
    }
@@ -1165,9 +1015,9 @@ public class XRayTransitionSet
    public XRayTransition getWeighiestTransition(Element elm) {
       double max = 0.0;
       XRayTransition res = null;
-      for(final XRayTransition xrt : mSet) {
+      for (final XRayTransition xrt : mSet) {
          final double w = xrt.getWeight(XRayTransition.NormalizeFamily);
-         if(w >= max) {
+         if (w >= max) {
             max = w;
             res = xrt;
          }
@@ -1175,52 +1025,45 @@ public class XRayTransitionSet
       return res;
    }
 
-   static public final String[] allBasicTransitionSets = {
-      XRayTransitionSet.K_ALPHA,
-      XRayTransitionSet.K_BETA,
-      XRayTransitionSet.K_FAMILY,
-      XRayTransitionSet.L_ALPHA,
-      XRayTransitionSet.L_BETA,
-      XRayTransitionSet.L_FAMILY,
-      XRayTransitionSet.M_ALPHA,
-      XRayTransitionSet.M_BETA,
-      XRayTransitionSet.M_GAMMA,
-      XRayTransitionSet.M_FAMILY
-   };
+   static public final String[] allBasicTransitionSets = {XRayTransitionSet.K_ALPHA, XRayTransitionSet.K_BETA, XRayTransitionSet.K_FAMILY,
+         XRayTransitionSet.L_ALPHA, XRayTransitionSet.L_BETA, XRayTransitionSet.L_FAMILY, XRayTransitionSet.M_ALPHA, XRayTransitionSet.M_BETA,
+         XRayTransitionSet.M_GAMMA, XRayTransitionSet.M_FAMILY};
 
    /**
     * Returns an ArrayList of Strings containing all the transition sets that
     * can be excited by an beam of the specified energy for the specified
     * element.
     * 
-    * @param el An element
-    * @param eB The incident beam energy
+    * @param el
+    *           An element
+    * @param eB
+    *           The incident beam energy
     * @return ArrayList A list of String objects such as K_ALPHA, K_BETA, ...,
     *         M_FAMILY
     */
    static public ArrayList<String> getBasicFamilies(Element el, double eB) {
       final ArrayList<String> res = new ArrayList<String>();
-      if(XRayTransition.exists(el, XRayTransition.KA1) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.K))) {
+      if (XRayTransition.exists(el, XRayTransition.KA1) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.K))) {
          res.add(XRayTransitionSet.K_ALPHA);
-         if(XRayTransition.exists(el, XRayTransition.KB1)) {
+         if (XRayTransition.exists(el, XRayTransition.KB1)) {
             res.add(XRayTransitionSet.K_BETA);
             res.add(XRayTransitionSet.K_FAMILY);
          }
       }
-      if(XRayTransition.exists(el, XRayTransition.LA1) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.LIII))) {
+      if (XRayTransition.exists(el, XRayTransition.LA1) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.LIII))) {
          res.add(XRayTransitionSet.L_ALPHA);
-         if(XRayTransition.exists(el, XRayTransition.LB1) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.LII))) {
+         if (XRayTransition.exists(el, XRayTransition.LB1) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.LII))) {
             res.add(XRayTransitionSet.L_BETA);
             res.add(XRayTransitionSet.L_FAMILY);
          }
       }
-      if(XRayTransition.exists(el, XRayTransition.MA1) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.MV))) {
+      if (XRayTransition.exists(el, XRayTransition.MA1) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.MV))) {
          res.add(XRayTransitionSet.M_ALPHA);
-         if(XRayTransition.exists(el, XRayTransition.MB) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.MIV))) {
+         if (XRayTransition.exists(el, XRayTransition.MB) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.MIV))) {
             res.add(XRayTransitionSet.M_BETA);
             res.add(XRayTransitionSet.M_FAMILY);
          }
-         if(XRayTransition.exists(el, XRayTransition.MG) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.MIII)))
+         if (XRayTransition.exists(el, XRayTransition.MG) && (eB > AtomicShell.getEdgeEnergy(el, AtomicShell.MIII)))
             res.add(XRayTransitionSet.M_GAMMA);
       }
       return res;
@@ -1252,8 +1095,8 @@ public class XRayTransitionSet
     */
    static public XRayTransitionSet intersection(XRayTransitionSet a, XRayTransitionSet b) {
       final XRayTransitionSet res = new XRayTransitionSet();
-      for(final XRayTransition xrt : a)
-         if(b.contains(xrt))
+      for (final XRayTransition xrt : a)
+         if (b.contains(xrt))
             res.mSet.add(xrt);
       res.updateMode();
       return res;
@@ -1270,8 +1113,8 @@ public class XRayTransitionSet
    static public XRayTransitionSet difference(XRayTransitionSet xrts1, XRayTransitionSet xrts2) {
       final XRayTransitionSet res = new XRayTransitionSet();
       res.mSet.addAll(xrts1.mSet);
-      for(final XRayTransition xrt : xrts1.mSet)
-         if(res.contains(xrt))
+      for (final XRayTransition xrt : xrts1.mSet)
+         if (res.contains(xrt))
             res.mSet.remove(xrt);
       res.updateMode();
       return res;
@@ -1282,18 +1125,18 @@ public class XRayTransitionSet
       union.addAll(xrts1.getTransitions());
       union.addAll(xrts2.getTransitions());
       double score = 0.0, sum = 0.0;
-      for(final XRayTransition xrt : union) {
+      for (final XRayTransition xrt : union) {
          final double w = xrt.getWeight(XRayTransition.NormalizeFamily);
          sum += w;
-         if(xrts1.contains(xrt) && xrts2.contains(xrt))
+         if (xrts1.contains(xrt) && xrts2.contains(xrt))
             score += w;
       }
       return sum > 0.0 ? score / sum : 0.0;
    }
 
    public boolean isValid() {
-      for(final XRayTransition xrt : mSet)
-         if(!xrt.isWellKnown()) {
+      for (final XRayTransition xrt : mSet)
+         if (!xrt.isWellKnown()) {
             System.err.println("Not valid: " + xrt + " in " + mSet);
             return false;
          }

@@ -24,9 +24,7 @@ import gov.nist.microanalysis.Utility.Histogram;
  * @author nritchie
  * @version 1.0
  */
-public class BSEDDepthDetector
-   implements
-   ActionListener {
+public class BSEDDepthDetector implements ActionListener {
 
    private final Histogram mHistogram;
    private final double mOffset;
@@ -50,20 +48,20 @@ public class BSEDDepthDetector
    @Override
    public void actionPerformed(ActionEvent ae) {
       assert (ae.getSource() instanceof MonteCarloSS);
-      switch(ae.getID()) {
-         case MonteCarloSS.ScatterEvent:
-         case MonteCarloSS.NonScatterEvent: {
+      switch (ae.getID()) {
+         case MonteCarloSS.ScatterEvent :
+         case MonteCarloSS.NonScatterEvent : {
             final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
             final Electron el = mcss.getElectron();
             mMaxDepth = Math.max(mMaxDepth, el.getPosition()[2]);
             break;
          }
-         case MonteCarloSS.BackscatterEvent: {
-            if(mMaxDepth != INIT_VAL)
+         case MonteCarloSS.BackscatterEvent : {
+            if (mMaxDepth != INIT_VAL)
                mHistogram.add(mMaxDepth - mOffset);
             break;
          }
-         case MonteCarloSS.TrajectoryStartEvent:
+         case MonteCarloSS.TrajectoryStartEvent :
             mMaxDepth = INIT_VAL;
             break;
       }

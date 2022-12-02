@@ -26,9 +26,7 @@ import gov.nist.microanalysis.Utility.CSVReader;
  * @version 1.0
  */
 
-public class XRayWindow2
-   implements
-   IXRayWindowProperties {
+public class XRayWindow2 implements IXRayWindowProperties {
 
    private String mName;
    private final double mChWidth;
@@ -57,13 +55,15 @@ public class XRayWindow2
     * Plotted input resource against XRayWindow2.transmission(..) and they
     * agree. 19-Feb-2008
     * 
-    * @param resourceName "AP3_3.csv" or similar
-    * @param chWidth in SI
-    * @param sp SpectrumProperties associated with the Window
+    * @param resourceName
+    *           "AP3_3.csv" or similar
+    * @param chWidth
+    *           in SI
+    * @param sp
+    *           SpectrumProperties associated with the Window
     * @throws EPQException
     */
-   public XRayWindow2(String resourceName, double chWidth, SpectrumProperties sp)
-         throws EPQException {
+   public XRayWindow2(String resourceName, double chWidth, SpectrumProperties sp) throws EPQException {
       mChWidth = chWidth;
       mProperties = sp.clone();
       mResourceName = resourceName;
@@ -76,15 +76,14 @@ public class XRayWindow2
 
    @Override
    public double transmission(double energy) {
-      if(mTransmission == null)
+      if (mTransmission == null)
          loadTransmission();
-      if(energy < mMin)
+      if (energy < mMin)
          return 0.0;
-      if(energy < mMax)
+      if (energy < mMax)
          return mTransmission[(int) Math.round((energy - mMin) / mChWidth)];
       else
-         return mHighEnergyWindow != null ? mHighEnergyScale * mHighEnergyWindow.transmission(energy)
-               : mTransmission[mTransmission.length - 1];
+         return mHighEnergyWindow != null ? mHighEnergyScale * mHighEnergyWindow.transmission(energy) : mTransmission[mTransmission.length - 1];
    }
 
    private void loadTransmission() {
@@ -99,34 +98,30 @@ public class XRayWindow2
       double e = FromSI.eV(mMin);
       final double dE = FromSI.eV(mChWidth);
       int start, end = 0;
-      for(int i = 0; i < nBins; i++, e += dE) { // i indexes into mTransmission
+      for (int i = 0; i < nBins; i++, e += dE) { // i indexes into mTransmission
          start = end;
          end = data.length;
-         for(int j = start; j < data.length; ++j)
-            if(data[j][0] >= (e + (dE / 2.0))) {
+         for (int j = start; j < data.length; ++j)
+            if (data[j][0] >= (e + (dE / 2.0))) {
                end = j;
                break;
             }
-         if(end > start) {
+         if (end > start) {
             // average multiple values...
             double sum = 0.0;
-            for(int j = start; j < end; ++j)
+            for (int j = start; j < end; ++j)
                sum += data[j][1];
             mTransmission[i] = sum / (end - start);
          } else
             // interpolate
-            mTransmission[i] = data[start - 1][1] + ((data[start][1] - data[start - 1][1])
-                  * ((e - data[start - 1][0]) / (data[start][0] - data[start - 1][0])));
+            mTransmission[i] = data[start - 1][1]
+                  + ((data[start][1] - data[start - 1][1]) * ((e - data[start - 1][0]) / (data[start][0] - data[start - 1][0])));
       }
       final double gridTh = mProperties.getNumericWithDefault(SpectrumProperties.SupportGridThickness, Double.NaN);
       final double openArea = mProperties.getNumericWithDefault(SpectrumProperties.WindowOpenArea, Double.NaN);
 
-      if(!(Double.isNaN(gridTh) || Double.isNaN(openArea))) {
-         final Material si = new Material(new Composition(new Element[] {
-            Element.Si
-         }, new double[] {
-            1.0
-         }), ToSI.gPerCC(2.33));
+      if (!(Double.isNaN(gridTh) || Double.isNaN(openArea))) {
+         final Material si = new Material(new Composition(new Element[]{Element.Si}, new double[]{1.0}), ToSI.gPerCC(2.33));
          mHighEnergyWindow = new GridMountedWindow(si, 1.0e-3 * gridTh, 0.01 * openArea);
          mHighEnergyScale = mTransmission[mTransmission.length - 1] / mHighEnergyWindow.transmission(mMax);
       }
@@ -147,7 +142,8 @@ public class XRayWindow2
    /**
     * setName
     * 
-    * @param name (non-Javadoc)
+    * @param name
+    *           (non-Javadoc)
     * @see gov.nist.microanalysis.EPQLibrary.Detector.IXRayWindowProperties#setName(java.lang.String)
     */
    @Override
@@ -175,7 +171,7 @@ public class XRayWindow2
 
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE) {
+      if (mHash == Integer.MAX_VALUE) {
          final int prime = 31;
          int result = 1;
          long temp;
@@ -183,7 +179,7 @@ public class XRayWindow2
          result = (prime * result) + (int) (temp ^ (temp >>> 32));
          result = (prime * result) + ((mName == null) ? 0 : mName.hashCode());
          result = (prime * result) + ((mProperties == null) ? 0 : mProperties.hashCode());
-         if(result == Integer.MAX_VALUE)
+         if (result == Integer.MAX_VALUE)
             result = Integer.MIN_VALUE;
          mHash = result;
       }
@@ -192,24 +188,24 @@ public class XRayWindow2
 
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final XRayWindow2 other = (XRayWindow2) obj;
-      if(Double.doubleToLongBits(mChWidth) != Double.doubleToLongBits(other.mChWidth))
+      if (Double.doubleToLongBits(mChWidth) != Double.doubleToLongBits(other.mChWidth))
          return false;
-      if(mName == null) {
-         if(other.mName != null)
+      if (mName == null) {
+         if (other.mName != null)
             return false;
-      } else if(!mName.equals(other.mName))
+      } else if (!mName.equals(other.mName))
          return false;
-      if(mProperties == null) {
-         if(other.mProperties != null)
+      if (mProperties == null) {
+         if (other.mProperties != null)
             return false;
-      } else if(!mProperties.equals(other.mProperties))
+      } else if (!mProperties.equals(other.mProperties))
          return false;
       return true;
    }

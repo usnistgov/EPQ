@@ -21,8 +21,7 @@ import java.util.List;
 /**
  * Defines a mechanism to construct instances of IRandomizedScatter.
  */
-abstract public class RandomizedScatterFactory
-   extends AlgorithmClass {
+abstract public class RandomizedScatterFactory extends AlgorithmClass {
 
    protected RandomizedScatterFactory(String name, LitReference ref) {
       super("Scatter factory", name, ref);
@@ -36,12 +35,8 @@ abstract public class RandomizedScatterFactory
     */
    abstract public RandomizedScatter get(Element elm);
 
-   static private final AlgorithmClass[] mImplementations = {
-      GasScatteringCrossSection.Factory,
-      NISTMottScatteringAngle.Factory,
-      ScreenedRutherfordScatteringAngle.Factory,
-      CzyzewskiMottScatteringAngle.Factory
-   };
+   static private final AlgorithmClass[] mImplementations = {GasScatteringCrossSection.Factory, NISTMottScatteringAngle.Factory,
+         ScreenedRutherfordScatteringAngle.Factory, CzyzewskiMottScatteringAngle.Factory};
 
    @Override
    public List<AlgorithmClass> getAllImplementations() {

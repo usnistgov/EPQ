@@ -53,8 +53,8 @@ public class SpectrumFitResult {
 
       @Override
       public String toString() {
-         return "Iint=" + mIntegratedIntensity.toString() + ", Ip=" + mPeakIntensity.toString() + ", w="
-               + mGaussianWidth.toString() + ", " + mPosition.toString();
+         return "Iint=" + mIntegratedIntensity.toString() + ", Ip=" + mPeakIntensity.toString() + ", w=" + mGaussianWidth.toString() + ", "
+               + mPosition.toString();
       }
    }
 
@@ -76,9 +76,9 @@ public class SpectrumFitResult {
    private ISpectrumData mBremSpec;
 
    public EDSCalibration getCalibration() {
-      return new SDDCalibration(mEnergyCalibration[1].doubleValue(), mEnergyCalibration[0].doubleValue(), (mEnergyParams.length > 2)
-            && (mEnergyParams[2].equals("Quadratic")) ? mEnergyCalibration[2].doubleValue()
-                  : 0.0, mFano.doubleValue(), mNoise.doubleValue());
+      return new SDDCalibration(mEnergyCalibration[1].doubleValue(), mEnergyCalibration[0].doubleValue(),
+            (mEnergyParams.length > 2) && (mEnergyParams[2].equals("Quadratic")) ? mEnergyCalibration[2].doubleValue() : 0.0, mFano.doubleValue(),
+            mNoise.doubleValue());
    }
 
    public SpectrumFitResult(ISpectrumData unk, Composition comp) {
@@ -89,7 +89,8 @@ public class SpectrumFitResult {
       mEnergyCalibration[2] = UncertainValue2.ZERO;
       mFano = new UncertainValue2(DEFAULT_FANO);
       final double DEFAULT_FWHM = 130.0;
-      mNoise = new UncertainValue2(SpectrumUtils.noiseFromResolution(DEFAULT_FANO, SpectrumUtils.fwhmToGaussianWidth(DEFAULT_FWHM), SpectrumUtils.E_MnKa));
+      mNoise = new UncertainValue2(
+            SpectrumUtils.noiseFromResolution(DEFAULT_FANO, SpectrumUtils.fwhmToGaussianWidth(DEFAULT_FWHM), SpectrumUtils.E_MnKa));
       mFWHMatMnKa = new UncertainValue2(DEFAULT_FWHM);
       mUnknown = unk;
       mComposition = comp;
@@ -111,7 +112,7 @@ public class SpectrumFitResult {
       mEnergyCalibration = new UncertainValue2[calib.length];
       mEnergyParams = new String[calib.length];
       mEnergyParamUnits = new String[calib.length];
-      for(int i = 0; i < calib.length; ++i) {
+      for (int i = 0; i < calib.length; ++i) {
          mEnergyCalibration[i] = calib[i].clone();
          mEnergyParams[i] = names[i];
          mEnergyParamUnits[i] = units[i];
@@ -120,7 +121,7 @@ public class SpectrumFitResult {
 
    public void setBremstrahlungModel(BremsstrahlungAnalytic ba) {
       mBremModel = ba;
-      if(mBremModel instanceof QuadraticBremsstrahlung) {
+      if (mBremModel instanceof QuadraticBremsstrahlung) {
          final QuadraticBremsstrahlung qb = (QuadraticBremsstrahlung) mBremModel;
          mBremA = new UncertainValue2(qb.mA);
          mBremB = new UncertainValue2(qb.mB);
@@ -152,7 +153,7 @@ public class SpectrumFitResult {
 
    public UncertainValue2 getIntegratedIntensity(XRayTransitionSet xrts) {
       double sum = 0.0;
-      for(final XRayTransition xrt : xrts)
+      for (final XRayTransition xrt : xrts)
          sum += getIntegratedIntensity(xrt).doubleValue();
       return new UncertainValue2(sum, "S", Math.sqrt(Math.abs(sum)));
    }
@@ -169,15 +170,15 @@ public class SpectrumFitResult {
 
    public XRayTransitionSet getFitTransitions(Element elm) {
       final XRayTransitionSet res = new XRayTransitionSet();
-      for(final XRayTransition xrt : mResults.keySet())
-         if(xrt.getElement().equals(elm))
+      for (final XRayTransition xrt : mResults.keySet())
+         if (xrt.getElement().equals(elm))
             res.add(xrt);
       return res;
    }
 
    public Set<XRayTransition> getTransitions() {
       final Set<XRayTransition> res = new TreeSet<XRayTransition>();
-      for(final XRayTransition xrt : mResults.keySet())
+      for (final XRayTransition xrt : mResults.keySet())
          res.add(xrt);
       return res;
    }
@@ -195,33 +196,33 @@ public class SpectrumFitResult {
     * tabulateResults with the reported relative intensities corrected for
     * differences in ZAF correction.
     * 
-    * @param props SpectrumProperties as required for a ZAF correction
+    * @param props
+    *           SpectrumProperties as required for a ZAF correction
     * @return String
     */
    public String tabulateResults(SpectrumProperties props) {
       final StringBuffer res = new StringBuffer();
       final Set<Element> elms = new TreeSet<Element>();
-      for(final XRayTransition xrt : mResults.keySet())
+      for (final XRayTransition xrt : mResults.keySet())
          elms.add(xrt.getElement());
       final NumberFormat nf = new DecimalFormat("0.0000E0");
       nf.setRoundingMode(RoundingMode.HALF_UP);
       final boolean zafCorrect = (props != null);
-      for(final Element elm : elms) {
-         if(res.length() > 0)
+      for (final Element elm : elms) {
+         if (res.length() > 0)
             res.append("\n");
          final Composition pureElm = new Composition(elm);
          final double[] maxI = new double[(AtomicShell.NFamily - AtomicShell.KFamily) + 1];
          final double[] intI = new double[XRayTransition.Last];
-         for(final Map.Entry<XRayTransition, TransitionResult> me : mResults.entrySet()) {
+         for (final Map.Entry<XRayTransition, TransitionResult> me : mResults.entrySet()) {
             final XRayTransition xrt = me.getKey();
             final TransitionResult tres = me.getValue();
-            if(xrt.getElement().equals(elm)) {
+            if (xrt.getElement().equals(elm)) {
                double kr = 1.0;
-               if(zafCorrect)
+               if (zafCorrect)
                   try {
                      kr = CorrectionAlgorithm.XPP.kratio(pureElm, mComposition, xrt, props).doubleValue();
-                  }
-                  catch(final EPQException e) {
+                  } catch (final EPQException e) {
                      e.printStackTrace();
                   }
                final int idx = xrt.getFamily() - AtomicShell.KFamily;
@@ -241,12 +242,12 @@ public class SpectrumFitResult {
          res.append(elm.getAtomicNumber());
          res.append(", ");
          res.append("\"I\"");
-         for(final double max : maxI) {
+         for (final double max : maxI) {
             res.append(", ");
             res.append(nf.format(max));
          }
          res.append(zafCorrect ? ", \"KW\"" : ", \"W\"");
-         for(final int tr : XRayTransition.ALL_TRANSITIONS) {
+         for (final int tr : XRayTransition.ALL_TRANSITIONS) {
             res.append(", ");
             final int idx = XRayTransition.getFamily(tr) - AtomicShell.KFamily;
             res.append(maxI[idx] > 0.0 ? nf.format(intI[tr] / maxI[idx]) : "0");
@@ -275,7 +276,7 @@ public class SpectrumFitResult {
    public String toHTML() {
       final StringBuffer sb = new StringBuffer(4096);
       sb.append("<p>");
-      if((mUnknown != null) && (mComposition != null)) {
+      if ((mUnknown != null) && (mComposition != null)) {
          sb.append("<H2>");
          sb.append(mUnknown.toString() + " fit as " + mComposition.toString());
          sb.append("</H2>\n");
@@ -296,11 +297,12 @@ public class SpectrumFitResult {
       try {
          final StringBuffer sb = new StringBuffer();
          sb.append("<TABLE>\n");
-         sb.append("<TR><TH>Transition</TH><TH colspan=3>Intensity</TH><TH colspan=4>Relative</TH><TH colspan=3>Gaussian<br>Width<br>(eV)</TH><TH colspan=3>FWHM<br>(eV)</TH><TH colspan=3>Channel</TH><TH>Energy<br>(eV)</TH></TR>\n");
+         sb.append(
+               "<TR><TH>Transition</TH><TH colspan=3>Intensity</TH><TH colspan=4>Relative</TH><TH colspan=3>Gaussian<br>Width<br>(eV)</TH><TH colspan=3>FWHM<br>(eV)</TH><TH colspan=3>Channel</TH><TH>Energy<br>(eV)</TH></TR>\n");
          final NumberFormat iFmt = new HalfUpFormat("#,###,###,##0");
          final NumberFormat fFmt = new HalfUpFormat("#,###,###,##0.0");
          final NumberFormat nFmt = new HalfUpFormat("0.000000");
-         for(final Map.Entry<XRayTransition, TransitionResult> me : mResults.entrySet()) {
+         for (final Map.Entry<XRayTransition, TransitionResult> me : mResults.entrySet()) {
             final TransitionResult tr = me.getValue();
             final UncertainValue2 gw = tr.mGaussianWidth;
             final XRayTransition xrt = me.getKey();
@@ -310,7 +312,7 @@ public class SpectrumFitResult {
             sb.append(xrt.toString());
             sb.append("</TH>");
             sb.append(format3Col(tr.mIntegratedIntensity, iFmt));
-            if(tr2 != null) {
+            if (tr2 != null) {
                sb.append(format3Col(UncertainValue2.divide(tr.mIntegratedIntensity, tr2.mIntegratedIntensity), nFmt));
                sb.append("<TD>" + xrt2.toString() + " - " + nFmt.format(xrt.getWeight(XRayTransition.NormalizeKLM)) + "</TD>");
             } else
@@ -321,43 +323,31 @@ public class SpectrumFitResult {
             sb.append("<TD>");
             try {
                sb.append(iFmt.format(FromSI.eV(xrt.getEnergy())));
-            }
-            catch(final EPQException e) {
+            } catch (final EPQException e) {
                sb.append("?");
             }
             sb.append("</TD></TR>\n");
          }
          sb.append("</TABLE><BR>");
          return sb.toString();
-      }
-      finally {
+      } finally {
          AlgorithmUser.clearGlobalOverride();
       }
    }
 
    private String integratedIntensityToHTML() {
       final StringBuffer sb = new StringBuffer();
-      if(mComposition != null) {
+      if (mComposition != null) {
          final NumberFormat iFmt = new HalfUpFormat("#,###,###,##0");
-         final String[] xtrsNames = new String[] {
-            XRayTransitionSet.K_FAMILY,
-            XRayTransitionSet.K_ALPHA,
-            XRayTransitionSet.K_BETA,
-            XRayTransitionSet.L_FAMILY,
-            XRayTransitionSet.L_ALPHA,
-            XRayTransitionSet.L_BETA,
-            XRayTransitionSet.L_GAMMA,
-            XRayTransitionSet.M_FAMILY,
-            XRayTransitionSet.M_ALPHA,
-            XRayTransitionSet.M_BETA,
-            XRayTransitionSet.M_GAMMA
-         };
+         final String[] xtrsNames = new String[]{XRayTransitionSet.K_FAMILY, XRayTransitionSet.K_ALPHA, XRayTransitionSet.K_BETA,
+               XRayTransitionSet.L_FAMILY, XRayTransitionSet.L_ALPHA, XRayTransitionSet.L_BETA, XRayTransitionSet.L_GAMMA, XRayTransitionSet.M_FAMILY,
+               XRayTransitionSet.M_ALPHA, XRayTransitionSet.M_BETA, XRayTransitionSet.M_GAMMA};
          sb.append("<TR><TH ALIGN=\"LEFT\">Element</TH><TH>Family</TH><TH colspan=3>Intensity</TH></TR>\n");
-         for(final Element elm : mComposition.getElementSet())
-            for(final String name : xtrsNames) {
+         for (final Element elm : mComposition.getElementSet())
+            for (final String name : xtrsNames) {
                final XRayTransitionSet xrts = new XRayTransitionSet(elm, name);
                final UncertainValue2 uv = this.getIntegratedIntensity(xrts);
-               if(uv.doubleValue() > 0.0) {
+               if (uv.doubleValue() > 0.0) {
                   sb.append("<TR><TH ALIGN=\"LEFT\">");
                   sb.append(elm);
                   sb.append("</TH><TH>");
@@ -374,16 +364,15 @@ public class SpectrumFitResult {
 
    private String energyCalibrationToHTML() {
       final StringBuffer sb = new StringBuffer();
-      if((mEnergyCalibration[1] != null) || (mEnergyCalibration[0] != null)) {
+      if ((mEnergyCalibration[1] != null) || (mEnergyCalibration[0] != null)) {
          sb.append("<H3>Energy Calibration</H3>");
          final NumberFormat nf = new HalfUpFormat("#,###,###,##0.0000");
          sb.append("<TABLE><TR><TH>Item</TH><TH colspan=3>Quantity</TH><TH>Unit</TH></TR>");
-         for(int i = 0; i < mEnergyCalibration.length; ++i) {
+         for (int i = 0; i < mEnergyCalibration.length; ++i) {
             sb.append("<TR><TD>");
             sb.append(mEnergyParams[i]);
             sb.append("</TD>");
-            sb.append(i < 2 ? format3Col(mEnergyCalibration[i], nf)
-                  : format3Col(mEnergyCalibration[i], new HTMLFormat("0.000")));
+            sb.append(i < 2 ? format3Col(mEnergyCalibration[i], nf) : format3Col(mEnergyCalibration[i], new HTMLFormat("0.000")));
             sb.append("<TD>");
             sb.append(mEnergyParamUnits[i]);
             sb.append("</TD></TR>");
@@ -395,7 +384,7 @@ public class SpectrumFitResult {
 
    private String bremToHTML() {
       final StringBuffer sb = new StringBuffer();
-      if((mBremA != null) && (mBremB != null)) {
+      if ((mBremA != null) && (mBremB != null)) {
          final NumberFormat fFmt = new HalfUpFormat("#,###,###,##0.0");
          sb.append("<H3>Bremsstrahlung</H3>");
          sb.append("<TABLE><TR><TH>Linear</TH><TH>Quadratic</TH></TR>\n");
@@ -410,7 +399,7 @@ public class SpectrumFitResult {
 
    public String resolutionToHTML() {
       final StringBuffer sb = new StringBuffer();
-      if((mFano != null) || (mNoise != null) || (mFWHMatMnKa != null)) {
+      if ((mFano != null) || (mNoise != null) || (mFWHMatMnKa != null)) {
          final NumberFormat fFmt = new HalfUpFormat("#,###,###,##0.0");
          final NumberFormat fFmt4 = new HalfUpFormat("#,###,###,##0.0000");
          sb.append("<H3>Detector Resolution</H3>");
@@ -428,11 +417,11 @@ public class SpectrumFitResult {
    public String toTransitionString(boolean withHeader) {
       final StringBuffer sb = new StringBuffer();
       final Set<Element> elms = new TreeSet<Element>();
-      for(final XRayTransition xrt : mResults.keySet())
+      for (final XRayTransition xrt : mResults.keySet())
          elms.add(xrt.getElement());
-      if(withHeader) {
+      if (withHeader) {
          sb.append("Z");
-         for(int tr = XRayTransition.KA1; tr < XRayTransition.N4N6; ++tr) {
+         for (int tr = XRayTransition.KA1; tr < XRayTransition.N4N6; ++tr) {
             sb.append("\t");
             sb.append("I[" + XRayTransition.getIUPACName(tr) + "]");
             sb.append("\t");
@@ -441,12 +430,12 @@ public class SpectrumFitResult {
          sb.append("\n");
       }
       final NumberFormat nf = new HalfUpFormat("#,###,###,##0.0");
-      for(final Element elm : elms) {
+      for (final Element elm : elms) {
          sb.append(elm.getAtomicNumber());
-         for(int tr = XRayTransition.KA1; tr < XRayTransition.N4N6; ++tr) {
+         for (int tr = XRayTransition.KA1; tr < XRayTransition.N4N6; ++tr) {
             final XRayTransition xrt = new XRayTransition(elm, tr);
             final TransitionResult res = mResults.get(xrt);
-            if(res != null) {
+            if (res != null) {
                final UncertainValue2 uv = res.mIntegratedIntensity;
                sb.append("\t");
                sb.append(nf.format(uv.doubleValue()));
@@ -485,24 +474,21 @@ public class SpectrumFitResult {
       SpectrumUtils.rename(res, "Fit[" + mUnknown.toString() + "," + mComposition.toString() + "]");
       final double[] data = res.getCounts();
       Arrays.fill(data, 0.0);
-      for(final XRayTransition xrt : xrts) {
+      for (final XRayTransition xrt : xrts) {
          final TransitionResult tr = mResults.get(xrt);
-         if(tr != null)
+         if (tr != null)
             try {
                final double e0 = FromSI.eV(xrt.getEnergy());
                final double sigma = tr.mGaussianWidth.doubleValue(); // in eV
                final double p = tr.mPosition.doubleValue(); // in channels
                final double g = tr.mPeakIntensity.doubleValue(); // in counts
-               final int lowCh = Math2.bound((int) (p
-                     - ((5.0 * sigma) / mEnergyCalibration[1].doubleValue())), 0, res.getChannelCount());
-               final int highCh = Math2.bound((int) (p + ((5.0 * sigma) / mEnergyCalibration[1].doubleValue()))
-                     + 1, 0, res.getChannelCount());
-               for(int ch = lowCh; ch < highCh; ++ch) {
+               final int lowCh = Math2.bound((int) (p - ((5.0 * sigma) / mEnergyCalibration[1].doubleValue())), 0, res.getChannelCount());
+               final int highCh = Math2.bound((int) (p + ((5.0 * sigma) / mEnergyCalibration[1].doubleValue())) + 1, 0, res.getChannelCount());
+               for (int ch = lowCh; ch < highCh; ++ch) {
                   final double e = (ch * mEnergyCalibration[1].doubleValue()) + mEnergyCalibration[0].doubleValue();
                   data[ch] += g * Math.exp(-0.5 * Math2.sqr((e - e0) / sigma));
                }
-            }
-            catch(final EPQException e) {
+            } catch (final EPQException e) {
                e.printStackTrace();
             }
       }
@@ -511,17 +497,17 @@ public class SpectrumFitResult {
 
    public ISpectrumData getSubSpectrum(Element elm, boolean withTail) {
       final ArrayList<XRayTransition> xrts = new ArrayList<XRayTransition>();
-      for(final XRayTransition xrt : mResults.keySet())
-         if(xrt.getElement().equals(elm))
+      for (final XRayTransition xrt : mResults.keySet())
+         if (xrt.getElement().equals(elm))
             xrts.add(xrt);
       return getSubSpectrum(xrts, withTail);
    }
 
    public ISpectrumData getSubSpectrum(Set<Element> elms, boolean withTail) {
       final ArrayList<XRayTransition> xrts = new ArrayList<XRayTransition>();
-      for(final XRayTransition xrt : mResults.keySet())
-         for(Element elm : elms)
-            if(xrt.getElement().equals(elm))
+      for (final XRayTransition xrt : mResults.keySet())
+         for (Element elm : elms)
+            if (xrt.getElement().equals(elm))
                xrts.add(xrt);
       return getSubSpectrum(xrts, withTail);
    }
@@ -539,13 +525,14 @@ public class SpectrumFitResult {
    /**
     * Returns the characteristic portion of the fit spectrum.
     * 
-    * @param withBrem - With bremsstrahlung added in (if available)
+    * @param withBrem
+    *           - With bremsstrahlung added in (if available)
     * @return ISpectrumData
     */
 
    public ISpectrumData getFitSpectrum(boolean withBrem) {
       final SpectrumMath res = new SpectrumMath(getSubSpectrum(mResults.keySet(), true));
-      if(withBrem && (mBremSpec != null))
+      if (withBrem && (mBremSpec != null))
          res.add(mBremSpec, 1.0);
       return res;
    }

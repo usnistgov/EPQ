@@ -30,8 +30,7 @@ import gov.nist.microanalysis.EPQLibrary.XRayTransitionSet;
  * @version 1.0
  */
 @SuppressWarnings("deprecation")
-public class ComputeZAFTest
-   extends TestCase {
+public class ComputeZAFTest extends TestCase {
 
    /**
     * Constructs a ComputeZAFTest
@@ -42,8 +41,7 @@ public class ComputeZAFTest
       super(arg0);
    }
 
-   public void testOne()
-         throws EPQException {
+   public void testOne() throws EPQException {
       final Element el = Element.Ca;
       final Composition unknown = MaterialFactory.createMaterial(MaterialFactory.K411);
       final Composition reference = MaterialFactory.createPureElement(el);
@@ -76,8 +74,7 @@ public class ComputeZAFTest
       assertEquals(uZaf, unkE / refE, 1.0e-6);
    }
 
-   public void testTwo()
-         throws EPQException {
+   public void testTwo() throws EPQException {
       final Element el = Element.Ca;
       final Composition unknown = MaterialFactory.createMaterial(MaterialFactory.K411);
       final Composition reference = MaterialFactory.createPureElement(el);
@@ -110,8 +107,7 @@ public class ComputeZAFTest
       assertEquals(uZaf, unkE / refE, 1.0e-6);
    }
 
-   public void testThree()
-         throws EPQException {
+   public void testThree() throws EPQException {
       final Element el = Element.Ca;
       final Composition unknown = MaterialFactory.createMaterial(MaterialFactory.K411);
       final Composition reference = MaterialFactory.createPureElement(el);
@@ -144,8 +140,7 @@ public class ComputeZAFTest
       assertEquals(uZaf, unkE / refE, 2.0e-3);
    }
 
-   public void testFour()
-         throws EPQException {
+   public void testFour() throws EPQException {
       final Element el = Element.Pb;
       final Composition unknown = new Composition();
       unknown.addElementByStoiciometry(Element.Pb, 1.0 / 3.0);

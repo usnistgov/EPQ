@@ -16,8 +16,7 @@ package gov.nist.microanalysis.Utility;
  * @author Nicholas
  * @version 1.0
  */
-abstract public class Integrator
-   extends AdaptiveRungeKutta {
+abstract public class Integrator extends AdaptiveRungeKutta {
 
    private final double mTolerance;
 
@@ -31,13 +30,10 @@ abstract public class Integrator
    }
 
    public double integrate(double lowVal, double highVal) {
-      final double[] y = new double[] {
-         0.0
-      };
+      final double[] y = new double[]{0.0};
       try {
          return highVal > lowVal ? integrate(lowVal, highVal, y, mTolerance, 0.05 * (highVal - lowVal))[0] : 0.0;
-      }
-      catch(final UtilException e) {
+      } catch (final UtilException e) {
          e.printStackTrace();
          return Double.NaN;
       }

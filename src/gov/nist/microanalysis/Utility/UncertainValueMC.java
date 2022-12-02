@@ -24,8 +24,7 @@ import java.util.Random;
  * @author nritchie
  * @version 1.0
  */
-public class UncertainValueMC
-   extends Number {
+public class UncertainValueMC extends Number {
 
    private static final long serialVersionUID = 8528835028857799252L;
 
@@ -36,8 +35,8 @@ public class UncertainValueMC
 
    static private final double calculateDeviate(UncertainValue2 uv2, Map<String, Double> deviate) {
       double randVal = 0.0;
-      for(String comp : uv2.getComponentNames()) {
-         if(!deviate.containsKey(comp))
+      for (String comp : uv2.getComponentNames()) {
+         if (!deviate.containsKey(comp))
             deviate.put(comp, UncertainValueMC.normalDeviate());
          randVal += deviate.get(comp).doubleValue() * uv2.getComponent(comp);
       }
@@ -64,8 +63,10 @@ public class UncertainValueMC
    /**
     * Constructs a UncertainValueMC from a value and an uncertainty.
     * 
-    * @param v The value
-    * @param dv One standard deviation uncertainty on v
+    * @param v
+    *           The value
+    * @param dv
+    *           One standard deviation uncertainty on v
     */
    public UncertainValueMC(double v, double dv) {
       this(v, dv * normalDeviate(), null);
@@ -95,7 +96,7 @@ public class UncertainValueMC
 
    static public UncertainValueMC sum(UncertainValueMC[] vals) {
       double v = 0.0, rv = 0.0;
-      for(int i = 0; i < vals.length; ++i) {
+      for (int i = 0; i < vals.length; ++i) {
          v += vals[i].mValue;
          rv += vals[i].mRandVal;
       }

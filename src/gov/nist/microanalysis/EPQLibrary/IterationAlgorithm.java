@@ -28,8 +28,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author Nicholas W. M. Ritchie
  * @version 1.0
  */
-abstract public class IterationAlgorithm
-   extends AlgorithmClass {
+abstract public class IterationAlgorithm extends AlgorithmClass {
    protected KRatioSet mDesired = null;
    protected ArrayList<Composition> mHistory = new ArrayList<Composition>();
 
@@ -74,8 +73,8 @@ abstract public class IterationAlgorithm
     * nextCompositionEstimate - Returns the next estimate of the Composition
     * based on the previous estimated Composition (estComp)
     * 
-    * @param zafMap A map containing
-    *           &lt;XRayTransitionSet,Double(zaf*estComp_i)&gt;
+    * @param zafMap
+    *           A map containing &lt;XRayTransitionSet,Double(zaf*estComp_i)&gt;
     * @return The next estimate of the Composition
     */
    abstract protected Composition perform(Map<XRayTransitionSet, Double> zafMap);
@@ -108,8 +107,7 @@ abstract public class IterationAlgorithm
     * A simple iteration procedure based on successive approximations. Works
     * fine.
     */
-   public static class SimpleIterationAlgorithm
-      extends IterationAlgorithm {
+   public static class SimpleIterationAlgorithm extends IterationAlgorithm {
       public SimpleIterationAlgorithm() {
          super("Simple iteration", "Source unknown");
       }
@@ -118,8 +116,8 @@ abstract public class IterationAlgorithm
       protected Composition perform(Map<XRayTransitionSet, Double> zafMap) {
          final Composition next = new Composition();
          // k = ZAF*C[ref]
-         for(final XRayTransitionSet xrts : mDesired.keySet())
-            if(zafMap.containsKey(xrts))
+         for (final XRayTransitionSet xrts : mDesired.keySet())
+            if (zafMap.containsKey(xrts))
                next.addElement(xrts.getElement(), Math2.bound(mDesired.getKRatio(xrts) / zafMap.get(xrts), TINY, HUGE));
          return next;
       }
@@ -130,8 +128,7 @@ abstract public class IterationAlgorithm
    /**
     * An iteration algorithm based on a first-order estimator. Works nicely!
     */
-   static public class WegsteinIterationAlgorithm
-      extends IterationAlgorithm {
+   static public class WegsteinIterationAlgorithm extends IterationAlgorithm {
       WegsteinIterationAlgorithm() {
          super("Wegstein iteration", "Wegstein, A. (1958) Commun. ACM, 1, 9");
       }
@@ -150,11 +147,11 @@ abstract public class IterationAlgorithm
       protected Composition perform(Map<XRayTransitionSet, Double> zafMap) {
          final boolean normalize = false;
          final Composition res = new Composition();
-         if(mHistory.size() >= 2) {
+         if (mHistory.size() >= 2) {
             assert mZAFMapNm1 != null;
             final Composition compN = mHistory.get(mHistory.size() - 1), compNm1 = mHistory.get(mHistory.size() - 2);
-            for(final XRayTransitionSet xrts : mDesired.keySet())
-               if(zafMap.containsKey(xrts)) {
+            for (final XRayTransitionSet xrts : mDesired.keySet())
+               if (zafMap.containsKey(xrts)) {
                   final Element el = xrts.getElement();
                   final double can = compN.weightFraction(el, normalize);
                   final double fan = 1.0 / zafMap.get(xrts);
@@ -162,7 +159,7 @@ abstract public class IterationAlgorithm
                   final Double d = mZAFMapNm1.get(xrts);
                   final double fan_1 = 1.0 / (d != null ? d.doubleValue() : 1.0e-5);
                   final double ka = mDesired.getKRatio(xrts);
-                  if((d != null) && ((10.0 * Math.abs(can - can_1)) > Math.abs(fan - fan_1))) {
+                  if ((d != null) && ((10.0 * Math.abs(can - can_1)) > Math.abs(fan - fan_1))) {
                      final double dfa_dca = (fan - fan_1) / (can - can_1);
                      final double den = 1.0 - (ka * dfa_dca);
                      // Springer-1976's suggestion as mentioned in Scott, Love,
@@ -174,8 +171,8 @@ abstract public class IterationAlgorithm
                }
          } else
             // Simple iteration
-            for(final XRayTransitionSet xrts : mDesired.keySet())
-               if(zafMap.containsKey(xrts))
+            for (final XRayTransitionSet xrts : mDesired.keySet())
+               if (zafMap.containsKey(xrts))
                   res.addElement(xrts.getElement(), Math2.bound(mDesired.getKRatio(xrts) / zafMap.get(xrts), TINY, HUGE));
          assert zafMap != null;
          mZAFMapNm1 = zafMap;
@@ -191,8 +188,7 @@ abstract public class IterationAlgorithm
     * assoicated with the previous Composition estimate and the estimated next
     * Composition on the specified PrintStream.
     */
-   static public class DiagnosticIterationAlgorithm
-      extends IterationAlgorithm {
+   static public class DiagnosticIterationAlgorithm extends IterationAlgorithm {
       private final PrintWriter mOutput;
       private final IterationAlgorithm mBase;
 
@@ -225,19 +221,17 @@ abstract public class IterationAlgorithm
             final Composition estComp = previousEstimate();
             mOutput.println("Measured KRS : \t" + mDesired.toString());
             final KRatioSet prevKrs = new KRatioSet();
-            for(final XRayTransitionSet xrts : mDesired.keySet())
-               if(zafMap.containsKey(xrts))
+            for (final XRayTransitionSet xrts : mDesired.keySet())
+               if (zafMap.containsKey(xrts))
                   prevKrs.addKRatio(xrts, estComp.weightFraction(xrts.getElement(), false) * (zafMap.get(xrts)).doubleValue(), 0.0);
             mOutput.println("Prev KRS     : \t" + prevKrs.toString());
             mOutput.println("Prev comp    : \t" + estComp.weightPercentString(false));
             mOutput.println("Next comp    : \t" + next.weightPercentString(false));
             mOutput.println("EPS = " + prevKrs.difference(mDesired));
             mOutput.println("-------------------------------------------------------------------");
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             ex.printStackTrace(mOutput);
-         }
-         finally {
+         } finally {
             mOutput.flush();
          }
          return next;
@@ -246,8 +240,5 @@ abstract public class IterationAlgorithm
 
    static public final IterationAlgorithm Default = IterationAlgorithm.WegsteinIteration;
 
-   static private final AlgorithmClass[] mAllImplementations = {
-      IterationAlgorithm.SimpleIteration,
-      IterationAlgorithm.WegsteinIteration
-   };
+   static private final AlgorithmClass[] mAllImplementations = {IterationAlgorithm.SimpleIteration, IterationAlgorithm.WegsteinIteration};
 }

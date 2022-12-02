@@ -52,8 +52,8 @@ import java.util.Arrays;
  * </p>
  * <p>
  * methodSE = 1: This selection is an implementation of the method described by
- * Ding &amp; Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE is
- * greater than a core level binding energy, the SE final energy is
+ * Ding &amp; Shimizu in SCANNING 18 (1996) p. 92. If the PE energy loss, deltaE
+ * is greater than a core level binding energy, the SE final energy is
  * deltaE-Ebinding. Otherwise, it is deltaE+EFermi, where EFermi is the Fermi
  * energy of the material. The final direction of the SE is determined from
  * conservation of momentum with the assumption that the SE initial momentum was
@@ -61,12 +61,13 @@ import java.util.Arrays;
  * </p>
  * <p>
  * methodSE = 2: This selection is an implementation of the method described by
- * Ding, Tang, &amp; Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is greater
- * than a core level binding energy the treatment is the same as methodSE = 1.
- * If not, the SE final energy is deltaE + E'. If E' were the Fermi energy this
- * would be the same as methodSE = 1. However, E' lies in the range max(0,EFermi
- * - deltaE) <= E' <= EFermi. The value of E' is determined probabilistically
- * based upon the free electron densities of occupied and unoccupied states.
+ * Ding, Tang, &amp; Shimizu in J.Appl.Phys. 89 (2001) p. 718. If deltaE is
+ * greater than a core level binding energy the treatment is the same as
+ * methodSE = 1. If not, the SE final energy is deltaE + E'. If E' were the
+ * Fermi energy this would be the same as methodSE = 1. However, E' lies in the
+ * range max(0,EFermi - deltaE) <= E' <= EFermi. The value of E' is determined
+ * probabilistically based upon the free electron densities of occupied and
+ * unoccupied states.
  * </p>
  * <p>
  * methodSE = 3: This selection is my modified version of the method described
@@ -101,9 +102,8 @@ import java.util.Arrays;
  * @author John Villarrubia
  * @version 1.0
  */
-public class TabulatedInelasticWAugerOrigSM
-   extends ScatterMechanism {
-   
+public class TabulatedInelasticWAugerOrigSM extends ScatterMechanism {
+
    private final int methodSE;
    private double energyOffset = 0.;
 
@@ -130,7 +130,7 @@ public class TabulatedInelasticWAugerOrigSM
    private double energyGap;
    private boolean defaultRatios = true;
    private double[][] cumulativeBranchingProbabilities = null;
-   
+
    /*
     * bEref is the energy (relative to conduction band bottom) to which core
     * level binding energies are referenced. This is generally the Fermi energy
@@ -167,63 +167,64 @@ public class TabulatedInelasticWAugerOrigSM
    /**
     * Constructs a TabulatedInelasticSM for the specified material.
     *
-    * @param mat - a SEmaterial that is the material within which scattering
+    * @param mat
+    *           - a SEmaterial that is the material within which scattering
     *           occurs.
-    * @param methodSE - an int that determines the method and assumptions by
-    *           which SE energies and angles are determined in a scattering
-    *           event. See the description in the class documentation.
-    * @param tables - an array of strings. The strings contain the full paths
-    *           and file names of the interpolation tables in this order:
-    *           String[0] = the IIMFP table (inverse inelastic mean free path
-    *           vs. primary electron energy (EO), String[1] = the reduced deltaE
-    *           table (deltaE/E0 vs E0 and r, with r a random number), table[2]
-    *           = the theta table (scattering angle of PE vs. E0,
-    *           deltaE/(E0-EFermi), r) and table[3] = the table of SE initial
-    *           energy vs. deltaE and r.
+    * @param methodSE
+    *           - an int that determines the method and assumptions by which SE
+    *           energies and angles are determined in a scattering event. See
+    *           the description in the class documentation.
+    * @param tables
+    *           - an array of strings. The strings contain the full paths and
+    *           file names of the interpolation tables in this order: String[0]
+    *           = the IIMFP table (inverse inelastic mean free path vs. primary
+    *           electron energy (EO), String[1] = the reduced deltaE table
+    *           (deltaE/E0 vs E0 and r, with r a random number), table[2] = the
+    *           theta table (scattering angle of PE vs. E0, deltaE/(E0-EFermi),
+    *           r) and table[3] = the table of SE initial energy vs. deltaE and
+    *           r.
     */
    public TabulatedInelasticWAugerOrigSM(SEmaterial mat, int methodSE, String[] tables) {
       this(mat, methodSE, tables, 0.);
    }
 
    /**
-    * <p>Constructs a TabulatedInelasticSM for the specified material. This form of
+    * <p>
+    * Constructs a TabulatedInelasticSM for the specified material. This form of
     * the constructor has an additional argument, energyOffset, allowing this
-    * parameter to be set to a value other than its default value of 0.</p>
+    * parameter to be set to a value other than its default value of 0.
+    * </p>
     * <p>
     * energyOffset = (energy of conduction band bottom) - (the energy defined as
     * the zero for purpose of the tables, generally the scattering band bottom)
     */
    public TabulatedInelasticWAugerOrigSM(SEmaterial mat, int methodSE, String[] tables, double energyOffset) {
       super();
-      if((methodSE != 2) && (methodSE != 3))
+      if ((methodSE != 2) && (methodSE != 3))
          methodSE = 1; // Make sure methodSE is valid
       this.methodSE = methodSE;
 
       /* Read interpolation tables into memory */
       try {
          tableIIMFP = NUTableInterpolation.getInstance(tables[0]);
-      }
-      catch(final FileNotFoundException e1) {
+      } catch (final FileNotFoundException e1) {
          throw new EPQFatalException("File " + tables[0] + " not found.");
       }
       try {
          tableReducedDeltaE = NUTableInterpolation.getInstance(tables[1]);
-      }
-      catch(final FileNotFoundException e1) {
+      } catch (final FileNotFoundException e1) {
          throw new EPQFatalException("File " + tables[1] + " not found.");
       }
       try {
          tableTheta = NUTableInterpolation.getInstance(tables[2]);
-      }
-      catch(final FileNotFoundException e1) {
+      } catch (final FileNotFoundException e1) {
          throw new EPQFatalException("File " + tables[2] + " not found.");
       }
-      if((methodSE == 2) || (methodSE == 3))
+      if ((methodSE == 2) || (methodSE == 3))
          try {
             tableSEE0 = NUTableInterpolation.getInstance(tables[3]);
             energyRangeSE0 = tableSEE0.getRange();
-         }
-         catch(final FileNotFoundException e1) {
+         } catch (final FileNotFoundException e1) {
             throw new EPQFatalException("File " + tables[3] + " not found.");
          }
 
@@ -233,6 +234,7 @@ public class TabulatedInelasticWAugerOrigSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatter(gov.nist.
     * microanalysis.NISTMonte.Electron)
@@ -243,7 +245,7 @@ public class TabulatedInelasticWAugerOrigSM
       final double kE0 = pe.getEnergy(); // PE initial energy rel to CB bottom
       final double kE = kE0 + energyOffset; // PE initial energy rel to
       // scattering band bottom
-      if(kE < tableEiDomain[0])
+      if (kE < tableEiDomain[0])
          /*
           * This might happen if something, e.g., electrostatic potential
           * difference, reduces electron energy between the time we determine
@@ -252,19 +254,14 @@ public class TabulatedInelasticWAugerOrigSM
           * don't scatter.
           */
          return null;
-      if(kE > tableEiDomain[1])
+      if (kE > tableEiDomain[1])
          throw new EPQFatalException("PE energy " + Double.toString(kE) + " is outside the interpolation table interval of ["
                + Double.toString(tableEiDomain[0]) + "," + Double.toString(tableEiDomain[1]) + "]");
       double theta = 0.;
       double phi = 0.; // PE trajectory parameters
       double energySE, thetaSE, phiSE; // SE trajectory parameters
       // TODO Do I need to check that kE>offsetFermiEnergy?
-      final double[] randoms = new double[] {
-         Math2.rgen.nextDouble(),
-         Math2.rgen.nextDouble(),
-         Math2.rgen.nextDouble(),
-         Math2.rgen.nextDouble()
-      };
+      final double[] randoms = new double[]{Math2.rgen.nextDouble(), Math2.rgen.nextDouble(), Math2.rgen.nextDouble(), Math2.rgen.nextDouble()};
       interpInput[0] = kE;
       interpInput[1] = randoms[0];
       // Energy loss by PE
@@ -273,21 +270,21 @@ public class TabulatedInelasticWAugerOrigSM
        * Cubic interpolation of the table can undershoot. Treat deltaE close to
        * but below the energyGap as such undershoot and correct it.
        */
-      if((deltaE < energyGap) && (deltaE > (0.95 * energyGap)))
+      if ((deltaE < energyGap) && (deltaE > (0.95 * energyGap)))
          deltaE = energyGap;
       /*
        * Larger discrepancies are most likely because we've been supplied an
        * empirical table that includes non-electronic energy losses (e.g.,
        * scattering from phonons). These should really be handled separately
-       * because our model is only valid for electrons &amp; plasmons. (E.g., phonon
-       * of energy deltaE carries very different momentum from electron of
-       * energy deltaE, so scattering angles can't be determined in the present
-       * model.) We skip the angular scattering part for such events. Any
-       * generated SE will be in the bandgap, so most likely dropped anyway. We
-       * return after we deal with the PE energy loss.
+       * because our model is only valid for electrons &amp; plasmons. (E.g.,
+       * phonon of energy deltaE carries very different momentum from electron
+       * of energy deltaE, so scattering angles can't be determined in the
+       * present model.) We skip the angular scattering part for such events.
+       * Any generated SE will be in the bandgap, so most likely dropped anyway.
+       * We return after we deal with the PE energy loss.
        */
- 
-      if(deltaE >= bandgap) {
+
+      if (deltaE >= bandgap) {
          // Determine theta and phi here
          /*
           * First, the reduced energy. This parameter ranges from 0 to 1 as
@@ -299,9 +296,9 @@ public class TabulatedInelasticWAugerOrigSM
           * interpolation error, lie slightly outside its physically determined
           * interval of [0,1]. If it does, clip it to the boundary.
           */
-         if(interpInput[1] > 1.)
+         if (interpInput[1] > 1.)
             interpInput[1] = 1.;
-         else if(interpInput[1] < 0.)
+         else if (interpInput[1] < 0.)
             interpInput[1] = 0.;
          interpInput[2] = randoms[1];
          theta = tableTheta.interpolate(interpInput, 3);
@@ -315,9 +312,10 @@ public class TabulatedInelasticWAugerOrigSM
       }
 
       pe.setEnergy(kE0 - deltaE);
-      final double theta0PE = pe.getTheta(); // Remember PE's deflected direction;
+      final double theta0PE = pe.getTheta(); // Remember PE's deflected
+                                             // direction;
       final double phi0PE = pe.getPhi(); // to use for SE
-      
+
       /*
        * I originally reset the previous energy to kE0 (next line), but I'm now
        * commenting it though I keep it here as a place-marker. My thinking is
@@ -342,13 +340,13 @@ public class TabulatedInelasticWAugerOrigSM
        * correspond to generation of mobile SE, since there are no empty mobile
        * states in the gap. We therefore return no SE for such events.
        */
-      if(deltaE < bandgap)
+      if (deltaE < bandgap)
          return null;
 
       final double Eq = (2. * kE) - deltaE - (2. * Math.sqrt(kE * (kE - deltaE)) * Math.cos(theta));
 
-      switch(methodSE) {
-         case 1:
+      switch (methodSE) {
+         case 1 :
             /*
              * In the following formula, offsetFermiEnergy - energyOffset is the
              * Fermi energy re-referenced to the bottom of the conduction band.
@@ -360,7 +358,7 @@ public class TabulatedInelasticWAugerOrigSM
              * adding deltaE gives the SE's final energy.
              */
             energySE = (deltaE + bEref) - pickBE(Eq, deltaE);
-            if((energySE + energyCBbottom) < minEgenSE)
+            if ((energySE + energyCBbottom) < minEgenSE)
                return null;
             thetaSE = (Math.PI / 2.); // Relative to PE's deflected direction
             phiSE = phi + Math.PI;
@@ -368,9 +366,9 @@ public class TabulatedInelasticWAugerOrigSM
             se = new Electron(pe, theta0PE, phi0PE, energySE);
             se.updateDirection(thetaSE, phiSE);
             break;
-         case 2:
+         case 2 :
             be = pickBE(Eq, deltaE);
-            if(be > 0.)
+            if (be > 0.)
                energySE = (deltaE + bEref) - be;
             else {
                interpInput[0] = deltaE;
@@ -381,13 +379,13 @@ public class TabulatedInelasticWAugerOrigSM
                 * which represents the range of allowed values. If the
                 * interpolated value overshoots, clip it.
                 */
-               if(energy0SE < energyRangeSE0[0])
+               if (energy0SE < energyRangeSE0[0])
                   energy0SE = energyRangeSE0[0];
-               else if(energy0SE > energyRangeSE0[1])
+               else if (energy0SE > energyRangeSE0[1])
                   energy0SE = energyRangeSE0[1];
                energySE = (deltaE + energy0SE) - energyOffset;
             }
-            if((energySE + energyCBbottom) < minEgenSE)
+            if ((energySE + energyCBbottom) < minEgenSE)
                return null;
             thetaSE = (Math.PI / 2.); // relative to PE already-deflected
                                       // direction
@@ -396,12 +394,12 @@ public class TabulatedInelasticWAugerOrigSM
             se = new Electron(pe, theta0PE, phi0PE, energySE);
             se.updateDirection(thetaSE, phiSE);
             break;
-         case 3:
+         case 3 :
             be = pickBE(Eq, deltaE);
-            if(be > 0.) { // core level excitation
+            if (be > 0.) { // core level excitation
 
                energySE = (deltaE + bEref) - be;
-               if((energySE + energyCBbottom) < minEgenSE)
+               if ((energySE + energyCBbottom) < minEgenSE)
                   return null;
                /*
                 * I'm going to approximate the angle distribution as isotropic
@@ -418,11 +416,11 @@ public class TabulatedInelasticWAugerOrigSM
                final double sum = (2. * offsetFermiEnergy) + deltaE;
                final double Eqmin = sum - root;
                final double Eqmax = sum + root;
-               if((Eqmin <= Eq) && (Eq <= Eqmax)) { // single-electron
+               if ((Eqmin <= Eq) && (Eq <= Eqmax)) { // single-electron
                   // scattering
                   final double[] energytheta = simESEf(Eq, deltaE, randoms[3]);
                   energySE = energytheta[0] - energyOffset;
-                  if((energySE + energyCBbottom) < minEgenSE)
+                  if ((energySE + energyCBbottom) < minEgenSE)
                      return null;
                   // Generate SE in PE direction with correct energy
                   se = new Electron(pe, theta0PE, phi0PE, energySE);
@@ -440,13 +438,14 @@ public class TabulatedInelasticWAugerOrigSM
                    */
                   se.updateDirection(energytheta[1], 2. * Math.PI * Math2.rgen.nextDouble());
                } else { // plasmon scattering
-                  
-                  /* CESC TEST */ 
-                  /*if (Eq>Eqmax) {
-                     System.out.println("Plasmon with q > q+.");
-                  }*/
+
                   /* CESC TEST */
-                  
+                  /*
+                   * if (Eq>Eqmax) { System.out.println("Plasmon with q > q+.");
+                   * }
+                   */
+                  /* CESC TEST */
+
                   interpInput[0] = deltaE;
                   interpInput[1] = randoms[3];
                   double energy0SE = tableSEE0.interpolate(interpInput, 3);
@@ -455,12 +454,12 @@ public class TabulatedInelasticWAugerOrigSM
                    * which represents the range of allowed values. If the
                    * interpolated value overshoots, clip it.
                    */
-                  if(energy0SE < energyRangeSE0[0])
+                  if (energy0SE < energyRangeSE0[0])
                      energy0SE = energyRangeSE0[0];
-                  else if(energy0SE > energyRangeSE0[1])
+                  else if (energy0SE > energyRangeSE0[1])
                      energy0SE = energyRangeSE0[1];
                   energySE = (deltaE + energy0SE) - energyOffset;
-                  if((energySE + energyCBbottom) < minEgenSE)
+                  if ((energySE + energyCBbottom) < minEgenSE)
                      return null;
                   /*
                    * For plasmon scattering, mode 3 assumes the plasmon
@@ -477,14 +476,14 @@ public class TabulatedInelasticWAugerOrigSM
                }
             }
             break;
-         default:
+         default :
             se = null;
             break;
       }
 
       return se;
    }
-    
+
    /*
     * simESEf is a private utility that computes the final SE energy for single
     * electron collisions. It also returns the polar angle of the final SE
@@ -501,17 +500,14 @@ public class TabulatedInelasticWAugerOrigSM
       final double kzf = kz + q;
       final double Ezq = kzf * kzf;
       double minE = (offsetFermiEnergy + bandgap) - Ezq;
-      if(minE < 0.)
+      if (minE < 0.)
          minE = 0.;
       final double maxE = offsetFermiEnergy - (kz * kz);
       assert minE <= maxE;
       final double Exy = (minE * (1. - r)) + (maxE * r);
       final double ESEf = Exy + Ezq;
       final double theta = Math.acos(kzf / Math.sqrt(ESEf));
-      return new double[] {
-         ESEf,
-         theta
-      };
+      return new double[]{ESEf, theta};
    }
 
    /*
@@ -530,7 +526,7 @@ public class TabulatedInelasticWAugerOrigSM
        * Detect and return immediately in the most common case (deltaE too small
        * for inner shell excitation)
        */
-      if((coreEnergies.length > 0) && (deltaE <= coreEnergies[0]))
+      if ((coreEnergies.length > 0) && (deltaE <= coreEnergies[0]))
          return 0.;
       /*
        * Arrive here if there is enough energy in principle to free an inner
@@ -538,20 +534,20 @@ public class TabulatedInelasticWAugerOrigSM
        * equation, given Eq and deltaE.
        */
       double energyForIonization;
-      if(E0fromDispersion)
+      if (E0fromDispersion)
          energyForIonization = computeE0fromDispersion(Eq, deltaE);
       else
          energyForIonization = deltaE;
 
-      for(i = 0; (i < coreEnergies.length) && (coreEnergies[i] <= energyForIonization); i++)
-         ;
-      if(i == 0)
+      for (i = 0; (i < coreEnergies.length) && (coreEnergies[i] <= energyForIonization); i++);
+      if (i == 0)
          return 0.;
-      if(defaultRatios)
+      if (defaultRatios)
          /*
-          * The advertised default behavior, as described by Ding &amp; Shimizu (Scanning).
+          * The advertised default behavior, as described by Ding &amp; Shimizu
+          * (Scanning).
           */
-         return coreEnergies[i-1];
+         return coreEnergies[i - 1];
       else {
          final double[] cprob = cumulativeBranchingProbabilities[i - 1];
          final double r = Math2.rgen.nextDouble();
@@ -568,9 +564,9 @@ public class TabulatedInelasticWAugerOrigSM
           * than r, in which case the energy we want is 0.
           */
 
-         if(index < 0) {
+         if (index < 0) {
             index = -2 - index;
-            if(index < 0)
+            if (index < 0)
                return 0.;
          }
 
@@ -590,7 +586,7 @@ public class TabulatedInelasticWAugerOrigSM
        * \develop\NewMONSEL\Physics\DielectricDevelopment\
        * SimulatingALADingShimizu.nb
        */
-      if(Eq == 0.)
+      if (Eq == 0.)
          return deltaE;
       /* Precompute quantities we're going to need more than once. */
       final double x = Eq / deltaE;
@@ -606,7 +602,7 @@ public class TabulatedInelasticWAugerOrigSM
       final double c3 = c2 - 27.;
       final double c4 = x2 * (3. + y);
       final double c6 = 1 - x2;
-      if(c3 > 0.) {
+      if (c3 > 0.) {
          final double tanPart = Math.atan2(3. * c6 * Math.sqrt(3. * c3 * c6), (18. * c4) - c1 - 27.);
          double trigPart = Math.cos(tanPart / 3.);
          final double prefactor = 2. * x * Math.sqrt(y * (y - (c6 * (y + 6.))));
@@ -633,6 +629,7 @@ public class TabulatedInelasticWAugerOrigSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatterRate(gov.nist
     * .microanalysis.NISTMonte.Electron)
@@ -644,11 +641,11 @@ public class TabulatedInelasticWAugerOrigSM
        * The PE kinetic energy can fall below the minimum in the table for
        * materials with a energyGap. In this case the actual scatter rate is 0.
        */
-      if(kEa[0] < tableIIMFPEiDomain[0])
+      if (kEa[0] < tableIIMFPEiDomain[0])
          return 0.;
-      if(kEa[0] > tableIIMFPEiDomain[1])
-         throw new EPQFatalException("PE energy " + Double.toString(kEa[0]) + " exceeds interpolation table maximum energy of "
-               + Double.toString(tableIIMFPEiDomain[1]));
+      if (kEa[0] > tableIIMFPEiDomain[1])
+         throw new EPQFatalException(
+               "PE energy " + Double.toString(kEa[0]) + " exceeds interpolation table maximum energy of " + Double.toString(tableIIMFPEiDomain[1]));
 
       /*
        * I do only first order interpolation below because I noticed for some
@@ -666,15 +663,15 @@ public class TabulatedInelasticWAugerOrigSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#setMaterial(gov.nist
     * .microanalysis.EPQLibrary.Material)
     */
    @Override
    public void setMaterial(Material mat) {
-      if(!(mat instanceof SEmaterial))
-         throw new EPQFatalException("Material " + mat.toString()
-               + " is not an SEmaterial as required for TabulatedInelasticSM.");
+      if (!(mat instanceof SEmaterial))
+         throw new EPQFatalException("Material " + mat.toString() + " is not an SEmaterial as required for TabulatedInelasticSM.");
 
       final SEmaterial semat = (SEmaterial) mat;
 
@@ -691,7 +688,7 @@ public class TabulatedInelasticWAugerOrigSM
        * insulators and semiconductors. bEref gives us our offsets to bottom of
        * conduction band.
        */
-      if(bandgap > 0.)
+      if (bandgap > 0.)
          bEref = -bandgap;
       else
          bEref = semat.getEFermi();
@@ -702,9 +699,9 @@ public class TabulatedInelasticWAugerOrigSM
        */
       tableEiDomain = tableReducedDeltaE.getDomain()[0];
       final double[] thetaTableEiDomain = tableTheta.getDomain()[0];
-      if(thetaTableEiDomain[0] > tableEiDomain[0])
+      if (thetaTableEiDomain[0] > tableEiDomain[0])
          tableEiDomain[0] = thetaTableEiDomain[0];
-      if(thetaTableEiDomain[1] < tableEiDomain[1])
+      if (thetaTableEiDomain[1] < tableEiDomain[1])
          tableEiDomain[1] = thetaTableEiDomain[1];
       tableIIMFPEiDomain = tableIIMFP.getDomain()[0];
    }
@@ -723,10 +720,11 @@ public class TabulatedInelasticWAugerOrigSM
     * the minEgenSE referred to the SE energy inside the sample. Accordingly, it
     * differed from this definition by an amount equal to the work function.
     *
-    * @param minEgenSE The minEgenSE to set.
+    * @param minEgenSE
+    *           The minEgenSE to set.
     */
    public void setMinEgenSE(double minEgenSE) {
-      if(minEgenSE > -workfunction)
+      if (minEgenSE > -workfunction)
          this.minEgenSE = minEgenSE;
       else
          throw new EPQFatalException("Illegal minEgenSE.");
@@ -768,14 +766,15 @@ public class TabulatedInelasticWAugerOrigSM
     * array of these ratios. The first ratio in the array is associated with the
     * lowest nonzero core energy (i.e., the first non-valence band bound state).
     * The length of the array must be equal to the length of the material's
-    * coreEnergies array. 
+    * coreEnergies array.
     * </p>
     * <p>
     * The default behavior, if this method is not called or if it is called with
     * no argument, is to assume all entries are 0. That is, the largest eligible
-    * binding energy state is assumed to be the one associated with the excitation
-    * channel. This is the method described by Ding &amp; Shimizu in SCANNING.
-    * <</p>
+    * binding energy state is assumed to be the one associated with the
+    * excitation channel. This is the method described by Ding &amp; Shimizu in
+    * SCANNING. <
+    * </p>
     */
    public void setBranchingRatios() {
       defaultRatios = true;
@@ -784,25 +783,21 @@ public class TabulatedInelasticWAugerOrigSM
    public void setBranchingRatios(double[] ratios) {
       defaultRatios = false;
       final int cElen = coreEnergies.length;
-      if(ratios.length != cElen)
-         throw new EPQFatalException("The number of branching ratios must be equal to the number of core energies, "
-               + Integer.toString(cElen) + " in this case.");
+      if (ratios.length != cElen)
+         throw new EPQFatalException(
+               "The number of branching ratios must be equal to the number of core energies, " + Integer.toString(cElen) + " in this case.");
       final double[][] probabilities = new double[cElen][];
       cumulativeBranchingProbabilities = new double[cElen][];
-      probabilities[0] = new double[] {
-         ratios[0]
-      };
-      cumulativeBranchingProbabilities[0] = new double[] {
-         ratios[0]
-      };
-      for(int i = 1; i < cElen; i++) {
+      probabilities[0] = new double[]{ratios[0]};
+      cumulativeBranchingProbabilities[0] = new double[]{ratios[0]};
+      for (int i = 1; i < cElen; i++) {
          probabilities[i] = new double[i + 1];
          cumulativeBranchingProbabilities[i] = new double[i + 1];
-         for(int j = 0; j < i; j++)
+         for (int j = 0; j < i; j++)
             probabilities[i][j] = probabilities[i - 1][j] * ratios[i];
          probabilities[i][i] = (1. - ratios[i - 1]) * ratios[i];
          cumulativeBranchingProbabilities[i][0] = probabilities[i][0];
-         for(int j = 1; j <= i; j++)
+         for (int j = 1; j <= i; j++)
             cumulativeBranchingProbabilities[i][j] = cumulativeBranchingProbabilities[i][j - 1] + probabilities[i][j];
       }
    }
@@ -813,7 +808,7 @@ public class TabulatedInelasticWAugerOrigSM
     * distinction between energyGap and bandgap is this: JMONSEL understands the
     * bandgap to be the distance between the top of the valence band and the
     * bottom of the conduction band. The energyGap is the value of the smallest
-    * allowed deltaE in the scattering tables. 
+    * allowed deltaE in the scattering tables.
     * </p>
     * <p>
     * These two ordinarily are the same, and they are set equal by default.
@@ -873,10 +868,11 @@ public class TabulatedInelasticWAugerOrigSM
     * than the ionization energy. If E0fromDispersion = true, it uses Ding et
     * al's later method, in which 0-momentum part (E0) of the energy is computed
     * from the plasmon dispersion for an event which transfers deltaE. Inner
-    * shell ionization can only happen if E0 &gt; ionization energy. This is more
-    * restrictive than deltaE > ionization energy.
+    * shell ionization can only happen if E0 &gt; ionization energy. This is
+    * more restrictive than deltaE > ionization energy.
     *
-    * @param e0fromDispersion The value to which to set E0fromDispersion.
+    * @param e0fromDispersion
+    *           The value to which to set E0fromDispersion.
     */
    public void setE0fromDispersion(boolean e0fromDispersion) {
       E0fromDispersion = e0fromDispersion;

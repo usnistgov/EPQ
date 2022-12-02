@@ -64,8 +64,7 @@ public class EMSAFile extends BaseSpectrum {
    public static boolean isInstanceOf(InputStream is) {
       boolean res = true;
       try {
-         try (final BufferedReader br = new BufferedReader(
-               new InputStreamReader(is, Charset.forName("US-ASCII")))) {
+         try (final BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("US-ASCII")))) {
             String line = br.readLine().trim();
             // It seems that DTSA expects a blank line up front!?! and LISPIX
             // obliges
@@ -123,8 +122,7 @@ public class EMSAFile extends BaseSpectrum {
     */
    public void read(InputStream is) throws IOException {
       reset();
-      try (final Reader rd = new InputStreamReader(is,
-            Charset.forName("US-ASCII"))) {
+      try (final Reader rd = new InputStreamReader(is, Charset.forName("US-ASCII"))) {
          try (final BufferedReader br = new BufferedReader(rd)) {
             // Number always use '.' as decimal separator
             mDefaultFormat = NumberFormat.getInstance(Locale.US);
@@ -142,13 +140,9 @@ public class EMSAFile extends BaseSpectrum {
                line = br.readLine().trim();
             } while (storeData(Prefix, Data));
             if (mStagePosition.size() > 0)
-               mProperties.setObjectProperty(SpectrumProperties.StagePosition,
-                     mStagePosition);
+               mProperties.setObjectProperty(SpectrumProperties.StagePosition, mStagePosition);
             mStagePosition = null;
-            final double scale = mIsCPS
-                  ? mProperties
-                        .getNumericWithDefault(SpectrumProperties.LiveTime, 1.0)
-                  : 1.0;
+            final double scale = mIsCPS ? mProperties.getNumericWithDefault(SpectrumProperties.LiveTime, 1.0) : 1.0;
             // Cases: nextDatum then "," or nextDatum then EOL or EOL
             if (!line.startsWith("#ENDOFDATA")) {
                int start = 0, dataCounter = 0;
@@ -180,11 +174,9 @@ public class EMSAFile extends BaseSpectrum {
                   ++xyCounter;
                }
                if (dataCounter != mChannels.length)
-                  System.err.println(
-                        "The number of data points was fewer than the reported number of channels.");
+                  System.err.println("The number of data points was fewer than the reported number of channels.");
             }
-            setEnergyScale(getZeroOffset() * mBaseXUnit,
-                  getChannelWidth() * mBaseXUnit);
+            setEnergyScale(getZeroOffset() * mBaseXUnit, getChannelWidth() * mBaseXUnit);
             mDefaultFormat = null;
          }
       }
@@ -196,8 +188,7 @@ public class EMSAFile extends BaseSpectrum {
       final Calendar c = Calendar.getInstance();
       try {
          if (mProperties.isDefined(SpectrumProperties.AcquisitionTime))
-            c.setTime(mProperties
-                  .getTimestampProperty(SpectrumProperties.AcquisitionTime));
+            c.setTime(mProperties.getTimestampProperty(SpectrumProperties.AcquisitionTime));
       } catch (final EPQException ex) {
       }
       day = c.get(Calendar.DAY_OF_MONTH);
@@ -228,8 +219,7 @@ public class EMSAFile extends BaseSpectrum {
       try {
          if (mProperties.isDefined(SpectrumProperties.AcquisitionTime)) {
             // Get previously set time
-            c.setTime(mProperties
-                  .getTimestampProperty(SpectrumProperties.AcquisitionTime));
+            c.setTime(mProperties.getTimestampProperty(SpectrumProperties.AcquisitionTime));
             hour = c.get(Calendar.HOUR_OF_DAY);
             min = c.get(Calendar.MINUTE);
             sec = c.get(Calendar.SECOND);
@@ -271,36 +261,24 @@ public class EMSAFile extends BaseSpectrum {
          value = value.trim();
          if (prefix.startsWith("#FORMAT")) {
             final String du = value.toUpperCase();
-            if (!(du.equals("EMSA/MAS SPECTRAL DATA FILE")
-                  || du.equals("EMSA/MAS SPECTRAL DATA STANDARD")))
-               System.err.println(
-                     "The format header in this EMSA file is spurious: "
-                           + value);
+            if (!(du.equals("EMSA/MAS SPECTRAL DATA FILE") || du.equals("EMSA/MAS SPECTRAL DATA STANDARD")))
+               System.err.println("The format header in this EMSA file is spurious: " + value);
          } else if (prefix.startsWith("#VERSION")) {
-            if ((parseDouble(value) != 1.0)
-                  && (!value.equalsIgnoreCase("TC202v1.0")))
-               System.err.println(
-                     "The EMSA file version number was not 1.0. It was "
-                           + value);
+            if ((parseDouble(value) != 1.0) && (!value.equalsIgnoreCase("TC202v1.0")))
+               System.err.println("The EMSA file version number was not 1.0. It was " + value);
          } else if (prefix.startsWith("#SPECIMEN")) {
             if (value.length() > 0)
-               mProperties.setTextProperty(SpectrumProperties.SpecimenDesc,
-                     value);
+               mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, value);
          } else if (prefix.startsWith("#TITLE")) {
-            if ((value.length() > 0)
-                  && (!value.startsWith("EDS Spectral Data")))
-               mProperties.setTextProperty(SpectrumProperties.SpectrumComment,
-                     value);
+            if ((value.length() > 0) && (!value.startsWith("EDS Spectral Data")))
+               mProperties.setTextProperty(SpectrumProperties.SpectrumComment, value);
          } else if (prefix.startsWith("#DATE"))
-            mProperties.setTimestampProperty(SpectrumProperties.AcquisitionTime,
-                  parseDate(value));
+            mProperties.setTimestampProperty(SpectrumProperties.AcquisitionTime, parseDate(value));
          else if (prefix.startsWith("#TIME"))
-            mProperties.setTimestampProperty(SpectrumProperties.AcquisitionTime,
-                  parseTime(value));
+            mProperties.setTimestampProperty(SpectrumProperties.AcquisitionTime, parseTime(value));
          else if (prefix.startsWith("#OWNER")) {
             if (value.length() > 0)
-               mProperties.setTextProperty(
-                     SpectrumProperties.InstrumentOperator, value);
+               mProperties.setTextProperty(SpectrumProperties.InstrumentOperator, value);
          } else if (prefix.startsWith("#NPOINTS")) {
             if (value.startsWith("+"))
                value = value.substring(1);
@@ -320,8 +298,7 @@ public class EMSAFile extends BaseSpectrum {
             if (value.length() > 0) {
                if (value.trim().compareToIgnoreCase("CPS") == 0) {
                   mIsCPS = true;
-                  mProperties.setTextProperty(SpectrumProperties.YUnits,
-                        "Counts");
+                  mProperties.setTextProperty(SpectrumProperties.YUnits, "Counts");
                } else
                   mProperties.setTextProperty(SpectrumProperties.YUnits, value);
             }
@@ -333,204 +310,145 @@ public class EMSAFile extends BaseSpectrum {
             mIsXY = value.equals("XY");
          // not necessary
          else if (prefix.startsWith("#XPERCHAN"))
-            mProperties.setNumericProperty(SpectrumProperties.EnergyScale,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.EnergyScale, parseDouble(value));
          else if (prefix.startsWith("#OFFSET"))
-            mProperties.setNumericProperty(SpectrumProperties.EnergyOffset,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.EnergyOffset, parseDouble(value));
          else if (prefix.startsWith("#CHOFFSET")) {
             // The offset in channel units
          } else if (prefix.startsWith("#SIGNALTYPE")) {
             if (value.length() > 0)
-               mProperties.setTextProperty(SpectrumProperties.SignalType,
-                     value);
-         } else if (prefix.startsWith("#XLABEL")
-               || prefix.startsWith("#YLABEL")) {
+               mProperties.setTextProperty(SpectrumProperties.SignalType, value);
+         } else if (prefix.startsWith("#XLABEL") || prefix.startsWith("#YLABEL")) {
             // ignore
          } else if (prefix.startsWith("#COMMENT")) {
-            if ((!mProperties.isDefined(SpectrumProperties.SpectrumComment))
-                  && (!value.startsWith("Converted by SpecUtil32 of EDAX INC")))
-               mProperties.setTextProperty(SpectrumProperties.SpectrumComment,
-                     value);
+            if ((!mProperties.isDefined(SpectrumProperties.SpectrumComment)) && (!value.startsWith("Converted by SpecUtil32 of EDAX INC")))
+               mProperties.setTextProperty(SpectrumProperties.SpectrumComment, value);
          } else if (prefix.startsWith("#BEAMKV"))
-            mProperties.setNumericProperty(SpectrumProperties.BeamEnergy,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.BeamEnergy, parseDouble(value));
          else if (prefix.startsWith("#EMISSION"))
-            mProperties.setNumericProperty(SpectrumProperties.EmissionCurrent,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.EmissionCurrent, parseDouble(value));
          else if (prefix.startsWith("#PROBECUR")) {
             final double val = parseDouble(value);
             if (val > 0.0)
                mProperties.setNumericProperty(SpectrumProperties.ProbeCurrent, val);
          } else if (prefix.startsWith("#BEAMDIA")) {
             final double r = parseDouble(value) / 2.0;
-            mProperties.setNumericProperty(SpectrumProperties.ProbeArea,
-                  Math.PI * r * r);
+            mProperties.setNumericProperty(SpectrumProperties.ProbeArea, Math.PI * r * r);
          } else if (prefix.matches("#MAGCAM"))
-            mProperties.setNumericProperty(SpectrumProperties.Magnification,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.Magnification, parseDouble(value));
          else if (prefix.startsWith("#CONVANGLE"))
-            mProperties.setNumericProperty(SpectrumProperties.ConvergenceAngle,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.ConvergenceAngle, parseDouble(value));
          else if (prefix.startsWith("#OPERMODE")) {
             if (value.equals("IMAG"))
                value = value + "E";
             if (value.length() > 0)
-               mProperties.setTextProperty(SpectrumProperties.OperatingMode,
-                     value);
+               mProperties.setTextProperty(SpectrumProperties.OperatingMode, value);
          } else if (prefix.startsWith("#THICKNESS"))
-            mProperties.setNumericProperty(SpectrumProperties.SpecimenThickness,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.SpecimenThickness, parseDouble(value));
          else if (prefix.startsWith("#XTILTSTGE")) {
             mXTilt = parseDouble(value);
             updateSampleOrientation();
          } else if (prefix.startsWith("#YTILTSTGE")) {
             mYTilt = parseDouble(value);
             updateSampleOrientation();
-         } else if (prefix.matches("#XPOSITION")
-               || prefix.matches("#XPOSITION MM"))
+         } else if (prefix.matches("#XPOSITION") || prefix.matches("#XPOSITION MM"))
             mStagePosition.set(Axis.X, parseDouble(value));
-         else if (prefix.matches("#YPOSITION")
-               || prefix.matches("#YPOSITION MM"))
+         else if (prefix.matches("#YPOSITION") || prefix.matches("#YPOSITION MM"))
             mStagePosition.set(Axis.Y, parseDouble(value));
-         else if (prefix.matches("#ZPOSITION")
-               || prefix.matches("#ZPOSITION MM"))
+         else if (prefix.matches("#ZPOSITION") || prefix.matches("#ZPOSITION MM"))
             mStagePosition.set(Axis.Z, parseDouble(value));
          else if (prefix.startsWith("#DWELLTIME"))
-            mProperties.setNumericProperty(SpectrumProperties.DwellTime,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.DwellTime, parseDouble(value));
          else if (prefix.matches("#INTEGTIME"))
-            mProperties.setNumericProperty(SpectrumProperties.IntegrationTime,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.IntegrationTime, parseDouble(value));
          else if (prefix.matches("#COLLANGLE"))
-            mProperties.setNumericProperty(SpectrumProperties.CollectionAngle,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.CollectionAngle, parseDouble(value));
          else if (prefix.matches("#ELSDET")) {
             if ((value.matches("SERIAL")) || (value.matches("PARALL"))) {
                // ignore
             }
          } else if (prefix.startsWith("#ELEVANGLE"))
-            mProperties.setNumericProperty(SpectrumProperties.Elevation,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.Elevation, parseDouble(value));
          else if (prefix.startsWith("#AZIMANGLE"))
-            mProperties.setNumericProperty(SpectrumProperties.Azimuth,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.Azimuth, parseDouble(value));
          else if (prefix.startsWith("#SOLIDANGL"))
-            mProperties.setNumericProperty(SpectrumProperties.SolidAngle,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.SolidAngle, parseDouble(value));
          else if (prefix.startsWith("#LIVETIME"))
-            mProperties.setNumericProperty(SpectrumProperties.LiveTime,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.LiveTime, parseDouble(value));
          else if (prefix.startsWith("#REALTIME"))
-            mProperties.setNumericProperty(SpectrumProperties.RealTime,
-                  parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.RealTime, parseDouble(value));
          else if (prefix.startsWith("#TBEWIND"))
-            mProperties.setNumericProperty(SpectrumProperties.BerylliumWindow,
-                  parseDouble(value) * 1.0e4);
+            mProperties.setNumericProperty(SpectrumProperties.BerylliumWindow, parseDouble(value) * 1.0e4);
          else if (prefix.startsWith("#TAUWIND"))
-            mProperties.setNumericProperty(SpectrumProperties.GoldLayer,
-                  parseDouble(value) * 1.0e7);
+            mProperties.setNumericProperty(SpectrumProperties.GoldLayer, parseDouble(value) * 1.0e7);
          else if (prefix.startsWith("#TDEADLYR"))
-            mProperties.setNumericProperty(SpectrumProperties.DeadLayer,
-                  parseDouble(value) * 1.0e4);
+            mProperties.setNumericProperty(SpectrumProperties.DeadLayer, parseDouble(value) * 1.0e4);
          else if (prefix.startsWith("#TACTLYR"))
-            mProperties.setNumericProperty(SpectrumProperties.ActiveLayer,
-                  parseDouble(value) * 1.0e4);
+            mProperties.setNumericProperty(SpectrumProperties.ActiveLayer, parseDouble(value) * 1.0e4);
          else if (prefix.startsWith("#TALWIND"))
-            mProperties.setNumericProperty(SpectrumProperties.AluminumLayer,
-                  parseDouble(value) * 1.0e4);
+            mProperties.setNumericProperty(SpectrumProperties.AluminumLayer, parseDouble(value) * 1.0e4);
          else if (prefix.startsWith("#TPYWIND"))
-            mProperties.setNumericProperty(SpectrumProperties.ParaleneWindow,
-                  parseDouble(value) * 1.0e4);
+            mProperties.setNumericProperty(SpectrumProperties.ParaleneWindow, parseDouble(value) * 1.0e4);
          else if (prefix.startsWith("#TBNWIND"))
-            mProperties.setNumericProperty(
-                  SpectrumProperties.BoronNitrideWindow,
-                  parseDouble(value) * 1.0e4);
+            mProperties.setNumericProperty(SpectrumProperties.BoronNitrideWindow, parseDouble(value) * 1.0e4);
          else if (prefix.startsWith("#TDIWIND"))
-            mProperties.setNumericProperty(SpectrumProperties.DiamondWindow,
-                  parseDouble(value) * 1.0e4);
+            mProperties.setNumericProperty(SpectrumProperties.DiamondWindow, parseDouble(value) * 1.0e4);
          else if (prefix.startsWith("#THCWIND"))
-            mProperties.setNumericProperty(SpectrumProperties.HydroCarbonWindow,
-                  parseDouble(value) * 1.0e4);
+            mProperties.setNumericProperty(SpectrumProperties.HydroCarbonWindow, parseDouble(value) * 1.0e4);
          else if (prefix.startsWith("#EDSDET")) {
             if (value.equalsIgnoreCase("SIBEW")) {
-               mProperties.setTextProperty(SpectrumProperties.DetectorType,
-                     DetectorProperties.SILI);
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     XRayWindowFactory.BE_WINDOW);
+               mProperties.setTextProperty(SpectrumProperties.DetectorType, DetectorProperties.SILI);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, XRayWindowFactory.BE_WINDOW);
             } else if (value.equalsIgnoreCase("SIUTW")) {
-               mProperties.setTextProperty(SpectrumProperties.DetectorType,
-                     DetectorProperties.SILI);
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     XRayWindowFactory.UT_WINDOW);
+               mProperties.setTextProperty(SpectrumProperties.DetectorType, DetectorProperties.SILI);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, XRayWindowFactory.UT_WINDOW);
             } else if (value.equalsIgnoreCase("SIWLS")) {
-               mProperties.setTextProperty(SpectrumProperties.DetectorType,
-                     DetectorProperties.SILI);
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     XRayWindowFactory.NO_WINDOW);
+               mProperties.setTextProperty(SpectrumProperties.DetectorType, DetectorProperties.SILI);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, XRayWindowFactory.NO_WINDOW);
             } else if (value.equalsIgnoreCase("GEBEW")) {
-               mProperties.setTextProperty(SpectrumProperties.DetectorType,
-                     DetectorProperties.GE);
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     XRayWindowFactory.BE_WINDOW);
+               mProperties.setTextProperty(SpectrumProperties.DetectorType, DetectorProperties.GE);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, XRayWindowFactory.BE_WINDOW);
             } else if (value.equalsIgnoreCase("GEUTW")) {
-               mProperties.setTextProperty(SpectrumProperties.DetectorType,
-                     DetectorProperties.GE);
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     XRayWindowFactory.UT_WINDOW);
+               mProperties.setTextProperty(SpectrumProperties.DetectorType, DetectorProperties.GE);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, XRayWindowFactory.UT_WINDOW);
             } else if (value.equalsIgnoreCase("SDBEW")) {
-               mProperties.setTextProperty(SpectrumProperties.DetectorType,
-                     DetectorProperties.SDD);
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     XRayWindowFactory.BE_WINDOW);
+               mProperties.setTextProperty(SpectrumProperties.DetectorType, DetectorProperties.SDD);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, XRayWindowFactory.BE_WINDOW);
             } else if (value.equalsIgnoreCase("SDUTW")) {
-               mProperties.setTextProperty(SpectrumProperties.DetectorType,
-                     DetectorProperties.SDD);
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     XRayWindowFactory.UT_WINDOW);
+               mProperties.setTextProperty(SpectrumProperties.DetectorType, DetectorProperties.SDD);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, XRayWindowFactory.UT_WINDOW);
             } else if (value.equalsIgnoreCase("SDWLS")) {
-               mProperties.setTextProperty(SpectrumProperties.DetectorType,
-                     DetectorProperties.SDD);
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     XRayWindowFactory.NO_WINDOW);
+               mProperties.setTextProperty(SpectrumProperties.DetectorType, DetectorProperties.SDD);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, XRayWindowFactory.NO_WINDOW);
             } else if (value.equalsIgnoreCase("UCALUTW")) {
-               mProperties.setTextProperty(SpectrumProperties.DetectorType,
-                     DetectorProperties.MICROCAL);
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     XRayWindowFactory.UT_WINDOW);
+               mProperties.setTextProperty(SpectrumProperties.DetectorType, DetectorProperties.MICROCAL);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, XRayWindowFactory.UT_WINDOW);
             }
          } else if (prefix.startsWith("##D2STDCMP")) { // DTSA-II custom tag
             final Composition comp = Material.fromParsableFormat(value);
             if (comp != null)
-               mProperties.setCompositionProperty(
-                     SpectrumProperties.StandardComposition, comp);
+               mProperties.setCompositionProperty(SpectrumProperties.StandardComposition, comp);
          } else if (prefix.startsWith("##D2QUANT")) { // DTSA-II custom tag
             final Composition comp = Material.fromParsableFormat(value);
             if (comp != null)
-               mProperties.setCompositionProperty(
-                     SpectrumProperties.MicroanalyticalComposition, comp);
+               mProperties.setCompositionProperty(SpectrumProperties.MicroanalyticalComposition, comp);
          } else if (prefix.startsWith("##D2ELEMS")) {
             final Set<Element> elms = Element.parseElementString(value);
             if (elms != null)
                mProperties.setElements(elms);
          } else if (prefix.startsWith("##WORKING")) {
             if (value.length() > 0)
-               mProperties.setNumericProperty(
-                     SpectrumProperties.WorkingDistance, parseDouble(value));
+               mProperties.setNumericProperty(SpectrumProperties.WorkingDistance, parseDouble(value));
          } else if (prefix.startsWith("##WINDOW")) {
             if (value.length() > 0)
-               mProperties.setTextProperty(SpectrumProperties.WindowType,
-                     value);
+               mProperties.setTextProperty(SpectrumProperties.WindowType, value);
          } else if (prefix.startsWith("##MNFWHM  -eV")) {
-            mProperties.setNumericProperty(SpectrumProperties.Resolution,
-                  parseDouble(value));
-            mProperties.setNumericProperty(SpectrumProperties.ResolutionLine,
-                  SpectrumUtils.E_MnKa);
+            mProperties.setNumericProperty(SpectrumProperties.Resolution, parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.ResolutionLine, SpectrumUtils.E_MnKa);
          } else if (prefix.startsWith("##SPECIMEN")) {
             // Custom property
             if (value.length() > 0)
-               mProperties.setTextProperty(SpectrumProperties.SpecimenDesc,
-                     value);
+               mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, value);
          } else if (prefix.startsWith("##DEAD_TM -%")) { // JEOL EMSA
             // mProperties.setNumericProperty(SpectrumProperties.DeadPercent,
             // Double.parseDouble(value));
@@ -538,46 +456,37 @@ public class EMSAFile extends BaseSpectrum {
             final int sh = Integer.parseInt(value);
             switch (sh) {
                case 0 :
-                  mProperties.setNumericProperty(
-                        SpectrumProperties.PulseProcessTime, 3.2);
+                  mProperties.setNumericProperty(SpectrumProperties.PulseProcessTime, 3.2);
                   break;
                case 1 :
-                  mProperties.setNumericProperty(
-                        SpectrumProperties.PulseProcessTime, 6.4);
+                  mProperties.setNumericProperty(SpectrumProperties.PulseProcessTime, 6.4);
                   break;
                case 2 :
-                  mProperties.setNumericProperty(
-                        SpectrumProperties.PulseProcessTime, 51.2);
+                  mProperties.setNumericProperty(SpectrumProperties.PulseProcessTime, 51.2);
                   break;
                case 3 :
-                  mProperties.setNumericProperty(
-                        SpectrumProperties.PulseProcessTime, 102.4);
+                  mProperties.setNumericProperty(SpectrumProperties.PulseProcessTime, 102.4);
                   break;
                default :
                   // Don't do anything...
                   break;
             }
          } else if (prefix.startsWith("##DEAD_TM -%"))
-            mProperties.setNumericProperty(SpectrumProperties.DeadPercent,
-                  Double.parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.DeadPercent, Double.parseDouble(value));
          else if (prefix.startsWith("##SH_TIME -%")) { // JEOL EMSA
             final int sh = Integer.parseInt(value);
             switch (sh) {
                case 0 :
-                  mProperties.setNumericProperty(
-                        SpectrumProperties.PulseProcessTime, 3.2);
+                  mProperties.setNumericProperty(SpectrumProperties.PulseProcessTime, 3.2);
                   break;
                case 1 :
-                  mProperties.setNumericProperty(
-                        SpectrumProperties.PulseProcessTime, 6.4);
+                  mProperties.setNumericProperty(SpectrumProperties.PulseProcessTime, 6.4);
                   break;
                case 2 :
-                  mProperties.setNumericProperty(
-                        SpectrumProperties.PulseProcessTime, 51.2);
+                  mProperties.setNumericProperty(SpectrumProperties.PulseProcessTime, 51.2);
                   break;
                case 3 :
-                  mProperties.setNumericProperty(
-                        SpectrumProperties.PulseProcessTime, 102.4);
+                  mProperties.setNumericProperty(SpectrumProperties.PulseProcessTime, 102.4);
                   break;
                default :
                   // Don't do anything...
@@ -587,22 +496,18 @@ public class EMSAFile extends BaseSpectrum {
             try {
                Object obj = EPQXStream.getInstance().fromXML(massage(value));
                if (obj instanceof SampleShape)
-                  mProperties.setSampleShape(SpectrumProperties.SampleShape,
-                        (SampleShape) obj);
+                  mProperties.setSampleShape(SpectrumProperties.SampleShape, (SampleShape) obj);
             } catch (Exception e) {
                // TESCAN also uses the ##SAMPLE tag but it just contains a
                // specimen description.
-               mProperties.setTextProperty(SpectrumProperties.SpecimenDesc,
-                     value);
+               mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, value);
 
             }
             // ignored special custom tag (ignore)
          } else if (prefix.startsWith("##MASSTHICK")) {
-            mProperties.setNumericProperty(SpectrumProperties.MassThickness,
-                  Double.parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.MassThickness, Double.parseDouble(value));
          } else if (prefix.startsWith("##CONDCOATING")) {
-            mProperties.setObjectProperty(SpectrumProperties.ConductiveCoating,
-                  ConductiveCoating.parse(value));
+            mProperties.setObjectProperty(SpectrumProperties.ConductiveCoating, ConductiveCoating.parse(value));
          } else if (prefix.startsWith("##IMAGE_REF")) {
             mProperties.setTextProperty(SpectrumProperties.ImageRef, value.trim());
          } else if (prefix.startsWith("##")) {
@@ -610,9 +515,7 @@ public class EMSAFile extends BaseSpectrum {
          } else if (prefix.startsWith("#SPECTRUM"))
             return false;
          else if (prefix.startsWith("##MULTISPEC")) {
-            mProperties.setNumericProperty(
-                  SpectrumProperties.MultiSpectrumMetric,
-                  Double.parseDouble(value));
+            mProperties.setNumericProperty(SpectrumProperties.MultiSpectrumMetric, Double.parseDouble(value));
          } else
             System.err.println("Unknown tag type in EMSA file - " + prefix);
       } catch (NumberFormatException | ParseException e) {
@@ -626,16 +529,12 @@ public class EMSAFile extends BaseSpectrum {
    }
 
    private void updateSampleOrientation() {
-      final double[] normal = new double[]{Math.sin(mXTilt),
-            Math.cos(mXTilt) * Math.sin(mYTilt),
-            -Math.cos(mXTilt) * Math.cos(mYTilt)};
-      mProperties.setSampleShape(SpectrumProperties.SampleShape,
-            new SampleShape.Bulk(normal));
+      final double[] normal = new double[]{Math.sin(mXTilt), Math.cos(mXTilt) * Math.sin(mYTilt), -Math.cos(mXTilt) * Math.cos(mYTilt)};
+      mProperties.setSampleShape(SpectrumProperties.SampleShape, new SampleShape.Bulk(normal));
    }
 
    private int findMonth(String month) {
-      final String[] months = {"jan", "feb", "mar", "apr", "may", "jun", "jul",
-            "aug", "sep", "oct", "nov", "dec"};
+      final String[] months = {"jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"};
       for (int i = 0; i < months.length; ++i)
          if (month.equalsIgnoreCase(months[i]))
             return i + 1;
@@ -645,8 +544,7 @@ public class EMSAFile extends BaseSpectrum {
    public EMSAFile() {
       super();
       // Set the default acquisition time stamp to now...
-      mProperties.setTimestampProperty(SpectrumProperties.AcquisitionTime,
-            new Date());
+      mProperties.setTimestampProperty(SpectrumProperties.AcquisitionTime, new Date());
    }
 
    public EMSAFile(File file, boolean withImgs) throws IOException {
@@ -656,17 +554,14 @@ public class EMSAFile extends BaseSpectrum {
          setFilename(file.getCanonicalPath());
          if (withImgs) {
             try {
-               final String imgRef = getProperties()
-                     .getTextWithDefault(SpectrumProperties.ImageRef, null);
+               final String imgRef = getProperties().getTextWithDefault(SpectrumProperties.ImageRef, null);
                if (imgRef != null) {
                   final File fn = new File(file.getParentFile(), imgRef);
                   final BufferedImage[] sis = ASPEXImage.read(fn);
                   if (sis.length > 0)
-                     getProperties().setObjectProperty(
-                           SpectrumProperties.MicroImage, sis[0]);
+                     getProperties().setObjectProperty(SpectrumProperties.MicroImage, sis[0]);
                   if (sis.length > 1)
-                     getProperties().setObjectProperty(
-                           SpectrumProperties.MicroImage2, sis[1]);
+                     getProperties().setObjectProperty(SpectrumProperties.MicroImage2, sis[1]);
                }
             } catch (Exception e) {
                e.printStackTrace();
@@ -703,12 +598,10 @@ public class EMSAFile extends BaseSpectrum {
       mProperties.getTextWithDefault(SpectrumProperties.SpecimenDesc, null);
 
       if ((name.length() > 0) && (!name.matches("[1-9][0-9]*")))
-         mProperties.setTextProperty(SpectrumProperties.SpectrumDisplayName,
-               name);
+         mProperties.setTextProperty(SpectrumProperties.SpectrumDisplayName, name);
       else if (!mProperties.isDefined(SpectrumProperties.SpectrumDisplayName)) {
          final File parent = f.getParentFile();
-         mProperties.setTextProperty(SpectrumProperties.SpectrumDisplayName,
-               parent.getName() + " - " + name);
+         mProperties.setTextProperty(SpectrumProperties.SpectrumDisplayName, parent.getName() + " - " + name);
       }
    }
 }

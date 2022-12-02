@@ -106,9 +106,7 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape;
  * @author John Villarrubia
  * @version 1.0
  */
-public class DepositedEnergyListener
-   implements
-   ActionListener {
+public class DepositedEnergyListener implements ActionListener {
 
    /**
     * <p>
@@ -169,7 +167,7 @@ public class DepositedEnergyListener
        * @return
        */
       private boolean contains(double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, double[] pos) {
-         if((xmin <= pos[0]) && (pos[0] < xmax) && (ymin <= pos[1]) && (pos[1] < ymax) && (zmin <= pos[2]) && (pos[2] < zmax))
+         if ((xmin <= pos[0]) && (pos[0] < xmax) && (ymin <= pos[1]) && (pos[1] < ymax) && (zmin <= pos[2]) && (pos[2] < zmax))
             return true;
          else
             return false;
@@ -184,17 +182,17 @@ public class DepositedEnergyListener
        */
       public void dump(PrintWriter pw) {
          /* Output data for each detected electron */
-         if(children != null) {
+         if (children != null) {
             /*
              * This OctEntry has multiple events stored in children.
              */
-            for(final OctEntry c : children)
-               if(c != null)
+            for (final OctEntry c : children)
+               if (c != null)
                   c.dump(pw);
             return;
          }
 
-         if(pos != null) {
+         if (pos != null) {
             /*
              * This OctEntry is a leaf. Print pos and depE.
              */
@@ -223,21 +221,21 @@ public class DepositedEnergyListener
        * @return
        */
       private OctEntry getChild(int index) {
-         if(children[index] == null) {
+         if (children[index] == null) {
             /* It doesn't exist yet, so generate it. */
             final int childGeneration = generation + 1;
-            if(childGeneration > maxDivisions)
+            if (childGeneration > maxDivisions)
                return null;
             final double[] childCenter = center.clone();
-            if(index < 4)
+            if (index < 4)
                childCenter[0] -= halfSizes[childGeneration][0];
             else
                childCenter[0] += halfSizes[childGeneration][0];
-            if((index < 2) || (index == 4) || (index == 5))
+            if ((index < 2) || (index == 4) || (index == 5))
                childCenter[1] -= halfSizes[childGeneration][1];
             else
                childCenter[1] += halfSizes[childGeneration][1];
-            if((index % 2) == 0)
+            if ((index % 2) == 0)
                childCenter[2] -= halfSizes[childGeneration][2];
             else
                childCenter[2] += halfSizes[childGeneration][2];
@@ -257,11 +255,11 @@ public class DepositedEnergyListener
       private int getChildIndex(double[] newpos) {
          int index = 0;
 
-         if(newpos[0] > center[0])
+         if (newpos[0] > center[0])
             index += 4;
-         if(newpos[1] > center[1])
+         if (newpos[1] > center[1])
             index += 2;
-         if(newpos[2] > center[2])
+         if (newpos[2] > center[2])
             index += 1;
 
          return index;
@@ -305,13 +303,13 @@ public class DepositedEnergyListener
           * case, if the event is within the test shape we return depE,
           * otherwise 0.
           */
-         if(pos != null)
-            if(contains(testShapeXmin, testShapeXmax, testShapeYmin, testShapeYmax, testShapeZmin, testShapeZmax, pos))
+         if (pos != null)
+            if (contains(testShapeXmin, testShapeXmax, testShapeYmin, testShapeYmax, testShapeZmin, testShapeZmax, pos))
                return depE;
             else
                return 0.;
          /* Second case: This Octree has no events. Return 0. */
-         if(children == null)
+         if (children == null)
             return 0.;
 
          /*
@@ -325,35 +323,35 @@ public class DepositedEnergyListener
          final double xmin = this.center[0] - halfSizes[generation][0];
          final double overlapXmax = Math.min(testShapeXmax, xmax);
          final double overlapXmin = Math.max(testShapeXmin, xmin);
-         if(overlapXmax < overlapXmin)
+         if (overlapXmax < overlapXmin)
             // null interval, there is no overlap
             return 0.;
          final double ymax = this.center[1] + halfSizes[generation][1];
          final double ymin = this.center[1] - halfSizes[generation][1];
          final double overlapYmax = Math.min(testShapeYmax, ymax);
          final double overlapYmin = Math.max(testShapeYmin, ymin);
-         if(overlapYmax < overlapYmin)
+         if (overlapYmax < overlapYmin)
             // null interval, there is no overlap
             return 0.;
          final double zmax = this.center[2] + halfSizes[generation][2];
          final double zmin = this.center[2] - halfSizes[generation][2];
          final double overlapZmax = Math.min(testShapeZmax, zmax);
          final double overlapZmin = Math.max(testShapeZmin, zmin);
-         if(overlapZmax < overlapZmin)
+         if (overlapZmax < overlapZmin)
             // null interval, there is no overlap
             return 0.;
 
          /* If overlap is complete, return depE */
-         if((overlapXmax == xmax) && (overlapXmin == xmin) && (overlapYmax == ymax) && (overlapYmin == ymin)
-               && (overlapZmax == zmax) && (overlapZmin == zmin))
+         if ((overlapXmax == xmax) && (overlapXmin == xmin) && (overlapYmax == ymax) && (overlapYmin == ymin) && (overlapZmax == zmax)
+               && (overlapZmin == zmin))
             return depE;
 
          /*
           * Otherwise, overlap is partial. Return the sum of depE from children.
           */
          double result = 0.;
-         for(final OctEntry c : children)
-            if(c != null)
+         for (final OctEntry c : children)
+            if (c != null)
                result += c.getDepositedEnergy(testShapeCenter, testShapeHalfSize);
          return result;
       }
@@ -378,20 +376,20 @@ public class DepositedEnergyListener
           */
 
          /* Possibility 1: 1 event */
-         if(pos != null)
-            if(shape.contains(pos))
+         if (pos != null)
+            if (shape.contains(pos))
                return depE;
             else
                return 0.;
 
          /* Possibility 2: 0 events */
-         if(children == null)
+         if (children == null)
             return 0.; // pos==null && children == null means 0 events
 
          /* Possibility 3: multiple events */
          double result = 0.;
-         for(final OctEntry c : children)
-            if(c != null)
+         for (final OctEntry c : children)
+            if (c != null)
                result += c.getDepositedEnergy(shape);
          return result;
       }
@@ -418,20 +416,20 @@ public class DepositedEnergyListener
        */
       public boolean insert(double[] newpos, double newDepE) {
 
-         if(children != null) {
+         if (children != null) {
             /*
              * This OctEntry is not a leaf. Decide which child should contain
              * this event and add it.
              */
             final int index = getChildIndex(newpos);
             final boolean result = getChild(index).insert(newpos, newDepE);
-            if(result)
+            if (result)
                depE += newDepE;
             return result;
          }
 
          // Make sure the coordinate is inside our volume.
-         if(!isInside(newpos))
+         if (!isInside(newpos))
             return false;
 
          /*
@@ -440,7 +438,7 @@ public class DepositedEnergyListener
           */
 
          /* If this is the first time we get data, do this */
-         if(pos == null) { // No data yet
+         if (pos == null) { // No data yet
             pos = newpos.clone();
             depE = newDepE;
             return true;
@@ -458,7 +456,7 @@ public class DepositedEnergyListener
           * Octree down to the resolution limit every time, we check for it and
           * combine events immediately when it happens.
           */
-         if((newpos[0] == pos[0]) && (newpos[1] == pos[1]) && (newpos[2] == pos[2])) {
+         if ((newpos[0] == pos[0]) && (newpos[1] == pos[1]) && (newpos[2] == pos[2])) {
             depE += newDepE;
             // leave pos as is, since they're the same
             return true;
@@ -468,7 +466,7 @@ public class DepositedEnergyListener
           * If we cannot subdivide this OctEntry, combine this event with our
           * others
           */
-         if(generation == maxDivisions) {
+         if (generation == maxDivisions) {
             depE += newDepE;
             pos = center;
             return true;
@@ -491,7 +489,7 @@ public class DepositedEnergyListener
          index = getChildIndex(newpos);
          result = getChild(index).insert(newpos, newDepE);
 
-         if(result)
+         if (result)
             depE += newDepE; // This time we must increment
          return result;
       }
@@ -504,11 +502,11 @@ public class DepositedEnergyListener
        * @return
        */
       public boolean isInside(double[] pos) {
-         if((pos[0] <= (center[0] - halfSizes[generation][0])) || (pos[0] > (center[0] + halfSizes[generation][0])))
+         if ((pos[0] <= (center[0] - halfSizes[generation][0])) || (pos[0] > (center[0] + halfSizes[generation][0])))
             return false;
-         if((pos[1] <= (center[1] - halfSizes[generation][1])) || (pos[1] > (center[1] + halfSizes[generation][1])))
+         if ((pos[1] <= (center[1] - halfSizes[generation][1])) || (pos[1] > (center[1] + halfSizes[generation][1])))
             return false;
-         if((pos[2] <= (center[2] - halfSizes[generation][2])) || (pos[2] > (center[2] + halfSizes[generation][2])))
+         if ((pos[2] <= (center[2] - halfSizes[generation][2])) || (pos[2] > (center[2] + halfSizes[generation][2])))
             return false;
          return true;
       }
@@ -579,42 +577,38 @@ public class DepositedEnergyListener
     * that the number of such subdivisions is limited to maxDivisions, after
     * which multiple events within the same minimal octant are summed.
     *
-    * @param mcss - the MonteCarloSS instance with which this listener is
+    * @param mcss
+    *           - the MonteCarloSS instance with which this listener is
     *           associated
-    * @param xmin - x coordinate of minimum diagonal corner that defines
-    *           bounding box
-    * @param xmax - y coordinate of minimum diagonal corner that defines
-    *           bounding box
-    * @param ymin - z coordinate of minimum diagonal corner that defines
-    *           bounding box
-    * @param ymax - x coordinate of maximum diagonal corner that defines
-    *           bounding box
-    * @param zmin - y coordinate of maximum diagonal corner that defines
-    *           bounding box
-    * @param zmax - z coordinate of maximum diagonal corner that defines
-    *           bounding box
-    * @param maxDivisions - the maximum number of times the bounding box may be
-    *           bisected along each of its dimensions.
+    * @param xmin
+    *           - x coordinate of minimum diagonal corner that defines bounding
+    *           box
+    * @param xmax
+    *           - y coordinate of minimum diagonal corner that defines bounding
+    *           box
+    * @param ymin
+    *           - z coordinate of minimum diagonal corner that defines bounding
+    *           box
+    * @param ymax
+    *           - x coordinate of maximum diagonal corner that defines bounding
+    *           box
+    * @param zmin
+    *           - y coordinate of maximum diagonal corner that defines bounding
+    *           box
+    * @param zmax
+    *           - z coordinate of maximum diagonal corner that defines bounding
+    *           box
+    * @param maxDivisions
+    *           - the maximum number of times the bounding box may be bisected
+    *           along each of its dimensions.
     */
    public DepositedEnergyListener(MonteCarloSS mcss, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, int maxDivisions) {
       this.mMonte = mcss;
-      final double[] center = new double[] {
-         (xmin + xmax) / 2.,
-         (ymin + ymax) / 2.,
-         (zmin + zmax) / 2.
-      };
+      final double[] center = new double[]{(xmin + xmax) / 2., (ymin + ymax) / 2., (zmin + zmax) / 2.};
       halfSizes = new double[maxDivisions + 1][];
-      halfSizes[0] = new double[] {
-         (xmax - xmin) / 2.,
-         (ymax - ymin) / 2.,
-         (zmax - zmin) / 2.,
-      };
-      for(int i = 1; i <= maxDivisions; i++)
-         halfSizes[i] = new double[] {
-            halfSizes[i - 1][0] / 2.,
-            halfSizes[i - 1][1] / 2.,
-            halfSizes[i - 1][2] / 2.
-         };
+      halfSizes[0] = new double[]{(xmax - xmin) / 2., (ymax - ymin) / 2., (zmax - zmin) / 2.,};
+      for (int i = 1; i <= maxDivisions; i++)
+         halfSizes[i] = new double[]{halfSizes[i - 1][0] / 2., halfSizes[i - 1][1] / 2., halfSizes[i - 1][2] / 2.};
       DepositedEnergyListener.maxDivisions = maxDivisions;
       mLog = new OctEntry(center, 0);
    }
@@ -627,9 +621,9 @@ public class DepositedEnergyListener
    public void actionPerformed(ActionEvent ae) {
       assert (ae.getSource() instanceof MonteCarloSS);
       assert (ae.getSource() == mMonte);
-      switch(ae.getID()) {
-         case MonteCarloSS.TrajectoryStartEvent: {
-            synchronized(this) {
+      switch (ae.getID()) {
+         case MonteCarloSS.TrajectoryStartEvent : {
+            synchronized (this) {
                final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
                final Electron el = mcss.getElectron();
                energyIn += el.getEnergy();
@@ -638,8 +632,8 @@ public class DepositedEnergyListener
          }
             break;
 
-         case MonteCarloSS.BackscatterEvent: {
-            synchronized(this) {
+         case MonteCarloSS.BackscatterEvent : {
+            synchronized (this) {
                final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
                final Electron el = mcss.getElectron();
                energyOut += el.getEnergy();
@@ -648,27 +642,27 @@ public class DepositedEnergyListener
          }
             break;
 
-         case MonteCarloSS.PostScatterEvent:
-         case MonteCarloSS.NonScatterEvent:
+         case MonteCarloSS.PostScatterEvent :
+         case MonteCarloSS.NonScatterEvent :
             /*
              * When the PE moves, its deposited energy is just the difference
              * between its initial and final energies.
              */
-            synchronized(this) {
+            synchronized (this) {
                /* Deposited energy = deltaE */
                final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
                final Electron el = mcss.getElectron();
                final double kE = el.getEnergy();
                final double depositedE = el.getPreviousEnergy() - kE;
-               if(depositedE != 0.) {
+               if (depositedE != 0.) {
                   mLog.insert(el.getPosition(), depositedE);
                   depositedEnergy += depositedE;
                }
             }
             break;
 
-         case MonteCarloSS.TrajectoryEndEvent:
-         case MonteCarloSS.EndSecondaryEvent:
+         case MonteCarloSS.TrajectoryEndEvent :
+         case MonteCarloSS.EndSecondaryEvent :
             /*
              * When the electron stops, its deposited energy is the difference
              * between its initial and final energies. The final energy is
@@ -678,16 +672,16 @@ public class DepositedEnergyListener
              * electron ends up at the bottom of the conduction band, where kE =
              * 0.)
              */
-            synchronized(this) {
+            synchronized (this) {
                /* Deposited energy = E - max(EF,0) */
                final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
                final Electron el = mcss.getElectron();
                final double kE = el.getEnergy();
                final RegionBase reg = el.getCurrentRegion();
                double depositedE;
-               if(reg != null) {
+               if (reg != null) {
                   final Material mat = reg.getMaterial();
-                  if(mat instanceof SEmaterial)
+                  if (mat instanceof SEmaterial)
                      depositedE = kE - Math.max(((SEmaterial) mat).getEFermi(), 0.);
                   else
                      depositedE = kE;
@@ -698,12 +692,12 @@ public class DepositedEnergyListener
                depositedEnergy += depositedE;
             }
             break;
-         case MonteCarloSS.StartSecondaryEvent:
+         case MonteCarloSS.StartSecondaryEvent :
             /*
              * The SE takes away the difference between its kinetic energy and
              * the Fermi energy.
              */
-            synchronized(this) {
+            synchronized (this) {
                /*
                 * deposited energy is negative: Removed energy = ESE - max(EF,0)
                 */
@@ -712,7 +706,7 @@ public class DepositedEnergyListener
                final double kE = secEl.getEnergy();
                final Material mat = secEl.getCurrentRegion().getMaterial();
                double depositedE;
-               if(mat instanceof SEmaterial)
+               if (mat instanceof SEmaterial)
                   depositedE = Math.max(((SEmaterial) mat).getEFermi(), 0.) - kE;
                else
                   depositedE = -kE;
@@ -721,7 +715,7 @@ public class DepositedEnergyListener
             }
             break;
 
-         default:
+         default :
             break;
 
       }
@@ -768,10 +762,12 @@ public class DepositedEnergyListener
     * directions. Because of this restriction this method can use a much faster
     * algorithm than the one employed by getDepositedEnergy(Shape shape).
     *
-    * @param testShapeCenter - [x, y, z] coordinates of the center of the box
-    *           that contains the energy deposit events that will be summed.
-    * @param testShapeHalfSize - half the length of the bounding box along each
-    *           of the coordinate axis directions.
+    * @param testShapeCenter
+    *           - [x, y, z] coordinates of the center of the box that contains
+    *           the energy deposit events that will be summed.
+    * @param testShapeHalfSize
+    *           - half the length of the bounding box along each of the
+    *           coordinate axis directions.
     * @return - the total deposited energy of events within the box described by
     *         the supplied parameters.
     */

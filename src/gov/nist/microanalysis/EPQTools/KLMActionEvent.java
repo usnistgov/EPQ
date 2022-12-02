@@ -25,8 +25,7 @@ import java.util.List;
  * @author nritchie
  * @version 1.0
  */
-public class KLMActionEvent
-   extends ActionEvent {
+public class KLMActionEvent extends ActionEvent {
 
    private static final long serialVersionUID = 2074079796714116586L;
 

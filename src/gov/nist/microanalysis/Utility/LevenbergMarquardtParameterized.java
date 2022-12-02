@@ -96,10 +96,11 @@ public class LevenbergMarquardtParameterized {
       /**
        * Sets the value assigned to constraint.
        * 
-       * @param constraint The value to which to set constraint.
+       * @param constraint
+       *           The value to which to set constraint.
        */
       public void setConstraint(Constraint constraint) {
-         if(mConstraint != constraint)
+         if (mConstraint != constraint)
             mConstraint = constraint;
       }
 
@@ -146,11 +147,11 @@ public class LevenbergMarquardtParameterized {
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(getClass() != obj.getClass())
+         if (getClass() != obj.getClass())
             return false;
          return mName.equals(((Parameter) obj).mName);
       }
@@ -165,9 +166,7 @@ public class LevenbergMarquardtParameterized {
       }
    }
 
-   static public class ParameterObject<T>
-      extends
-      Parameter {
+   static public class ParameterObject<T> extends Parameter {
       private final T mObject;
 
       public ParameterObject(String name, Constraint constraint, double defValue, boolean isFit, T obj) {
@@ -208,7 +207,8 @@ public class LevenbergMarquardtParameterized {
        * Does this Function depend upon the argument Parameter and is this
        * Parameter fit?
        * 
-       * @param idx {@link Parameter}
+       * @param idx
+       *           {@link Parameter}
        * @return true if dependent and fit; false otherwise
        */
       boolean isFitParameter(Parameter idx);
@@ -218,8 +218,10 @@ public class LevenbergMarquardtParameterized {
       /**
        * A function with argument arg and parameters param.
        * 
-       * @param arg double
-       * @param param Map&lt;Parameter, Double&gt;
+       * @param arg
+       *           double
+       * @param param
+       *           Map&lt;Parameter, Double&gt;
        * @return The constrained result
        */
       double compute(double arg, Map<Parameter, Double> param);
@@ -228,9 +230,12 @@ public class LevenbergMarquardtParameterized {
        * The derivative of the function in <code>compute(..)</code> with respect
        * to the i-th member of the arguments <code>param</code>.
        * 
-       * @param arg double
-       * @param param Map&lt;Parameter, Double&gt;
-       * @param idx Parameter
+       * @param arg
+       *           double
+       * @param param
+       *           Map&lt;Parameter, Double&gt;
+       * @param idx
+       *           Parameter
        * @return The derivative
        */
       double derivative(double arg, Map<Parameter, Double> param, Parameter idx);
@@ -239,32 +244,32 @@ public class LevenbergMarquardtParameterized {
        * Returns the same as <code>compute(..)</code> except also propogates the
        * error in <code>param</code> into error in the result.
        * 
-       * @param arg double
-       * @param param Map&lt;Parameter, UncertainValue2&gt;
+       * @param arg
+       *           double
+       * @param param
+       *           Map&lt;Parameter, UncertainValue2&gt;
        * @return An UncertainValue containing the error propogated result of the
        *         constraint.
        */
       UncertainValue2 computeU(double arg, Map<Parameter, UncertainValue2> param);
    }
 
-   public interface InvertableFunction
-      extends
-      Function {
+   public interface InvertableFunction extends Function {
 
       /**
        * Computes the inverse of <code>compute(double arg, Map&lt;Parameter,
        * UncertainValue&gt; param)</code>
        * 
-       * @param arg double
-       * @param param Map&lt;Parameter, UncertainValue2&gt;
+       * @param arg
+       *           double
+       * @param param
+       *           Map&lt;Parameter, UncertainValue2&gt;
        * @return UncertainValue2
        */
       public UncertainValue2 inverse(double arg, Map<Parameter, UncertainValue2> param);
    }
 
-   public static abstract class FunctionImpl
-      implements
-      Function {
+   public static abstract class FunctionImpl implements Function {
 
       private final HashSet<Parameter> mParameters = new HashSet<Parameter>();
 
@@ -280,8 +285,8 @@ public class LevenbergMarquardtParameterized {
       @Override
       final public Set<Parameter> getParameters(boolean all) {
          final HashSet<Parameter> res = new HashSet<Parameter>();
-         for(final Parameter p : mParameters)
-            if(all || p.isFit())
+         for (final Parameter p : mParameters)
+            if (all || p.isFit())
                res.add(p);
          return res;
       }
@@ -295,12 +300,13 @@ public class LevenbergMarquardtParameterized {
        * Extracts the fit Parameter values associated with this function from a
        * Map containing all fit parameter values.
        * 
-       * @param fitResult Map&lt;Parameter, UncertainValue2&gt;
+       * @param fitResult
+       *           Map&lt;Parameter, UncertainValue2&gt;
        * @return Map&lt;Parameter, Double&gt;
        */
       final public Map<Parameter, UncertainValue2> extract(Map<Parameter, UncertainValue2> fitResult) {
          final HashMap<Parameter, UncertainValue2> res = new HashMap<Parameter, UncertainValue2>();
-         for(final Parameter p : getParameters(false))
+         for (final Parameter p : getParameters(false))
             res.put(p, fitResult.get(p));
          return res;
       }
@@ -328,9 +334,7 @@ public class LevenbergMarquardtParameterized {
     * @author nritchie
     * @version 1.0
     */
-   private class ParameterizedFitFunction
-      implements
-      FitFunction {
+   private class ParameterizedFitFunction implements FitFunction {
 
       private final ArrayList<Parameter> mParameters;
       private final Function mFunction;
@@ -345,7 +349,7 @@ public class LevenbergMarquardtParameterized {
       private Map<Parameter, Double> getUpdatedParam(Matrix params) {
          final Map<Parameter, Double> param = new HashMap<Parameter, Double>();
          int i = 0;
-         for(final Parameter p : mParameters) {
+         for (final Parameter p : mParameters) {
             param.put(p, params.get(i, 0));
             ++i;
          }
@@ -356,9 +360,9 @@ public class LevenbergMarquardtParameterized {
       public Matrix partials(Matrix params) {
          final Matrix res = new Matrix(mOrdinate.length, params.getRowDimension());
          final Map<Parameter, Double> param = getUpdatedParam(params);
-         for(int j = 0; j < mParameters.size(); ++j) {
+         for (int j = 0; j < mParameters.size(); ++j) {
             final Parameter p = mParameters.get(j);
-            for(int ch = 0; ch < mOrdinate.length; ++ch)
+            for (int ch = 0; ch < mOrdinate.length; ++ch)
                res.set(ch, j, mFunction.derivative(mOrdinate[ch], param, p));
          }
          return res;
@@ -367,14 +371,15 @@ public class LevenbergMarquardtParameterized {
       /**
        * Computes the fit function as a function of the fit parameters.
        * 
-       * @param params A m x 1 Matrix containing the fit function parameters
+       * @param params
+       *           A m x 1 Matrix containing the fit function parameters
        * @return A n x 1 matrix containing the fit function values at each
        */
       @Override
       public Matrix compute(Matrix params) {
          final Matrix res = new Matrix(mOrdinate.length, 1);
          final Map<Parameter, Double> param = getUpdatedParam(params);
-         for(int j = 0; j < mOrdinate.length; ++j)
+         for (int j = 0; j < mOrdinate.length; ++j)
             res.set(j, 0, mFunction.compute(mOrdinate[j], param));
          return res;
       }
@@ -401,9 +406,7 @@ public class LevenbergMarquardtParameterized {
     * @author nritchie
     * @version 1.0
     */
-   public static class ParameterizedFitResult
-      extends
-      FitResult {
+   public static class ParameterizedFitResult extends FitResult {
 
       private final List<Parameter> mParameters;
 
@@ -436,15 +439,15 @@ public class LevenbergMarquardtParameterized {
 
       public List<Parameter> getParametersByClass(Class<? extends Parameter> pc) {
          final List<Parameter> res = new ArrayList<LevenbergMarquardtParameterized.Parameter>();
-         for(final Parameter p : mParameters)
-            if(p.getClass().equals(pc))
+         for (final Parameter p : mParameters)
+            if (p.getClass().equals(pc))
                res.add(p);
          return Collections.unmodifiableList(res);
       }
 
       public Parameter getParameterByClass(Class<? extends Parameter> pc) {
-         for(final Parameter p : mParameters)
-            if(p.getClass().equals(pc))
+         for (final Parameter p : mParameters)
+            if (p.getClass().equals(pc))
                return p;
          return null;
       }
@@ -452,7 +455,7 @@ public class LevenbergMarquardtParameterized {
       public Map<Parameter, UncertainValue2> getParameterMap() {
          final Map<Parameter, UncertainValue2> res = new HashMap<LevenbergMarquardtParameterized.Parameter, UncertainValue2>();
          final UncertainValue2[] bpu = getBestParametersU();
-         for(int i = 0; i < mParameters.size(); ++i)
+         for (int i = 0; i < mParameters.size(); ++i)
             res.put(mParameters.get(i), bpu[i]);
          return Collections.unmodifiableMap(res);
       }
@@ -460,7 +463,7 @@ public class LevenbergMarquardtParameterized {
       public Map<Parameter, Double> getResults() {
          final Map<Parameter, Double> res = new HashMap<LevenbergMarquardtParameterized.Parameter, Double>();
          final UncertainValue2[] bpu = getBestParametersU();
-         for(int i = 0; i < mParameters.size(); ++i)
+         for (int i = 0; i < mParameters.size(); ++i)
             res.put(mParameters.get(i), bpu[i].doubleValue());
          return Collections.unmodifiableMap(res);
       }
@@ -468,7 +471,7 @@ public class LevenbergMarquardtParameterized {
       public String tabulate() {
          final StringBuffer sb = new StringBuffer();
          sb.append("Name\tDefault\tFit\tu(Fit)\n");
-         for(final Parameter p : mParameters) {
+         for (final Parameter p : mParameters) {
             sb.append(p.mName);
             sb.append("\t");
             sb.append(p.mDefaultValue);
@@ -489,31 +492,34 @@ public class LevenbergMarquardtParameterized {
     * estimates <code>sigma</code>. The results are returned as a
     * {@link ParameterizedFitResult} object.
     * 
-    * @param f {@link Function}
-    * @param xVals double[n]
-    * @param yData double[n]
-    * @param sigma double[n]
+    * @param f
+    *           {@link Function}
+    * @param xVals
+    *           double[n]
+    * @param yData
+    *           double[n]
+    * @param sigma
+    *           double[n]
     * @return {@link ParameterizedFitResult}
     * @throws EPQException
     */
-   public ParameterizedFitResult compute(Function f, double[] xVals, double[] yData, double[] sigma)
-         throws EPQException {
+   public ParameterizedFitResult compute(Function f, double[] xVals, double[] yData, double[] sigma) throws EPQException {
       final ParameterizedFitFunction pff = new ParameterizedFitFunction(xVals, f);
       // Initialize constraints
       final ConstrainedFitFunction cff = new ConstrainedFitFunction(pff, pff.paramSize());
-      for(int i = 0; i < pff.paramSize(); ++i)
+      for (int i = 0; i < pff.paramSize(); ++i)
          cff.setConstraint(i, pff.mParameters.get(i).mConstraint);
       final LevenbergMarquardtConstrained lmq = new LevenbergMarquardtConstrained();
-      if(mListener != null)
+      if (mListener != null)
          lmq.addActionListener(mListener);
       // Initialize fit data.
       final Matrix yM = new Matrix(yData.length, 1), sM = new Matrix(sigma.length, 1);
-      for(int i = 0; i < yData.length; ++i) {
+      for (int i = 0; i < yData.length; ++i) {
          yM.set(i, 0, yData[i]);
          sM.set(i, 0, sigma[i]);
       }
       final Matrix p0 = new Matrix(pff.mParameters.size(), 1);
-      for(int i = 0; i < pff.paramSize(); ++i)
+      for (int i = 0; i < pff.paramSize(); ++i)
          p0.set(i, 0, pff.mParameters.get(i).mDefaultValue);
       return new ParameterizedFitResult(lmq, lmq.compute(cff, yM, sM, p0), pff.mParameters);
    }

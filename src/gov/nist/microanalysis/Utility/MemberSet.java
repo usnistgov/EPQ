@@ -25,27 +25,11 @@ public class MemberSet {
    public static final int INIT_NEXT_MEMBER = -1;
 
    static private final int QUANTA = 8; // Byte.SIZE
-   static private byte[] MASKS = {
-      (byte) (0x1 << 0),
-      (byte) (0x1 << 1),
-      (byte) (0x1 << 2),
-      (byte) (0x1 << 3),
-      (byte) (0x1 << 4),
-      (byte) (0x1 << 5),
-      (byte) (0x1 << 6),
-      (byte) (0x1 << 7)
-   };
+   static private byte[] MASKS = {(byte) (0x1 << 0), (byte) (0x1 << 1), (byte) (0x1 << 2), (byte) (0x1 << 3), (byte) (0x1 << 4), (byte) (0x1 << 5),
+         (byte) (0x1 << 6), (byte) (0x1 << 7)};
 
-   static private byte[] INV_MASKS = {
-      (byte) (0xFF - (0x1 << 0)),
-      (byte) (0xFF - (0x1 << 1)),
-      (byte) (0xFF - (0x1 << 2)),
-      (byte) (0xFF - (0x1 << 3)),
-      (byte) (0xFF - (0x1 << 4)),
-      (byte) (0xFF - (0x1 << 5)),
-      (byte) (0xFF - (0x1 << 6)),
-      (byte) (0xFF - (0x1 << 7))
-   };
+   static private byte[] INV_MASKS = {(byte) (0xFF - (0x1 << 0)), (byte) (0xFF - (0x1 << 1)), (byte) (0xFF - (0x1 << 2)), (byte) (0xFF - (0x1 << 3)),
+         (byte) (0xFF - (0x1 << 4)), (byte) (0xFF - (0x1 << 5)), (byte) (0xFF - (0x1 << 6)), (byte) (0xFF - (0x1 << 7))};
 
    private final byte[] mMembers;
    private final int mSize;
@@ -78,13 +62,13 @@ public class MemberSet {
     * @return true if they contain the same members; false otherwise.
     */
    public boolean equals(MemberSet ms) {
-      if(ms == this)
+      if (ms == this)
          return true;
-      for(int i = mMembers.length - 2; i >= 0; --i)
-         if(mMembers[i] != ms.mMembers[i])
+      for (int i = mMembers.length - 2; i >= 0; --i)
+         if (mMembers[i] != ms.mMembers[i])
             return false;
-      for(int i = QUANTA * (mMembers.length - 1); i < mSize; ++i)
-         if(this.contains(i) != ms.contains(i))
+      for (int i = QUANTA * (mMembers.length - 1); i < mSize; ++i)
+         if (this.contains(i) != ms.contains(i))
             return false;
       return true;
 
@@ -134,7 +118,7 @@ public class MemberSet {
     */
    public void include(MemberSet ms) {
       assert (ms.size() == size());
-      for(int i = 0; i < mMembers.length; ++i)
+      for (int i = 0; i < mMembers.length; ++i)
          mMembers[i] |= ms.mMembers[i];
    }
 
@@ -145,7 +129,7 @@ public class MemberSet {
     */
    public void remove(MemberSet ms) {
       assert (ms.size() == size());
-      for(int i = 0; i < mMembers.length; ++i)
+      for (int i = 0; i < mMembers.length; ++i)
          mMembers[i] &= (0xFF - ms.mMembers[i]);
    }
 
@@ -156,7 +140,7 @@ public class MemberSet {
     */
    public void both(MemberSet ms) {
       assert (ms.size() == size());
-      for(int i = 0; i < mMembers.length; ++i)
+      for (int i = 0; i < mMembers.length; ++i)
          mMembers[i] &= ms.mMembers[i];
    }
 
@@ -167,7 +151,7 @@ public class MemberSet {
     */
    public void neither(MemberSet ms) {
       assert (ms.size() != size());
-      for(int i = 0; i < mMembers.length; ++i)
+      for (int i = 0; i < mMembers.length; ++i)
          mMembers[i] = (byte) (~(ms.mMembers[i] | mMembers[i]));
    }
 
@@ -178,10 +162,10 @@ public class MemberSet {
     */
    public int getMemberCount() {
       int res = 0;
-      for(int i = mMembers.length - 2; i >= 0; --i)
+      for (int i = mMembers.length - 2; i >= 0; --i)
          res += Integer.bitCount(mMembers[i] & 0xFF);
-      for(int i = QUANTA * (mSize / QUANTA); i < size(); ++i)
-         if(contains(i))
+      for (int i = QUANTA * (mSize / QUANTA); i < size(); ++i)
+         if (contains(i))
             ++res;
       return res;
    }
@@ -197,17 +181,17 @@ public class MemberSet {
 
    public int nextMember(int i) {
       int j = i + 1;
-      if((j % QUANTA) != 0) {
-         for(int k = j; k < ((QUANTA * (j / QUANTA)) + QUANTA); ++k)
-            if(contains(k))
+      if ((j % QUANTA) != 0) {
+         for (int k = j; k < ((QUANTA * (j / QUANTA)) + QUANTA); ++k)
+            if (contains(k))
                return k;
          j = (QUANTA * (j / QUANTA)) + QUANTA;
       }
-      for(int k = j / QUANTA; k < mMembers.length; ++k)
-         if(mMembers[k] != 0) {
+      for (int k = j / QUANTA; k < mMembers.length; ++k)
+         if (mMembers[k] != 0) {
             final byte b = mMembers[k];
-            for(int l = 0; l < MASKS.length; ++l)
-               if((b & MASKS[l]) != 0)
+            for (int l = 0; l < MASKS.length; ++l)
+               if ((b & MASKS[l]) != 0)
                   return (k * QUANTA) + l;
          }
       return END_OF_MEMBERS;

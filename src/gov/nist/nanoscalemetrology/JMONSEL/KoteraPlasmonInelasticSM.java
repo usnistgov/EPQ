@@ -48,8 +48,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * improvements should be implemented in a new scatter mechanism under a new
  * name.
  */
-public class KoteraPlasmonInelasticSM
-   extends ScatterMechanism {
+public class KoteraPlasmonInelasticSM extends ScatterMechanism {
 
    // private Material mat;
 
@@ -94,6 +93,7 @@ public class KoteraPlasmonInelasticSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatterRate(gov.nist
     * .microanalysis.NISTMonte.Electron)
@@ -101,7 +101,7 @@ public class KoteraPlasmonInelasticSM
    @Override
    public double scatterRate(Electron pe) {
       final double kE = pe.getEnergy();
-      if((plasmonE >= kE) || (minEgenSE > plasmonE) || (kE <= crossoverE))
+      if ((plasmonE >= kE) || (minEgenSE > plasmonE) || (kE <= crossoverE))
          return 0.;
       final double k0 = Math.sqrt(kE); // magnitude PE intial momentum
       // (proportional)
@@ -119,6 +119,7 @@ public class KoteraPlasmonInelasticSM
     * change in PE direction is treated as negligible. The change in PE energy
     * is already included in an average way in the continuous energy loss
     * formula, so to include it here would be double counting.
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatter(gov.nist.
     * microanalysis.NISTMonte.Electron)
@@ -130,15 +131,15 @@ public class KoteraPlasmonInelasticSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#setMaterial(gov.nist
     * .microanalysis.EPQLibrary.Material)
     */
    @Override
    public void setMaterial(Material mat) {
-      if(!(mat instanceof SEmaterial))
-         throw new EPQFatalException("Material " + mat.toString()
-               + " is not an SEmaterial as required for KoteraPlasmonInelasticSM.");
+      if (!(mat instanceof SEmaterial))
+         throw new EPQFatalException("Material " + mat.toString() + " is not an SEmaterial as required for KoteraPlasmonInelasticSM.");
       // this.mat = mat;
 
       plasmonE = ((SEmaterial) mat).getEplasmon();
@@ -169,10 +170,11 @@ public class KoteraPlasmonInelasticSM
     * by default. It can be set to a different positive value by using this
     * method. SE with energies below this value are "turned off".
     *
-    * @param minEgenSE The minEgenSE to set.
+    * @param minEgenSE
+    *           The minEgenSE to set.
     */
    public void setMinEgenSE(double minEgenSE) {
-      if(minEgenSE > 0.)
+      if (minEgenSE > 0.)
          this.minEgenSE = minEgenSE;
       else
          throw new EPQFatalException("Illegal minEgenSE.");

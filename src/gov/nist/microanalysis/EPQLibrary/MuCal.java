@@ -15,11 +15,12 @@ import gov.nist.microanalysis.Utility.CSVReader;
  * <li>Dr. B. A. Bunker, Dr. Q. T. Islam, B. I. Boaynov for their helpful
  * suggestions.</li>
  * <li>Dr. M. Zanabria for helping in typing the data in.</li>
- * <li>Dr. B. A. Bunker and Dr. Anne Tabor-Morris for subsequent modifications.</li>
+ * <li>Dr. B. A. Bunker and Dr. Anne Tabor-Morris for subsequent
+ * modifications.</li>
  * </ul>
  * <p>
- * Data tables extracted from <a
- * href="http://csrri.iit.edu/mucal-src/mucal_c-1.3.tar.gz">mucal.c, version
+ * Data tables extracted from
+ * <a href="http://csrri.iit.edu/mucal-src/mucal_c-1.3.tar.gz">mucal.c, version
  * 1.3</a>. Addition values for Z = 84, 85, 97, 88, 89, 91 and 94 were
  * interpolated from the tabulated values.
  * </p>
@@ -55,7 +56,7 @@ public class MuCal {
       conv_fac = new double[table.length];
       xsect_coh = new double[table.length][4];
       xsect_ncoh = new double[table.length][4];
-      for(int i = 0; i < table.length; ++i) {
+      for (int i = 0; i < table.length; ++i) {
          final double[] row = table[i];
          assert (int) Math.round(row[0]) == i + 1;
          conv_fac[i] = row[1];
@@ -73,7 +74,7 @@ public class MuCal {
    final private static double computeEqn4(double ephot, double[] fit) {
       final double log_e = Math.log(ephot);
       double xsec = 0.0;
-      for(int i = 0; i < 4; i++)
+      for (int i = 0; i < 4; i++)
          xsec += fit[i] * Math.pow(log_e, i);
       return Math.exp(xsec);
    }
@@ -83,7 +84,8 @@ public class MuCal {
     * energy and atom.
     * 
     * @param elm
-    * @param ePhoton Photon energy in joules
+    * @param ePhoton
+    *           Photon energy in joules
     * @return The cross section in meters<sup>2</sup>/kg
     */
    final public double computeCoherent(Element elm, double ePhoton) {
@@ -97,7 +99,8 @@ public class MuCal {
     * energy and atom.
     * 
     * @param elm
-    * @param ePhoton Photon energy in joules
+    * @param ePhoton
+    *           Photon energy in joules
     * @return The cross section in meters<sup>2</sup>/kg
     */
    final public double computeIncoherent(Element elm, double ePhoton) {
@@ -134,13 +137,15 @@ public class MuCal {
     * material of a nominal density of 1 kg/m^3. Multiply this by the density to
     * get the true MAC.
     * 
-    * @param comp Composition - The absorbing material
-    * @param ePhoton double - The x-ray energy in Joules
+    * @param comp
+    *           Composition - The absorbing material
+    * @param ePhoton
+    *           double - The x-ray energy in Joules
     * @return Absorption per unit length per kg/m<sup>3</sup>
     */
    final public double computeCoherent(Composition comp, double ePhoton) {
       double mac = 0.0;
-      for(final Element elm : comp.getElementSet())
+      for (final Element elm : comp.getElementSet())
          mac += computeCoherent(elm, ePhoton) * comp.weightFraction(elm, false);
       return mac;
    }
@@ -150,13 +155,15 @@ public class MuCal {
     * the specified material. Note the value returned is the absorption for a
     * material of a nominal density of 1 kg/m^3.
     * 
-    * @param comp Composition - The absorbing material
-    * @param ePhoton double - The x-ray energy in Joules
+    * @param comp
+    *           Composition - The absorbing material
+    * @param ePhoton
+    *           double - The x-ray energy in Joules
     * @return Scatters per m per kg/m<sup>3</sup>
     */
    final public double computeIncoherent(Composition comp, double ePhoton) {
       double scat = 0.0;
-      for(final Element elm : comp.getElementSet())
+      for (final Element elm : comp.getElementSet())
          scat += computeIncoherent(elm, ePhoton) * comp.weightFraction(elm, false);
       return scat;
    }
@@ -170,8 +177,7 @@ public class MuCal {
     * @return double Meters
     * @throws EPQException
     */
-   public double coherentMeanFreePath(Material mat, double ePhoton)
-         throws EPQException {
+   public double coherentMeanFreePath(Material mat, double ePhoton) throws EPQException {
       return 1.0 / (computeCoherent(mat, ePhoton) * mat.getDensity()); // m^2
       // per kg
    }
@@ -185,8 +191,7 @@ public class MuCal {
     * @return double Meters
     * @throws EPQException
     */
-   public double incoherentMeanFreePath(Material mat, double ePhoton)
-         throws EPQException {
+   public double incoherentMeanFreePath(Material mat, double ePhoton) throws EPQException {
       return 1.0 / (computeIncoherent(mat, ePhoton) * mat.getDensity());
    }
 }

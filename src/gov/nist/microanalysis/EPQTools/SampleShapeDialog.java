@@ -42,8 +42,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author nicholas
  */
-public class SampleShapeDialog
-   extends JDialog {
+public class SampleShapeDialog extends JDialog {
 
    static private enum SHAPE {
       BULK, BLOCK, RECT_PRISM, CYLINDER, SPHERE, TRI_PRISM, FIBER, HEMISPHERE, SQR_PYRAMID
@@ -64,21 +63,9 @@ public class SampleShapeDialog
    private final JRadioButton jRadioButton_SquarePyramid = new JRadioButton("Square Pyramid");
    private final ButtonGroup jButtonGroup_Shapes = new ButtonGroup();
 
-   private final JTextField[] jTextField_Dim = new JTextField[] {
-      new JTextField(),
-      new JTextField(),
-      new JTextField()
-   };
-   private final JLabel[] jLabel_Dim = new JLabel[] {
-      new JLabel("Dimension"),
-      new JLabel("Depth"),
-      new JLabel("Width")
-   };
-   private final JLabel[] jLabel_Unit = new JLabel[] {
-      new JLabel("\u00B5m"),
-      new JLabel("\u00B5m"),
-      new JLabel("\u00B5m")
-   };
+   private final JTextField[] jTextField_Dim = new JTextField[]{new JTextField(), new JTextField(), new JTextField()};
+   private final JLabel[] jLabel_Dim = new JLabel[]{new JLabel("Dimension"), new JLabel("Depth"), new JLabel("Width")};
+   private final JLabel[] jLabel_Unit = new JLabel[]{new JLabel("\u00B5m"), new JLabel("\u00B5m"), new JLabel("\u00B5m")};
 
    private final JLabel jLabel_Diagram = new JLabel();
 
@@ -107,21 +94,21 @@ public class SampleShapeDialog
          @Override
          public void itemStateChanged(ItemEvent e) {
             SHAPE sh;
-            if(jRadioButton_RectPrism.isSelected())
+            if (jRadioButton_RectPrism.isSelected())
                sh = SHAPE.RECT_PRISM;
-            else if(jRadioButton_Cylinder.isSelected())
+            else if (jRadioButton_Cylinder.isSelected())
                sh = SHAPE.CYLINDER;
-            else if(jRadioButton_Sphere.isSelected())
+            else if (jRadioButton_Sphere.isSelected())
                sh = SHAPE.SPHERE;
-            else if(jRadioButton_TriPrism.isSelected())
+            else if (jRadioButton_TriPrism.isSelected())
                sh = SHAPE.TRI_PRISM;
-            else if(jRadioButton_Fiber.isSelected())
+            else if (jRadioButton_Fiber.isSelected())
                sh = SHAPE.FIBER;
-            else if(jRadioButton_Hemisphere.isSelected())
+            else if (jRadioButton_Hemisphere.isSelected())
                sh = SHAPE.HEMISPHERE;
-            else if(jRadioButton_SquarePyramid.isSelected())
+            else if (jRadioButton_SquarePyramid.isSelected())
                sh = SHAPE.SQR_PYRAMID;
-            else if(jRadioButton_Block.isSelected())
+            else if (jRadioButton_Block.isSelected())
                sh = SHAPE.BLOCK;
             else
                sh = SHAPE.BULK;
@@ -138,7 +125,8 @@ public class SampleShapeDialog
       jRadioButton_Hemisphere.addItemListener(il);
       jRadioButton_SquarePyramid.addItemListener(il);
 
-      final JPanel btnPanel = new JPanel(new FormLayout("pref", "pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref"));
+      final JPanel btnPanel = new JPanel(
+            new FormLayout("pref", "pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref"));
       btnPanel.setBorder(SwingUtils.createTitledBorder("Shapes"));
       btnPanel.add(jRadioButton_Bulk, cc.xy(1, 1));
       btnPanel.add(jRadioButton_Block, cc.xy(1, 3));
@@ -157,12 +145,12 @@ public class SampleShapeDialog
             @Override
             public void focusLost(FocusEvent e) {
                int idx = -1;
-               for(int i = 0; i < 3; ++i)
-                  if(e.getComponent() == jTextField_Dim[i]) {
+               for (int i = 0; i < 3; ++i)
+                  if (e.getComponent() == jTextField_Dim[i]) {
                      idx = i;
                      break;
                   }
-               if(idx != -1)
+               if (idx != -1)
                   validateDimension(idx);
             }
 
@@ -173,7 +161,7 @@ public class SampleShapeDialog
          };
 
          final PanelBuilder pb = new PanelBuilder(new FormLayout(fmtStr, "pref, 5dlu, pref, 5dlu, pref"));
-         for(int i = 0; i < 3; ++i) {
+         for (int i = 0; i < 3; ++i) {
             pb.add(jLabel_Dim[i], cc.xy(2, 1 + (2 * i)));
             pb.add(jTextField_Dim[i], cc.xy(4, 1 + (2 * i)));
             jTextField_Dim[i].setText("1.0");
@@ -209,7 +197,7 @@ public class SampleShapeDialog
       jButton_Ok.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if(validateResults()) {
+            if (validateResults()) {
                mResultOk = true;
                setVisible(false);
             }
@@ -244,24 +232,24 @@ public class SampleShapeDialog
    }
 
    private Icon getIcon(SHAPE sh) {
-      switch(sh) {
-         case BULK:
+      switch (sh) {
+         case BULK :
             return null;
-         case BLOCK:
+         case BLOCK :
             return new ImageIcon(JWizardDialog.class.getResource("ClipArt/rectangularPrism.png"));
-         case RECT_PRISM:
+         case RECT_PRISM :
             return new ImageIcon(JWizardDialog.class.getResource("ClipArt/tetragonalPrism.png"));
-         case CYLINDER:
+         case CYLINDER :
             return new ImageIcon(JWizardDialog.class.getResource("ClipArt/cylinder.png"));
-         case SPHERE:
+         case SPHERE :
             return new ImageIcon(JWizardDialog.class.getResource("ClipArt/sphere.png"));
-         case TRI_PRISM:
+         case TRI_PRISM :
             return new ImageIcon(JWizardDialog.class.getResource("ClipArt/triangularPrism.png"));
-         case FIBER:
+         case FIBER :
             return new ImageIcon(JWizardDialog.class.getResource("ClipArt/fiber.png"));
-         case HEMISPHERE:
+         case HEMISPHERE :
             return new ImageIcon(JWizardDialog.class.getResource("ClipArt/hemisphere.png"));
-         case SQR_PYRAMID:
+         case SQR_PYRAMID :
             return new ImageIcon(JWizardDialog.class.getResource("ClipArt/squarePyramid.png"));
       }
       return null;
@@ -280,51 +268,51 @@ public class SampleShapeDialog
 
    private void setShape(SHAPE sh) {
       jLabel_Diagram.setIcon(getIcon(sh));
-      switch(sh) {
-         case BULK:
+      switch (sh) {
+         case BULK :
             updateLabel(0, "Depth", false);
             updateLabel(1, "Thickness", false);
             updateLabel(2, "Width", false);
             updateDensity(false);
             break;
-         case BLOCK:
+         case BLOCK :
             updateLabel(0, "Depth", true);
             updateLabel(1, "Thickness", true);
             updateLabel(2, "Width", true);
             updateDensity(true);
             break;
-         case RECT_PRISM:
+         case RECT_PRISM :
             updateLabel(0, "Depth", true);
             updateLabel(1, "Thickness", true);
             updateLabel(2, "Width", false);
             updateDensity(true);
             break;
-         case CYLINDER:
+         case CYLINDER :
             updateLabel(0, "Diameter", true);
             updateLabel(1, "Height", true);
             updateLabel(2, "Width", false);
             updateDensity(true);
             break;
-         case SPHERE:
-         case HEMISPHERE:
+         case SPHERE :
+         case HEMISPHERE :
             updateLabel(0, "Diameter", true);
             updateLabel(1, "Thickness", false);
             updateLabel(2, "Width", false);
             updateDensity(true);
             break;
-         case TRI_PRISM:
+         case TRI_PRISM :
             updateLabel(0, "Height", true);
             updateLabel(1, "Thickness", false);
             updateLabel(2, "Width", true);
             updateDensity(true);
             break;
-         case FIBER:
+         case FIBER :
             updateLabel(0, "Diameter", true);
             updateLabel(1, "Thickness", false);
             updateLabel(2, "Length", true);
             updateDensity(true);
             break;
-         case SQR_PYRAMID:
+         case SQR_PYRAMID :
             updateLabel(0, "Thickness", true);
             updateLabel(1, "Base", false);
             updateLabel(2, "Width", false);
@@ -337,8 +325,7 @@ public class SampleShapeDialog
       super(parent, "Particle Shape Dialog", true);
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -348,8 +335,7 @@ public class SampleShapeDialog
       try {
          setModal(true);
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -361,8 +347,7 @@ public class SampleShapeDialog
       try {
          v = nf.parse(tf.getText().trim()).doubleValue() * 1.0e-6;
          tf.setBackground(SystemColor.window);
-      }
-      catch(final ParseException ex) {
+      } catch (final ParseException ex) {
          tf.setBackground(Color.pink);
          tf.requestFocus();
          tf.setText("1.0");
@@ -376,10 +361,9 @@ public class SampleShapeDialog
          final NumberFormat nf = NumberFormat.getInstance();
          final double v = nf.parse(jTextField_Density.getText().trim()).doubleValue();
          jTextField_Density.setBackground(SystemColor.window);
-         if((v >= 0.01) && (v <= 20.0))
+         if ((v >= 0.01) && (v <= 20.0))
             return true;
-      }
-      catch(final ParseException e) {
+      } catch (final ParseException e) {
          jTextField_Density.setText("3.0");
       }
       jTextField_Density.setBackground(Color.pink);
@@ -394,10 +378,9 @@ public class SampleShapeDialog
          final NumberFormat nf = NumberFormat.getInstance();
          final double v = nf.parse(tf.getText().trim()).doubleValue();
          tf.setBackground(SystemColor.window);
-         if((v >= 0.01) && (v <= 1000.0))
+         if ((v >= 0.01) && (v <= 1000.0))
             return true;
-      }
-      catch(final ParseException e) {
+      } catch (final ParseException e) {
          tf.setText("3.0");
       }
       tf.setBackground(Color.pink);
@@ -408,88 +391,88 @@ public class SampleShapeDialog
 
    public boolean validateResults() {
       SHAPE sh = SHAPE.BULK;
-      if(jRadioButton_Block.isSelected())
+      if (jRadioButton_Block.isSelected())
          sh = SHAPE.BLOCK;
-      else if(jRadioButton_RectPrism.isSelected())
+      else if (jRadioButton_RectPrism.isSelected())
          sh = SHAPE.RECT_PRISM;
-      else if(jRadioButton_Cylinder.isSelected())
+      else if (jRadioButton_Cylinder.isSelected())
          sh = SHAPE.CYLINDER;
-      else if(jRadioButton_Sphere.isSelected())
+      else if (jRadioButton_Sphere.isSelected())
          sh = SHAPE.SPHERE;
-      else if(jRadioButton_TriPrism.isSelected())
+      else if (jRadioButton_TriPrism.isSelected())
          sh = SHAPE.TRI_PRISM;
-      else if(jRadioButton_Fiber.isSelected())
+      else if (jRadioButton_Fiber.isSelected())
          sh = SHAPE.FIBER;
-      else if(jRadioButton_Hemisphere.isSelected())
+      else if (jRadioButton_Hemisphere.isSelected())
          sh = SHAPE.HEMISPHERE;
-      else if(jRadioButton_SquarePyramid.isSelected())
+      else if (jRadioButton_SquarePyramid.isSelected())
          sh = SHAPE.SQR_PYRAMID;
       else
          sh = SHAPE.BULK;
-      switch(sh) {
-         case BULK:
+      switch (sh) {
+         case BULK :
             return true;
-         case BLOCK:
+         case BLOCK :
             return validateDimension(1) && validateDimension(0) && validateDimension(2) && validateDensity();
-         case RECT_PRISM:
+         case RECT_PRISM :
             return validateDimension(0) && validateDimension(1) && validateDensity();
-         case CYLINDER:
+         case CYLINDER :
             return validateDimension(0) && validateDimension(1) && validateDensity();
-         case SPHERE:
+         case SPHERE :
             return validateDimension(0) && validateDensity();
-         case TRI_PRISM:
+         case TRI_PRISM :
             return validateDimension(2) && validateDimension(0) && validateDensity();
-         case FIBER:
+         case FIBER :
             return validateDimension(0) && validateDimension(2) && validateDensity();
-         case HEMISPHERE:
+         case HEMISPHERE :
             return validateDimension(0) && validateDensity();
-         case SQR_PYRAMID:
+         case SQR_PYRAMID :
             return validateDimension(0) && validateDensity();
       }
       return false;
    }
 
    public SampleShape getSampleShape() {
-      if(mResultOk) {
+      if (mResultOk) {
          SHAPE sh = SHAPE.BULK;
-         if(jRadioButton_Block.isSelected())
+         if (jRadioButton_Block.isSelected())
             sh = SHAPE.BLOCK;
-         else if(jRadioButton_RectPrism.isSelected())
+         else if (jRadioButton_RectPrism.isSelected())
             sh = SHAPE.RECT_PRISM;
-         else if(jRadioButton_Cylinder.isSelected())
+         else if (jRadioButton_Cylinder.isSelected())
             sh = SHAPE.CYLINDER;
-         else if(jRadioButton_Sphere.isSelected())
+         else if (jRadioButton_Sphere.isSelected())
             sh = SHAPE.SPHERE;
-         else if(jRadioButton_TriPrism.isSelected())
+         else if (jRadioButton_TriPrism.isSelected())
             sh = SHAPE.TRI_PRISM;
-         else if(jRadioButton_Fiber.isSelected())
+         else if (jRadioButton_Fiber.isSelected())
             sh = SHAPE.FIBER;
-         else if(jRadioButton_Hemisphere.isSelected())
+         else if (jRadioButton_Hemisphere.isSelected())
             sh = SHAPE.HEMISPHERE;
-         else if(jRadioButton_SquarePyramid.isSelected())
+         else if (jRadioButton_SquarePyramid.isSelected())
             sh = SHAPE.SQR_PYRAMID;
          else
             sh = SHAPE.BULK;
-         switch(sh) {
-            case BULK:
+         switch (sh) {
+            case BULK :
                return new SampleShape.Bulk();
-            case BLOCK:
+            case BLOCK :
                return new SampleShape.RightRectangularPrism(getDimension(1), getDimension(0), getDimension(2));
-            case RECT_PRISM:
+            case RECT_PRISM :
                return new SampleShape.TetragonalPrism(getDimension(0), getDimension(1));
-            case CYLINDER:
+            case CYLINDER :
                return new SampleShape.Cylinder(0.5 * getDimension(0), getDimension(1));
-            case SPHERE:
+            case SPHERE :
                return new SampleShape.Sphere(0.5 * getDimension(0));
-            case TRI_PRISM:
+            case TRI_PRISM :
                return new SampleShape.TriangularPrism(getDimension(2), getDimension(0));
-            case FIBER:
+            case FIBER :
                return new SampleShape.Fiber(0.5 * getDimension(0), getDimension(2));
-            case HEMISPHERE:
+            case HEMISPHERE :
                return new SampleShape.Hemisphere(0.5 * getDimension(0));
-            case SQR_PYRAMID:
+            case SQR_PYRAMID :
                return new SampleShape.SquarePyramid(2.0 * getDimension(0));
-            default:
+            default :
                return null;
          }
       } else
@@ -502,51 +485,51 @@ public class SampleShapeDialog
    }
 
    public void setSampleShape(SampleShape ss) {
-      if((ss == null) || (ss instanceof SampleShape.Bulk)) {
+      if ((ss == null) || (ss instanceof SampleShape.Bulk)) {
          setShape(SHAPE.BULK);
          jRadioButton_Bulk.setSelected(true);
-      } else if(ss instanceof SampleShape.RightRectangularPrism) {
+      } else if (ss instanceof SampleShape.RightRectangularPrism) {
          final SampleShape.RightRectangularPrism shape = (SampleShape.RightRectangularPrism) ss;
          setDimension(0, shape.getDepth());
          setDimension(1, shape.getHeight());
          setDimension(2, shape.getWidth());
          setShape(SHAPE.BLOCK);
          jRadioButton_Block.setSelected(true);
-      } else if(ss instanceof SampleShape.TetragonalPrism) {
+      } else if (ss instanceof SampleShape.TetragonalPrism) {
          final SampleShape.TetragonalPrism shape = (SampleShape.TetragonalPrism) ss;
          setDimension(0, shape.getDiagonal());
          setDimension(1, shape.getHeight());
          setShape(SHAPE.RECT_PRISM);
          jRadioButton_RectPrism.setSelected(true);
-      } else if(ss instanceof SampleShape.Cylinder) {
+      } else if (ss instanceof SampleShape.Cylinder) {
          final SampleShape.Cylinder shape = (SampleShape.Cylinder) ss;
          setDimension(0, 2.0 * shape.getRadius());
          setDimension(1, shape.getHeight());
          setShape(SHAPE.CYLINDER);
          jRadioButton_Cylinder.setSelected(true);
-      } else if(ss instanceof SampleShape.Sphere) {
+      } else if (ss instanceof SampleShape.Sphere) {
          final SampleShape.Sphere shape = (SampleShape.Sphere) ss;
          setDimension(0, 2.0 * shape.getRadius());
          setShape(SHAPE.SPHERE);
          jRadioButton_Sphere.setSelected(true);
-      } else if(ss instanceof SampleShape.TriangularPrism) {
+      } else if (ss instanceof SampleShape.TriangularPrism) {
          final SampleShape.TriangularPrism shape = (SampleShape.TriangularPrism) ss;
          setDimension(0, shape.getHeight());
          setDimension(2, shape.getLength());
          setShape(SHAPE.TRI_PRISM);
          jRadioButton_TriPrism.setSelected(true);
-      } else if(ss instanceof SampleShape.Fiber) {
+      } else if (ss instanceof SampleShape.Fiber) {
          final SampleShape.Fiber shape = (SampleShape.Fiber) ss;
          setDimension(0, 2.0 * shape.getRadius());
          setDimension(2, shape.getLength());
          setShape(SHAPE.FIBER);
          jRadioButton_Fiber.setSelected(true);
-      } else if(ss instanceof SampleShape.Hemisphere) {
+      } else if (ss instanceof SampleShape.Hemisphere) {
          final SampleShape.Hemisphere shape = (SampleShape.Hemisphere) ss;
          setDimension(0, 2.0 * shape.getRadius());
          setShape(SHAPE.HEMISPHERE);
          jRadioButton_Hemisphere.setSelected(true);
-      } else if(ss instanceof SampleShape.SquarePyramid) {
+      } else if (ss instanceof SampleShape.SquarePyramid) {
          final SampleShape.SquarePyramid shape = (SampleShape.SquarePyramid) ss;
          setDimension(0, shape.getHeight());
          setShape(SHAPE.SQR_PYRAMID);
@@ -566,8 +549,7 @@ public class SampleShapeDialog
          final NumberFormat nf = NumberFormat.getInstance();
          v = nf.parse(tf.getText().trim()).doubleValue();
          tf.setBackground(SystemColor.window);
-      }
-      catch(final ParseException ex) {
+      } catch (final ParseException ex) {
          tf.setBackground(Color.pink);
          tf.requestFocus();
          tf.setText("3.0");
@@ -576,7 +558,8 @@ public class SampleShapeDialog
    }
 
    /**
-    * @param den in SI (kg/m^3)
+    * @param den
+    *           in SI (kg/m^3)
     */
    public void setDensity(double den) {
       final NumberFormat df = new HalfUpFormat("0.0");
@@ -598,10 +581,10 @@ public class SampleShapeDialog
       jRadioButton_Fiber.setEnabled(ca.supports(SampleShape.Fiber.class));
       jRadioButton_Hemisphere.setEnabled(ca.supports(SampleShape.Hemisphere.class));
       jRadioButton_SquarePyramid.setEnabled(ca.supports(SampleShape.SquarePyramid.class));
-      if(!jButtonGroup_Shapes.getSelection().isEnabled()) {
+      if (!jButtonGroup_Shapes.getSelection().isEnabled()) {
          final Enumeration<AbstractButton> ea = jButtonGroup_Shapes.getElements();
-         for(AbstractButton ab = ea.nextElement(); ea.hasMoreElements(); ab = ea.nextElement())
-            if(ab.isEnabled()) {
+         for (AbstractButton ab = ea.nextElement(); ea.hasMoreElements(); ab = ea.nextElement())
+            if (ab.isEnabled()) {
                ab.setSelected(true);
                break;
             }

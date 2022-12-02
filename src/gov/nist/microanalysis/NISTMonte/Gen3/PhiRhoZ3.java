@@ -37,8 +37,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author nritchie
  * @version 1.0
  */
-final public class PhiRhoZ3
-   implements ActionListener {
+final public class PhiRhoZ3 implements ActionListener {
 
    final double mMinZ;
    final double mMaxZ;
@@ -56,14 +55,13 @@ final public class PhiRhoZ3
          mNorm = Double.NaN;
       }
 
-      private void compute(XRay xrt, int bin)
-            throws EPQException {
+      private void compute(XRay xrt, int bin) throws EPQException {
          mEmitted[bin] += xrt.getIntensity();
          mGenerated[bin] += xrt.getGenerated();
-         if(Double.isNaN(mNorm) && (xrt.getGenerated() > 0.0)) {
+         if (Double.isNaN(mNorm) && (xrt.getGenerated() > 0.0)) {
             final Electron e = mEventListener.mMonte.getElectron();
             final MonteCarloSS.RegionBase r = e.getCurrentRegion();
-            if((r != null) && (r.getMaterial().getDensity() > ToSI.gPerCC(0.001)))
+            if ((r != null) && (r.getMaterial().getDensity() > ToSI.gPerCC(0.001)))
                mNorm = (binWidth() * xrt.getGenerated()) / Math2.distance(e.getPrevPosition(), e.getPosition());
          }
 
@@ -106,8 +104,7 @@ final public class PhiRhoZ3
     * @param nBins
     * @throws EPQException
     */
-   public PhiRhoZ3(XRayTransport3 xrel, double minZ, double maxZ, int nBins)
-         throws EPQException {
+   public PhiRhoZ3(XRayTransport3 xrel, double minZ, double maxZ, int nBins) throws EPQException {
       mEventListener = xrel;
       mMinZ = minZ;
       mMaxZ = maxZ;
@@ -122,36 +119,35 @@ final public class PhiRhoZ3
    @Override
    public void actionPerformed(ActionEvent ae) {
       assert ae.getSource() == mEventListener;
-      switch(ae.getID()) {
-         case BaseXRayGeneration3.XRayGeneration: {
+      switch (ae.getID()) {
+         case BaseXRayGeneration3.XRayGeneration : {
             try {
-               for(int i = mEventListener.getEventCount() - 1; i >= 0; i--) {
+               for (int i = mEventListener.getEventCount() - 1; i >= 0; i--) {
                   final XRayTransport3.XRay xrt = mEventListener.getXRay(i);
-                  if(xrt instanceof CharacteristicXRay) {
+                  if (xrt instanceof CharacteristicXRay) {
                      final XRayTransition tr = ((CharacteristicXRay) xrt).getTransition();
-                     if(xrt != null) {
+                     if (xrt != null) {
                         TransitionDatum td = mTransitionData.get(tr);
-                        if(td == null) {
+                        if (td == null) {
                            td = new TransitionDatum(mNBins);
                            mTransitionData.put(tr, td);
                         }
                         final double[] pos = xrt.getGenerationPos();
                         final int z = (int) ((pos[2] - mMinZ) / binWidth());
-                        if((z >= 0) && (z < mNBins))
+                        if ((z >= 0) && (z < mNBins))
                            td.compute(xrt, z);
                      }
                   }
                }
-            }
-            catch(final EPQException e) {
+            } catch (final EPQException e) {
                e.printStackTrace();
             }
          }
             break;
-         case MonteCarloSS.TrajectoryStartEvent:
+         case MonteCarloSS.TrajectoryStartEvent :
             ++mElectronCount;
             break;
-         case MonteCarloSS.FirstTrajectoryEvent:
+         case MonteCarloSS.FirstTrajectoryEvent :
             mElectronCount = 0;
             mTransitionData.clear();
             break;
@@ -173,38 +169,38 @@ final public class PhiRhoZ3
       final NumberFormat nf = new HalfUpFormat("0.000");
       wr.print("Min\tMax");
       final TreeSet<XRayTransition> xrts = new TreeSet<XRayTransition>(mTransitionData.keySet());
-      for(final XRayTransition xrt : xrts) {
+      for (final XRayTransition xrt : xrts) {
          wr.print("\tGen[" + xrt.toString() + "]");
          wr.print("\tEmit[" + xrt.toString() + "]");
       }
-      for(final XRayTransition xrt : xrts) {
+      for (final XRayTransition xrt : xrts) {
          wr.print("\tGen_I[" + xrt.toString() + "]");
          wr.print("\tEmit_I[" + xrt.toString() + "]");
       }
       wr.println();
       wr.print("\t");
-      for(@SuppressWarnings("unused")
+      for (@SuppressWarnings("unused")
       final XRayTransition xrt : xrts) {
          wr.print("\tNorm");
          wr.print("\tNorm");
       }
-      for(@SuppressWarnings("unused")
+      for (@SuppressWarnings("unused")
       final XRayTransition xrt : xrts) {
          wr.print("\t1/(meter e-)");
          wr.print("\t1/(meter e-)");
       }
       wr.println();
       wr.flush();
-      for(int bin = 0; bin < mNBins; ++bin) {
+      for (int bin = 0; bin < mNBins; ++bin) {
          wr.print(binName(bin));
-         for(final XRayTransition xrt : xrts) {
+         for (final XRayTransition xrt : xrts) {
             final TransitionDatum td = mTransitionData.get(xrt);
             wr.print("\t");
             wr.print(nf.format(td.getGenerated(bin)));
             wr.print("\t");
             wr.print(nf.format(td.getEmitted(bin)));
          }
-         for(final XRayTransition xrt : xrts) {
+         for (final XRayTransition xrt : xrts) {
             final TransitionDatum td = mTransitionData.get(xrt);
             wr.print("\t");
             wr.print(nf.format(td.getGeneratedIntensity(bin)));

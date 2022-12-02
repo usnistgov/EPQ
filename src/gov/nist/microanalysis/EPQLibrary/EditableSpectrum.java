@@ -18,8 +18,7 @@ import java.util.Arrays;
  * @version 1.0
  */
 
-public class EditableSpectrum
-   extends BaseSpectrum {
+public class EditableSpectrum extends BaseSpectrum {
    private final double[] mChannels;
    private double mChannelWidth = Double.NaN;
    private double mZeroOffset = Double.NaN;
@@ -28,9 +27,12 @@ public class EditableSpectrum
    /**
     * EditableSpectrum - Create a blank editable spectrum.
     * 
-    * @param nChannels int
-    * @param chWidth double
-    * @param zeroOffset double
+    * @param nChannels
+    *           int
+    * @param chWidth
+    *           double
+    * @param zeroOffset
+    *           double
     */
    public EditableSpectrum(int nChannels, double chWidth, double zeroOffset) {
       super();
@@ -88,7 +90,7 @@ public class EditableSpectrum
       super();
       mChannels = new double[nCh];
       final int dLen = Math.min(nCh, chData.length);
-      for(int i = 0; i < dLen; ++i)
+      for (int i = 0; i < dLen; ++i)
          mChannels[i] = chData[i];
       setProperties(new SpectrumProperties());
       setEnergyScale(zeroOffset, chWidth);
@@ -106,7 +108,7 @@ public class EditableSpectrum
       super();
       mChannels = new double[nCh];
       final int dLen = Math.min(nCh, chData.length);
-      for(int i = 0; i < dLen; ++i)
+      for (int i = 0; i < dLen; ++i)
          mChannels[i] = chData[i];
       setProperties(new SpectrumProperties());
       setEnergyScale(zeroOffset, chWidth);
@@ -127,11 +129,12 @@ public class EditableSpectrum
     * EditableSpectrum - Create an editable spectrum that is a duplicate of the
     * specified spectrum.
     * 
-    * @param sd ISpectrumData
+    * @param sd
+    *           ISpectrumData
     */
    public EditableSpectrum(ISpectrumData sd) {
       mChannels = new double[sd.getChannelCount()];
-      for(int i = sd.getChannelCount() - 1; i >= 0; --i) {
+      for (int i = sd.getChannelCount() - 1; i >= 0; --i) {
          mChannels[i] = sd.getCounts(i);
          assert !Double.isNaN(mChannels[i]);
       }
@@ -159,7 +162,8 @@ public class EditableSpectrum
    /**
     * getCounts - See ISpectrumData
     * 
-    * @param i int
+    * @param i
+    *           int
     * @return double
     */
    @Override
@@ -180,8 +184,10 @@ public class EditableSpectrum
    /**
     * setCounts - Set the counts for the specified channel.
     * 
-    * @param i int
-    * @param counts double
+    * @param i
+    *           int
+    * @param counts
+    *           double
     */
    public void setCounts(int i, double counts) {
       mChannels[i] = counts;
@@ -205,23 +211,23 @@ public class EditableSpectrum
    }
 
    final public void add(double[] channels) {
-      for(int i = 0; (i < channels.length) && (i < mChannels.length); ++i)
+      for (int i = 0; (i < channels.length) && (i < mChannels.length); ++i)
          mChannels[i] += channels[i];
    }
 
    final public void subtract(double[] channels) {
-      for(int i = 0; (i < channels.length) && (i < mChannels.length); ++i)
+      for (int i = 0; (i < channels.length) && (i < mChannels.length); ++i)
          mChannels[i] -= channels[i];
    }
 
    final public void increment(int ch) {
-      if((ch >= 0) && (ch < mChannels.length))
+      if ((ch >= 0) && (ch < mChannels.length))
          ++mChannels[ch];
    }
 
    final public void increment(double energy) {
       final int ch = (int) ((energy - mZeroOffset) / mChannelWidth);
-      if((ch >= 0) && (ch < mChannels.length))
+      if ((ch >= 0) && (ch < mChannels.length))
          ++mChannels[ch];
    }
 

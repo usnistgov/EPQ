@@ -54,13 +54,13 @@ public class NUTableInterpolation {
     * getInstance - Returns an instance of a RegularTableInterpolation object
     * for the table contained in the named resource.
     *
-    * @param tableFileName - A String providing the full path name of the data
-    *           file that stores the table to be interpolated.
+    * @param tableFileName
+    *           - A String providing the full path name of the data file that
+    *           stores the table to be interpolated.
     */
-   public static NUTableInterpolation getInstance(String tableFileName)
-         throws FileNotFoundException {
+   public static NUTableInterpolation getInstance(String tableFileName) throws FileNotFoundException {
       NUTableInterpolation uniqueInstance = instanceMap.get(tableFileName);
-      if(uniqueInstance == null) {
+      if (uniqueInstance == null) {
          uniqueInstance = new NUTableInterpolation(tableFileName);
          instanceMap.put(tableFileName, uniqueInstance);
       }
@@ -73,10 +73,7 @@ public class NUTableInterpolation {
    private double[][][][] table4d;
    private double[][] x;
    private double[][] domain;
-   private final double[] range = {
-      Double.POSITIVE_INFINITY,
-      Double.NEGATIVE_INFINITY
-   };
+   private final double[] range = {Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY};
    private int dim; // dimension of this table
    // int[] nPoints; // Array of length dim with number of points for each x
    // double[] xinc; // Array of length dim with x increment size
@@ -95,11 +92,11 @@ public class NUTableInterpolation {
     * order with the Nth input variable varying most rapidly, the N-1st next,
     * and so on, with the 1st varying most slowly.
     *
-    * @param tableFileName - A String providing the name of the resource (data
-    *           file) that stores the table to be interpolated.
+    * @param tableFileName
+    *           - A String providing the name of the resource (data file) that
+    *           stores the table to be interpolated.
     */
-   private NUTableInterpolation(String tableFileName)
-         throws FileNotFoundException {
+   private NUTableInterpolation(String tableFileName) throws FileNotFoundException {
       this.tableFileName = tableFileName;
       ReadTable(tableFileName);
    }
@@ -115,8 +112,8 @@ public class NUTableInterpolation {
    public double[][] getDomain() {
       // Return a deep copy
       final double[][] domainCopy = new double[dim][2];
-      for(int i = 0; i < dim; i++)
-         for(int j = 0; j < 2; j++)
+      for (int i = 0; i < dim; i++)
+         for (int j = 0; j < 2; j++)
             domainCopy[i][j] = domain[i][j];
       return domainCopy;
    }
@@ -131,10 +128,7 @@ public class NUTableInterpolation {
     */
    public double[] getRange() {
       // Return a copy
-      final double[] rangeCopy = {
-         range[0],
-         range[1]
-      };
+      final double[] rangeCopy = {range[0], range[1]};
       return rangeCopy;
    }
 
@@ -145,35 +139,34 @@ public class NUTableInterpolation {
     * to very poor estimates. The calling routine is responsible for checking
     * the input against the domain if extrapolation is to be avoided.
     *
-    * @param xval - double[] of length in principle equal to the dimension of
-    *           the table. For convenience it is allowed to be greater, in which
+    * @param xval
+    *           - double[] of length in principle equal to the dimension of the
+    *           table. For convenience it is allowed to be greater, in which
     *           case the unnecessary values at the end of the array are ignored.
-    * @param order - int The interpolation order, 1 for linear, 3 for cubic,
-    *           etc.
+    * @param order
+    *           - int The interpolation order, 1 for linear, 3 for cubic, etc.
     * @return double - The estimated value of the tabulated function at the
     *         supplied coordinate.
     */
    public double interpolate(double[] xval, int order) {
-      if(xval.length < dim)
-         throw new IllegalArgumentException("Attempt to interpolate " + tableFileName + " at x with " + String.valueOf(dim)
-               + "dimensions");
+      if (xval.length < dim)
+         throw new IllegalArgumentException("Attempt to interpolate " + tableFileName + " at x with " + String.valueOf(dim) + "dimensions");
 
-      switch(dim) {
-         case 1:
+      switch (dim) {
+         case 1 :
             return NULagrangeInterpolation.d1(table1d, x[0], order, xval[0])[0];
-         case 2:
+         case 2 :
             return NULagrangeInterpolation.d2(table2d, x, order, xval)[0];
-         case 3:
+         case 3 :
             return NULagrangeInterpolation.d3(table3d, x, order, xval)[0];
-         case 4:
+         case 4 :
             return NULagrangeInterpolation.d4(table4d, x, order, xval)[0];
-         default:
+         default :
             throw new IllegalArgumentException("Table dimensions must be 1<=dim<=4");
       }
    }
 
-   private void ReadTable(String tableFileName)
-         throws FileNotFoundException {
+   private void ReadTable(String tableFileName) throws FileNotFoundException {
       final FileReader fr = new FileReader(tableFileName);
 
       final BufferedReader br = new BufferedReader(fr);
@@ -181,7 +174,7 @@ public class NUTableInterpolation {
       s.useLocale(Locale.US);
       try {
          dim = s.nextInt();
-         if((dim < 1) || (dim > 4))
+         if ((dim < 1) || (dim > 4))
             throw new IllegalArgumentException("Table dimensions must be 1<=dim<=4");
          /*
           * Note: I think I could write a general N-dimension interpolation
@@ -193,11 +186,11 @@ public class NUTableInterpolation {
 
          domain = new double[dim][2];
 
-         for(int i = 0; i < dim; i++) {
+         for (int i = 0; i < dim; i++) {
             nPoints[i] = s.nextInt();
             x[i] = new double[nPoints[i]];
 
-            for(int j = 0; j < nPoints[i]; j++)
+            for (int j = 0; j < nPoints[i]; j++)
                /*
                 * TODO The try/catch below was added to debug a problem that
                 * seems unique to Georg Frase's computer. After the problem is
@@ -205,7 +198,7 @@ public class NUTableInterpolation {
                 */
                x[i][j] = s.nextDouble();
 
-            if(x[i][0] < x[i][nPoints[i] - 1]) {
+            if (x[i][0] < x[i][nPoints[i] - 1]) {
                domain[i][0] = x[i][0];
                domain[i][1] = x[i][nPoints[i] - 1];
             } else {
@@ -214,57 +207,56 @@ public class NUTableInterpolation {
             }
          }
 
-         switch(dim) {
-            case 1:
+         switch (dim) {
+            case 1 :
                table1d = new double[nPoints[0]];
-               for(int i = 0; i < nPoints[0]; i++) {
+               for (int i = 0; i < nPoints[0]; i++) {
                   table1d[i] = s.nextDouble();
-                  if(table1d[i] < range[0])
+                  if (table1d[i] < range[0])
                      range[0] = table1d[i];
-                  else if(table1d[i] > range[1])
+                  else if (table1d[i] > range[1])
                      range[1] = table1d[i];
                }
                break;
-            case 2:
+            case 2 :
                table2d = new double[nPoints[0]][nPoints[1]];
-               for(int i = 0; i < nPoints[0]; i++)
-                  for(int j = 0; j < nPoints[1]; j++) {
+               for (int i = 0; i < nPoints[0]; i++)
+                  for (int j = 0; j < nPoints[1]; j++) {
                      table2d[i][j] = s.nextDouble();
-                     if(table2d[i][j] < range[0])
+                     if (table2d[i][j] < range[0])
                         range[0] = table2d[i][j];
-                     else if(table2d[i][j] > range[1])
+                     else if (table2d[i][j] > range[1])
                         range[1] = table2d[i][j];
                   }
                break;
-            case 3:
+            case 3 :
                table3d = new double[nPoints[0]][nPoints[1]][nPoints[2]];
-               for(int i = 0; i < nPoints[0]; i++)
-                  for(int j = 0; j < nPoints[1]; j++)
-                     for(int k = 0; k < nPoints[2]; k++) {
+               for (int i = 0; i < nPoints[0]; i++)
+                  for (int j = 0; j < nPoints[1]; j++)
+                     for (int k = 0; k < nPoints[2]; k++) {
                         table3d[i][j][k] = s.nextDouble();
-                        if(table3d[i][j][k] < range[0])
+                        if (table3d[i][j][k] < range[0])
                            range[0] = table3d[i][j][k];
-                        else if(table3d[i][j][k] > range[1])
+                        else if (table3d[i][j][k] > range[1])
                            range[1] = table3d[i][j][k];
                      }
                break;
-            case 4:
+            case 4 :
                table4d = new double[nPoints[0]][nPoints[1]][nPoints[2]][nPoints[3]];
-               for(int i = 0; i < nPoints[0]; i++)
-                  for(int j = 0; j < nPoints[1]; j++)
-                     for(int k = 0; k < nPoints[2]; k++)
-                        for(int m = 0; m < nPoints[3]; m++) {
+               for (int i = 0; i < nPoints[0]; i++)
+                  for (int j = 0; j < nPoints[1]; j++)
+                     for (int k = 0; k < nPoints[2]; k++)
+                        for (int m = 0; m < nPoints[3]; m++) {
                            table4d[i][j][k][m] = s.nextDouble();
-                           if(table4d[i][j][k][m] < range[0])
+                           if (table4d[i][j][k][m] < range[0])
                               range[0] = table4d[i][j][k][m];
-                           else if(table4d[i][j][k][m] > range[1])
+                           else if (table4d[i][j][k][m] > range[1])
                               range[1] = table4d[i][j][k][m];
                         }
                break;
          }
-      }
-      finally {
-         if(s != null)
+      } finally {
+         if (s != null)
             s.close();
       }
    }

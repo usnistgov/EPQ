@@ -38,9 +38,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author John Villarrubia
  * @version 1.0
  */
-public class SelectableElasticSM
-   extends ScatterMechanism
-   implements Cloneable {
+public class SelectableElasticSM extends ScatterMechanism implements Cloneable {
 
    // Array of randomized scatterers, one for each element
    private RandomizedScatter[] rse = null;
@@ -61,8 +59,10 @@ public class SelectableElasticSM
    /**
     * Constructs a SelectableElasticSM
     *
-    * @param mat - The Material for which scattering is to be determined
-    * @param rsf - The RandomizedScatterFactory that is to be used for the
+    * @param mat
+    *           - The Material for which scattering is to be determined
+    * @param rsf
+    *           - The RandomizedScatterFactory that is to be used for the
     *           calculations
     */
    public SelectableElasticSM(Material mat, RandomizedScatterFactory rsf) {
@@ -75,7 +75,8 @@ public class SelectableElasticSM
     * Constructs a SelectableElasticSM. This form of the constructor defaults to
     * algorithms determined by NISTMottScatteringAngle.
     *
-    * @param mat - The Material for which scattering is to be determined
+    * @param mat
+    *           - The Material for which scattering is to be determined
     */
    public SelectableElasticSM(Material mat) {
       this(mat, NISTMottScatteringAngle.Factory); // Set to default
@@ -89,7 +90,7 @@ public class SelectableElasticSM
        * later use.
        */
       totalScaledCrossSection = 0.;
-      for(int i = 0; i < nce; i++) {
+      for (int i = 0; i < nce; i++) {
          totalScaledCrossSection += rse[i].totalCrossSection(kE) * scalefactor[i];
          cumulativeScaledCrossSection[i] = totalScaledCrossSection;
       }
@@ -99,6 +100,7 @@ public class SelectableElasticSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatterRate(gov.nist
     * .microanalysis.EPQLibrary.Material, double)
@@ -112,6 +114,7 @@ public class SelectableElasticSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#randomScatteringAngle
     * (gov.nist.microanalysis.EPQLibrary.Material, double)
@@ -119,14 +122,14 @@ public class SelectableElasticSM
    @Override
    public Electron scatter(Electron pe) {
       final double kE = pe.getPreviousEnergy();
-      if(kE != cached_kE)
+      if (kE != cached_kE)
          setCache(kE);
       // Decide which element we scatter from
       final double r = Math2.rgen.nextDouble() * totalScaledCrossSection;
       int index = 0; // Index is first index
 
       // Increment index and mechanism until cumulative scatter rate exceeds r
-      while(cumulativeScaledCrossSection[index] < r)
+      while (cumulativeScaledCrossSection[index] < r)
          index++;
 
       final double alpha = rse[index].randomScatteringAngle(kE);
@@ -144,7 +147,7 @@ public class SelectableElasticSM
    public void setMaterial(Material mat) {
       nce = mat.getElementCount();
       densityNa = mat.getDensity() * PhysicalConstants.AvagadroNumber;
-      if(nce > 0) {
+      if (nce > 0) {
          // Element[] elements = (Element[]) mat.getElementSet().toArray();
          final Set<Element> elements = mat.getElementSet();
          rse = new RandomizedScatter[nce];
@@ -152,7 +155,7 @@ public class SelectableElasticSM
          cumulativeScaledCrossSection = new double[nce];
 
          int i = 0;
-         for(final Element elm : elements) {
+         for (final Element elm : elements) {
             rse[i] = rsf.get(elm);
             // The factor of 1000 in the next line is to convert atomic
             // weight in g/mole to kg/mole.

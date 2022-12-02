@@ -23,8 +23,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
  * @version 1.0
  */
 
-public class EMISPECFile
-   extends BaseSpectrum {
+public class EMISPECFile extends BaseSpectrum {
 
    private class DimensionArrayFormat {
 
@@ -42,11 +41,11 @@ public class EMISPECFile
        * readDimensionArrayFormat - reads the data in an emispec file pertaining
        * to the dimension array.
        * 
-       * @param ledis LEDataInputStream - ALTERS, the emispec file being read.
+       * @param ledis
+       *           LEDataInputStream - ALTERS, the emispec file being read.
        * @throws IOException
        */
-      private void readDimensionArrayFormat(LEDataInputStream ledis)
-            throws IOException {
+      private void readDimensionArrayFormat(LEDataInputStream ledis) throws IOException {
          final StringBuffer DescriptionBuffer = new StringBuffer();
          final StringBuffer UnitsBuffer = new StringBuffer();
          int DescriptionLength, UnitsLength;
@@ -58,20 +57,19 @@ public class EMISPECFile
          ledis.readInt(); // mCalibrationElement
 
          DescriptionLength = ledis.readInt();
-         for(int index = 0; index < DescriptionLength; index++)
+         for (int index = 0; index < DescriptionLength; index++)
             DescriptionBuffer.append((char) ledis.readByte());
          mDescription = DescriptionBuffer.toString();
          mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, mDescription);
 
          UnitsLength = ledis.readInt();
-         for(int index = 0; index < UnitsLength; index++)
+         for (int index = 0; index < UnitsLength; index++)
             UnitsBuffer.append((char) ledis.readByte());
          mUnits = UnitsBuffer.toString();
       }
    }
 
-   private class DataElementFormat
-      extends BaseSpectrum {
+   private class DataElementFormat extends BaseSpectrum {
 
       private int mChannelCount;
       private short mDataType;
@@ -101,12 +99,12 @@ public class EMISPECFile
        * readDataElementFormat - reads the data in an emispec file pertaining to
        * the individual data elements.
        * 
-       * @param ledis LEDataInputStream - ALTERS, the emispec file being read.
+       * @param ledis
+       *           LEDataInputStream - ALTERS, the emispec file being read.
        * @throws IOException
        */
-      private void readDataElementFormat(LEDataInputStream ledis)
-            throws IOException {
-         if(mDataTypeID == OneDimensional) {
+      private void readDataElementFormat(LEDataInputStream ledis) throws IOException {
+         if (mDataTypeID == OneDimensional) {
             final double zero = ledis.readDouble();
             final double width = ledis.readDouble();
             setEnergyScale(zero, width);
@@ -115,40 +113,40 @@ public class EMISPECFile
             mChannelCount = ledis.readInt();
             mChannels = new double[mChannelCount];
 
-            for(int index = 0; index < mChannelCount; index++)
-               switch(mDataType) {
-                  case UnsignedOneByteInteger:
+            for (int index = 0; index < mChannelCount; index++)
+               switch (mDataType) {
+                  case UnsignedOneByteInteger :
                      mChannels[index] = ledis.readUnsignedByte();
                      break;
-                  case UnsignedTwoByteInteger:
+                  case UnsignedTwoByteInteger :
                      mChannels[index] = ledis.readUnsignedShort();
                      break;
-                  case UnsignedFourByteInteger:
+                  case UnsignedFourByteInteger :
                      mChannels[index] = ledis.readInt();
                      break;
-                  case SignedOneByteInteger:
+                  case SignedOneByteInteger :
                      mChannels[index] = ledis.readByte();
                      break;
-                  case SignedTwoByteInteger:
+                  case SignedTwoByteInteger :
                      mChannels[index] = ledis.readShort();
                      break;
-                  case SignedFourByteInteger:
+                  case SignedFourByteInteger :
                      mChannels[index] = ledis.readInt();
                      break;
-                  case FourByteFloat:
+                  case FourByteFloat :
                      mChannels[index] = ledis.readFloat();
                      break;
-                  case EightByteFloat:
+                  case EightByteFloat :
                      mChannels[index] = ledis.readDouble();
                      break;
-                  case EightByteComplex:
+                  case EightByteComplex :
                      throw new IOException("Unsupported data type: 8-byte complex.");
-                  case SixteenByteComplex:
+                  case SixteenByteComplex :
                      throw new IOException("Unsupported data type: 16-byte complex.");
-                  default:
+                  default :
                      throw new IOException("Unrecognized data type.");
                }
-         } else if(mDataTypeID == TwoDimensional)
+         } else if (mDataTypeID == TwoDimensional)
             throw new IOException("Two Dimensional Data is not supported.");
       }
    }
@@ -163,18 +161,18 @@ public class EMISPECFile
        * readDataTagFormat - Reads the information about the time and/or
        * position when the data was taken.
        * 
-       * @param ledis LEDataInputStream - ALTERS, the EMISPEC file being read.
+       * @param ledis
+       *           LEDataInputStream - ALTERS, the EMISPEC file being read.
        * @throws IOException
        */
-      private void readDataTagFormat(LEDataInputStream ledis)
-            throws IOException {
-         if(mTagTypeID == TagIsTimeOnly) {
-            if(ledis.readShort() != TagIsTimeOnly)
+      private void readDataTagFormat(LEDataInputStream ledis) throws IOException {
+         if (mTagTypeID == TagIsTimeOnly) {
+            if (ledis.readShort() != TagIsTimeOnly)
                throw new IOException("Conflicting Data Tag formats");
             else
                mTime = ledis.readFloat();
-         } else if(mTagTypeID == TagIs2DwithTime) {
-            if(ledis.readShort() != TagIs2DwithTime)
+         } else if (mTagTypeID == TagIs2DwithTime) {
+            if (ledis.readShort() != TagIs2DwithTime)
                throw new IOException("Conflicting Data Tag formats");
             else {
                mTime = ledis.readFloat();
@@ -254,7 +252,8 @@ public class EMISPECFile
    /**
     * setFilename - set the name of the file associated with this spectrum.
     * 
-    * @param fn String
+    * @param fn
+    *           String
     */
    public void setFilename(String fn) {
       mFileName = fn;
@@ -264,7 +263,8 @@ public class EMISPECFile
     * isInstanceOf - Does the specified input stream represent an instance of an
     * EMISPEC file?
     * 
-    * @param is InputStream
+    * @param is
+    *           InputStream
     * @return boolean
     */
    public static boolean isInstanceOf(InputStream is) {
@@ -273,17 +273,15 @@ public class EMISPECFile
          try {
             try (final LEDataInputStream ledis = new LEDataInputStream(is)) {
                res = (ledis.readShort() == LittleEndianCode);
-               if(res)
+               if (res)
                   res = (ledis.readShort() == FileIDCode);
-               if(res)
+               if (res)
                   res = (ledis.readShort() == VersionNumber);
             }
-         }
-         finally {
+         } finally {
             is.close(); // force closure to ensure it is not reused...
          }
-      }
-      catch(final IOException ex) {
+      } catch (final IOException ex) {
          res = false;
       }
       return res;
@@ -294,19 +292,19 @@ public class EMISPECFile
     * six parts: (1) the header (2) the dimension array (3) the data offset
     * array (4) the tag offset array (5) the spectrum data (6) the data tag.
     * 
-    * @param is File - PRESERVES, an input stream linked to the EMISPEC file
+    * @param is
+    *           File - PRESERVES, an input stream linked to the EMISPEC file
     *           that is to be read.
     * @throws IOException
     */
-   public void read(InputStream is)
-         throws IOException {
+   public void read(InputStream is) throws IOException {
       LEDataInputStream ledis = new LEDataInputStream(is);
       int[] mData_Offset_Array, mTag_Offset_Array;
       mFileName = "Unknown";
       readHeaderFormat(ledis);
 
       DimensionArray = new DimensionArrayFormat[mNumberDimensions];
-      for(int index = 0; index < mNumberDimensions; index++) {
+      for (int index = 0; index < mNumberDimensions; index++) {
          DimensionArray[index] = new DimensionArrayFormat();
          DimensionArray[index].readDimensionArrayFormat(ledis);
       }
@@ -318,7 +316,7 @@ public class EMISPECFile
       DataArray = new DataElementFormat[mTotalNumberElements];
       DataTagArray = new DataTagFormat[mTotalNumberElements];
 
-      for(int index = 0; index < mTotalNumberElements; index++) {
+      for (int index = 0; index < mTotalNumberElements; index++) {
          // Because reset is not supported, I have to close the data file and
          // reopen to reset it
          ledis.close();
@@ -332,7 +330,7 @@ public class EMISPECFile
       }
       mChannel_Count = DataArray[DataArray.length - 1].getChannelCount();
       sumMyChannelArray();
-      for(int index = 0; index < mTag_Offset_Array.length; index++) {
+      for (int index = 0; index < mTag_Offset_Array.length; index++) {
          ledis.close();
          is.reset();
          ledis = new LEDataInputStream(is);
@@ -348,32 +346,31 @@ public class EMISPECFile
    /**
     * readHeaderFormat - Reads the header information of an EMISPEC file.
     * 
-    * @param ledis LEDataInputStream - ALTERS, the EMISPEC file that is being
-    *           read.
+    * @param ledis
+    *           LEDataInputStream - ALTERS, the EMISPEC file that is being read.
     * @throws IOException
     */
-   private void readHeaderFormat(LEDataInputStream ledis)
-         throws IOException {
-      if(ledis.readShort() != LittleEndianCode)
+   private void readHeaderFormat(LEDataInputStream ledis) throws IOException {
+      if (ledis.readShort() != LittleEndianCode)
          throw new IOException("This file does not appear to be a valid EMISPEC file.");
 
-      if(ledis.readShort() != FileIDCode)
+      if (ledis.readShort() != FileIDCode)
          throw new IOException("This EMISPEC's file ID id not recognized as valid.");
 
-      if(ledis.readShort() != VersionNumber)
+      if (ledis.readShort() != VersionNumber)
          throw new IOException("This EMISPEC file is not the correct version.");
 
       mDataTypeID = ledis.readInt();
-      if(!((mDataTypeID != OneDimensional) || (mDataTypeID != TwoDimensional)))
+      if (!((mDataTypeID != OneDimensional) || (mDataTypeID != TwoDimensional)))
          throw new IOException("The Data Type ID for this EMISPEC file is not valid.");
 
       mTagTypeID = ledis.readInt();
-      if(!((mTagTypeID != TagIsTimeOnly) || (mTagTypeID != TagIs2DwithTime)))
+      if (!((mTagTypeID != TagIsTimeOnly) || (mTagTypeID != TagIs2DwithTime)))
          throw new IOException("The Tag Type ID for this EMISPEC file is not valid");
 
       mTotalNumberElements = ledis.readInt();
       mValidNumberElements = ledis.readInt();
-      if(mValidNumberElements > mTotalNumberElements)
+      if (mValidNumberElements > mTotalNumberElements)
          throw new IOException("# of valid elements greater than # of elements in array");
 
       ledis.readInt(); // mOffsetArrayOffset
@@ -384,14 +381,15 @@ public class EMISPECFile
     * readDataOffsetArrayFormat - Reads all the offset values corresponding to
     * each of the data points in the EMISPEC file.
     * 
-    * @param ledis LEDataInputStream - ALTERS, the EMISPEC file being read.
-    * @param My_Data_Offset_Array int[] - PRODUCES, holds the values of the data
-    *           offset given by the file.
+    * @param ledis
+    *           LEDataInputStream - ALTERS, the EMISPEC file being read.
+    * @param My_Data_Offset_Array
+    *           int[] - PRODUCES, holds the values of the data offset given by
+    *           the file.
     * @throws IOException
     */
-   private void readDataOffsetArrayFormat(LEDataInputStream ledis, int[] My_Data_Offset_Array)
-         throws IOException {
-      for(int index = 0; index < mTotalNumberElements; index++)
+   private void readDataOffsetArrayFormat(LEDataInputStream ledis, int[] My_Data_Offset_Array) throws IOException {
+      for (int index = 0; index < mTotalNumberElements; index++)
          My_Data_Offset_Array[index] = ledis.readInt();
    }
 
@@ -399,14 +397,15 @@ public class EMISPECFile
     * readTagOffsetArrayFormat - Reads all the tag offset values corresponding
     * to the tag information in the EMISPEC file.
     * 
-    * @param ledis LEDataInputStream - ALTERS, the EMISPEC file being read.
-    * @param My_Tag_Offset_Array int[] - PRODUCES, holds the values of the tag
-    *           offset given by the file.
+    * @param ledis
+    *           LEDataInputStream - ALTERS, the EMISPEC file being read.
+    * @param My_Tag_Offset_Array
+    *           int[] - PRODUCES, holds the values of the tag offset given by
+    *           the file.
     * @throws IOException
     */
-   private void readTagOffsetArrayFormat(LEDataInputStream ledis, int[] My_Tag_Offset_Array)
-         throws IOException {
-      for(int index = 0; index < mTotalNumberElements; index++)
+   private void readTagOffsetArrayFormat(LEDataInputStream ledis, int[] My_Tag_Offset_Array) throws IOException {
+      for (int index = 0; index < mTotalNumberElements; index++)
          My_Tag_Offset_Array[index] = ledis.readInt();
    }
 
@@ -416,8 +415,8 @@ public class EMISPECFile
     */
    private void sumMyChannelArray() {
       mSummed_Channel_Array = new double[mChannel_Count];
-      for(int index = 0; index < mChannel_Count; index++)
-         for(final DataElementFormat element : DataArray)
+      for (int index = 0; index < mChannel_Count; index++)
+         for (final DataElementFormat element : DataArray)
             mSummed_Channel_Array[index] = mSummed_Channel_Array[index] + element.getCounts(index);
    }
 
@@ -436,8 +435,7 @@ public class EMISPECFile
       super();
    }
 
-   public EMISPECFile(InputStream is)
-         throws IOException {
+   public EMISPECFile(InputStream is) throws IOException {
       super();
       read(is);
    }

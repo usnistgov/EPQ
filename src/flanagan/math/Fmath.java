@@ -201,12 +201,12 @@ public class Fmath {
    // argument and return are integer, therefore limited to 0<=n<=12
    // see below for long and double arguments
    public static int factorial(int n) {
-      if(n < 0)
+      if (n < 0)
          throw new IllegalArgumentException("n must be a positive integer");
-      if(n > 12)
+      if (n > 12)
          throw new IllegalArgumentException("n must less than 13 to avoid integer overflow\nTry long or double argument");
       int f = 1;
-      for(int i = 2; i <= n; i++)
+      for (int i = 2; i <= n; i++)
          f *= i;
       return f;
    }
@@ -215,13 +215,13 @@ public class Fmath {
    // argument and return are long, therefore limited to 0<=n<=20
    // see below for double argument
    public static long factorial(long n) {
-      if(n < 0)
+      if (n < 0)
          throw new IllegalArgumentException("n must be a positive integer");
-      if(n > 20)
+      if (n > 20)
          throw new IllegalArgumentException("n must less than 21 to avoid long integer overflow\nTry double argument");
       long f = 1;
       long iCount = 2L;
-      while(iCount <= n) {
+      while (iCount <= n) {
          f *= iCount;
          iCount += 1L;
       }
@@ -231,12 +231,12 @@ public class Fmath {
    // factorial of n
    // Argument is of type BigInteger
    public static BigInteger factorial(BigInteger n) {
-      if(n.compareTo(BigInteger.ZERO) == -1)
+      if (n.compareTo(BigInteger.ZERO) == -1)
          throw new IllegalArgumentException("\nn must be a positive integer\nIs a Gamma funtion [Fmath.gamma(x)] more appropriate?");
       BigInteger one = BigInteger.ONE;
       BigInteger f = one;
       BigInteger iCount = new BigInteger("2");
-      while(iCount.compareTo(n) != 1) {
+      while (iCount.compareTo(n) != 1) {
          f = f.multiply(iCount);
          iCount = iCount.add(one);
       }
@@ -250,11 +250,11 @@ public class Fmath {
    // factorial returned as double but is, numerically, should be an integer
    // numerical rounding may makes this an approximation after n = 21
    public static double factorial(double n) {
-      if((n < 0.0) || ((n - Math.floor(n)) != 0))
+      if ((n < 0.0) || ((n - Math.floor(n)) != 0))
          throw new IllegalArgumentException("\nn must be a positive integer\nIs a Gamma funtion [Fmath.gamma(x)] more appropriate?");
       double f = 1.0D;
       double iCount = 2.0D;
-      while(iCount <= n) {
+      while (iCount <= n) {
          f *= iCount;
          iCount += 1.0D;
       }
@@ -264,12 +264,12 @@ public class Fmath {
    // factorial of n
    // Argument is of type BigDecimal but must be, numerically, an integer
    public static BigDecimal factorial(BigDecimal n) {
-      if((n.compareTo(BigDecimal.ZERO) == -1) || !Fmath.isInteger(n))
+      if ((n.compareTo(BigDecimal.ZERO) == -1) || !Fmath.isInteger(n))
          throw new IllegalArgumentException("\nn must be a positive integer\nIs a Gamma funtion [Fmath.gamma(x)] more appropriate?");
       BigDecimal one = BigDecimal.ONE;
       BigDecimal f = one;
       BigDecimal iCount = new BigDecimal(2.0D);
-      while(iCount.compareTo(n) != 1) {
+      while (iCount.compareTo(n) != 1) {
          f = f.multiply(iCount);
          iCount = iCount.add(one);
       }
@@ -282,10 +282,10 @@ public class Fmath {
    // log[e](factorial) returned as double
    // numerical rounding may makes this an approximation
    public static double logFactorial(int n) {
-      if(n < 0)
+      if (n < 0)
          throw new IllegalArgumentException("\nn must be a positive integer\nIs a Gamma funtion [Fmath.gamma(x)] more appropriate?");
       double f = 0.0D;
-      for(int i = 2; i <= n; i++)
+      for (int i = 2; i <= n; i++)
          f += Math.log(i);
       return f;
    }
@@ -295,11 +295,11 @@ public class Fmath {
    // log[e](factorial) returned as double
    // numerical rounding may makes this an approximation
    public static double logFactorial(long n) {
-      if(n < 0L)
+      if (n < 0L)
          throw new IllegalArgumentException("\nn must be a positive integer\nIs a Gamma funtion [Fmath.gamma(x)] more appropriate?");
       double f = 0.0D;
       long iCount = 2L;
-      while(iCount <= n) {
+      while (iCount <= n) {
          f += Math.log(iCount);
          iCount += 1L;
       }
@@ -311,11 +311,11 @@ public class Fmath {
    // log[e](factorial) returned as double
    // numerical rounding may makes this an approximation
    public static double logFactorial(double n) {
-      if((n < 0) || ((n - Math.floor(n)) != 0))
+      if ((n < 0) || ((n - Math.floor(n)) != 0))
          throw new IllegalArgumentException("\nn must be a positive integer\nIs a Gamma funtion [Fmath.gamma(x)] more appropriate?");
       double f = 0.0D;
       double iCount = 2.0D;
-      while(iCount <= n) {
+      while (iCount <= n) {
          f += Math.log(iCount);
          iCount += 1.0D;
       }
@@ -326,7 +326,7 @@ public class Fmath {
    /* returns -1 if x < 0 else returns 1 */
    // double version
    public static double sign(double x) {
-      if(x < 0.0)
+      if (x < 0.0)
          return -1.0;
       else
          return 1.0;
@@ -335,7 +335,7 @@ public class Fmath {
    /* returns -1 if x < 0 else returns 1 */
    // float version
    public static float sign(float x) {
-      if(x < 0.0F)
+      if (x < 0.0F)
          return -1.0F;
       else
          return 1.0F;
@@ -344,7 +344,7 @@ public class Fmath {
    /* returns -1 if x < 0 else returns 1 */
    // int version
    public static int sign(int x) {
-      if(x < 0)
+      if (x < 0)
          return -1;
       else
          return 1;
@@ -353,7 +353,7 @@ public class Fmath {
    /* returns -1 if x < 0 else returns 1 */
    // long version
    public static long sign(long x) {
-      if(x < 0)
+      if (x < 0)
          return -1;
       else
          return 1;
@@ -368,11 +368,11 @@ public class Fmath {
       final double amod = Math.abs(aa);
       final double bmod = Math.abs(bb);
       double cc = 0.0D, ratio = 0.0D;
-      if(amod == 0.0)
+      if (amod == 0.0)
          cc = bmod;
-      else if(bmod == 0.0)
+      else if (bmod == 0.0)
          cc = amod;
-      else if(amod >= bmod) {
+      else if (amod >= bmod) {
          ratio = bmod / amod;
          cc = amod * Math.sqrt(1.0 + (ratio * ratio));
       } else {
@@ -428,7 +428,7 @@ public class Fmath {
    // Inverse sine
    // Fmath.asin Checks limits - Java Math.asin returns NaN if without limits
    public static double asin(double a) {
-      if((a < -1.0D) && (a > 1.0D))
+      if ((a < -1.0D) && (a > 1.0D))
          throw new IllegalArgumentException("Fmath.asin argument (" + a + ") must be >= -1.0 and <= 1.0");
       return Math.asin(a);
    }
@@ -457,7 +457,7 @@ public class Fmath {
    // Inverse cosine
    // Fmath.asin Checks limits - Java Math.asin returns NaN if without limits
    public static double acos(double a) {
-      if((a < -1.0D) || (a > 1.0D))
+      if ((a < -1.0D) || (a > 1.0D))
          throw new IllegalArgumentException("Fmath.acos argument (" + a + ") must be >= -1.0 and <= 1.0");
       return Math.acos(a);
    }
@@ -516,7 +516,7 @@ public class Fmath {
 
    // Inverse secant
    public static double asec(double a) {
-      if((a < 1.0D) && (a > -1.0D))
+      if ((a < 1.0D) && (a > -1.0D))
          throw new IllegalArgumentException("asec argument (" + a + ") must be >= 1 or <= -1");
       return Math.acos(1.0 / a);
    }
@@ -528,7 +528,7 @@ public class Fmath {
 
    // Inverse cosecant
    public static double acsc(double a) {
-      if((a < 1.0D) && (a > -1.0D))
+      if ((a < 1.0D) && (a > -1.0D))
          throw new IllegalArgumentException("acsc argument (" + a + ") must be >= 1 or <= -1");
       return Math.asin(1.0 / a);
    }
@@ -540,7 +540,7 @@ public class Fmath {
 
    // Inverse exsecant
    public static double aexsec(double a) {
-      if((a < 0.0D) && (a > -2.0D))
+      if ((a < 0.0D) && (a > -2.0D))
          throw new IllegalArgumentException("aexsec argument (" + a + ") must be >= 0.0 and <= -2");
       return Math.asin(1.0D / (1.0D + a));
    }
@@ -552,7 +552,7 @@ public class Fmath {
 
    // Inverse versine
    public static double avers(double a) {
-      if((a < 0.0D) && (a > 2.0D))
+      if ((a < 0.0D) && (a > 2.0D))
          throw new IllegalArgumentException("avers argument (" + a + ") must be <= 2 and >= 0");
       return Math.acos(1.0D - a);
    }
@@ -564,7 +564,7 @@ public class Fmath {
 
    // Inverse coversine
    public static double acovers(double a) {
-      if((a < 0.0D) && (a > 2.0D))
+      if ((a < 0.0D) && (a > 2.0D))
          throw new IllegalArgumentException("acovers argument (" + a + ") must be <= 2 and >= 0");
       return Math.asin(1.0D - a);
    }
@@ -576,14 +576,14 @@ public class Fmath {
 
    // Inverse haversine
    public static double ahav(double a) {
-      if((a < 0.0D) && (a > 1.0D))
+      if ((a < 0.0D) && (a > 1.0D))
          throw new IllegalArgumentException("ahav argument (" + a + ") must be >= 0 and <= 1");
       return Fmath.acos(1.0D - (2.0D * a));
    }
 
    // Unnormalised sinc (unnormalised sine cardinal) sin(x)/x
    public static double sinc(double a) {
-      if(Math.abs(a) < 1e-40)
+      if (Math.abs(a) < 1e-40)
          return 1.0D;
       else
          return Math.sin(a) / a;
@@ -591,7 +591,7 @@ public class Fmath {
 
    // Normalised sinc (normalised sine cardinal) sin(pi.x)/(pi.x)
    public static double nsinc(double a) {
-      if(Math.abs(a) < 1e-40)
+      if (Math.abs(a) < 1e-40)
          return 1.0D;
       else
          return Math.sin(Math.PI * a) / (Math.PI * a);
@@ -605,7 +605,7 @@ public class Fmath {
    // Inverse hyperbolic sine of a double number
    public static double asinh(double a) {
       double sgn = 1.0D;
-      if(a < 0.0D) {
+      if (a < 0.0D) {
          sgn = -1.0D;
          a = -a;
       }
@@ -619,7 +619,7 @@ public class Fmath {
 
    // Inverse hyperbolic cosine of a double number
    public static double acosh(double a) {
-      if(a < 1.0D)
+      if (a < 1.0D)
          throw new IllegalArgumentException("acosh real number argument (" + a + ") must be >= 1");
       return Math.log(a + Math.sqrt((a * a) - 1.0D));
    }
@@ -632,11 +632,11 @@ public class Fmath {
    // Inverse hyperbolic tangent of a double number
    public static double atanh(double a) {
       double sgn = 1.0D;
-      if(a < 0.0D) {
+      if (a < 0.0D) {
          sgn = -1.0D;
          a = -a;
       }
-      if(a > 1.0D)
+      if (a > 1.0D)
          throw new IllegalArgumentException("atanh real number argument (" + (sgn * a) + ") must be >= -1 and <= 1");
       return 0.5D * sgn * (Math.log(1.0D + a) - Math.log(1.0D - a));
    }
@@ -649,11 +649,11 @@ public class Fmath {
    // Inverse hyperbolic cotangent of a double number
    public static double acoth(double a) {
       double sgn = 1.0D;
-      if(a < 0.0D) {
+      if (a < 0.0D) {
          sgn = -1.0D;
          a = -a;
       }
-      if(a < 1.0D)
+      if (a < 1.0D)
          throw new IllegalArgumentException("acoth real number argument (" + (sgn * a) + ") must be <= -1 or >= 1");
       return 0.5D * sgn * (Math.log(1.0D + a) - Math.log(a - 1.0D));
    }
@@ -665,7 +665,7 @@ public class Fmath {
 
    // Inverse hyperbolic secant of a double number
    public static double asech(double a) {
-      if((a > 1.0D) || (a < 0.0D))
+      if ((a > 1.0D) || (a < 0.0D))
          throw new IllegalArgumentException("asech real number argument (" + a + ") must be >= 0 and <= 1");
       return 0.5D * (Math.log((1.0D / a) + Math.sqrt((1.0D / (a * a)) - 1.0D)));
    }
@@ -678,7 +678,7 @@ public class Fmath {
    // Inverse hyperbolic cosecant of a double number
    public static double acsch(double a) {
       double sgn = 1.0D;
-      if(a < 0.0D) {
+      if (a < 0.0D) {
          sgn = -1.0D;
          a = -a;
       }
@@ -689,10 +689,10 @@ public class Fmath {
    // returns a value of xDouble truncated to trunc decimal places
    public static double truncate(double xDouble, int trunc) {
       double xTruncated = xDouble;
-      if(!Fmath.isNaN(xDouble))
-         if(!Fmath.isPlusInfinity(xDouble))
-            if(!Fmath.isMinusInfinity(xDouble))
-               if(xDouble != 0.0D) {
+      if (!Fmath.isNaN(xDouble))
+         if (!Fmath.isPlusInfinity(xDouble))
+            if (!Fmath.isMinusInfinity(xDouble))
+               if (xDouble != 0.0D) {
                   final String xString = ((Double.valueOf(xDouble)).toString()).trim();
                   xTruncated = Double.parseDouble(truncateProcedure(xString, trunc));
                }
@@ -702,10 +702,10 @@ public class Fmath {
    // returns a value of xFloat truncated to trunc decimal places
    public static float truncate(float xFloat, int trunc) {
       float xTruncated = xFloat;
-      if(!Fmath.isNaN(xFloat))
-         if(!Fmath.isPlusInfinity(xFloat))
-            if(!Fmath.isMinusInfinity(xFloat))
-               if(xFloat != 0.0D) {
+      if (!Fmath.isNaN(xFloat))
+         if (!Fmath.isPlusInfinity(xFloat))
+            if (!Fmath.isMinusInfinity(xFloat))
+               if (xFloat != 0.0D) {
                   final String xString = ((Float.valueOf(xFloat)).toString()).trim();
                   xTruncated = Float.parseFloat(truncateProcedure(xString, trunc));
                }
@@ -723,14 +723,14 @@ public class Fmath {
       int dotPos = xValue.indexOf('.');
       final int minPos = xValue.indexOf('-');
 
-      if(minPos != -1)
-         if(minPos == 0) {
+      if (minPos != -1)
+         if (minPos == 0) {
             xWorking = xWorking.substring(1);
             first = "-";
             dotPos--;
             expPos--;
          }
-      if(expPos > -1) {
+      if (expPos > -1) {
          exponent = xWorking.substring(expPos);
          xWorking = xWorking.substring(0, expPos);
       }
@@ -739,31 +739,31 @@ public class Fmath {
       String xDiscarded = null;
       String tempString = null;
       double tempDouble = 0.0D;
-      if(dotPos > -1) {
+      if (dotPos > -1) {
          xPreDot = xWorking.substring(0, dotPos);
          xPostDot = xWorking.substring(dotPos + 1);
          final int xLength = xPostDot.length();
-         if(trunc < xLength) {
+         if (trunc < xLength) {
             xDiscarded = xPostDot.substring(trunc);
             tempString = xDiscarded.substring(0, 1) + ".";
-            if(xDiscarded.length() > 1)
+            if (xDiscarded.length() > 1)
                tempString += xDiscarded.substring(1);
             else
                tempString += "0";
             tempDouble = Math.round(Double.parseDouble(tempString));
 
-            if(trunc > 0) {
-               if(tempDouble >= 5.0) {
+            if (trunc > 0) {
+               if (tempDouble >= 5.0) {
                   final int[] xArray = new int[trunc + 1];
                   xArray[0] = 0;
-                  for(int i = 0; i < trunc; i++)
+                  for (int i = 0; i < trunc; i++)
                      xArray[i + 1] = Integer.parseInt(xPostDot.substring(i, i + 1));
                   boolean test = true;
                   int iCounter = trunc;
-                  while(test) {
+                  while (test) {
                      xArray[iCounter] += 1;
-                     if(iCounter > 0) {
-                        if(xArray[iCounter] < 10)
+                     if (iCounter > 0) {
+                        if (xArray[iCounter] < 10)
                            test = false;
                         else {
                            xArray[iCounter] = 0;
@@ -776,13 +776,13 @@ public class Fmath {
                   preInt += xArray[0];
                   xPreDot = (Integer.valueOf(preInt)).toString();
                   tempString = "";
-                  for(int i = 1; i <= trunc; i++)
+                  for (int i = 1; i <= trunc; i++)
                      tempString += (Integer.valueOf(xArray[i])).toString();
                   xPostDot = tempString;
                } else
                   xPostDot = xPostDot.substring(0, trunc);
             } else {
-               if(tempDouble >= 5.0) {
+               if (tempDouble >= 5.0) {
                   int preInt = Integer.parseInt(xPreDot);
                   preInt++;
                   xPreDot = (Integer.valueOf(preInt)).toString();
@@ -800,7 +800,7 @@ public class Fmath {
    // x is double
    public static boolean isInfinity(double x) {
       boolean test = false;
-      if((x == Double.POSITIVE_INFINITY) || (x == Double.NEGATIVE_INFINITY))
+      if ((x == Double.POSITIVE_INFINITY) || (x == Double.NEGATIVE_INFINITY))
          test = true;
       return test;
    }
@@ -810,7 +810,7 @@ public class Fmath {
    // x is float
    public static boolean isInfinity(float x) {
       boolean test = false;
-      if((x == Float.POSITIVE_INFINITY) || (x == Float.NEGATIVE_INFINITY))
+      if ((x == Float.POSITIVE_INFINITY) || (x == Float.NEGATIVE_INFINITY))
          test = true;
       return test;
    }
@@ -819,7 +819,7 @@ public class Fmath {
    // x is double
    public static boolean isPlusInfinity(double x) {
       boolean test = false;
-      if(x == Double.POSITIVE_INFINITY)
+      if (x == Double.POSITIVE_INFINITY)
          test = true;
       return test;
    }
@@ -828,7 +828,7 @@ public class Fmath {
    // x is float
    public static boolean isPlusInfinity(float x) {
       boolean test = false;
-      if(x == Float.POSITIVE_INFINITY)
+      if (x == Float.POSITIVE_INFINITY)
          test = true;
       return test;
    }
@@ -837,7 +837,7 @@ public class Fmath {
    // x is double
    public static boolean isMinusInfinity(double x) {
       boolean test = false;
-      if(x == Double.NEGATIVE_INFINITY)
+      if (x == Double.NEGATIVE_INFINITY)
          test = true;
       return test;
    }
@@ -846,7 +846,7 @@ public class Fmath {
    // x is float
    public static boolean isMinusInfinity(float x) {
       boolean test = false;
-      if(x == Float.NEGATIVE_INFINITY)
+      if (x == Float.NEGATIVE_INFINITY)
          test = true;
       return test;
    }
@@ -869,16 +869,16 @@ public class Fmath {
    // NB!! This method treats two NaNs as equal
    public static boolean isEqual(double x, double y) {
       boolean test = false;
-      if(Fmath.isNaN(x)) {
-         if(Fmath.isNaN(y))
+      if (Fmath.isNaN(x)) {
+         if (Fmath.isNaN(y))
             test = true;
-      } else if(Fmath.isPlusInfinity(x)) {
-         if(Fmath.isPlusInfinity(y))
+      } else if (Fmath.isPlusInfinity(x)) {
+         if (Fmath.isPlusInfinity(y))
             test = true;
-      } else if(Fmath.isMinusInfinity(x)) {
-         if(Fmath.isMinusInfinity(y))
+      } else if (Fmath.isMinusInfinity(x)) {
+         if (Fmath.isMinusInfinity(y))
             test = true;
-      } else if(x == y)
+      } else if (x == y)
          test = true;
       return test;
    }
@@ -889,16 +889,16 @@ public class Fmath {
    // NB!! This method treats two NaNs as equal
    public static boolean isEqual(float x, float y) {
       boolean test = false;
-      if(Fmath.isNaN(x)) {
-         if(Fmath.isNaN(y))
+      if (Fmath.isNaN(x)) {
+         if (Fmath.isNaN(y))
             test = true;
-      } else if(Fmath.isPlusInfinity(x)) {
-         if(Fmath.isPlusInfinity(y))
+      } else if (Fmath.isPlusInfinity(x)) {
+         if (Fmath.isPlusInfinity(y))
             test = true;
-      } else if(Fmath.isMinusInfinity(x)) {
-         if(Fmath.isMinusInfinity(y))
+      } else if (Fmath.isMinusInfinity(x)) {
+         if (Fmath.isMinusInfinity(y))
             test = true;
-      } else if(x == y)
+      } else if (x == y)
          test = true;
       return test;
    }
@@ -907,7 +907,7 @@ public class Fmath {
    // x and y are int
    public static boolean isEqual(int x, int y) {
       boolean test = false;
-      if(x == y)
+      if (x == y)
          test = true;
       return test;
    }
@@ -916,7 +916,7 @@ public class Fmath {
    // x and y are char
    public static boolean isEqual(char x, char y) {
       boolean test = false;
-      if(x == y)
+      if (x == y)
          test = true;
       return test;
    }
@@ -925,7 +925,7 @@ public class Fmath {
    // x and y are Strings
    public static boolean isEqual(String x, String y) {
       boolean test = false;
-      if(x.equals(y))
+      if (x.equals(y))
          test = true;
       return test;
    }
@@ -935,7 +935,7 @@ public class Fmath {
    // x and y are double
    public static boolean isEqualWithinLimits(double x, double y, double limit) {
       boolean test = false;
-      if(Math.abs(x - y) <= Math.abs(limit))
+      if (Math.abs(x - y) <= Math.abs(limit))
          test = true;
       return test;
    }
@@ -944,7 +944,7 @@ public class Fmath {
    // x and y are float
    public static boolean isEqualWithinLimits(float x, float y, float limit) {
       boolean test = false;
-      if(Math.abs(x - y) <= Math.abs(limit))
+      if (Math.abs(x - y) <= Math.abs(limit))
          test = true;
       return test;
    }
@@ -953,7 +953,7 @@ public class Fmath {
    // x and y are long
    public static boolean isEqualWithinLimits(long x, long y, long limit) {
       boolean test = false;
-      if(Math.abs(x - y) <= Math.abs(limit))
+      if (Math.abs(x - y) <= Math.abs(limit))
          test = true;
       return test;
    }
@@ -962,7 +962,7 @@ public class Fmath {
    // x and y are int
    public static boolean isEqualWithinLimits(int x, int y, int limit) {
       boolean test = false;
-      if(Math.abs(x - y) <= Math.abs(limit))
+      if (Math.abs(x - y) <= Math.abs(limit))
          test = true;
       return test;
    }
@@ -971,7 +971,7 @@ public class Fmath {
    // x and y are BigDecimal
    public static boolean isEqualWithinLimits(BigDecimal x, BigDecimal y, BigDecimal limit) {
       boolean test = false;
-      if(((x.subtract(y)).abs()).compareTo(limit.abs()) <= 0)
+      if (((x.subtract(y)).abs()).compareTo(limit.abs()) <= 0)
          test = true;
       return test;
    }
@@ -980,7 +980,7 @@ public class Fmath {
    // x and y are BigInteger
    public static boolean isEqualWithinLimits(BigInteger x, BigInteger y, BigInteger limit) {
       boolean test = false;
-      if(((x.subtract(y)).abs()).compareTo(limit.abs()) <= 0)
+      if (((x.subtract(y)).abs()).compareTo(limit.abs()) <= 0)
          test = true;
       return test;
    }
@@ -991,7 +991,7 @@ public class Fmath {
    public static boolean isEqualWithinPerCent(double x, double y, double perCent) {
       boolean test = false;
       final double limit = Math.abs(((x + y) * perCent) / 200.0D);
-      if(Math.abs(x - y) <= limit)
+      if (Math.abs(x - y) <= limit)
          test = true;
       return test;
    }
@@ -1001,7 +1001,7 @@ public class Fmath {
    public static boolean isEqualWithinPerCent(float x, float y, float perCent) {
       boolean test = false;
       final double limit = Math.abs(((x + y) * perCent) / 200.0F);
-      if(Math.abs(x - y) <= limit)
+      if (Math.abs(x - y) <= limit)
          test = true;
       return test;
    }
@@ -1011,7 +1011,7 @@ public class Fmath {
    public static boolean isEqualWithinPerCent(long x, long y, double perCent) {
       boolean test = false;
       final double limit = Math.abs(((x + y) * perCent) / 200.0D);
-      if(Math.abs(x - y) <= limit)
+      if (Math.abs(x - y) <= limit)
          test = true;
       return test;
    }
@@ -1021,7 +1021,7 @@ public class Fmath {
    public static boolean isEqualWithinPerCent(long x, long y, long perCent) {
       boolean test = false;
       final double limit = Math.abs(((double) (x + y) * (double) perCent) / 200.0D);
-      if(Math.abs(x - y) <= limit)
+      if (Math.abs(x - y) <= limit)
          test = true;
       return test;
    }
@@ -1031,7 +1031,7 @@ public class Fmath {
    public static boolean isEqualWithinPerCent(int x, int y, double perCent) {
       boolean test = false;
       final double limit = Math.abs(((x + y) * perCent) / 200.0D);
-      if(Math.abs(x - y) <= limit)
+      if (Math.abs(x - y) <= limit)
          test = true;
       return test;
    }
@@ -1041,7 +1041,7 @@ public class Fmath {
    public static boolean isEqualWithinPerCent(int x, int y, int perCent) {
       boolean test = false;
       final double limit = Math.abs(((double) (x + y) * (double) perCent) / 200.0D);
-      if(Math.abs(x - y) <= limit)
+      if (Math.abs(x - y) <= limit)
          test = true;
       return test;
    }
@@ -1051,7 +1051,7 @@ public class Fmath {
    public static boolean isEqualWithinPerCent(BigDecimal x, BigDecimal y, BigDecimal perCent) {
       boolean test = false;
       BigDecimal limit = (x.add(y)).multiply(perCent).multiply(new BigDecimal("0.005"));
-      if(((x.subtract(y)).abs()).compareTo(limit.abs()) <= 0)
+      if (((x.subtract(y)).abs()).compareTo(limit.abs()) <= 0)
          test = true;
       limit = null;
       return test;
@@ -1064,7 +1064,7 @@ public class Fmath {
       BigDecimal xx = new BigDecimal(x);
       BigDecimal yy = new BigDecimal(y);
       BigDecimal limit = (xx.add(yy)).multiply(perCent).multiply(new BigDecimal("0.005"));
-      if(((xx.subtract(yy)).abs()).compareTo(limit.abs()) <= 0)
+      if (((xx.subtract(yy)).abs()).compareTo(limit.abs()) <= 0)
          test = true;
       limit = null;
       xx = null;
@@ -1080,7 +1080,7 @@ public class Fmath {
       BigDecimal yy = new BigDecimal(y);
       BigDecimal pc = new BigDecimal(perCent);
       BigDecimal limit = (xx.add(yy)).multiply(pc).multiply(new BigDecimal("0.005"));
-      if(((xx.subtract(yy)).abs()).compareTo(limit.abs()) <= 0)
+      if (((xx.subtract(yy)).abs()).compareTo(limit.abs()) <= 0)
          test = true;
       limit = null;
       xx = null;
@@ -1156,7 +1156,7 @@ public class Fmath {
    public static boolean isInteger(double x) {
       boolean retn = false;
       final double xfloor = Math.floor(x);
-      if((x - xfloor) == 0.0D)
+      if ((x - xfloor) == 0.0D)
          retn = true;
       return retn;
    }
@@ -1168,14 +1168,14 @@ public class Fmath {
       boolean retn = true;
       boolean test = true;
       int ii = 0;
-      while(test) {
+      while (test) {
          final double xfloor = Math.floor(x[ii]);
-         if((x[ii] - xfloor) != 0.0D) {
+         if ((x[ii] - xfloor) != 0.0D) {
             retn = false;
             test = false;
          } else {
             ii++;
-            if(ii == x.length)
+            if (ii == x.length)
                test = false;
          }
       }
@@ -1187,7 +1187,7 @@ public class Fmath {
    public static boolean isInteger(float x) {
       boolean ret = false;
       final float xfloor = (float) Math.floor(x);
-      if((x - xfloor) == 0.0F)
+      if ((x - xfloor) == 0.0F)
          ret = true;
       return ret;
    }
@@ -1199,14 +1199,14 @@ public class Fmath {
       boolean retn = true;
       boolean test = true;
       int ii = 0;
-      while(test) {
+      while (test) {
          final float xfloor = (float) Math.floor(x[ii]);
-         if((x[ii] - xfloor) != 0.0D) {
+         if ((x[ii] - xfloor) != 0.0D) {
             retn = false;
             test = false;
          } else {
             ii++;
-            if(ii == x.length)
+            if (ii == x.length)
                test = false;
          }
       }
@@ -1215,16 +1215,16 @@ public class Fmath {
 
    public static boolean isInteger(Number numberAsObject) {
       boolean test = integers.containsKey(numberAsObject.getClass());
-      if(!test) {
-         if(numberAsObject instanceof Double) {
+      if (!test) {
+         if (numberAsObject instanceof Double) {
             final double dd = numberAsObject.doubleValue();
             test = Fmath.isInteger(dd);
          }
-         if(numberAsObject instanceof Float) {
+         if (numberAsObject instanceof Float) {
             final float dd = numberAsObject.floatValue();
             test = Fmath.isInteger(dd);
          }
-         if(numberAsObject instanceof BigDecimal) {
+         if (numberAsObject instanceof BigDecimal) {
             final double dd = numberAsObject.doubleValue();
             test = Fmath.isInteger(dd);
          }
@@ -1234,25 +1234,25 @@ public class Fmath {
 
    public static boolean isInteger(Number[] numberAsObject) {
       boolean testall = true;
-      for(final Number element : numberAsObject) {
+      for (final Number element : numberAsObject) {
          boolean test = integers.containsKey(element.getClass());
-         if(!test) {
-            if(element instanceof Double) {
+         if (!test) {
+            if (element instanceof Double) {
                final double dd = element.doubleValue();
                test = Fmath.isInteger(dd);
-               if(!test)
+               if (!test)
                   testall = false;
             }
-            if(element instanceof Float) {
+            if (element instanceof Float) {
                final float dd = element.floatValue();
                test = Fmath.isInteger(dd);
-               if(!test)
+               if (!test)
                   testall = false;
             }
-            if(element instanceof BigDecimal) {
+            if (element instanceof BigDecimal) {
                final double dd = element.doubleValue();
                test = Fmath.isInteger(dd);
-               if(!test)
+               if (!test)
                   testall = false;
             }
          }
@@ -1265,7 +1265,7 @@ public class Fmath {
    // x is int
    public static boolean isEven(int x) {
       boolean test = false;
-      if((x % 2) == 0.0D)
+      if ((x % 2) == 0.0D)
          test = true;
       return test;
    }
@@ -1274,11 +1274,11 @@ public class Fmath {
    // x is float but must hold an integer value
    public static boolean isEven(float x) {
       double y = Math.floor(x);
-      if((x - y) != 0.0D)
+      if ((x - y) != 0.0D)
          throw new IllegalArgumentException("the argument is not an integer");
       boolean test = false;
       y = Math.floor(x / 2.0F);
-      if(((x / 2.0F) - y) == 0.0D)
+      if (((x / 2.0F) - y) == 0.0D)
          test = true;
       return test;
    }
@@ -1287,11 +1287,11 @@ public class Fmath {
    // x is double but must hold an integer value
    public static boolean isEven(double x) {
       double y = Math.floor(x);
-      if((x - y) != 0.0D)
+      if ((x - y) != 0.0D)
          throw new IllegalArgumentException("the argument is not an integer");
       boolean test = false;
       y = Math.floor(x / 2.0F);
-      if(((x / 2.0D) - y) == 0.0D)
+      if (((x / 2.0D) - y) == 0.0D)
          test = true;
       return test;
    }
@@ -1301,7 +1301,7 @@ public class Fmath {
    // x is int
    public static boolean isOdd(int x) {
       boolean test = true;
-      if((x % 2) == 0.0D)
+      if ((x % 2) == 0.0D)
          test = false;
       return test;
    }
@@ -1310,11 +1310,11 @@ public class Fmath {
    // x is float but must hold an integer value
    public static boolean isOdd(float x) {
       double y = Math.floor(x);
-      if((x - y) != 0.0D)
+      if ((x - y) != 0.0D)
          throw new IllegalArgumentException("the argument is not an integer");
       boolean test = true;
       y = Math.floor(x / 2.0F);
-      if(((x / 2.0F) - y) == 0.0D)
+      if (((x / 2.0F) - y) == 0.0D)
          test = false;
       return test;
    }
@@ -1323,11 +1323,11 @@ public class Fmath {
    // x is double but must hold an integer value
    public static boolean isOdd(double x) {
       double y = Math.floor(x);
-      if((x - y) != 0.0D)
+      if ((x - y) != 0.0D)
          throw new IllegalArgumentException("the argument is not an integer");
       boolean test = true;
       y = Math.floor(x / 2.0F);
-      if(((x / 2.0D) - y) == 0.0D)
+      if (((x / 2.0D) - y) == 0.0D)
          test = false;
       return test;
    }
@@ -1337,11 +1337,11 @@ public class Fmath {
    public static boolean leapYear(int year) {
       boolean test = false;
 
-      if((year % 4) != 0)
+      if ((year % 4) != 0)
          test = false;
-      else if((year % 400) == 0)
+      else if ((year % 400) == 0)
          test = true;
-      else if((year % 100) == 0)
+      else if ((year % 100) == 0)
          test = false;
       else
          test = true;
@@ -1352,28 +1352,14 @@ public class Fmath {
    // Returns milliseconds since 0 hours 0 minutes 0 seconds on 1 Jan 1970
    public static long dateToJavaMilliS(int year, int month, int day, int hour, int min, int sec) {
 
-      final long[] monthDays = {
-         0L,
-         31L,
-         28L,
-         31L,
-         30L,
-         31L,
-         30L,
-         31L,
-         31L,
-         30L,
-         31L,
-         30L,
-         31L
-      };
+      final long[] monthDays = {0L, 31L, 28L, 31L, 30L, 31L, 30L, 31L, 31L, 30L, 31L, 30L, 31L};
       long ms = 0L;
 
       long yearDiff = 0L;
       int yearTest = year - 1;
-      while(yearTest >= 1970) {
+      while (yearTest >= 1970) {
          yearDiff += 365;
-         if(Fmath.leapYear(yearTest))
+         if (Fmath.leapYear(yearTest))
             yearDiff++;
          yearTest--;
       }
@@ -1381,17 +1367,16 @@ public class Fmath {
 
       long monthDiff = 0L;
       int monthTest = month - 1;
-      while(monthTest > 0) {
+      while (monthTest > 0) {
          monthDiff += monthDays[monthTest];
-         if(Fmath.leapYear(year))
+         if (Fmath.leapYear(year))
             monthDiff++;
          monthTest--;
       }
 
       monthDiff *= 24L * 60L * 60L * 1000L;
 
-      ms = yearDiff + monthDiff + (day * 24L * 60L * 60L * 1000L) + (hour * 60L * 60L * 1000L) + (min * 60L * 1000L)
-            + (sec * 1000L);
+      ms = yearDiff + monthDiff + (day * 24L * 60L * 60L * 1000L) + (hour * 60L * 60L * 1000L) + (min * 60L * 1000L) + (sec * 1000L);
 
       return ms;
    }
@@ -1405,8 +1390,8 @@ public class Fmath {
    public static double maximum(double[] aa) {
       final int n = aa.length;
       double aamax = aa[0];
-      for(int i = 1; i < n; i++)
-         if(aa[i] > aamax)
+      for (int i = 1; i < n; i++)
+         if (aa[i] > aamax)
             aamax = aa[i];
       return aamax;
    }
@@ -1415,8 +1400,8 @@ public class Fmath {
    public static float maximum(float[] aa) {
       final int n = aa.length;
       float aamax = aa[0];
-      for(int i = 1; i < n; i++)
-         if(aa[i] > aamax)
+      for (int i = 1; i < n; i++)
+         if (aa[i] > aamax)
             aamax = aa[i];
       return aamax;
    }
@@ -1425,8 +1410,8 @@ public class Fmath {
    public static int maximum(int[] aa) {
       final int n = aa.length;
       int aamax = aa[0];
-      for(int i = 1; i < n; i++)
-         if(aa[i] > aamax)
+      for (int i = 1; i < n; i++)
+         if (aa[i] > aamax)
             aamax = aa[i];
       return aamax;
    }
@@ -1435,8 +1420,8 @@ public class Fmath {
    public static long maximum(long[] aa) {
       final long n = aa.length;
       long aamax = aa[0];
-      for(int i = 1; i < n; i++)
-         if(aa[i] > aamax)
+      for (int i = 1; i < n; i++)
+         if (aa[i] > aamax)
             aamax = aa[i];
       return aamax;
    }
@@ -1445,8 +1430,8 @@ public class Fmath {
    public static double minimum(double[] aa) {
       final int n = aa.length;
       double aamin = aa[0];
-      for(int i = 1; i < n; i++)
-         if(aa[i] < aamin)
+      for (int i = 1; i < n; i++)
+         if (aa[i] < aamin)
             aamin = aa[i];
       return aamin;
    }
@@ -1455,8 +1440,8 @@ public class Fmath {
    public static float minimum(float[] aa) {
       final int n = aa.length;
       float aamin = aa[0];
-      for(int i = 1; i < n; i++)
-         if(aa[i] < aamin)
+      for (int i = 1; i < n; i++)
+         if (aa[i] < aamin)
             aamin = aa[i];
       return aamin;
    }
@@ -1466,8 +1451,8 @@ public class Fmath {
    public static int minimum(int[] aa) {
       final int n = aa.length;
       int aamin = aa[0];
-      for(int i = 1; i < n; i++)
-         if(aa[i] < aamin)
+      for (int i = 1; i < n; i++)
+         if (aa[i] < aamin)
             aamin = aa[i];
       return aamin;
    }
@@ -1476,8 +1461,8 @@ public class Fmath {
    public static long minimum(long[] aa) {
       final long n = aa.length;
       long aamin = aa[0];
-      for(int i = 1; i < n; i++)
-         if(aa[i] < aamin)
+      for (int i = 1; i < n; i++)
+         if (aa[i] < aamin)
             aamin = aa[i];
       return aamin;
    }
@@ -1510,9 +1495,9 @@ public class Fmath {
       final double n = aa.length;
       double diff = sorted[1] - sorted[0];
       double minDiff = diff;
-      for(int i = 1; i < (n - 1); i++) {
+      for (int i = 1; i < (n - 1); i++) {
          diff = sorted[i + 1] - sorted[i];
-         if(diff < minDiff)
+         if (diff < minDiff)
             minDiff = diff;
       }
       return minDiff;
@@ -1524,9 +1509,9 @@ public class Fmath {
       final float n = aa.length;
       float diff = sorted[1] - sorted[0];
       float minDiff = diff;
-      for(int i = 1; i < (n - 1); i++) {
+      for (int i = 1; i < (n - 1); i++) {
          diff = sorted[i + 1] - sorted[i];
-         if(diff < minDiff)
+         if (diff < minDiff)
             minDiff = diff;
       }
       return minDiff;
@@ -1538,9 +1523,9 @@ public class Fmath {
       final long n = aa.length;
       long diff = sorted[1] - sorted[0];
       long minDiff = diff;
-      for(int i = 1; i < (n - 1); i++) {
+      for (int i = 1; i < (n - 1); i++) {
          diff = sorted[i + 1] - sorted[i];
-         if(diff < minDiff)
+         if (diff < minDiff)
             minDiff = diff;
       }
       return minDiff;
@@ -1552,9 +1537,9 @@ public class Fmath {
       final int n = aa.length;
       int diff = sorted[1] - sorted[0];
       int minDiff = diff;
-      for(int i = 1; i < (n - 1); i++) {
+      for (int i = 1; i < (n - 1); i++) {
          diff = sorted[i + 1] - sorted[i];
-         if(diff < minDiff)
+         if (diff < minDiff)
             minDiff = diff;
       }
       return minDiff;
@@ -1565,7 +1550,7 @@ public class Fmath {
    public static double[] reverseArray(double[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[n - 1 - i];
       return bb;
    }
@@ -1574,7 +1559,7 @@ public class Fmath {
    public static float[] reverseArray(float[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[n - 1 - i];
       return bb;
    }
@@ -1583,7 +1568,7 @@ public class Fmath {
    public static int[] reverseArray(int[] aa) {
       final int n = aa.length;
       final int[] bb = new int[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[n - 1 - i];
       return bb;
    }
@@ -1592,7 +1577,7 @@ public class Fmath {
    public static long[] reverseArray(long[] aa) {
       final int n = aa.length;
       final long[] bb = new long[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[n - 1 - i];
       return bb;
    }
@@ -1601,7 +1586,7 @@ public class Fmath {
    public static char[] reverseArray(char[] aa) {
       final int n = aa.length;
       final char[] bb = new char[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[n - 1 - i];
       return bb;
    }
@@ -1611,7 +1596,7 @@ public class Fmath {
    public static double[] arrayAbs(double[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = Math.abs(aa[i]);
       return bb;
    }
@@ -1620,7 +1605,7 @@ public class Fmath {
    public static float[] arrayAbs(float[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = Math.abs(aa[i]);
       return bb;
    }
@@ -1629,7 +1614,7 @@ public class Fmath {
    public static long[] arrayAbs(long[] aa) {
       final int n = aa.length;
       final long[] bb = new long[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = Math.abs(aa[i]);
       return bb;
    }
@@ -1638,7 +1623,7 @@ public class Fmath {
    public static int[] arrayAbs(int[] aa) {
       final int n = aa.length;
       final int[] bb = new int[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = Math.abs(aa[i]);
       return bb;
    }
@@ -1648,7 +1633,7 @@ public class Fmath {
    public static double[] arrayMultByConstant(double[] aa, double constant) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i] * constant;
       return bb;
    }
@@ -1657,7 +1642,7 @@ public class Fmath {
    public static double[] arrayMultByConstant(int[] aa, double constant) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i] * constant;
       return bb;
    }
@@ -1666,7 +1651,7 @@ public class Fmath {
    public static double[] arrayMultByConstant(double[] aa, int constant) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i] * constant;
       return bb;
    }
@@ -1675,7 +1660,7 @@ public class Fmath {
    public static double[] arrayMultByConstant(int[] aa, int constant) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = (aa[i] * constant);
       return bb;
    }
@@ -1685,7 +1670,7 @@ public class Fmath {
    public static double[] log10Elements(double[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = Math.log10(aa[i]);
       return bb;
    }
@@ -1694,7 +1679,7 @@ public class Fmath {
    public static float[] log10Elements(float[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = (float) Math.log10(aa[i]);
       return bb;
    }
@@ -1704,7 +1689,7 @@ public class Fmath {
    public static double[] lnElements(double[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = Math.log10(aa[i]);
       return bb;
    }
@@ -1713,7 +1698,7 @@ public class Fmath {
    public static float[] lnElements(float[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = (float) Math.log10(aa[i]);
       return bb;
    }
@@ -1723,7 +1708,7 @@ public class Fmath {
    public static double[] squareRootElements(double[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = Math.sqrt(aa[i]);
       return bb;
    }
@@ -1732,7 +1717,7 @@ public class Fmath {
    public static float[] squareRootElements(float[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = (float) Math.sqrt(aa[i]);
       return bb;
    }
@@ -1742,7 +1727,7 @@ public class Fmath {
    public static double[] raiseElementsToPower(double[] aa, double power) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = Math.pow(aa[i], power);
       return bb;
    }
@@ -1751,7 +1736,7 @@ public class Fmath {
    public static double[] raiseElementsToPower(double[] aa, int power) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = Math.pow(aa[i], power);
       return bb;
    }
@@ -1760,7 +1745,7 @@ public class Fmath {
    public static float[] raiseElementsToPower(float[] aa, float power) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = (float) Math.pow(aa[i], power);
       return bb;
    }
@@ -1769,7 +1754,7 @@ public class Fmath {
    public static float[] raiseElementsToPower(float[] aa, int power) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = (float) Math.pow(aa[i], power);
       return bb;
    }
@@ -1779,7 +1764,7 @@ public class Fmath {
    public static double[] invertElements(double[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = 1.0D / aa[i];
       return bb;
    }
@@ -1788,7 +1773,7 @@ public class Fmath {
    public static float[] invertElements(float[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = 1.0F / aa[i];
       return bb;
    }
@@ -1802,14 +1787,14 @@ public class Fmath {
       int[] indices = null;
       int numberOfIndices = 0;
       final ArrayList<Integer> arrayl = new ArrayList<Integer>();
-      for(int i = 0; i < array.length; i++)
-         if(array[i] == value) {
+      for (int i = 0; i < array.length; i++)
+         if (array[i] == value) {
             numberOfIndices++;
             arrayl.add(Integer.valueOf(i));
          }
-      if(numberOfIndices != 0) {
+      if (numberOfIndices != 0) {
          indices = new int[numberOfIndices];
-         for(int i = 0; i < numberOfIndices; i++)
+         for (int i = 0; i < numberOfIndices; i++)
             indices[i] = (arrayl.get(i)).intValue();
       }
       return indices;
@@ -1822,14 +1807,14 @@ public class Fmath {
       int[] indices = null;
       int numberOfIndices = 0;
       final ArrayList<Integer> arrayl = new ArrayList<Integer>();
-      for(int i = 0; i < array.length; i++)
-         if(array[i] == value) {
+      for (int i = 0; i < array.length; i++)
+         if (array[i] == value) {
             numberOfIndices++;
             arrayl.add(Integer.valueOf(i));
          }
-      if(numberOfIndices != 0) {
+      if (numberOfIndices != 0) {
          indices = new int[numberOfIndices];
-         for(int i = 0; i < numberOfIndices; i++)
+         for (int i = 0; i < numberOfIndices; i++)
             indices[i] = (arrayl.get(i)).intValue();
       }
       return indices;
@@ -1842,14 +1827,14 @@ public class Fmath {
       int[] indices = null;
       int numberOfIndices = 0;
       final ArrayList<Integer> arrayl = new ArrayList<Integer>();
-      for(int i = 0; i < array.length; i++)
-         if(array[i] == value) {
+      for (int i = 0; i < array.length; i++)
+         if (array[i] == value) {
             numberOfIndices++;
             arrayl.add(Integer.valueOf(i));
          }
-      if(numberOfIndices != 0) {
+      if (numberOfIndices != 0) {
          indices = new int[numberOfIndices];
-         for(int i = 0; i < numberOfIndices; i++)
+         for (int i = 0; i < numberOfIndices; i++)
             indices[i] = (arrayl.get(i)).intValue();
       }
       return indices;
@@ -1862,14 +1847,14 @@ public class Fmath {
       int[] indices = null;
       int numberOfIndices = 0;
       final ArrayList<Integer> arrayl = new ArrayList<Integer>();
-      for(int i = 0; i < array.length; i++)
-         if(array[i] == value) {
+      for (int i = 0; i < array.length; i++)
+         if (array[i] == value) {
             numberOfIndices++;
             arrayl.add(Integer.valueOf(i));
          }
-      if(numberOfIndices != 0) {
+      if (numberOfIndices != 0) {
          indices = new int[numberOfIndices];
-         for(int i = 0; i < numberOfIndices; i++)
+         for (int i = 0; i < numberOfIndices; i++)
             indices[i] = (arrayl.get(i)).intValue();
       }
       return indices;
@@ -1882,14 +1867,14 @@ public class Fmath {
       int[] indices = null;
       int numberOfIndices = 0;
       final ArrayList<Integer> arrayl = new ArrayList<Integer>();
-      for(int i = 0; i < array.length; i++)
-         if(array[i] == value) {
+      for (int i = 0; i < array.length; i++)
+         if (array[i] == value) {
             numberOfIndices++;
             arrayl.add(Integer.valueOf(i));
          }
-      if(numberOfIndices != 0) {
+      if (numberOfIndices != 0) {
          indices = new int[numberOfIndices];
-         for(int i = 0; i < numberOfIndices; i++)
+         for (int i = 0; i < numberOfIndices; i++)
             indices[i] = (arrayl.get(i)).intValue();
       }
       return indices;
@@ -1902,14 +1887,14 @@ public class Fmath {
       int[] indices = null;
       int numberOfIndices = 0;
       final ArrayList<Integer> arrayl = new ArrayList<Integer>();
-      for(int i = 0; i < array.length; i++)
-         if(array[i] == value) {
+      for (int i = 0; i < array.length; i++)
+         if (array[i] == value) {
             numberOfIndices++;
             arrayl.add(Integer.valueOf(i));
          }
-      if(numberOfIndices != 0) {
+      if (numberOfIndices != 0) {
          indices = new int[numberOfIndices];
-         for(int i = 0; i < numberOfIndices; i++)
+         for (int i = 0; i < numberOfIndices; i++)
             indices[i] = (arrayl.get(i)).intValue();
       }
       return indices;
@@ -1922,14 +1907,14 @@ public class Fmath {
       int[] indices = null;
       int numberOfIndices = 0;
       final ArrayList<Integer> arrayl = new ArrayList<Integer>();
-      for(int i = 0; i < array.length; i++)
-         if(array[i] == value) {
+      for (int i = 0; i < array.length; i++)
+         if (array[i] == value) {
             numberOfIndices++;
             arrayl.add(Integer.valueOf(i));
          }
-      if(numberOfIndices != 0) {
+      if (numberOfIndices != 0) {
          indices = new int[numberOfIndices];
-         for(int i = 0; i < numberOfIndices; i++)
+         for (int i = 0; i < numberOfIndices; i++)
             indices[i] = (arrayl.get(i)).intValue();
       }
       return indices;
@@ -1942,14 +1927,14 @@ public class Fmath {
       int[] indices = null;
       int numberOfIndices = 0;
       final ArrayList<Integer> arrayl = new ArrayList<Integer>();
-      for(int i = 0; i < array.length; i++)
-         if(array[i].equals(value)) {
+      for (int i = 0; i < array.length; i++)
+         if (array[i].equals(value)) {
             numberOfIndices++;
             arrayl.add(Integer.valueOf(i));
          }
-      if(numberOfIndices != 0) {
+      if (numberOfIndices != 0) {
          indices = new int[numberOfIndices];
-         for(int i = 0; i < numberOfIndices; i++)
+         for (int i = 0; i < numberOfIndices; i++)
             indices[i] = (arrayl.get(i)).intValue();
       }
       return indices;
@@ -1962,14 +1947,14 @@ public class Fmath {
       int[] indices = null;
       int numberOfIndices = 0;
       final ArrayList<Integer> arrayl = new ArrayList<Integer>();
-      for(int i = 0; i < array.length; i++)
-         if(array[i].equals(value)) {
+      for (int i = 0; i < array.length; i++)
+         if (array[i].equals(value)) {
             numberOfIndices++;
             arrayl.add(Integer.valueOf(i));
          }
-      if(numberOfIndices != 0) {
+      if (numberOfIndices != 0) {
          indices = new int[numberOfIndices];
-         for(int i = 0; i < numberOfIndices; i++)
+         for (int i = 0; i < numberOfIndices; i++)
             indices[i] = (arrayl.get(i)).intValue();
       }
       return indices;
@@ -1984,13 +1969,13 @@ public class Fmath {
       int index = -1;
       boolean test = true;
       int counter = 0;
-      while(test)
-         if(array[counter] == value) {
+      while (test)
+         if (array[counter] == value) {
             index = counter;
             test = false;
          } else {
             counter++;
-            if(counter >= array.length)
+            if (counter >= array.length)
                test = false;
          }
       return index;
@@ -2003,13 +1988,13 @@ public class Fmath {
       int index = -1;
       boolean test = true;
       int counter = 0;
-      while(test)
-         if(array[counter] == value) {
+      while (test)
+         if (array[counter] == value) {
             index = counter;
             test = false;
          } else {
             counter++;
-            if(counter >= array.length)
+            if (counter >= array.length)
                test = false;
          }
       return index;
@@ -2022,13 +2007,13 @@ public class Fmath {
       int index = -1;
       boolean test = true;
       int counter = 0;
-      while(test)
-         if(array[counter] == value) {
+      while (test)
+         if (array[counter] == value) {
             index = counter;
             test = false;
          } else {
             counter++;
-            if(counter >= array.length)
+            if (counter >= array.length)
                test = false;
          }
       return index;
@@ -2041,13 +2026,13 @@ public class Fmath {
       int index = -1;
       boolean test = true;
       int counter = 0;
-      while(test)
-         if(array[counter] == value) {
+      while (test)
+         if (array[counter] == value) {
             index = counter;
             test = false;
          } else {
             counter++;
-            if(counter >= array.length)
+            if (counter >= array.length)
                test = false;
          }
       return index;
@@ -2060,13 +2045,13 @@ public class Fmath {
       int index = -1;
       boolean test = true;
       int counter = 0;
-      while(test)
-         if(array[counter] == value) {
+      while (test)
+         if (array[counter] == value) {
             index = counter;
             test = false;
          } else {
             counter++;
-            if(counter >= array.length)
+            if (counter >= array.length)
                test = false;
          }
       return index;
@@ -2079,13 +2064,13 @@ public class Fmath {
       int index = -1;
       boolean test = true;
       int counter = 0;
-      while(test)
-         if(array[counter] == value) {
+      while (test)
+         if (array[counter] == value) {
             index = counter;
             test = false;
          } else {
             counter++;
-            if(counter >= array.length)
+            if (counter >= array.length)
                test = false;
          }
       return index;
@@ -2098,13 +2083,13 @@ public class Fmath {
       int index = -1;
       boolean test = true;
       int counter = 0;
-      while(test)
-         if(array[counter] == value) {
+      while (test)
+         if (array[counter] == value) {
             index = counter;
             test = false;
          } else {
             counter++;
-            if(counter >= array.length)
+            if (counter >= array.length)
                test = false;
          }
       return index;
@@ -2117,13 +2102,13 @@ public class Fmath {
       int index = -1;
       boolean test = true;
       int counter = 0;
-      while(test)
-         if(array[counter].equals(value)) {
+      while (test)
+         if (array[counter].equals(value)) {
             index = counter;
             test = false;
          } else {
             counter++;
-            if(counter >= array.length)
+            if (counter >= array.length)
                test = false;
          }
       return index;
@@ -2136,13 +2121,13 @@ public class Fmath {
       int index = -1;
       boolean test = true;
       int counter = 0;
-      while(test)
-         if(array[counter].equals(value)) {
+      while (test)
+         if (array[counter].equals(value)) {
             index = counter;
             test = false;
          } else {
             counter++;
-            if(counter >= array.length)
+            if (counter >= array.length)
                test = false;
          }
       return index;
@@ -2154,8 +2139,8 @@ public class Fmath {
    public static double nearestElementValue(double[] array, double value) {
       double diff = Math.abs(array[0] - value);
       double nearest = array[0];
-      for(int i = 1; i < array.length; i++)
-         if(Math.abs(array[i] - value) < diff) {
+      for (int i = 1; i < array.length; i++)
+         if (Math.abs(array[i] - value) < diff) {
             diff = Math.abs(array[i] - value);
             nearest = array[i];
          }
@@ -2166,8 +2151,8 @@ public class Fmath {
    public static int nearestElementIndex(double[] array, double value) {
       double diff = Math.abs(array[0] - value);
       int nearest = 0;
-      for(int i = 1; i < array.length; i++)
-         if(Math.abs(array[i] - value) < diff) {
+      for (int i = 1; i < array.length; i++)
+         if (Math.abs(array[i] - value) < diff) {
             diff = Math.abs(array[i] - value);
             nearest = i;
          }
@@ -2183,25 +2168,25 @@ public class Fmath {
       int ii = 0;
       boolean test = true;
       double min = array[0];
-      while(test) {
-         if(array[ii] < min)
+      while (test) {
+         if (array[ii] < min)
             min = array[ii];
-         if((value - array[ii]) >= 0.0D) {
+         if ((value - array[ii]) >= 0.0D) {
             diff0 = value - array[ii];
             nearest = array[ii];
             test = false;
          } else {
             ii++;
-            if(ii > (array.length - 1)) {
+            if (ii > (array.length - 1)) {
                nearest = min;
                diff0 = min - value;
                test = false;
             }
          }
       }
-      for(final double element : array) {
+      for (final double element : array) {
          diff1 = value - element;
-         if((diff1 >= 0.0D) && (diff1 < diff0)) {
+         if ((diff1 >= 0.0D) && (diff1 < diff0)) {
             diff0 = diff1;
             nearest = element;
          }
@@ -2219,27 +2204,27 @@ public class Fmath {
       boolean test = true;
       double min = array[0];
       int minI = 0;
-      while(test) {
-         if(array[ii] < min) {
+      while (test) {
+         if (array[ii] < min) {
             min = array[ii];
             minI = ii;
          }
-         if((value - array[ii]) >= 0.0D) {
+         if ((value - array[ii]) >= 0.0D) {
             diff0 = value - array[ii];
             nearest = ii;
             test = false;
          } else {
             ii++;
-            if(ii > (array.length - 1)) {
+            if (ii > (array.length - 1)) {
                nearest = minI;
                diff0 = min - value;
                test = false;
             }
          }
       }
-      for(int i = 0; i < array.length; i++) {
+      for (int i = 0; i < array.length; i++) {
          diff1 = value - array[i];
-         if((diff1 >= 0.0D) && (diff1 < diff0)) {
+         if ((diff1 >= 0.0D) && (diff1 < diff0)) {
             diff0 = diff1;
             nearest = i;
          }
@@ -2256,25 +2241,25 @@ public class Fmath {
       int ii = 0;
       boolean test = true;
       double max = array[0];
-      while(test) {
-         if(array[ii] > max)
+      while (test) {
+         if (array[ii] > max)
             max = array[ii];
-         if((array[ii] - value) >= 0.0D) {
+         if ((array[ii] - value) >= 0.0D) {
             diff0 = value - array[ii];
             nearest = array[ii];
             test = false;
          } else {
             ii++;
-            if(ii > (array.length - 1)) {
+            if (ii > (array.length - 1)) {
                nearest = max;
                diff0 = value - max;
                test = false;
             }
          }
       }
-      for(final double element : array) {
+      for (final double element : array) {
          diff1 = element - value;
-         if((diff1 >= 0.0D) && (diff1 < diff0)) {
+         if ((diff1 >= 0.0D) && (diff1 < diff0)) {
             diff0 = diff1;
             nearest = element;
          }
@@ -2292,27 +2277,27 @@ public class Fmath {
       boolean test = true;
       double max = array[0];
       int maxI = 0;
-      while(test) {
-         if(array[ii] > max) {
+      while (test) {
+         if (array[ii] > max) {
             max = array[ii];
             maxI = ii;
          }
-         if((array[ii] - value) >= 0.0D) {
+         if ((array[ii] - value) >= 0.0D) {
             diff0 = value - array[ii];
             nearest = ii;
             test = false;
          } else {
             ii++;
-            if(ii > (array.length - 1)) {
+            if (ii > (array.length - 1)) {
                nearest = maxI;
                diff0 = value - max;
                test = false;
             }
          }
       }
-      for(int i = 0; i < array.length; i++) {
+      for (int i = 0; i < array.length; i++) {
          diff1 = array[i] - value;
-         if((diff1 >= 0.0D) && (diff1 < diff0)) {
+         if ((diff1 >= 0.0D) && (diff1 < diff0)) {
             diff0 = diff1;
             nearest = i;
          }
@@ -2324,8 +2309,8 @@ public class Fmath {
    public static int nearestElementValue(int[] array, int value) {
       int diff = Math.abs(array[0] - value);
       int nearest = array[0];
-      for(int i = 1; i < array.length; i++)
-         if(Math.abs(array[i] - value) < diff) {
+      for (int i = 1; i < array.length; i++)
+         if (Math.abs(array[i] - value) < diff) {
             diff = Math.abs(array[i] - value);
             nearest = array[i];
          }
@@ -2336,8 +2321,8 @@ public class Fmath {
    public static int nearestElementIndex(int[] array, int value) {
       int diff = Math.abs(array[0] - value);
       int nearest = 0;
-      for(int i = 1; i < array.length; i++)
-         if(Math.abs(array[i] - value) < diff) {
+      for (int i = 1; i < array.length; i++)
+         if (Math.abs(array[i] - value) < diff) {
             diff = Math.abs(array[i] - value);
             nearest = i;
          }
@@ -2353,25 +2338,25 @@ public class Fmath {
       int ii = 0;
       boolean test = true;
       int min = array[0];
-      while(test) {
-         if(array[ii] < min)
+      while (test) {
+         if (array[ii] < min)
             min = array[ii];
-         if((value - array[ii]) >= 0) {
+         if ((value - array[ii]) >= 0) {
             diff0 = value - array[ii];
             nearest = array[ii];
             test = false;
          } else {
             ii++;
-            if(ii > (array.length - 1)) {
+            if (ii > (array.length - 1)) {
                nearest = min;
                diff0 = min - value;
                test = false;
             }
          }
       }
-      for(final int element : array) {
+      for (final int element : array) {
          diff1 = value - element;
-         if((diff1 >= 0) && (diff1 < diff0)) {
+         if ((diff1 >= 0) && (diff1 < diff0)) {
             diff0 = diff1;
             nearest = element;
          }
@@ -2389,27 +2374,27 @@ public class Fmath {
       boolean test = true;
       int min = array[0];
       int minI = 0;
-      while(test) {
-         if(array[ii] < min) {
+      while (test) {
+         if (array[ii] < min) {
             min = array[ii];
             minI = ii;
          }
-         if((value - array[ii]) >= 0) {
+         if ((value - array[ii]) >= 0) {
             diff0 = value - array[ii];
             nearest = ii;
             test = false;
          } else {
             ii++;
-            if(ii > (array.length - 1)) {
+            if (ii > (array.length - 1)) {
                nearest = minI;
                diff0 = min - value;
                test = false;
             }
          }
       }
-      for(int i = 0; i < array.length; i++) {
+      for (int i = 0; i < array.length; i++) {
          diff1 = value - array[i];
-         if((diff1 >= 0) && (diff1 < diff0)) {
+         if ((diff1 >= 0) && (diff1 < diff0)) {
             diff0 = diff1;
             nearest = i;
          }
@@ -2426,25 +2411,25 @@ public class Fmath {
       int ii = 0;
       boolean test = true;
       int max = array[0];
-      while(test) {
-         if(array[ii] > max)
+      while (test) {
+         if (array[ii] > max)
             max = array[ii];
-         if((array[ii] - value) >= 0) {
+         if ((array[ii] - value) >= 0) {
             diff0 = value - array[ii];
             nearest = array[ii];
             test = false;
          } else {
             ii++;
-            if(ii > (array.length - 1)) {
+            if (ii > (array.length - 1)) {
                nearest = max;
                diff0 = value - max;
                test = false;
             }
          }
       }
-      for(final int element : array) {
+      for (final int element : array) {
          diff1 = element - value;
-         if((diff1 >= 0) && (diff1 < diff0)) {
+         if ((diff1 >= 0) && (diff1 < diff0)) {
             diff0 = diff1;
             nearest = element;
          }
@@ -2462,27 +2447,27 @@ public class Fmath {
       boolean test = true;
       int max = array[0];
       int maxI = 0;
-      while(test) {
-         if(array[ii] > max) {
+      while (test) {
+         if (array[ii] > max) {
             max = array[ii];
             maxI = ii;
          }
-         if((array[ii] - value) >= 0) {
+         if ((array[ii] - value) >= 0) {
             diff0 = value - array[ii];
             nearest = ii;
             test = false;
          } else {
             ii++;
-            if(ii > (array.length - 1)) {
+            if (ii > (array.length - 1)) {
                nearest = maxI;
                diff0 = value - max;
                test = false;
             }
          }
       }
-      for(int i = 0; i < array.length; i++) {
+      for (int i = 0; i < array.length; i++) {
          diff1 = array[i] - value;
-         if((diff1 >= 0) && (diff1 < diff0)) {
+         if ((diff1 >= 0) && (diff1 < diff0)) {
             diff0 = diff1;
             nearest = i;
          }
@@ -2494,7 +2479,7 @@ public class Fmath {
    // Sum of all array elements - double array
    public static double arraySum(double[] array) {
       double sum = 0.0D;
-      for(final double i : array)
+      for (final double i : array)
          sum += i;
       return sum;
    }
@@ -2502,7 +2487,7 @@ public class Fmath {
    // Sum of all array elements - float array
    public static float arraySum(float[] array) {
       float sum = 0.0F;
-      for(final float i : array)
+      for (final float i : array)
          sum += i;
       return sum;
    }
@@ -2510,7 +2495,7 @@ public class Fmath {
    // Sum of all array elements - int array
    public static int arraySum(int[] array) {
       int sum = 0;
-      for(final int i : array)
+      for (final int i : array)
          sum += i;
       return sum;
    }
@@ -2518,7 +2503,7 @@ public class Fmath {
    // Sum of all array elements - long array
    public static long arraySum(long[] array) {
       long sum = 0L;
-      for(final long i : array)
+      for (final long i : array)
          sum += i;
       return sum;
    }
@@ -2526,8 +2511,8 @@ public class Fmath {
    // Sum of all positive array elements - long array
    public static long arrayPositiveElementsSum(long[] array) {
       long sum = 0L;
-      for(final long i : array)
-         if(i > 0)
+      for (final long i : array)
+         if (i > 0)
             sum += i;
       return sum;
    }
@@ -2536,7 +2521,7 @@ public class Fmath {
    // Product of all array elements - double array
    public static double arrayProduct(double[] array) {
       double product = 1.0D;
-      for(final double i : array)
+      for (final double i : array)
          product *= i;
       return product;
    }
@@ -2544,7 +2529,7 @@ public class Fmath {
    // Product of all array elements - float array
    public static float arrayProduct(float[] array) {
       float product = 1.0F;
-      for(final float i : array)
+      for (final float i : array)
          product *= i;
       return product;
    }
@@ -2552,7 +2537,7 @@ public class Fmath {
    // Product of all array elements - int array
    public static int arrayProduct(int[] array) {
       int product = 1;
-      for(final int i : array)
+      for (final int i : array)
          product *= i;
       return product;
    }
@@ -2560,7 +2545,7 @@ public class Fmath {
    // Product of all array elements - long array
    public static long arrayProduct(long[] array) {
       long product = 1L;
-      for(final long i : array)
+      for (final long i : array)
          product *= i;
       return product;
    }
@@ -2572,9 +2557,9 @@ public class Fmath {
       final int bLen = bb.length;
       final int cLen = aLen + bLen;
       final double[] cc = new double[cLen];
-      for(int i = 0; i < aLen; i++)
+      for (int i = 0; i < aLen; i++)
          cc[i] = aa[i];
-      for(int i = 0; i < bLen; i++)
+      for (int i = 0; i < bLen; i++)
          cc[i + aLen] = bb[i];
       return cc;
    }
@@ -2585,9 +2570,9 @@ public class Fmath {
       final int bLen = bb.length;
       final int cLen = aLen + bLen;
       final float[] cc = new float[cLen];
-      for(int i = 0; i < aLen; i++)
+      for (int i = 0; i < aLen; i++)
          cc[i] = aa[i];
-      for(int i = 0; i < bLen; i++)
+      for (int i = 0; i < bLen; i++)
          cc[i + aLen] = bb[i];
 
       return cc;
@@ -2599,9 +2584,9 @@ public class Fmath {
       final int bLen = bb.length;
       final int cLen = aLen + bLen;
       final int[] cc = new int[cLen];
-      for(int i = 0; i < aLen; i++)
+      for (int i = 0; i < aLen; i++)
          cc[i] = aa[i];
-      for(int i = 0; i < bLen; i++)
+      for (int i = 0; i < bLen; i++)
          cc[i + aLen] = bb[i];
 
       return cc;
@@ -2613,9 +2598,9 @@ public class Fmath {
       final int bLen = bb.length;
       final int cLen = aLen + bLen;
       final long[] cc = new long[cLen];
-      for(int i = 0; i < aLen; i++)
+      for (int i = 0; i < aLen; i++)
          cc[i] = aa[i];
-      for(int i = 0; i < bLen; i++)
+      for (int i = 0; i < bLen; i++)
          cc[i + aLen] = bb[i];
 
       return cc;
@@ -2627,9 +2612,9 @@ public class Fmath {
       final int bLen = bb.length;
       final int cLen = aLen + bLen;
       final short[] cc = new short[cLen];
-      for(int i = 0; i < aLen; i++)
+      for (int i = 0; i < aLen; i++)
          cc[i] = aa[i];
-      for(int i = 0; i < bLen; i++)
+      for (int i = 0; i < bLen; i++)
          cc[i + aLen] = bb[i];
       return cc;
    }
@@ -2640,9 +2625,9 @@ public class Fmath {
       final int bLen = bb.length;
       final int cLen = aLen + bLen;
       final byte[] cc = new byte[cLen];
-      for(int i = 0; i < aLen; i++)
+      for (int i = 0; i < aLen; i++)
          cc[i] = aa[i];
-      for(int i = 0; i < bLen; i++)
+      for (int i = 0; i < bLen; i++)
          cc[i + aLen] = bb[i];
 
       return cc;
@@ -2654,9 +2639,9 @@ public class Fmath {
       final int bLen = bb.length;
       final int cLen = aLen + bLen;
       final char[] cc = new char[cLen];
-      for(int i = 0; i < aLen; i++)
+      for (int i = 0; i < aLen; i++)
          cc[i] = aa[i];
-      for(int i = 0; i < bLen; i++)
+      for (int i = 0; i < bLen; i++)
          cc[i + aLen] = bb[i];
 
       return cc;
@@ -2668,9 +2653,9 @@ public class Fmath {
       final int bLen = bb.length;
       final int cLen = aLen + bLen;
       final String[] cc = new String[cLen];
-      for(int i = 0; i < aLen; i++)
+      for (int i = 0; i < aLen; i++)
          cc[i] = aa[i];
-      for(int i = 0; i < bLen; i++)
+      for (int i = 0; i < bLen; i++)
          cc[i + aLen] = bb[i];
 
       return cc;
@@ -2682,9 +2667,9 @@ public class Fmath {
       final int bLen = bb.length;
       final int cLen = aLen + bLen;
       final Object[] cc = new Object[cLen];
-      for(int i = 0; i < aLen; i++)
+      for (int i = 0; i < aLen; i++)
          cc[i] = aa[i];
-      for(int i = 0; i < bLen; i++)
+      for (int i = 0; i < bLen; i++)
          cc[i + aLen] = bb[i];
 
       return cc;
@@ -2695,7 +2680,7 @@ public class Fmath {
    public static double[] floatTOdouble(float[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2704,7 +2689,7 @@ public class Fmath {
    public static double[] intTOdouble(int[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2713,7 +2698,7 @@ public class Fmath {
    public static float[] intTOfloat(int[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2722,7 +2707,7 @@ public class Fmath {
    public static long[] intTOlong(int[] aa) {
       final int n = aa.length;
       final long[] bb = new long[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2732,7 +2717,7 @@ public class Fmath {
    public static double[] longTOdouble(long[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2742,7 +2727,7 @@ public class Fmath {
    public static float[] longTOfloat(long[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2751,7 +2736,7 @@ public class Fmath {
    public static double[] shortTOdouble(short[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2760,7 +2745,7 @@ public class Fmath {
    public static float[] shortTOfloat(short[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2769,7 +2754,7 @@ public class Fmath {
    public static long[] shortTOlong(short[] aa) {
       final int n = aa.length;
       final long[] bb = new long[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2778,7 +2763,7 @@ public class Fmath {
    public static int[] shortTOint(short[] aa) {
       final int n = aa.length;
       final int[] bb = new int[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2787,7 +2772,7 @@ public class Fmath {
    public static double[] byteTOdouble(byte[] aa) {
       final int n = aa.length;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2796,7 +2781,7 @@ public class Fmath {
    public static float[] byteTOfloat(byte[] aa) {
       final int n = aa.length;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2805,7 +2790,7 @@ public class Fmath {
    public static long[] byteTOlong(byte[] aa) {
       final int n = aa.length;
       final long[] bb = new long[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2814,7 +2799,7 @@ public class Fmath {
    public static int[] byteTOint(byte[] aa) {
       final int n = aa.length;
       final int[] bb = new int[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2823,7 +2808,7 @@ public class Fmath {
    public static short[] byteTOshort(byte[] aa) {
       final int n = aa.length;
       final short[] bb = new short[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
       return bb;
    }
@@ -2833,7 +2818,7 @@ public class Fmath {
    public static int[] doubleTOint(double[] aa) {
       final int n = aa.length;
       final int[] bb = new int[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = (int) aa[i];
       return bb;
    }
@@ -2842,7 +2827,7 @@ public class Fmath {
    // print an array of doubles to screen
    // No line returns except at the end
    public static void print(double[] aa) {
-      for(final double element : aa)
+      for (final double element : aa)
          System.out.print(element + "   ");
       System.out.println();
    }
@@ -2850,14 +2835,14 @@ public class Fmath {
    // print an array of doubles to screen
    // with line returns
    public static void println(double[] aa) {
-      for(final double element : aa)
+      for (final double element : aa)
          System.out.println(element + "   ");
    }
 
    // print an array of floats to screen
    // No line returns except at the end
    public static void print(float[] aa) {
-      for(final float element : aa)
+      for (final float element : aa)
          System.out.print(element + "   ");
       System.out.println();
    }
@@ -2865,14 +2850,14 @@ public class Fmath {
    // print an array of floats to screen
    // with line returns
    public static void println(float[] aa) {
-      for(final float element : aa)
+      for (final float element : aa)
          System.out.println(element + "   ");
    }
 
    // print an array of ints to screen
    // No line returns except at the end
    public static void print(int[] aa) {
-      for(final int element : aa)
+      for (final int element : aa)
          System.out.print(element + "   ");
       System.out.println();
    }
@@ -2880,14 +2865,14 @@ public class Fmath {
    // print an array of ints to screen
    // with line returns
    public static void println(int[] aa) {
-      for(final int element : aa)
+      for (final int element : aa)
          System.out.println(element + "   ");
    }
 
    // print an array of longs to screen
    // No line returns except at the end
    public static void print(long[] aa) {
-      for(final long element : aa)
+      for (final long element : aa)
          System.out.print(element + "   ");
       System.out.println();
    }
@@ -2895,14 +2880,14 @@ public class Fmath {
    // print an array of longs to screen
    // with line returns
    public static void println(long[] aa) {
-      for(final long element : aa)
+      for (final long element : aa)
          System.out.println(element + "   ");
    }
 
    // print an array of char to screen
    // No line returns except at the end
    public static void print(char[] aa) {
-      for(final char element : aa)
+      for (final char element : aa)
          System.out.print(element + "   ");
       System.out.println();
    }
@@ -2910,14 +2895,14 @@ public class Fmath {
    // print an array of char to screen
    // with line returns
    public static void println(char[] aa) {
-      for(final char element : aa)
+      for (final char element : aa)
          System.out.println(element + "   ");
    }
 
    // print an array of String to screen
    // No line returns except at the end
    public static void print(String[] aa) {
-      for(final String element : aa)
+      for (final String element : aa)
          System.out.print(element + "   ");
       System.out.println();
    }
@@ -2925,14 +2910,14 @@ public class Fmath {
    // print an array of Strings to screen
    // with line returns
    public static void println(String[] aa) {
-      for(final String element : aa)
+      for (final String element : aa)
          System.out.println(element + "   ");
    }
 
    // print an array of shorts to screen
    // No line returns except at the end
    public static void print(short[] aa) {
-      for(final short element : aa)
+      for (final short element : aa)
          System.out.print(element + "   ");
       System.out.println();
    }
@@ -2940,14 +2925,14 @@ public class Fmath {
    // print an array of shorts to screen
    // with line returns
    public static void println(short[] aa) {
-      for(final short element : aa)
+      for (final short element : aa)
          System.out.println(element + "   ");
    }
 
    // print an array of bytes to screen
    // No line returns except at the end
    public static void print(byte[] aa) {
-      for(final byte element : aa)
+      for (final byte element : aa)
          System.out.print(element + "   ");
       System.out.println();
    }
@@ -2955,13 +2940,13 @@ public class Fmath {
    // print an array of bytes to screen
    // with line returns
    public static void println(byte[] aa) {
-      for(final byte element : aa)
+      for (final byte element : aa)
          System.out.println(element + "   ");
    }
 
    // print a 2D array of doubles to screen
    public static void print(double[][] aa) {
-      for(final double[] element : aa)
+      for (final double[] element : aa)
          Fmath.print(element);
    }
 
@@ -2973,10 +2958,10 @@ public class Fmath {
    public static Vector<Object> selectSortVector(double[] aa) {
       final ArrayList<Object> list = Fmath.selectSortArrayList(aa);
       Vector<Object> ret = null;
-      if(list != null) {
+      if (list != null) {
          final int n = list.size();
          ret = new Vector<Object>(n);
-         for(int i = 0; i < n; i++)
+         for (int i = 0; i < n; i++)
             ret.addElement(list.get(i));
       }
       return ret;
@@ -2994,15 +2979,15 @@ public class Fmath {
       int holdi = 0;
       final double[] bb = new double[n];
       final int[] indices = new int[n];
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          bb[i] = aa[i];
          indices[i] = i;
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(bb[i] < bb[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (bb[i] < bb[index])
                index = i;
          lastIndex++;
          holdb = bb[index];
@@ -3027,13 +3012,13 @@ public class Fmath {
       final int n = aa.length;
       double hold = 0.0D;
       final double[] bb = new double[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(bb[i] < bb[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (bb[i] < bb[index])
                index = i;
          lastIndex++;
          hold = bb[index];
@@ -3051,13 +3036,13 @@ public class Fmath {
       final int n = aa.length;
       float hold = 0.0F;
       final float[] bb = new float[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(bb[i] < bb[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (bb[i] < bb[index])
                index = i;
          lastIndex++;
          hold = bb[index];
@@ -3075,13 +3060,13 @@ public class Fmath {
       final int n = aa.length;
       int hold = 0;
       final int[] bb = new int[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(bb[i] < bb[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (bb[i] < bb[index])
                index = i;
          lastIndex++;
          hold = bb[index];
@@ -3099,13 +3084,13 @@ public class Fmath {
       final int n = aa.length;
       long hold = 0L;
       final long[] bb = new long[n];
-      for(int i = 0; i < n; i++)
+      for (int i = 0; i < n; i++)
          bb[i] = aa[i];
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(bb[i] < bb[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (bb[i] < bb[index])
                index = i;
          lastIndex++;
          hold = bb[index];
@@ -3126,15 +3111,15 @@ public class Fmath {
       final int n = aa.length;
       double holdb = 0.0D;
       int holdi = 0;
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          bb[i] = aa[i];
          indices[i] = i;
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(bb[i] < bb[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (bb[i] < bb[index])
                index = i;
          lastIndex++;
          holdb = bb[index];
@@ -3157,30 +3142,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       double holdx = 0.0D;
       double holdy = 0.0D;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3203,30 +3188,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       float holdx = 0.0F;
       float holdy = 0.0F;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3249,30 +3234,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       long holdx = 0L;
       long holdy = 0L;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3295,30 +3280,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       int holdx = 0;
       int holdy = 0;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3341,30 +3326,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       double holdx = 0.0D;
       long holdy = 0L;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3387,30 +3372,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       long holdx = 0L;
       double holdy = 0.0D;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3433,30 +3418,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       double holdx = 0.0D;
       int holdy = 0;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3479,30 +3464,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       int holdx = 0;
       double holdy = 0.0D;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3525,30 +3510,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       long holdx = 0L;
       int holdy = 0;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3571,30 +3556,30 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(n != m)
-         throw new IllegalArgumentException("First argument array, aa, (length = " + n
-               + ") and the second argument array, bb, (length = " + m + ") should be the same length");
+      if (n != m)
+         throw new IllegalArgumentException(
+               "First argument array, aa, (length = " + n + ") and the second argument array, bb, (length = " + m + ") should be the same length");
       final int nn = cc.length;
-      if(nn < n)
+      if (nn < n)
          throw new IllegalArgumentException("The third argument array, cc, (length = " + nn
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int mm = dd.length;
-      if(mm < m)
+      if (mm < m)
          throw new IllegalArgumentException("The fourth argument array, dd, (length = " + mm
                + ") should be at least as long as the second argument array, bb, (length = " + m + ")");
 
       int holdx = 0;
       long holdy = 0L;
 
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          cc[i] = aa[i];
          dd[i] = bb[i];
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(cc[i] < cc[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (cc[i] < cc[index])
                index = i;
          lastIndex++;
          holdx = cc[index];
@@ -3616,25 +3601,25 @@ public class Fmath {
       int lastIndex = -1;
       final int n = aa.length;
       final int m = bb.length;
-      if(m < n)
+      if (m < n)
          throw new IllegalArgumentException("The second argument array, bb, (length = " + m
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
       final int k = indices.length;
-      if(m < n)
+      if (m < n)
          throw new IllegalArgumentException("The third argument array, indices, (length = " + k
                + ") should be at least as long as the first argument array, aa, (length = " + n + ")");
 
       double holdb = 0.0D;
       int holdi = 0;
-      for(int i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
          bb[i] = aa[i];
          indices[i] = i;
       }
 
-      while(lastIndex != (n - 1)) {
+      while (lastIndex != (n - 1)) {
          index = lastIndex + 1;
-         for(int i = lastIndex + 2; i < n; i++)
-            if(bb[i] < bb[index])
+         for (int i = lastIndex + 2; i < n; i++)
+            if (bb[i] < bb[index])
                index = i;
          lastIndex++;
          holdb = bb[index];
@@ -3667,11 +3652,9 @@ public class Fmath {
                objCopy = ois.readObject();
             }
          }
-      }
-      catch(final IOException e) {
+      } catch (final IOException e) {
          e.printStackTrace();
-      }
-      catch(final ClassNotFoundException cnfe) {
+      } catch (final ClassNotFoundException cnfe) {
          cnfe.printStackTrace();
       }
       return objCopy;

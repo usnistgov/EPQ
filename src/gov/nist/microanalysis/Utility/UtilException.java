@@ -15,8 +15,7 @@ package gov.nist.microanalysis.Utility;
  * @author Nicholas W. M. Ritchie
  * @version 1.0
  */
-public class UtilException
-   extends Exception {
+public class UtilException extends Exception {
    private static final long serialVersionUID = 0x1;
 
    public UtilException() {

@@ -41,77 +41,57 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @author nicholas
  */
 @SuppressWarnings("deprecation")
-public class EPQXStream
-   extends
-   XStream {
+public class EPQXStream extends XStream {
 
    private static EPQXStream mInstance = null;
 
    public static EPQXStream getInstance() {
-      if(mInstance == null)
+      if (mInstance == null)
          mInstance = new EPQXStream();
       return mInstance;
    }
 
    private void init() {
-	   // clear out existing permissions and start a whitelist
-	   addPermission(NoTypePermission.NONE);
-	   // allow some basics
-	   addPermission(NullPermission.NULL);
-	   addPermission(PrimitiveTypePermission.PRIMITIVES);
-	   addPermission(ArrayTypePermission.ARRAYS);
-	   allowTypeHierarchy(java.util.Collection.class);
-	   allowTypeHierarchy(java.util.Map.class);
-	   allowTypes(new Class[] {
-			   java.io.File.class, 
-			   // java.nio.charset.Charset.class,
-			   // java.util.BitSet.class,
-			   // java.lang.Class.class,
-			   // java.lang.Object.class,
-			   // java.lang.StackTraceElement.class, 
-			   java.lang.String.class,
-			   // java.lang.StringBuffer.class, 
-			   // java.lang.StringBuilder.class,
-			   java.net.URI.class,
-			   java.net.URL.class,
-			   java.sql.Date.class,
-			   java.sql.Time.class,
-			   java.sql.Timestamp.class,
-			   // java.text.DecimalFormatSymbols.class, 
-			   // java.time.Duration.class,
-			   // java.time.Instant.class,
-			   java.time.LocalDate.class,
-			   java.time.LocalDateTime.class,
-			   java.time.LocalTime.class,
-			   java.time.MonthDay.class,
-			   java.time.OffsetDateTime.class,
-			   java.time.OffsetTime.class,
-			   // java.time.Period.class,
-			   // java.time.Ser.class,
-			   java.time.Year.class,
-			   java.time.YearMonth.class,
-			   java.time.ZonedDateTime.class,
-			   // java.time.chrono.HijrahDate.class,
-			   // java.time.chrono.JapaneseDate.class,
-			   // java.time.chrono.JapaneseEra.class,
-			   // java.time.chrono.MinguoDate.class,
-			   // java.time.chrono.Ser.class,
-			   // java.time.chrono.ThaiBuddhistDate.class, 
-			   // java.time.temporal.ValueRange.class,
-			   // java.time.temporal.WeekFields.class,
-			   // java.util.Currency.class,
-			   java.util.Date.class,
-			   java.util.Locale.class,
-			   // java.util.regex.Pattern.class,
-			   java.util.UUID.class,
-	   });
-	   // allow any type from the same package
-	   allowTypesByWildcard(new String[] {
-		         "gov.nist.microanalysis.**",
-		         "gov.nist.nanoscalemetrology.**",
-		         "org.python.**",
-		         "Jama.**"
-	   });
+      // clear out existing permissions and start a whitelist
+      addPermission(NoTypePermission.NONE);
+      // allow some basics
+      addPermission(NullPermission.NULL);
+      addPermission(PrimitiveTypePermission.PRIMITIVES);
+      addPermission(ArrayTypePermission.ARRAYS);
+      allowTypeHierarchy(java.util.Collection.class);
+      allowTypeHierarchy(java.util.Map.class);
+      allowTypes(new Class[]{java.io.File.class,
+            // java.nio.charset.Charset.class,
+            // java.util.BitSet.class,
+            // java.lang.Class.class,
+            // java.lang.Object.class,
+            // java.lang.StackTraceElement.class,
+            java.lang.String.class,
+            // java.lang.StringBuffer.class,
+            // java.lang.StringBuilder.class,
+            java.net.URI.class, java.net.URL.class, java.sql.Date.class, java.sql.Time.class, java.sql.Timestamp.class,
+            // java.text.DecimalFormatSymbols.class,
+            // java.time.Duration.class,
+            // java.time.Instant.class,
+            java.time.LocalDate.class, java.time.LocalDateTime.class, java.time.LocalTime.class, java.time.MonthDay.class,
+            java.time.OffsetDateTime.class, java.time.OffsetTime.class,
+            // java.time.Period.class,
+            // java.time.Ser.class,
+            java.time.Year.class, java.time.YearMonth.class, java.time.ZonedDateTime.class,
+            // java.time.chrono.HijrahDate.class,
+            // java.time.chrono.JapaneseDate.class,
+            // java.time.chrono.JapaneseEra.class,
+            // java.time.chrono.MinguoDate.class,
+            // java.time.chrono.Ser.class,
+            // java.time.chrono.ThaiBuddhistDate.class,
+            // java.time.temporal.ValueRange.class,
+            // java.time.temporal.WeekFields.class,
+            // java.util.Currency.class,
+            java.util.Date.class, java.util.Locale.class,
+            // java.util.regex.Pattern.class,
+            java.util.UUID.class,});
+      // allow any type from the same package
+      allowTypesByWildcard(new String[]{"gov.nist.microanalysis.**", "gov.nist.nanoscalemetrology.**", "org.python.**", "Jama.**"});
       setMode(XStream.ID_REFERENCES);
       alias("AtomicShell", AtomicShell.class);
       alias("BasicSiLiLineshape", BasicSiLiLineshape.class);
@@ -158,7 +138,8 @@ public class EPQXStream
    }
 
    /**
-    * @param reflectionProvider @param hierarchicalStreamDriver
+    * @param reflectionProvider
+    *           @param hierarchicalStreamDriver
     */
    public EPQXStream(ReflectionProvider reflectionProvider, HierarchicalStreamDriver hierarchicalStreamDriver) {
       super(reflectionProvider, hierarchicalStreamDriver);
@@ -166,7 +147,8 @@ public class EPQXStream
    }
 
    /**
-    * @param reflectionProvider @param driver @param classLoader
+    * @param reflectionProvider
+    *           @param driver @param classLoader
     */
    public EPQXStream(ReflectionProvider reflectionProvider, HierarchicalStreamDriver driver, ClassLoader classLoader) {
       super(reflectionProvider, driver, classLoader);
@@ -174,7 +156,8 @@ public class EPQXStream
    }
 
    /**
-    * @param reflectionProvider @param driver @param classLoader @param mapper
+    * @param reflectionProvider
+    *           @param driver @param classLoader @param mapper
     */
    public EPQXStream(ReflectionProvider reflectionProvider, HierarchicalStreamDriver driver, ClassLoader classLoader, Mapper mapper) {
       super(reflectionProvider, driver, classLoader, mapper);
@@ -182,10 +165,12 @@ public class EPQXStream
    }
 
    /**
-    * @param reflectionProvider @param driver @param classLoader @param
-    *           mapper @param converterLookup @param converterRegistry
+    * @param reflectionProvider
+    *           @param driver @param classLoader @param mapper @param
+    *           converterLookup @param converterRegistry
     */
-   public EPQXStream(ReflectionProvider reflectionProvider, HierarchicalStreamDriver driver, ClassLoader classLoader, Mapper mapper, ConverterLookup converterLookup, ConverterRegistry converterRegistry) {
+   public EPQXStream(ReflectionProvider reflectionProvider, HierarchicalStreamDriver driver, ClassLoader classLoader, Mapper mapper,
+         ConverterLookup converterLookup, ConverterRegistry converterRegistry) {
       super(reflectionProvider, driver, classLoader, mapper, converterLookup, converterRegistry);
       init();
    }
@@ -197,8 +182,7 @@ public class EPQXStream
     * (128-bit likely unique ID) @param obj @return A hash code as a
     * String @throws NoSuchAlgorithmException
     */
-   public static String toMD5(Object obj)
-         throws NoSuchAlgorithmException {
+   public static String toMD5(Object obj) throws NoSuchAlgorithmException {
       final MessageDigest m = MessageDigest.getInstance("MD5");
       final EPQXStream xs = EPQXStream.getInstance();
       final String xml = xs.toXML(obj);
@@ -206,7 +190,7 @@ public class EPQXStream
       m.update(df.format(new Date(System.currentTimeMillis())).getBytes());
       m.update(xml.getBytes());
       String res = new BigInteger(1, m.digest()).toString(16);
-      if(res.length() < 32)
+      if (res.length() < 32)
          res = "00000000000000000000000000000000".substring(0, 32 - res.length()) + res;
       assert res.length() == 32;
       return toCanonicalUUID(res);
@@ -215,8 +199,7 @@ public class EPQXStream
    public static String generateGUID(Object obj) {
       try {
          return toMD5(obj);
-      }
-      catch(final NoSuchAlgorithmException e) {
+      } catch (final NoSuchAlgorithmException e) {
          final String hex = Long.toHexString(System.currentTimeMillis()) + Double.toHexString((new Random()).nextLong());
          return "fa116636-ac2b-2f0d-" + ("0000000000000000".substring(0, 16 - hex.length()) + hex);
       }
@@ -230,9 +213,9 @@ public class EPQXStream
    static public String toCanonicalUUID(String uuid) {
       uuid = uuid.replace("-", "").toLowerCase();
       assert uuid.length() <= 32;
-      while(uuid.length() < 32)
+      while (uuid.length() < 32)
          uuid = "0" + uuid;
-      return uuid.substring(0, 8) + "-" + uuid.substring(8, 12) + "-" + uuid.substring(12, 16) + "-" + uuid.substring(16, 20)
-            + "-" + uuid.substring(20, 32);
+      return uuid.substring(0, 8) + "-" + uuid.substring(8, 12) + "-" + uuid.substring(12, 16) + "-" + uuid.substring(16, 20) + "-"
+            + uuid.substring(20, 32);
    }
 }

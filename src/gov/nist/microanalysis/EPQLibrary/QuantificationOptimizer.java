@@ -29,9 +29,9 @@ abstract public class QuantificationOptimizer {
     * {@link QuantificationPlan} object describing how to optimally implement
     * the plan described in the {@link QuantificationOutline}.
     * 
-    * @param unk An estimate of the composition of the unknown.
+    * @param unk
+    *           An estimate of the composition of the unknown.
     * @return QuantificationPlan
     */
-   abstract public QuantificationPlan compute(Composition unk)
-         throws EPQException;
+   abstract public QuantificationPlan compute(Composition unk) throws EPQException;
 }

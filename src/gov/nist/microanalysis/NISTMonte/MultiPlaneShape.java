@@ -37,13 +37,10 @@ import gov.nist.microanalysis.Utility.Transform3D;
  * @version 1.0
  */
 
-public class MultiPlaneShape
-   extends Intersection
-   implements MonteCarloSS.Shape, ITransform, TrajectoryVRML.IRender {
+public class MultiPlaneShape extends Intersection implements MonteCarloSS.Shape, ITransform, TrajectoryVRML.IRender {
 
    // Helper class to handle individual planes
-   final static public class Plane
-      implements MonteCarloSS.Shape, ITransform {
+   final static public class Plane implements MonteCarloSS.Shape, ITransform {
       double[] mNormal = new double[3];
       double[] mPoint = new double[3];
 
@@ -62,15 +59,13 @@ public class MultiPlaneShape
       @Override
       public boolean contains(double[] p) {
          assert (p.length == 3);
-         return ((((p[0] - mPoint[0]) * mNormal[0]) + ((p[1] - mPoint[1]) * mNormal[1])
-               + ((p[2] - mPoint[2]) * mNormal[2])) <= 0.0);
+         return ((((p[0] - mPoint[0]) * mNormal[0]) + ((p[1] - mPoint[1]) * mNormal[1]) + ((p[2] - mPoint[2]) * mNormal[2])) <= 0.0);
       }
 
       // Is the point close to being contained by this plane?
       public boolean almostContains(double[] p) {
          assert (p.length == 3);
-         final double tmp = (((p[0] - mPoint[0]) * mNormal[0]) + ((p[1] - mPoint[1]) * mNormal[1])
-               + ((p[2] - mPoint[2]) * mNormal[2]));
+         final double tmp = (((p[0] - mPoint[0]) * mNormal[0]) + ((p[1] - mPoint[1]) * mNormal[1]) + ((p[2] - mPoint[2]) * mNormal[2]));
          return tmp <= 0.0;
       }
 
@@ -82,9 +77,8 @@ public class MultiPlaneShape
          assert (p1.length == 3);
          assert (p2.length == 3);
          final double den = ((p2[0] - p1[0]) * mNormal[0]) + ((p2[1] - p1[1]) * mNormal[1]) + ((p2[2] - p1[2]) * mNormal[2]);
-         if(den != 0.0) {
-            final double res = (((mPoint[0] - p1[0]) * mNormal[0]) + ((mPoint[1] - p1[1]) * mNormal[1])
-                  + ((mPoint[2] - p1[2]) * mNormal[2])) / den;
+         if (den != 0.0) {
+            final double res = (((mPoint[0] - p1[0]) * mNormal[0]) + ((mPoint[1] - p1[1]) * mNormal[1]) + ((mPoint[2] - p1[2]) * mNormal[2])) / den;
             return res < 0.0 ? Double.MAX_VALUE : res;
          } else
             return Double.MAX_VALUE;
@@ -139,8 +133,11 @@ public class MultiPlaneShape
       final double det = ((n0[0] * ((n1[1] * n2[2]) - (n2[1] * n1[2])) //
       ) - (n1[0] * ((n0[1] * n2[2]) - (n2[1] * n0[2])) //
       )) + (n2[0] * ((n0[1] * n1[2]) - (n1[1] * n0[2])));
-      if(Math.abs(det) > 1.0e-10)
-         return Math2.divide(Math2.plus(Math2.plus(Math2.multiply(Math2.dot(planes[0].mPoint, n0), Math2.cross(n1, n2)), Math2.multiply(Math2.dot(planes[1].mPoint, n1), Math2.cross(n2, n0))), Math2.multiply(Math2.dot(planes[2].mPoint, n2), Math2.cross(n0, n1))), det);
+      if (Math.abs(det) > 1.0e-10)
+         return Math2.divide(Math2.plus(
+               Math2.plus(Math2.multiply(Math2.dot(planes[0].mPoint, n0), Math2.cross(n1, n2)),
+                     Math2.multiply(Math2.dot(planes[1].mPoint, n1), Math2.cross(n2, n0))),
+               Math2.multiply(Math2.dot(planes[2].mPoint, n2), Math2.cross(n0, n1))), det);
       else
          return null;
    }
@@ -167,11 +164,7 @@ public class MultiPlaneShape
    // Add a plane offset by dist*normal from pt
    private void addOffsetPlane(double[] normal, double[] pt, double dist) {
       normal = normalize(normal);
-      addPlane(normal, new double[] {
-         pt[0] + (normal[0] * dist),
-         pt[1] + (normal[1] * dist),
-         pt[2] + (normal[2] * dist)
-      });
+      addPlane(normal, new double[]{pt[0] + (normal[0] * dist), pt[1] + (normal[1] * dist), pt[2] + (normal[2] * dist)});
    }
 
    /**
@@ -187,9 +180,12 @@ public class MultiPlaneShape
     * Normal defines the orientation of the plane associated with pt1. A second
     * plane is constructed a distance thickness from the first plane.
     * 
-    * @param normal double[]
-    * @param pt1 double[]
-    * @param thickness double
+    * @param normal
+    *           double[]
+    * @param pt1
+    *           double[]
+    * @param thickness
+    *           double
     * @return MultiPlaneShape
     */
    public static MultiPlaneShape createFilm(double[] normal, double[] pt1, double thickness) {
@@ -203,8 +199,10 @@ public class MultiPlaneShape
     * createSubstrate - Construct a MCSS_MultiPlane object corresponding to an
     * infinitely thick layer.
     * 
-    * @param normal double[]
-    * @param pt double[]
+    * @param normal
+    *           double[]
+    * @param pt
+    *           double[]
     * @return MultiPlaneShape
     */
    public static MultiPlaneShape createSubstrate(double[] normal, double[] pt) {
@@ -219,8 +217,10 @@ public class MultiPlaneShape
     * rotation phi around the z-axis, followed by a rotation theta around the
     * y-axis and finally a rotation psi around the z-axis.
     * 
-    * @param dims double[] - The unrotated dimensions (x,y,z axis)
-    * @param point double[] - The location of the center of the block
+    * @param dims
+    *           double[] - The unrotated dimensions (x,y,z axis)
+    * @param point
+    *           double[] - The location of the center of the block
     * @return MCSS_MultiPlaneShape
     */
    public static MultiPlaneShape createBlock(double[] dims, double[] point) {
@@ -233,11 +233,16 @@ public class MultiPlaneShape
     * rotation phi around the z-axis, followed by a rotation theta around the
     * y-axis and finally a rotation psi around the z-axis.
     * 
-    * @param dims double[] - The unrotated dimensions (x,y,z axis)
-    * @param point double[] - The location of the center of the block
-    * @param phi double - rotation about the z-axis (radians)
-    * @param theta double - rotation about the y-axis (radians)
-    * @param psi double - rotation about the x-axis (radians)
+    * @param dims
+    *           double[] - The unrotated dimensions (x,y,z axis)
+    * @param point
+    *           double[] - The location of the center of the block
+    * @param phi
+    *           double - rotation about the z-axis (radians)
+    * @param theta
+    *           double - rotation about the y-axis (radians)
+    * @param psi
+    *           double - rotation about the x-axis (radians)
     * @return MCSS_MultiPlaneShape
     */
    public static MultiPlaneShape createBlock(double[] dims, double[] point, double phi, double theta, double psi) {
@@ -245,38 +250,17 @@ public class MultiPlaneShape
       final double cpsi = Math.cos(psi), spsi = Math.sin(psi);
       final double cth = Math.cos(theta), sth = Math.sin(theta);
       // Rotated x, y and z-axis normals
-      final double[][] normals = {
-         {
-            (cphi * cth * cpsi) - (sphi * spsi),
-            (sphi * cpsi) + (cphi * cth * spsi),
-            -cphi * sth
-         },
-         {
-            (-sphi * cth * cpsi) - (cphi * spsi),
-            (-sphi * cth * spsi) + (cphi * cpsi),
-            sth * sphi
-         },
-         {
-            sth * cpsi,
-            sth * spsi,
-            cth
-         }
-      };
+      final double[][] normals = {{(cphi * cth * cpsi) - (sphi * spsi), (sphi * cpsi) + (cphi * cth * spsi), -cphi * sth},
+            {(-sphi * cth * cpsi) - (cphi * spsi), (-sphi * cth * spsi) + (cphi * cpsi), sth * sphi}, {sth * cpsi, sth * spsi, cth}};
 
       final MultiPlaneShape mp = new MultiPlaneShape();
 
-      for(int i = 0; i < 3; ++i) {
+      for (int i = 0; i < 3; ++i) {
          final double[] normal = normals[i];
-         mp.addPlane(normal, new double[] {
-            point[0] + ((dims[i] * normal[0]) / 2.0),
-            point[1] + ((dims[i] * normal[1]) / 2.0),
-            point[2] + ((dims[i] * normal[2]) / 2.0)
-         });
-         mp.addPlane(invert(normal), new double[] {
-            point[0] - ((dims[i] * normal[0]) / 2.0),
-            point[1] - ((dims[i] * normal[1]) / 2.0),
-            point[2] - ((dims[i] * normal[2]) / 2.0)
-         });
+         mp.addPlane(normal, new double[]{point[0] + ((dims[i] * normal[0]) / 2.0), point[1] + ((dims[i] * normal[1]) / 2.0),
+               point[2] + ((dims[i] * normal[2]) / 2.0)});
+         mp.addPlane(invert(normal), new double[]{point[0] - ((dims[i] * normal[0]) / 2.0), point[1] - ((dims[i] * normal[1]) / 2.0),
+               point[2] - ((dims[i] * normal[2]) / 2.0)});
       }
       return mp;
    }
@@ -286,10 +270,14 @@ public class MultiPlaneShape
     * center, number of sides, height and base dimension. Use rotate(..) to
     * rotate the object into the desired orientation.
     * 
-    * @param center Location of center double[3]
-    * @param n Number of sides (excluding the base)
-    * @param height Height of the object (&gt;0)
-    * @param base Length of a side of the base
+    * @param center
+    *           Location of center double[3]
+    * @param n
+    *           Number of sides (excluding the base)
+    * @param height
+    *           Height of the object (&gt;0)
+    * @param base
+    *           Length of a side of the base
     * @return MultiPlaneShape
     */
    public static MultiPlaneShape createNamid(double[] center, int n, double height, double base) {
@@ -298,7 +286,7 @@ public class MultiPlaneShape
       final MultiPlaneShape mp = new MultiPlaneShape();
       mp.addPlane(Math2.Z_AXIS, Math2.ORIGIN_3D);
       final double theta = -Math.atan2(base / 2.0, height);
-      for(int i = 0; i < n; ++i) {
+      for (int i = 0; i < n; ++i) {
          final double[] perp = Transform3D.rotate(Math2.X_AXIS, ((double) i / (double) n) * (2.0 * Math.PI), 0.0, 0.0);
          final double[] nn = Transform3D.rotate(Math2.X_AXIS, 0.0, -theta, ((double) i / (double) n) * (2.0 * Math.PI));
          mp.addPlane(nn, Math2.multiply(base / 2.0, perp));
@@ -337,8 +325,10 @@ public class MultiPlaneShape
     * addPlane - Add a new bounding plane to the Shape defined by this
     * MCSS_MultiPlane.
     * 
-    * @param normal double[]
-    * @param point double[]
+    * @param normal
+    *           double[]
+    * @param point
+    *           double[]
     */
    public void addPlane(double[] normal, double[] point) {
       add(new Plane(normalize(normal), point));
@@ -350,14 +340,15 @@ public class MultiPlaneShape
     * work. The details are a little complex so I wouldn't be surprised if
     * someone found a problem or two.
     * 
-    * @param rc The context into which to render this object
-    * @param wr The Writer into which to write the results
+    * @param rc
+    *           The context into which to render this object
+    * @param wr
+    *           The Writer into which to write the results
     * @see gov.nist.microanalysis.NISTMonte.TrajectoryVRML.IRender#render(gov.nist.microanalysis.NISTMonte.TrajectoryVRML.RenderContext,
     *      java.io.Writer)
     */
    @Override
-   public void render(TrajectoryVRML.RenderContext rc, Writer wr)
-         throws IOException {
+   public void render(TrajectoryVRML.RenderContext rc, Writer wr) throws IOException {
       // Configure the number format
       final NumberFormat nf = NumberFormat.getInstance(Locale.US);
       nf.setMaximumFractionDigits(3);
@@ -372,40 +363,37 @@ public class MultiPlaneShape
       // For each plane find the points located on it...
       List<Shape> planes = getShapes();
       final int pSize = planes.size();
-      for(int i = 0; i < pSize; ++i) {
+      for (int i = 0; i < pSize; ++i) {
          ps[0] = (Plane) planes.get(i);
          // An array of plane indexes int[2]
          final ArrayList<int[]> idxList = new ArrayList<int[]>();
          final HashMap<int[], double[]> ptMap = new HashMap<int[], double[]>();
          // For each plane find the other 2*n planes that define the
-         for(int j = 0; j < pSize; ++j)
-            if(i != j) {
+         for (int j = 0; j < pSize; ++j)
+            if (i != j) {
                ps[1] = (Plane) planes.get(j);
-               for(int k = j + 1; k < pSize; ++k)
-                  if(i != k) {
+               for (int k = j + 1; k < pSize; ++k)
+                  if (i != k) {
                      ps[2] = (Plane) planes.get(k);
                      final double[] pt = intersection(ps);
-                     if(pt != null) {
+                     if (pt != null) {
                         // Check to ensure that this point is inside
                         // all the other planes...
                         boolean inside = true;
-                        for(int m = 0; inside && (m < pSize); m++)
-                           if((m != i) && (m != j) && (m != k)) {
+                        for (int m = 0; inside && (m < pSize); m++)
+                           if ((m != i) && (m != j) && (m != k)) {
                               final Plane p = (Plane) planes.get(m);
                               inside = p.almostContains(pt);
                            }
-                        if(inside) {
+                        if (inside) {
                            boolean add = true;
-                           for(final Iterator<double[]> m = ptMap.values().iterator(); add && m.hasNext();) {
+                           for (final Iterator<double[]> m = ptMap.values().iterator(); add && m.hasNext();) {
                               final double[] inclPt = m.next();
                               final double d = Math2.distance(inclPt, pt);
                               add = (d > 1.0e-12);
                            }
-                           if(add) {
-                              final int[] idxItem = new int[] {
-                                 j,
-                                 k
-                              };
+                           if (add) {
+                              final int[] idxItem = new int[]{j, k};
                               // This point forms one of the corners for this
                               // plane
                               idxList.add(idxItem);
@@ -415,18 +403,18 @@ public class MultiPlaneShape
                      }
                   }
             }
-         if(ptMap.size() > 2) {
+         if (ptMap.size() > 2) {
             // Put idxList in order such that we can step through them by
             // permuting only one index per step.
-            for(int j = 0; j < idxList.size(); ++j) {
+            for (int j = 0; j < idxList.size(); ++j) {
                final int[] iJ = idxList.get(j);
-               for(int k = j + 1; k < idxList.size(); ++k) {
+               for (int k = j + 1; k < idxList.size(); ++k) {
                   final int[] iK = idxList.get(k);
                   // Is the first or second index duplicated?
                   final boolean b0 = ((iJ[0] == iK[0]) || (iJ[0] == iK[1]));
                   final boolean b1 = ((iJ[1] == iK[0]) || (iJ[1] == iK[1]));
                   // Only permute one index
-                  if(b0 ^ b1) {
+                  if (b0 ^ b1) {
                      // Swap iK into j+1
                      final int[] iJp1 = idxList.get(j + 1);
                      idxList.set(j + 1, iK);
@@ -441,8 +429,8 @@ public class MultiPlaneShape
             wr.append(" geometry IndexedFaceSet {\n");
             wr.append("  coord Coordinate {\n");
             wr.append("   point [ ");
-            for(int j = 0; j < idxList.size(); ++j) {
-               if(j != 0)
+            for (int j = 0; j < idxList.size(); ++j) {
+               if (j != 0)
                   wr.append(", ");
                final double[] pt = ptMap.get(idxList.get(j));
                wr.append(nf.format(pt[0] / TrajectoryVRML.SCALE));
@@ -454,8 +442,8 @@ public class MultiPlaneShape
             wr.append(" ]\n");
             wr.append("  }\n");
             wr.append("  coordIndex [ ");
-            for(int j = 0; j < idxList.size(); ++j) {
-               if(j != 0)
+            for (int j = 0; j < idxList.size(); ++j) {
+               if (j != 0)
                   wr.append(" ");
                wr.append(Integer.toString(j));
             }
@@ -482,7 +470,7 @@ public class MultiPlaneShape
     */
    public List<Plane> getPlanes() {
       List<Plane> res = new ArrayList<Plane>();
-      for(Shape sh : getShapes())
+      for (Shape sh : getShapes())
          res.add((Plane) sh);
       return Collections.unmodifiableList(res);
    }

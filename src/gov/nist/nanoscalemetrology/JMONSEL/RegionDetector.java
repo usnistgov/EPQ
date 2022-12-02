@@ -68,9 +68,7 @@ import gov.nist.microanalysis.Utility.Histogram;
  * @version 1.1
  */
 
-public class RegionDetector
-   implements
-   ActionListener {
+public class RegionDetector implements ActionListener {
 
    private final HashSet<TransformableRegion> regSet;
    private final double minEeV;
@@ -219,13 +217,18 @@ public class RegionDetector
    /**
     * RegionDetector: Constructor.
     *
-    * @param mcss - the MonteCarloSS that generates events for this listener
-    * @param regCollection - a collection containing all regions on which this
-    *           detector will trigger.
-    * @param minE - the minimum energy in the range that triggers this detector
-    * @param maxE - the maximum energy that triggers this detector
-    * @param destructive - true if electrons are to be terminated after
-    *           detection, false if they continue their trajectories
+    * @param mcss
+    *           - the MonteCarloSS that generates events for this listener
+    * @param regCollection
+    *           - a collection containing all regions on which this detector
+    *           will trigger.
+    * @param minE
+    *           - the minimum energy in the range that triggers this detector
+    * @param maxE
+    *           - the maximum energy that triggers this detector
+    * @param destructive
+    *           - true if electrons are to be terminated after detection, false
+    *           if they continue their trajectories
     */
    public RegionDetector(MonteCarloSS mcss, Collection<TransformableRegion> regCollection, double minE, double maxE, boolean destructive) {
       mMonte = mcss;
@@ -235,7 +238,7 @@ public class RegionDetector
        * size-independent contains() method.
        */
       this.regSet = new HashSet<TransformableRegion>((int) (regCollection.size() * 1.5) + 1);
-      for(final TransformableRegion el : regCollection)
+      for (final TransformableRegion el : regCollection)
          regSet.add(el);
       this.minEeV = FromSI.eV(minE);
       this.maxEeV = FromSI.eV(maxE);
@@ -247,53 +250,53 @@ public class RegionDetector
    public void actionPerformed(ActionEvent ae) {
       assert (ae.getSource() instanceof MonteCarloSS);
       assert (ae.getSource() == mMonte);
-      switch(ae.getID()) {
-         case MonteCarloSS.FirstTrajectoryEvent: {
+      switch (ae.getID()) {
+         case MonteCarloSS.FirstTrajectoryEvent : {
             mEventCount = 0;
             break;
          }
-         case MonteCarloSS.BackscatterEvent:
-            if(!includeExitingElectrons)
+         case MonteCarloSS.BackscatterEvent :
+            if (!includeExitingElectrons)
                break;
-         case MonteCarloSS.ExitMaterialEvent: {
+         case MonteCarloSS.ExitMaterialEvent : {
             final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
             final Electron el = mcss.getElectron();
             final double elEeV = FromSI.eV(el.getEnergy());
             // Skip stats if our electron is outside the energy range
-            if((elEeV < minEeV) || (elEeV > maxEeV))
+            if ((elEeV < minEeV) || (elEeV > maxEeV))
                break;
             // Skip also if its is not a transition from outside to inside our
             // listed regions
             final boolean isInRegion = regSet.contains(el.getCurrentRegion()) && !regSet.contains(el.getPreviousRegion());
-            if((ae.getID() == MonteCarloSS.ExitMaterialEvent) && !isInRegion)
+            if ((ae.getID() == MonteCarloSS.ExitMaterialEvent) && !isInRegion)
                break;
             final double elevation = el.getTheta();
             assert (elevation >= 0.0);
             assert (elevation <= Math.PI);
             double azimuth = el.getPhi();
-            if(azimuth < 0.)
+            if (azimuth < 0.)
                azimuth += 2.0 * Math.PI;
             assert (azimuth >= 0.0);
             assert (azimuth <= (2.0 * Math.PI));
-            synchronized(this) {
+            synchronized (this) {
                mElevationBins.add(elevation);
                mAzimuthalBins.add(azimuth);
                final double kEeV = FromSI.eV(el.getEnergy());
                mEnergyBins.add(kEeV);
-               if(mLogDetected)
+               if (mLogDetected)
                   mLog.add(new Datum(el.getIdent(), el.getStepCount(), kEeV, el.getPosition(), el.getTheta(), el.getPhi()));
             }
-            if(destructive)
+            if (destructive)
                el.setTrajectoryComplete(true);
             break;
          }
-         case MonteCarloSS.TrajectoryEndEvent:
-            synchronized(this) {
+         case MonteCarloSS.TrajectoryEndEvent :
+            synchronized (this) {
                mEventCount++;
             }
             break;
-         case MonteCarloSS.BeamEnergyChanged:
-            synchronized(this) {
+         case MonteCarloSS.BeamEnergyChanged :
+            synchronized (this) {
                initialize();
             }
             break;
@@ -340,7 +343,7 @@ public class RegionDetector
       pw.println("Electron energy histogram");
       // final Iterator<Integer> bs =
       // mEnergyBins.getResultMap("{0,number,#.##}").values().iterator();
-      for(final Map.Entry<Histogram.BinName, Integer> bs : mEnergyBins.getResultMap("{0,number,#.###}").entrySet()) {
+      for (final Map.Entry<Histogram.BinName, Integer> bs : mEnergyBins.getResultMap("{0,number,#.###}").entrySet()) {
          pw.print(bs.getKey().toString());
          pw.print("\t");
          pw.println(bs.getValue().toString());
@@ -348,7 +351,7 @@ public class RegionDetector
 
       pw.println("Azimuthal angle histogram");
       pw.println("Bin\tAngle");
-      for(final Map.Entry<Histogram.BinName, Integer> me : mAzimuthalBins.getResultMap("{0,number,#.###}").entrySet()) {
+      for (final Map.Entry<Histogram.BinName, Integer> me : mAzimuthalBins.getResultMap("{0,number,#.###}").entrySet()) {
          pw.print(me.getKey().toString());
          pw.print("\t");
          pw.println(me.getValue().toString());
@@ -356,18 +359,18 @@ public class RegionDetector
 
       pw.println("Elevation angle histogram");
       pw.println("Bin\tAngle");
-      for(final Map.Entry<Histogram.BinName, Integer> me : mElevationBins.getResultMap("{0,number,#.###}").entrySet()) {
+      for (final Map.Entry<Histogram.BinName, Integer> me : mElevationBins.getResultMap("{0,number,#.###}").entrySet()) {
          pw.print(me.getKey().toString());
          pw.print("\t");
          pw.println(me.getValue().toString());
       }
 
       /* If logging is turned on, output data for each detected electron */
-      if(mLogDetected) {
+      if (mLogDetected) {
          pw.println("Detected electron log (electron ID, energy, position, and direction of motion at detection)");
          pw.println("Number of logged electrons: " + Integer.toString(mLog.size()));
          pw.println(Datum.getHeader());
-         for(final Datum logEntry : mLog)
+         for (final Datum logEntry : mLog)
             pw.println(logEntry.toString());
       }
       pw.close();
@@ -385,10 +388,11 @@ public class RegionDetector
    /**
     * Sets the number of bins in the energy histogram
     *
-    * @param energyBinCount The value to which to set energyBinCount.
+    * @param energyBinCount
+    *           The value to which to set energyBinCount.
     */
    public void setEnergyBinCount(int energyBinCount) {
-      if(mEnergyBinCount != energyBinCount) {
+      if (mEnergyBinCount != energyBinCount) {
          mEnergyBinCount = energyBinCount;
          initialize();
       }
@@ -406,8 +410,8 @@ public class RegionDetector
     * setIncludeExitingElectrons(true). By default, these electrons are not
     * counted by the detector.
     *
-    * @param includeExitingElectrons The value to which to set
-    *           includeExitingElectrons.
+    * @param includeExitingElectrons
+    *           The value to which to set includeExitingElectrons.
     */
    public void setIncludeExitingElectrons(boolean includeExitingElectrons) {
       this.includeExitingElectrons = includeExitingElectrons;
@@ -429,7 +433,8 @@ public class RegionDetector
     * electron are stored and will be included in the output file generated by
     * dump.
     *
-    * @param logDetected The value to which to set logDetected.
+    * @param logDetected
+    *           The value to which to set logDetected.
     */
    public void setLogDetected(final boolean logDetected) {
       mLogDetected = logDetected;

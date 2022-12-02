@@ -17,10 +17,10 @@ abstract public class MCUncertaintyEngine {
    }
 
    public void doIterations(int iterations) {
-      for(int i = 0; i < iterations; i++) {
+      for (int i = 0; i < iterations; i++) {
          Map<String, Double> rd = new TreeMap<String, Double>();
          UncertainValueMC[] args = new UncertainValueMC[mArguments.length];
-         for(int j = 0; j < mArguments.length; ++j)
+         for (int j = 0; j < mArguments.length; ++j)
             args[j] = new UncertainValueMC(UncertainValue2.asUncertainValue2(mArguments[j]), rd);
          mResults.add(compute(args));
       }

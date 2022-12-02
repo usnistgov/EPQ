@@ -37,8 +37,10 @@ public interface BarrierScatterMechanism {
     * produced, barrierScatter creates one with appropriate energy and
     * trajectory and returns it. Otherwise it returns null.
     *
-    * @param pe -- the primary electron
-    * @param nextRegion -- the region on the other side of the boundary
+    * @param pe
+    *           -- the primary electron
+    * @param nextRegion
+    *           -- the region on the other side of the boundary
     * @return Electron -- a secondary electron if there is one (null otherwise).
     */
    Electron barrierScatter(Electron pe, RegionBase nextRegion);

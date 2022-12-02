@@ -61,9 +61,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author Nicholas
  * @version 1.0
  */
-public class JWizardDialog
-   extends
-   JDialog {
+public class JWizardDialog extends JDialog {
    /**
     * 
     */
@@ -97,14 +95,12 @@ public class JWizardDialog
    // Results
    private final Map<String, Object> mResults = new TreeMap<String, Object>();
 
-   public JWizardDialog()
-         throws HeadlessException {
+   public JWizardDialog() throws HeadlessException {
       super();
       try {
          wizInitialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -114,8 +110,7 @@ public class JWizardDialog
       try {
          wizInitialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -125,8 +120,7 @@ public class JWizardDialog
       try {
          wizInitialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -144,8 +138,7 @@ public class JWizardDialog
       try {
          wizInitialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -155,8 +148,7 @@ public class JWizardDialog
       try {
          wizInitialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -169,8 +161,7 @@ public class JWizardDialog
       this(owner, "Trixy wizard...", modal);
    }
 
-   private void wizInitialize()
-         throws Exception {
+   private void wizInitialize() throws Exception {
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
       final LayoutManager layout = new FormLayout("8dlu, 400dlu, 8dlu", "8dlu, pref, 8dlu, 170dlu, 8dlu, pref, 8dlu, pref, 8dlu");
       jPanel_Main.setLayout(layout);
@@ -184,7 +175,7 @@ public class JWizardDialog
             assert (jWizardPanel_Active != null);
             assert (mPreviousPanels.size() > 0);
             assert (mPreviousPanels.size() == mPreviousBanners.size());
-            if(jWizardPanel_Active != null) {
+            if (jWizardPanel_Active != null) {
                jPanel_Contents.remove(jWizardPanel_Active);
                setNextPanel(jWizardPanel_Active, jLabel_Banner.getText());
             }
@@ -198,7 +189,7 @@ public class JWizardDialog
       jButton_Next.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if((jWizardPanel_Active != null) && jWizardPanel_Active.permitNext()) {
+            if ((jWizardPanel_Active != null) && jWizardPanel_Active.permitNext()) {
                assert (jWizardPanel_Active != null);
                assert (jWizardPanel_Next != null);
                mPreviousPanels.add(jWizardPanel_Active);
@@ -217,7 +208,7 @@ public class JWizardDialog
       jButton_Finish.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if(jWizardPanel_Active.permitNext()) {
+            if (jWizardPanel_Active.permitNext()) {
                mFinished = true;
                jWizardPanel_Active.onHide();
                setVisible(false);
@@ -292,7 +283,7 @@ public class JWizardDialog
    }
 
    public void setMessageText(String msg) {
-      if(mLongErrorMsg.size() == 0) {
+      if (mLongErrorMsg.size() == 0) {
          jLabel_ErrorLabel.setForeground(SystemColor.textText);
          jLabel_ErrorLabel.setText(msg);
          jButton_ErrorBtn.setEnabled(false);
@@ -316,7 +307,7 @@ public class JWizardDialog
    public void setExceptionText(String shortMsg, String dialogMsg, Throwable th) {
       th.printStackTrace();
       String longMsg = th.getMessage();
-      if(longMsg == null) {
+      if (longMsg == null) {
          final StringWriter sw = new StringWriter();
          final PrintWriter pw = new PrintWriter(sw);
          th.printStackTrace(pw);
@@ -337,14 +328,14 @@ public class JWizardDialog
       // If this method is called more than once, we must ensure that the Error
       // Button will not be called more than once with older error messages
       final ActionListener[] al = jButton_ErrorBtn.getActionListeners();
-      for(int index = 0; jButton_ErrorBtn.getActionListeners().length > 0; index++)
+      for (int index = 0; jButton_ErrorBtn.getActionListeners().length > 0; index++)
          jButton_ErrorBtn.removeActionListener(al[index]);
       jButton_ErrorBtn.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
             final StringBuffer sb = new StringBuffer();
             sb.append(mLongErrorMsg.size() + " errors:");
-            for(int i = 0; i < mLongErrorMsg.size(); ++i) {
+            for (int i = 0; i < mLongErrorMsg.size(); ++i) {
                sb.append("\nError " + (i + 1) + "\n");
                sb.append(mLongErrorMsg.get(i));
             }
@@ -361,14 +352,14 @@ public class JWizardDialog
       // If this method is called more than once, we must ensure that the Error
       // Button will not be called more than once with older error messages
       final ActionListener[] al = jButton_ErrorBtn.getActionListeners();
-      for(int index = 0; jButton_ErrorBtn.getActionListeners().length > 0; index++)
+      for (int index = 0; jButton_ErrorBtn.getActionListeners().length > 0; index++)
          jButton_ErrorBtn.removeActionListener(al[index]);
       jButton_ErrorBtn.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
             final StringBuffer sb = new StringBuffer();
             sb.append(mLongErrorMsg.size() + " errors:");
-            for(int i = 0; i < mLongErrorMsg.size(); ++i) {
+            for (int i = 0; i < mLongErrorMsg.size(); ++i) {
                sb.append("\nError " + (i + 1) + "\n");
                sb.append(mLongErrorMsg.get(i));
             }
@@ -407,12 +398,12 @@ public class JWizardDialog
 
    public void setActivePanel(JWizardPanel panel, String banner) {
       jLabel_ErrorLabel.setText("");
-      if(jWizardPanel_Active != null) {
+      if (jWizardPanel_Active != null) {
          jWizardPanel_Active.onHide();
          jPanel_Contents.remove(jWizardPanel_Active);
          jWizardPanel_Active = null;
       }
-      if(panel != null) {
+      if (panel != null) {
          jPanel_Contents.add(panel, CC.xy(1, 1));
          clearMessageText();
          panel.onShow();
@@ -420,9 +411,9 @@ public class JWizardDialog
       }
       jWizardPanel_Active = panel;
       jLabel_Banner.setText(banner != null ? banner : "None");
-      if(jWizardPanel_Next != null)
+      if (jWizardPanel_Next != null)
          jLabel_NextLabel.setText("<html>Next: <em>" + mNextBanner + "</em>");
-      if(mPreviousBanners.size() > 0) {
+      if (mPreviousBanners.size() > 0) {
          final String str = mPreviousBanners.get(mPreviousBanners.size() - 1);
          jLabel_PrevLabel.setText("<html>Previous: <em>" + str + "</em>");
       } else
@@ -434,7 +425,7 @@ public class JWizardDialog
    public void setNextPanel(JWizardPanel panel, String banner) {
       jWizardPanel_Next = panel;
       mNextBanner = banner;
-      if(jWizardPanel_Next != null)
+      if (jWizardPanel_Next != null)
          jLabel_NextLabel.setText("<html>Next: <em>" + mNextBanner + "</em>");
       else
          jLabel_NextLabel.setText("Finish");
@@ -442,21 +433,21 @@ public class JWizardDialog
    }
 
    public void enableFinish(boolean b) {
-      if(jButton_Finish.isEnabled() != b) {
+      if (jButton_Finish.isEnabled() != b) {
          jButton_Finish.setEnabled(b);
          getRootPane().setDefaultButton(jButton_Finish.isEnabled() ? jButton_Finish : null);
       }
    }
 
    public void enableNext(boolean b) {
-      if(jButton_Next.isEnabled() != b) {
+      if (jButton_Next.isEnabled() != b) {
          jButton_Next.setEnabled(b);
          getRootPane().setDefaultButton(jButton_Next.isEnabled() ? jButton_Next : null);
       }
    }
 
    public void setBackEnabled(boolean b) {
-      if(b != jButton_Back.isEnabled())
+      if (b != jButton_Back.isEnabled())
          jButton_Back.setEnabled(b);
    }
 
@@ -478,7 +469,7 @@ public class JWizardDialog
    }
 
    public void setIcon(Icon icon) {
-      if(icon instanceof ImageIcon) {
+      if (icon instanceof ImageIcon) {
          final ImageIcon imgIcon = (ImageIcon) icon;
          jLabel_Icon.setIcon(new ImageIcon(imgIcon.getImage().getScaledInstance(64, 59, Image.SCALE_AREA_AVERAGING)));
       } else
@@ -526,7 +517,8 @@ public class JWizardDialog
     * useful for passing configuration information extracted from the panel back
     * to the program that acts on it.
     * 
-    * @param name A unique string
+    * @param name
+    *           A unique string
     * @return An Object containing configuration information
     */
    public Object getResult(String name) {
@@ -539,16 +531,16 @@ public class JWizardDialog
     * useful for passing configuration information extracted from the panel back
     * to the program that acts on it.
     * 
-    * @param name A unique string
-    * @param result An Object containing configuration information
+    * @param name
+    *           A unique string
+    * @param result
+    *           An Object containing configuration information
     */
    public void setResult(String name, Object result) {
       mResults.put(name, result);
    }
 
-   static public class JWizardPanel
-      extends
-      JPanel {
+   static public class JWizardPanel extends JPanel {
 
       protected static final long serialVersionUID = 0x42;
       private final JWizardDialog mWizard;
@@ -622,8 +614,10 @@ public class JWizardDialog
        * WizardDialog. This is useful for passing configuration information
        * extracted from the panel back to the program that acts on it.
        * 
-       * @param name A unique string
-       * @param res An Object containing configuration information
+       * @param name
+       *           A unique string
+       * @param res
+       *           An Object containing configuration information
        */
       protected void setResult(String name, Object res) {
          mWizard.setResult(name, res);
@@ -642,18 +636,15 @@ public class JWizardDialog
          return mWizard.getResult(name);
       }
 
-      
       public void addInScrollPane(JPanel jp) {
-		JPanel base = new JPanel();
-		base.setLayout(new FormLayout("300dlu", "155dlu"));
-		base.add(new JScrollPane(jp), CC.xy(1, 1));
-		add(base);
+         JPanel base = new JPanel();
+         base.setLayout(new FormLayout("300dlu", "155dlu"));
+         base.add(new JScrollPane(jp), CC.xy(1, 1));
+         add(base);
       }
    }
 
-   abstract public class JProgressPanel
-      extends
-      JWizardPanel {
+   abstract public class JProgressPanel extends JWizardPanel {
 
       private static final long serialVersionUID = -2510365605502237127L;
       private JProgressBar mProgressBar;
@@ -667,14 +658,12 @@ public class JWizardDialog
          super(wiz);
          try {
             initialize();
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             ex.printStackTrace();
          }
       }
 
-      private void initialize()
-            throws Exception {
+      private void initialize() throws Exception {
          final PanelBuilder builder = new PanelBuilder(new FormLayout("250dlu", "pref, 10dlu, pref"));
          builder.addSeparator("Progress", CC.xy(1, 1));
          mProgressBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, 100);

@@ -25,17 +25,17 @@ import gov.nist.microanalysis.NISTMonte.SumShape;
  * @author John Villarrubia
  * @version 1.0
  */
-public class NormalUnionShape
-   extends SumShape
-   implements NormalShape {
+public class NormalUnionShape extends SumShape implements NormalShape {
 
    private double[] result = null;
 
    /**
     * Constructs the union, NormalUnionShape, of its two input shapes.
     *
-    * @param a - (NormalShape) One of the two shapes.
-    * @param b - (NormalShape) The other shape.
+    * @param a
+    *           - (NormalShape) One of the two shapes.
+    * @param b
+    *           - (NormalShape) The other shape.
     */
    public NormalUnionShape(NormalShape a, NormalShape b) {
       super(a, b);
@@ -48,8 +48,8 @@ public class NormalUnionShape
    @Override
    public boolean contains(double[] pos0, double[] pos1) {
       final List<MonteCarloSS.Shape> shapes = getShapes();
-      for(final MonteCarloSS.Shape shape : shapes)
-         if(((NormalShape) shape).contains(pos0, pos1))
+      for (final MonteCarloSS.Shape shape : shapes)
+         if (((NormalShape) shape).contains(pos0, pos1))
             return true;
       return false;
    }
@@ -66,12 +66,7 @@ public class NormalUnionShape
    @Override
    public double[] getFirstNormal(double[] pos0, double[] pos1) {
 
-      final double[] nointersection = {
-         0.,
-         0.,
-         0.,
-         Double.MAX_VALUE
-      };
+      final double[] nointersection = {0., 0., 0., Double.MAX_VALUE};
       final List<MonteCarloSS.Shape> shapes = getShapes();
       final NormalShape shapeA = (NormalShape) shapes.get(0);
       final NormalShape shapeB = (NormalShape) shapes.get(1);
@@ -108,28 +103,24 @@ public class NormalUnionShape
        */
 
       // Get 1st A and B intersections and whether we are inside or outside
-      final double[] delta = {
-         pos1[0] - pos0[0],
-         pos1[1] - pos0[1],
-         pos1[2] - pos0[2]
-      };
+      final double[] delta = {pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2]};
       double nva[] = shapeA.getFirstNormal(pos0, pos1);
-      if(nva[3] <= 1.)
+      if (nva[3] <= 1.)
          adepth = ((delta[0] * nva[0]) + (delta[1] * nva[1]) + (delta[2] * nva[2])) > 0 ? 1 : 0;
       else { // If the crossing is inside-out, then at p0 we are inside.
          // To come back to: What about delta.nva==0?
-         if(shapeA.contains(pos0, pos1))
+         if (shapeA.contains(pos0, pos1))
             return nointersection; // If we were inside at p0 and u>1 there
          // can be no inside-out crossing
          adepth = 0;
       }
 
       double nvb[] = shapeB.getFirstNormal(pos0, pos1);
-      if(nvb[3] <= 1.)
+      if (nvb[3] <= 1.)
          bdepth = ((delta[0] * nvb[0]) + (delta[1] * nvb[1]) + (delta[2] * nvb[2])) > 0 ? 1 : 0;
       else { // If the crossing is inside-out, then at p0 we are inside.
          // To come back to: What about ?.nvb==0?
-         if(shapeB.contains(pos0, pos1))
+         if (shapeB.contains(pos0, pos1))
             return nointersection; // If we were inside at p0 and u>1 there
          // can be no inside-out crossing
          result = nva;
@@ -143,9 +134,9 @@ public class NormalUnionShape
       // meter
       // step.
 
-      for(;;)
-         if(nva[3] < nvb[3]) { // shape A provides the first intersection
-            if(adepth == cdepth) {
+      for (;;)
+         if (nva[3] < nvb[3]) { // shape A provides the first intersection
+            if (adepth == cdepth) {
                result = nva;
                return nva; // c toggles from 0 to 1 or vice versa, like A,
                // so this is a boundary
@@ -174,29 +165,28 @@ public class NormalUnionShape
              */
             u = nva[3] + EXTRAU; // Save the distance to our new start
             // point
-            nva = shapeA.getFirstNormal(new double[] {
-               pos0[0] + (u * delta[0]), // This is pos0+u*delta
-               pos0[1] + (u * delta[1]),
-               pos0[2] + (u * delta[2])
-            }, pos1); // Find
+            nva = shapeA.getFirstNormal(new double[]{pos0[0] + (u * delta[0]), // This
+                                                                               // is
+                                                                               // pos0+u*delta
+                  pos0[1] + (u * delta[1]), pos0[2] + (u * delta[2])}, pos1); // Find
             // the
             // next
             // one
             // after
             // that
 
-            if(nva[3] < Double.MAX_VALUE)
+            if (nva[3] < Double.MAX_VALUE)
                nva[3] = (nva[3] * (1. - u)) + u;
-            if(nva[3] > 1)
-               if(cdepth == bdepth) {
+            if (nva[3] > 1)
+               if (cdepth == bdepth) {
                   result = nvb;
                   return nvb;
                } else
                   return nointersection;
             adepth = adepth ^ 1; // Toggle depth in A
-         } else if(nva[3] > nvb[3]) { // Same as above, with A and B roles
+         } else if (nva[3] > nvb[3]) { // Same as above, with A and B roles
             // reversed
-            if(bdepth == cdepth) {
+            if (bdepth == cdepth) {
                result = nvb;
                return nvb; // c toggles from 0 to 1
                // or vice versa, like
@@ -208,21 +198,20 @@ public class NormalUnionShape
             // Get the next intersection in B
             u = nvb[3] + EXTRAU; // Save the distance to our new start
             // point
-            nvb = shapeB.getFirstNormal(new double[] {
-               pos0[0] + (u * delta[0]), // This is pos0+u*delta
-               pos0[1] + (u * delta[1]),
-               pos0[2] + (u * delta[2])
-            }, pos1); // Find
+            nvb = shapeB.getFirstNormal(new double[]{pos0[0] + (u * delta[0]), // This
+                                                                               // is
+                                                                               // pos0+u*delta
+                  pos0[1] + (u * delta[1]), pos0[2] + (u * delta[2])}, pos1); // Find
             // the
             // next
             // one
             // after
             // that
 
-            if(nvb[3] < Double.MAX_VALUE)
+            if (nvb[3] < Double.MAX_VALUE)
                nvb[3] = (nvb[3] * (1. - u)) + u;
-            if(nvb[3] > 1)
-               if(cdepth == adepth) {
+            if (nvb[3] > 1)
+               if (cdepth == adepth) {
                   result = nva;
                   return nva;
                } else
@@ -232,34 +221,42 @@ public class NormalUnionShape
             // simultaneously hit A and B boundaries. Depth changes
             // by 0 or 2
             final int depthchange = (((adepth ^ 1) - adepth) + (bdepth ^ 1)) - bdepth;
-            if(depthchange == 0) { // We simultaneously went into one as we
+            if (depthchange == 0) { // We simultaneously went into one as we
                // went out of the other
                // Update information for both A and B
                // Get the next intersection in both, A first
                u = nva[3] + EXTRAU; // Save the distance to our new
                // start point
-               nva = shapeA.getFirstNormal(new double[] {
-                  pos0[0] + (u * delta[0]), // This is pos0+u*delta
-                  pos0[1] + (u * delta[1]),
-                  pos0[2] + (u * delta[2])
-               }, pos1); // Find the next one after that
-               if(nva[3] < Double.MAX_VALUE)
+               nva = shapeA.getFirstNormal(new double[]{pos0[0] + (u * delta[0]), // This
+                                                                                  // is
+                                                                                  // pos0+u*delta
+                     pos0[1] + (u * delta[1]), pos0[2] + (u * delta[2])}, pos1); // Find
+                                                                                 // the
+                                                                                 // next
+                                                                                 // one
+                                                                                 // after
+                                                                                 // that
+               if (nva[3] < Double.MAX_VALUE)
                   nva[3] = (nva[3] * (1. - u)) + u;
 
                // Get the next intersection in B
                u = nvb[3] + EXTRAU; // Save the distance to our new
                // start point
-               nvb = shapeB.getFirstNormal(new double[] {
-                  pos0[0] + (u * delta[0]), // This is pos0+u*delta
-                  pos0[1] + (u * delta[1]),
-                  pos0[2] + (u * delta[2])
-               }, pos1); // Find the next one after that
-               if(nvb[3] < Double.MAX_VALUE)
+               nvb = shapeB.getFirstNormal(new double[]{pos0[0] + (u * delta[0]), // This
+                                                                                  // is
+                                                                                  // pos0+u*delta
+                     pos0[1] + (u * delta[1]), pos0[2] + (u * delta[2])}, pos1); // Find
+                                                                                 // the
+                                                                                 // next
+                                                                                 // one
+                                                                                 // after
+                                                                                 // that
+               if (nvb[3] < Double.MAX_VALUE)
                   nvb[3] = (nvb[3] * (1. - u)) + u;
 
-               if(nva[3] > 1)
+               if (nva[3] > 1)
                   // in A
-                  if(cdepth != bdepth) { // remember bdepth changed but
+                  if (cdepth != bdepth) { // remember bdepth changed but
                      // we've not
                      // yet updated it. This really means cdepth ==
                      // bdepth
@@ -267,9 +264,9 @@ public class NormalUnionShape
                      return nvb;
                   } else
                      return nointersection;
-               if(nvb[3] > 1)
+               if (nvb[3] > 1)
                   // in A
-                  if(cdepth != adepth) {// remember adepth changed but
+                  if (cdepth != adepth) {// remember adepth changed but
                      // we've not
                      // yet updated it. This really means cdepth ==
                      // adepth
@@ -285,12 +282,7 @@ public class NormalUnionShape
                 * boundary. Return average of the two normal vectors. (nva[3]
                 * and nvb[3] are the same, so either will do.)
                 */
-               result = new double[] {
-                  (nva[0] + nvb[0]) / 2.,
-                  (nva[1] + nvb[1]) / 2.,
-                  (nva[2] + nvb[2]) / 2.,
-                  nva[3]
-               };
+               result = new double[]{(nva[0] + nvb[0]) / 2., (nva[1] + nvb[1]) / 2., (nva[2] + nvb[2]) / 2., nva[3]};
                return result;
             }
          } // End simultaneous boundaries block

@@ -22,8 +22,7 @@ import gov.nist.microanalysis.EPQLibrary.XRayTransition;
  * @author nicholas
  * @version 1.0
  */
-abstract public class DetectorCalibration
-   implements Comparable<DetectorCalibration> {
+abstract public class DetectorCalibration implements Comparable<DetectorCalibration> {
 
    /**
     * The time from which this calibration becomes active. Calibrations are
@@ -76,7 +75,7 @@ abstract public class DetectorCalibration
    @Override
    public int compareTo(DetectorCalibration o) {
       int res = mActiveDate.compareTo(o.mActiveDate);
-      if(res == 0)
+      if (res == 0)
          res = toString().compareTo(o.toString());
       // System.out.println(toString() + ".compareTo(" + o.toString() + ")=" +
       // Integer.toString(res));
@@ -85,19 +84,18 @@ abstract public class DetectorCalibration
 
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final DetectorCalibration other = (DetectorCalibration) obj;
       assert (mActiveDate != null);
       assert (other.mActiveDate != null);
       assert (mProperties != null);
       assert (other.mProperties != null);
-      final boolean res = mActiveDate.equals(other.mActiveDate) && toString().equals(other.toString())
-            && mProperties.equals(other.mProperties);
+      final boolean res = mActiveDate.equals(other.mActiveDate) && toString().equals(other.toString()) && mProperties.equals(other.mProperties);
       return res;
    }
 
@@ -135,14 +133,14 @@ abstract public class DetectorCalibration
 
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE) {
+      if (mHash == Integer.MAX_VALUE) {
          final int prime = 31;
          int result = 1;
          assert (mActiveDate != null);
          assert (mProperties != null);
          result = (prime * result) + mActiveDate.hashCode();
          result = (prime * result) + mProperties.hashCode();
-         if(result == Integer.MAX_VALUE)
+         if (result == Integer.MAX_VALUE)
             result = Integer.MIN_VALUE;
          mHash = result;
       }

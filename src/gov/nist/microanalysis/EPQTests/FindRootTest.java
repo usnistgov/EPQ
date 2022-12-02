@@ -18,8 +18,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class FindRootTest
-   extends TestCase {
+public class FindRootTest extends TestCase {
    public FindRootTest(String test) {
       super(test);
    }
@@ -47,9 +46,7 @@ public class FindRootTest
             return Math.sin(x0) - res;
          }
       };
-      final double[] vars = {
-         0.5
-      }; // root at 30 degrees
+      final double[] vars = {0.5}; // root at 30 degrees
       fr.initialize(vars);
       assertEquals(fr.perform(0.0, Math.PI / 2.0, eps, 20), (30.0 * Math.PI) / 180.0, eps);
    }

@@ -21,8 +21,7 @@ import java.util.Collection;
  * @version 1.0
  */
 
-public class DescriptiveStatistics
-   implements Comparable<DescriptiveStatistics> {
+public class DescriptiveStatistics implements Comparable<DescriptiveStatistics> {
    private double mLast;
    private double mSum;
    private double mSumOfSqrs;
@@ -51,8 +50,10 @@ public class DescriptiveStatistics
     * the resulting object is the average of the source objects weighted by the
     * number of items in each.
     * 
-    * @param ds1 DescriptiveStatistics
-    * @param ds2 DescriptiveStatistics
+    * @param ds1
+    *           DescriptiveStatistics
+    * @param ds2
+    *           DescriptiveStatistics
     */
    public DescriptiveStatistics(DescriptiveStatistics ds1, DescriptiveStatistics ds2) {
       mLast = Double.NaN;
@@ -83,7 +84,8 @@ public class DescriptiveStatistics
    /**
     * Merge the argument DescriptiveStatistics object with this one.
     * 
-    * @param ds DescriptiveStatistics
+    * @param ds
+    *           DescriptiveStatistics
     */
    public void merge(DescriptiveStatistics ds) {
       mLast = Double.NaN;
@@ -100,7 +102,8 @@ public class DescriptiveStatistics
    /**
     * Add a number to the accumulated statistics.
     * 
-    * @param x double
+    * @param x
+    *           double
     */
    public void add(double x) {
       final double x2 = x * x;
@@ -108,9 +111,9 @@ public class DescriptiveStatistics
       mSumOfSqrs += x2;
       mSumOfCubes += x2 * x;
       mSumOfQuarts += x2 * x2;
-      if(Double.isNaN(mMin) || (x < mMin))
+      if (Double.isNaN(mMin) || (x < mMin))
          mMin = x;
-      if(Double.isNaN(mMax) || (x > mMax))
+      if (Double.isNaN(mMax) || (x > mMax))
          mMax = x;
       mLast = x;
       ++mNPoints;
@@ -147,7 +150,8 @@ public class DescriptiveStatistics
    /**
     * Returns the average and the standard deviation as an uncertain value.
     * 
-    * @param name Name given to the uncertainty component (Source)
+    * @param name
+    *           Name given to the uncertainty component (Source)
     * @return UncertainValue2
     */
    public UncertainValue2 getValue(String name) {
@@ -185,8 +189,7 @@ public class DescriptiveStatistics
    public double kurtosis() {
       final double mu = average();
       final double v = variance();
-      return ((((mSumOfQuarts - (4.0 * mu * mSumOfCubes)) + (6.0 * mu * mu * mSumOfSqrs)) - (3.0 * mSum * mu * mu * mu))
-            / (mNPoints * v * v)) - 3.0;
+      return ((((mSumOfQuarts - (4.0 * mu * mSumOfCubes)) + (6.0 * mu * mu * mSumOfSqrs)) - (3.0 * mSum * mu * mu * mu)) / (mNPoints * v * v)) - 3.0;
    }
 
    /**
@@ -261,12 +264,13 @@ public class DescriptiveStatistics
     * minimum and maximum values may become corrupt (NaN).
     * </p>
     * 
-    * @param val double
+    * @param val
+    *           double
     */
    public void remove(double val) {
-      if(mMax == val)
+      if (mMax == val)
          mMax = Double.NaN;
-      if(mMin == val)
+      if (mMin == val)
          mMin = Double.NaN;
       --mNPoints;
       mSum -= val;
@@ -283,7 +287,7 @@ public class DescriptiveStatistics
     */
    public boolean removeLast() {
       final boolean res = !Double.isNaN(mLast);
-      if(res)
+      if (res)
          remove(mLast);
       mLast = Double.NaN;
       return res;
@@ -296,7 +300,7 @@ public class DescriptiveStatistics
    public int compareTo(DescriptiveStatistics o) {
       final double ta = average();
       final double oa = o.average();
-      if(ta == oa) {
+      if (ta == oa) {
          final double tv = variance();
          final double ov = o.variance();
          return tv == ov ? 0 : (tv < ov ? -1 : 1);
@@ -306,14 +310,14 @@ public class DescriptiveStatistics
 
    public static DescriptiveStatistics compute(Number[] ns) {
       DescriptiveStatistics ds = new DescriptiveStatistics();
-      for(Number n : ns)
+      for (Number n : ns)
          ds.add(n.doubleValue());
       return ds;
    }
 
    public static DescriptiveStatistics compute(Collection<? extends Number> ns) {
       DescriptiveStatistics ds = new DescriptiveStatistics();
-      for(Number n : ns)
+      for (Number n : ns)
          ds.add(n.doubleValue());
       return ds;
    }

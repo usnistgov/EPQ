@@ -23,8 +23,7 @@ import gov.nist.microanalysis.Utility.PoissonDeviate;
  * @version 1.0
  */
 
-public class NoisySpectrum
-   extends DerivedSpectrum {
+public class NoisySpectrum extends DerivedSpectrum {
 
    private final double[] mChannels;
    private final double mScale;
@@ -34,8 +33,10 @@ public class NoisySpectrum
     * NoisySpectrum - Create a new noisy spectrum from the data in src scaled by
     * the factor scale (nominally 0&lt;scale&lt;=1.0).
     * 
-    * @param src ISpectrumData
-    * @param scale double
+    * @param src
+    *           ISpectrumData
+    * @param scale
+    *           double
     */
    public NoisySpectrum(ISpectrumData src, double scale, int seed) {
       super(src);
@@ -43,12 +44,12 @@ public class NoisySpectrum
       mSeed = seed;
       mChannels = new double[src.getChannelCount()];
       final PoissonDeviate pd = new PoissonDeviate(seed);
-      for(int i = src.getChannelCount() - 1; i >= 0; --i)
+      for (int i = src.getChannelCount() - 1; i >= 0; --i)
          mChannels[i] = src.getCounts(i) > 0 ? pd.randomDeviate(scale * src.getCounts(i)) : 0.0;
       // Now take account for the rescaling in either the live time or the beam
       // current
       final SpectrumProperties sp = getProperties();
-      if(sp.isDefined(SpectrumProperties.LiveTime))
+      if (sp.isDefined(SpectrumProperties.LiveTime))
          sp.setNumericProperty(SpectrumProperties.LiveTime, sp.getNumericWithDefault(SpectrumProperties.LiveTime, 0.0) * mScale);
       else {
          final double faraday = SpectrumUtils.getAverageFaradayCurrent(sp, 0.0);
@@ -59,7 +60,8 @@ public class NoisySpectrum
    /**
     * getCounts - see ISpectrumData
     * 
-    * @param i int
+    * @param i
+    *           int
     * @return double
     */
    @Override

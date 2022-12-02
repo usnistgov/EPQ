@@ -21,8 +21,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class EdgeEnergyTest
-   extends TestCase {
+public class EdgeEnergyTest extends TestCase {
    public EdgeEnergyTest(String test) {
       super(test);
    }

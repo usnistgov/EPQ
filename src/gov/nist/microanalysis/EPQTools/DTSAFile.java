@@ -40,8 +40,7 @@ import gov.nist.microanalysis.EPQLibrary.StageCoordinate.Axis;
 
 public class DTSAFile {
 
-   public class DTSASpectrum
-      extends BaseSpectrum {
+   public class DTSASpectrum extends BaseSpectrum {
 
       private class Element_InfoRec {
          private int mAtomic_number;
@@ -54,8 +53,7 @@ public class DTSAFile {
          private Element_InfoRec() {
          }
 
-         private void read(DataInputStream dis)
-               throws IOException {
+         private void read(DataInputStream dis) throws IOException {
             mAtomic_number = dis.readShort();
             dis.readFloat();
             mWeight_Fraction = dis.readFloat();
@@ -92,12 +90,11 @@ public class DTSAFile {
       // Only add the properties if they have been explicitly set to a non-zero
       // value...
       private void setPropertyWhenNotEqual(SpectrumProperties.PropertyId pid, double val, double notVal) {
-         if(val != notVal)
+         if (val != notVal)
             mProperties.setNumericProperty(pid, val);
       }
 
-      void read(DataInputStream dis)
-            throws IOException {
+      void read(DataInputStream dis) throws IOException {
          // Spectrum_Structure
          mProperties.setTextProperty(SpectrumProperties.SpectrumType, readCharacters(dis, 4));
          mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, readCharacters(dis, 255));
@@ -114,12 +111,8 @@ public class DTSAFile {
             final double yTilt = dis.readFloat();
             // It is ambiguous whether the xTilt happens first but we will just
             // assume it.
-            if((xTilt != 0.0) || (yTilt != 0.0)) {
-               final double[] normal = new double[] {
-                  Math.sin(xTilt),
-                  Math.cos(xTilt) * Math.sin(yTilt),
-                  -Math.cos(xTilt) * Math.cos(yTilt)
-               };
+            if ((xTilt != 0.0) || (yTilt != 0.0)) {
+               final double[] normal = new double[]{Math.sin(xTilt), Math.cos(xTilt) * Math.sin(yTilt), -Math.cos(xTilt) * Math.cos(yTilt)};
                mProperties.setSampleShape(SpectrumProperties.SampleShape, new SampleShape.Bulk(normal));
             }
          }
@@ -131,16 +124,16 @@ public class DTSAFile {
          final int number_of_Elements = dis.readShort();
          {
             final Composition comp = new Composition();
-            for(int i = 0; i < 15; ++i) {
+            for (int i = 0; i < 15; ++i) {
                final Element_InfoRec eir = new Element_InfoRec();
                eir.read(dis);
-               if((i < number_of_Elements) && Element.isValid(eir.mAtomic_number) && (eir.mWeight_Fraction > 0.0))
+               if ((i < number_of_Elements) && Element.isValid(eir.mAtomic_number) && (eir.mWeight_Fraction > 0.0))
                   comp.addElement(eir.mAtomic_number, eir.mWeight_Fraction);
             }
-            if(comp.getElementCount() > 0)
+            if (comp.getElementCount() > 0)
                mProperties.setCompositionProperty(SpectrumProperties.StandardComposition, comp);
          }
-         for(int i = 0; i < 157; ++i)
+         for (int i = 0; i < 157; ++i)
             dis.readFloat();
          dis.readByte(); // WDS_in_eV
          dis.readByte(); // Bool2
@@ -153,7 +146,7 @@ public class DTSAFile {
          {
             final float x = dis.readFloat();
             final float y = dis.readFloat();
-            if((x != 0.0) || (y != 0.0)) {
+            if ((x != 0.0) || (y != 0.0)) {
                final StageCoordinate sp = new StageCoordinate();
                sp.set(Axis.X, x);
                sp.set(Axis.Y, y);
@@ -164,14 +157,14 @@ public class DTSAFile {
          // Don't know how to use FirstChannel and LastChannel
          int firstChannel = dis.readShort() - 1;
          int lastChannel = dis.readShort();
-         if((firstChannel == -1) && (lastChannel == 0)) {
+         if ((firstChannel == -1) && (lastChannel == 0)) {
             firstChannel = 0;
             lastChannel = mNumberOfChannels;
          }
 
-         if(lastChannel > mNumberOfChannels)
+         if (lastChannel > mNumberOfChannels)
             lastChannel = mNumberOfChannels;
-         if(firstChannel >= lastChannel)
+         if (firstChannel >= lastChannel)
             firstChannel = 0;
          setPropertyWhenNotEqual(SpectrumProperties.ProbeCurrent, dis.readFloat(), 0.0);
          dis.readInt(); // mBegin_Time
@@ -193,16 +186,14 @@ public class DTSAFile {
          dis.readShort(); // Offset
          dis.readShort(); // PulseProcessorType
          dis.readShort(); // PulseProcessorSetting
-         for(int i = 0; i < mNumberOfChannels; ++i)
-            if((i >= firstChannel) && (i < lastChannel))
+         for (int i = 0; i < mNumberOfChannels; ++i)
+            if ((i >= firstChannel) && (i < lastChannel))
                mChannels[i] = dis.readFloat();
       }
    }
 
-   private void skip(DataInputStream dis)
-         throws IOException {
-      dis.skip(4 + 255 + 2 + 25 + (4 * 1) + (9 * 4) + 2 + (15 * (2 + (4 * 4))) + (157 * 4) + (2 * 1) + (2 * 4) + (2 * 2)
-            + (4 * 4));
+   private void skip(DataInputStream dis) throws IOException {
+      dis.skip(4 + 255 + 2 + 25 + (4 * 1) + (9 * 4) + 2 + (15 * (2 + (4 * 4))) + (157 * 4) + (2 * 1) + (2 * 4) + (2 * 2) + (4 * 4));
       final int firstChannel = dis.readShort();
       final int lastChannel = dis.readShort();
       dis.skip((2 * 4) + 4 + (2 * 4) + 2 + (2 * 4) + (5 * 4) + (2 * 1) + (4 * 2));
@@ -217,8 +208,7 @@ public class DTSAFile {
    DTSASpectrum[] mSpectra;
    SpectrumProperties mGlobal = new SpectrumProperties();
 
-   public DTSAFile(File file)
-         throws FileNotFoundException, IOException {
+   public DTSAFile(File file) throws FileNotFoundException, IOException {
       super();
       try (final InputStream fis = new BufferedInputStream(new FileInputStream(file))) {
          read(fis);
@@ -246,15 +236,14 @@ public class DTSAFile {
       return df.read(is, specIdx);
    }
 
-   private static String readCharacters(DataInputStream ois, int nMax)
-         throws IOException {
+   private static String readCharacters(DataInputStream ois, int nMax) throws IOException {
       final byte[] b = new byte[nMax];
       int n = ois.readByte(); // The number of good characters
-      if(n > nMax)
+      if (n > nMax)
          n = nMax;
-      if(ois.read(b) != nMax)
+      if (ois.read(b) != nMax)
          throw new IOException("Unable to read a full character buffer");
-      if((nMax % 2) == 0)
+      if ((nMax % 2) == 0)
          ois.readByte();
       return (Charset.forName("ISO-8859-1").decode(ByteBuffer.wrap(b, 0, n))).toString();
    }
@@ -267,7 +256,7 @@ public class DTSAFile {
                final int last = ois.readShort();
                final int first = ois.readShort();
                res = ((first == 0) || (first == 1)) && ((last >= first) && (last <= 100));
-               if(res) {
+               if (res) {
                   readCharacters(ois, 50); // SpecimenId
                   readCharacters(ois, 25); // SourceFile
                   readCharacters(ois, 255); // SpecimenDesc
@@ -277,28 +266,26 @@ public class DTSAFile {
                   ois.readShort(); // mDetector_Spec
                   ois.readShort(); // mDetector_ID
                   final float az = ois.readFloat(); // azimuth
-                  if((az <= -360.0) || (az > 360.0))
+                  if ((az <= -360.0) || (az > 360.0))
                      res = false;
-                  if(res) {
+                  if (res) {
                      final float el = ois.readFloat();
                      res = (el >= -90.0) && (el <= 90.0);
                   }
-                  if(res) {
+                  if (res) {
                      final float detArea = ois.readFloat();
                      res = (detArea == 0.0) || ((detArea > 0.01) && (detArea < 2000.0));
                   }
-                  if(res) {
+                  if (res) {
                      final float detThick = ois.readFloat();
                      res = (detThick == 0.0) || ((detThick > 0.01) && (detThick <= 100.0));
                   }
                }
             }
-         }
-         finally {
+         } finally {
             is.close(); // force closure to ensure it is not reused...
          }
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          res = false;
       }
       return res;
@@ -307,7 +294,7 @@ public class DTSAFile {
    // Only add the properties if they have been explicitly set to a non-zero
    // value...
    private void setPropertyWhenNotEqualG(SpectrumProperties.PropertyId pid, double val, double notVal) {
-      if(val != notVal)
+      if (val != notVal)
          mGlobal.setNumericProperty(pid, val);
    }
 
@@ -317,13 +304,12 @@ public class DTSAFile {
          try (final DataInputStream ois = new DataInputStream(is)) {
             readHeader(ois);
             mSpectra = new DTSASpectrum[(mLastSpec - mFirstSpec) + 1];
-            for(int i = mFirstSpec; i <= mLastSpec; ++i) {
+            for (int i = mFirstSpec; i <= mLastSpec; ++i) {
                mSpectra[i - mFirstSpec] = new DTSAFile.DTSASpectrum(mGlobal);
                mSpectra[i - mFirstSpec].read(ois);
             }
          }
-      }
-      catch(final IOException iox) {
+      } catch (final IOException iox) {
 
       }
    }
@@ -334,15 +320,14 @@ public class DTSAFile {
          mGlobal.clear();
          try (final DataInputStream dis = new DataInputStream(is)) {
             readHeader(dis);
-            for(int i = mFirstSpec; i <= mLastSpec; ++i)
-               if((i - mFirstSpec) == specIdx) {
+            for (int i = mFirstSpec; i <= mLastSpec; ++i)
+               if ((i - mFirstSpec) == specIdx) {
                   res = new DTSASpectrum(mGlobal);
                   res.read(dis);
                } else
                   this.skip(dis);
          }
-      }
-      catch(final IOException iox) {
+      } catch (final IOException iox) {
 
       }
       return res;
@@ -354,8 +339,7 @@ public class DTSAFile {
     * @param ois
     * @throws IOException
     */
-   private void readHeader(DataInputStream ois)
-         throws IOException {
+   private void readHeader(DataInputStream ois) throws IOException {
       mLastSpec = ois.readShort();
       mFirstSpec = ois.readShort();
       mGlobal.setTextProperty(SpectrumProperties.SpecimenName, readCharacters(ois, 50));
@@ -372,11 +356,8 @@ public class DTSAFile {
          // Assume a nominal WD of 20 mm and a nominal detector distance of 5
          // cm
          final double dist = 50.0; // mm
-         final double[] pos = {
-            dist * Math.cos(azimuth) * Math.cos(elevation),
-            dist * Math.sin(azimuth) * Math.cos(elevation),
-            dist * Math.sin(elevation)
-         };
+         final double[] pos = {dist * Math.cos(azimuth) * Math.cos(elevation), dist * Math.sin(azimuth) * Math.cos(elevation),
+               dist * Math.sin(elevation)};
          mGlobal.setArrayProperty(SpectrumProperties.DetectorPosition, pos);
       }
       setPropertyWhenNotEqualG(SpectrumProperties.DetectorArea, ois.readFloat(), 0.0);
@@ -397,7 +378,7 @@ public class DTSAFile {
       mGlobal.setNumericProperty(SpectrumProperties.EnergyScale, ois.readFloat());
       {
          final double res = ois.readFloat();
-         if(res != 0.0) {
+         if (res != 0.0) {
             mGlobal.setNumericProperty(SpectrumProperties.Resolution, res);
             mGlobal.setNumericProperty(SpectrumProperties.ResolutionLine, SpectrumUtils.E_MnKa);
          }

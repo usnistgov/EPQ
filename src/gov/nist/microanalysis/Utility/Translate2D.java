@@ -68,14 +68,14 @@ public class Translate2D {
    }
 
    static public CalibrationPoint createCalibrationPoint(double oldX, double oldY, double newX, double newY) {
-      return new CalibrationPoint(new double[] { oldX, oldY }, new double[] { newX, newY });
+      return new CalibrationPoint(new double[]{oldX, oldY}, new double[]{newX, newY});
    }
 
    // Transformation parameters
-   private double[] mOffset        = new double[2];
-   private double[] mScale         = new double[2];
-   private double   mRotation;                     // radians
-   private boolean  mXAxisInverted = false;
+   private double[] mOffset = new double[2];
+   private double[] mScale = new double[2];
+   private double mRotation; // radians
+   private boolean mXAxisInverted = false;
 
    public double calibrate(Collection<CalibrationPoint> calPts) {
       final Iterator<CalibrationPoint> calIt = calPts.iterator();
@@ -106,21 +106,19 @@ public class Translate2D {
                final boolean invert = (ii < 2);
                mXAxisInverted = invert;
                if (!axisInverted) {
-                  mOffset[0] = -(((((Math2.sqr(x1p) * x2) + (((dyp * x2) + (dy * x2p)) * y1p))
-                        - (x1p * ((x1 * x2p) + (x2 * x2p) + (dy * y2p))))
+                  mOffset[0] = -(((((Math2.sqr(x1p) * x2) + (((dyp * x2) + (dy * x2p)) * y1p)) - (x1p * ((x1 * x2p) + (x2 * x2p) + (dy * y2p))))
                         + (x1 * ((Math2.sqr(x2p) - (y1p * y2p)) + Math2.sqr(y2p)))) / dp2);
-                  mOffset[1] = (((-(Math2.sqr(x2p) * y1) + (dx * x2p * y1p)) - (Math2.sqr(x1p) * y2) - (dyp * y1p * y2))
-                        + (dyp * y1 * y2p) + (x1p * ((x2p * (y1 + y2)) - (dx * y2p)))) / dp2;
+                  mOffset[1] = (((-(Math2.sqr(x2p) * y1) + (dx * x2p * y1p)) - (Math2.sqr(x1p) * y2) - (dyp * y1p * y2)) + (dyp * y1 * y2p)
+                        + (x1p * ((x2p * (y1 + y2)) - (dx * y2p)))) / dp2;
                   final double ma = Math.abs((dx * dxp) - (dy * dyp));
                   mScale[0] = ma > 0.0 ? (dp2 * ma) / (Math.sqrt(d2 * dp2) * ((dx * dxp) - (dy * dyp))) : 1.0;
                   mRotation = Math.acos(Math.abs((dx * dxp) - (dy * dyp)) / Math.sqrt(d2 * dp2));
                   mScale[1] = mScale[0];
                } else {
                   mOffset[0] = (((-Math2.sqr(x1p) * x2) + (y1p * (((x2p * y1) - (x2 * y1p) - (x2p * y2)) + (x2 * y2p)))
-                        + (x1p * (((x1 + x2) * x2p) + (-dy * y2p))))
-                        - (x1 * ((Math2.sqr(x2p) - (y1p * y2p)) + Math2.sqr(y2p)))) / dp2;
-                  mOffset[1] = -((((Math2.sqr(x2p) * y1) + (dx * x2p * y1p) + (Math2.sqr(x1p) * y2) + (dyp * y1p * y2))
-                        - (dyp * y1 * y2p) - (x1p * ((x2p * (y1 + y2)) + (dx * y2p)))) / dp2);
+                        + (x1p * (((x1 + x2) * x2p) + (-dy * y2p)))) - (x1 * ((Math2.sqr(x2p) - (y1p * y2p)) + Math2.sqr(y2p)))) / dp2;
+                  mOffset[1] = -((((Math2.sqr(x2p) * y1) + (dx * x2p * y1p) + (Math2.sqr(x1p) * y2) + (dyp * y1p * y2)) - (dyp * y1 * y2p)
+                        - (x1p * ((x2p * (y1 + y2)) + (dx * y2p)))) / dp2);
                   final double ma = Math.abs((dx * dxp) + (dy * dyp));
                   mScale[0] = ma > 0.0 ? (dp2 * ((dx * dxp) + (dy * dyp))) / (Math.sqrt(d2 * dp2) * ma) : 1.0;
                   mRotation = Math.acos(Math.abs((dx * dxp) + (dy * dyp)) / Math.sqrt(d2 * dp2));
@@ -157,10 +155,8 @@ public class Translate2D {
                final double scX = x[0], scY = x[1], offX = x[2], offY = x[3], rot = x[4];
                for (final CalibrationPoint cp : calPts) {
                   double resX, resY;
-                  resX = (((cp.mOldPoint[0] + offX) * Math.cos(rot)) - ((cp.mOldPoint[1] + offY) * Math.sin(rot)))
-                        * scX;
-                  resY = (((cp.mOldPoint[1] + offY) * Math.cos(rot)) + ((cp.mOldPoint[0] + offX) * Math.sin(rot)))
-                        * scY;
+                  resX = (((cp.mOldPoint[0] + offX) * Math.cos(rot)) - ((cp.mOldPoint[1] + offY) * Math.sin(rot))) * scX;
+                  resY = (((cp.mOldPoint[1] + offY) * Math.cos(rot)) + ((cp.mOldPoint[0] + offX) * Math.sin(rot))) * scY;
                   sumSqr += Math2.sqr(resX - cp.mNewPoint[0]) + Math2.sqr(resY - cp.mNewPoint[1]);
                }
                return sumSqr;
@@ -171,9 +167,8 @@ public class Translate2D {
          for (final CalibrationPoint cp : calPts)
             scOff = Math.max(Math.max(scOff, Math.abs(cp.mOldPoint[0] - cp.mNewPoint[0]) / 100.0),
                   Math.abs(cp.mOldPoint[1] - cp.mNewPoint[1]) / 100.0);
-         final double[] center = new double[] { mScale[0], mScale[1], mOffset[0], mOffset[1], mRotation };
-         final double[] scale = new double[] { Math.abs(mScale[0]) / 10.0, Math.abs(mScale[1]) / 10.0, scOff, scOff,
-               0.01 };
+         final double[] center = new double[]{mScale[0], mScale[1], mOffset[0], mOffset[1], mRotation};
+         final double[] scale = new double[]{Math.abs(mScale[0]) / 10.0, Math.abs(mScale[1]) / 10.0, scOff, scOff, 0.01};
          double[] best;
          try {
             best = rc.perform(Simplex.randomizedStartingPoints(center, scale));
@@ -265,10 +260,8 @@ public class Translate2D {
     */
    public double[] compute(double[] oldCoord) {
       final double[] res = new double[2];
-      res[0] = (((oldCoord[0] + mOffset[0]) * Math.cos(mRotation)) - ((oldCoord[1] + mOffset[1]) * Math.sin(mRotation)))
-            * mScale[0];
-      res[1] = (((oldCoord[1] + mOffset[1]) * Math.cos(mRotation)) + ((oldCoord[0] + mOffset[0]) * Math.sin(mRotation)))
-            * mScale[1];
+      res[0] = (((oldCoord[0] + mOffset[0]) * Math.cos(mRotation)) - ((oldCoord[1] + mOffset[1]) * Math.sin(mRotation))) * mScale[0];
+      res[1] = (((oldCoord[1] + mOffset[1]) * Math.cos(mRotation)) + ((oldCoord[0] + mOffset[0]) * Math.sin(mRotation))) * mScale[1];
       return res;
    }
 
@@ -281,10 +274,8 @@ public class Translate2D {
     */
    public double[] inverse(double[] newCoord) {
       final double[] res = new double[2];
-      res[0] = -mOffset[0] + ((Math.cos(mRotation) * newCoord[0]) / mScale[0])
-            + ((Math.sin(mRotation) * newCoord[1]) / mScale[1]);
-      res[1] = (-mOffset[1] - ((Math.sin(mRotation) * newCoord[0]) / mScale[0]))
-            + ((Math.cos(mRotation) * newCoord[1]) / mScale[1]);
+      res[0] = -mOffset[0] + ((Math.cos(mRotation) * newCoord[0]) / mScale[0]) + ((Math.sin(mRotation) * newCoord[1]) / mScale[1]);
+      res[1] = (-mOffset[1] - ((Math.sin(mRotation) * newCoord[0]) / mScale[0])) + ((Math.cos(mRotation) * newCoord[1]) / mScale[1]);
       return res;
    }
 

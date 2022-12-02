@@ -47,9 +47,7 @@ import gov.nist.microanalysis.Utility.PrintUtilities;
 import gov.nist.microanalysis.Utility.Translate2D;
 import gov.nist.microanalysis.Utility.Translate2D.CalibrationPoint;
 
-public class RelocationApp
-   extends
-   JFrame {
+public class RelocationApp extends JFrame {
 
    private static final long serialVersionUID = -8936386448493361187L;
    private JTextPane resultPane;
@@ -75,9 +73,9 @@ public class RelocationApp
          javax.swing.text.Element body = null;
          {
             javax.swing.text.Element root = doc.getDefaultRootElement();
-            for(int i = 0; i < root.getElementCount(); i++) {
+            for (int i = 0; i < root.getElementCount(); i++) {
                javax.swing.text.Element element = root.getElement(i);
-               if(element.getAttributes().getAttribute(StyleConstants.NameAttribute) == HTML.Tag.BODY) {
+               if (element.getAttributes().getAttribute(StyleConstants.NameAttribute) == HTML.Tag.BODY) {
                   body = element;
                   break;
                }
@@ -86,18 +84,17 @@ public class RelocationApp
          }
          doc.insertBeforeEnd(body, html);
          resultPane.setCaretPosition(doc.getEndPosition().getOffset() - 1);
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          e.printStackTrace();
       }
    }
 
    private void addToRelocatedTable(String html) {
-      if(mInRelocationTable == 0) {
+      if (mInRelocationTable == 0) {
          final String header = "<P>" + "<TABLE>"
-               + " <CAPTION ALIGN=BOTTOM><B>Table:</B> Relocated points (Computed values are in bold face.)</CAPTION>" + " <TR>"
-               + "  <TH></TH>" + "  <TH>X<sub>0</sub></TH>" + "  <TH>Y<sub>0</sub></TH>" + "  <TH>X<sub>1</sub></TH>"
-               + "  <TH>Y<sub>1</sub></TH>" + "</TR>" + "</TABLE>" + "</P>";
+               + " <CAPTION ALIGN=BOTTOM><B>Table:</B> Relocated points (Computed values are in bold face.)</CAPTION>" + " <TR>" + "  <TH></TH>"
+               + "  <TH>X<sub>0</sub></TH>" + "  <TH>Y<sub>0</sub></TH>" + "  <TH>X<sub>1</sub></TH>" + "  <TH>Y<sub>1</sub></TH>" + "</TR>"
+               + "</TABLE>" + "</P>";
          appendHTML(header);
       }
       final HTMLEditorKit hek = (HTMLEditorKit) resultPane.getEditorKit();
@@ -106,8 +103,7 @@ public class RelocationApp
       try {
          hek.insertHTML(doc, doc.getLength() - 1, "<TR>" + html + "</TR>", 3, 0, HTML.Tag.TR);
          tag_Field.setText("Point " + Integer.toString(++mPointCount));
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          e.printStackTrace();
       }
    }
@@ -117,8 +113,7 @@ public class RelocationApp
       try {
          initialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
       // Set the size of the window...
@@ -151,8 +146,7 @@ public class RelocationApp
       try {
          res = mParser.parse(field.getText()).doubleValue();
          field.setBackground(backColor);
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          field.setBackground(Color.pink);
          field.requestFocus();
          res = Double.NaN;
@@ -264,7 +258,7 @@ public class RelocationApp
       html.append("  <TR><TH>Rotation</TH><TD>");
       html.append(nf2.format(Math.toDegrees(res.getRotation())));
       html.append("&deg;</TD></TR>");
-      if(calibrationPoints != null) {
+      if (calibrationPoints != null) {
          html.append("  <TR><TH>Error</TH><TD>");
          html.append(nf.format(res.error(calibrationPoints)));
          html.append("  </TD></TR>");
@@ -290,11 +284,9 @@ public class RelocationApp
             final String kSaveDir = "HTMLSave";
             final Preferences userPref = Preferences.userNodeForPackage(RelocationApp.class);
             final JFileChooser jfc = new JFileChooser(userPref.get(kSaveDir, System.getProperty("user.home")));
-            jfc.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-               "html",
-            }, "HTML File"));
+            jfc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"html",}, "HTML File"));
             final int option = jfc.showSaveDialog(RelocationApp.this);
-            if(option == JFileChooser.APPROVE_OPTION) {
+            if (option == JFileChooser.APPROVE_OPTION) {
                final File res = jfc.getSelectedFile();
                try {
                   try (final FileOutputStream fos = new FileOutputStream(res)) {
@@ -302,8 +294,7 @@ public class RelocationApp
                      final HTMLDocument doc = (HTMLDocument) resultPane.getDocument();
                      hek.write(fos, doc, 0, doc.getLength());
                   }
-               }
-               catch(final Exception e1) {
+               } catch (final Exception e1) {
                   ErrorDialog.createErrorMessage(RelocationApp.this, "Error saving HTML", e1);
                }
                userPref.put(kSaveDir, res.getParent());
@@ -319,19 +310,16 @@ public class RelocationApp
             final String kSaveDir = "HTMLSave";
             final Preferences userPref = Preferences.userNodeForPackage(RelocationApp.class);
             final JFileChooser jfc = new JFileChooser(userPref.get(kSaveDir, System.getProperty("user.home")));
-            jfc.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-               "xrel",
-            }, "Relocation File"));
+            jfc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"xrel",}, "Relocation File"));
             final int option = jfc.showSaveDialog(RelocationApp.this);
-            if(option == JFileChooser.APPROVE_OPTION) {
+            if (option == JFileChooser.APPROVE_OPTION) {
                final File res = jfc.getSelectedFile();
                try {
                   try (final FileOutputStream fos = new FileOutputStream(res)) {
                      EPQXStream xs = EPQXStream.getInstance();
                      xs.toXML(mTranslate, fos);
                   }
-               }
-               catch(final Exception e1) {
+               } catch (final Exception e1) {
                   ErrorDialog.createErrorMessage(RelocationApp.this, "Error saving HTML", e1);
                }
                userPref.put(kSaveDir, res.getParent());
@@ -347,21 +335,18 @@ public class RelocationApp
             final String kSaveDir = "HTMLSave";
             final Preferences userPref = Preferences.userNodeForPackage(RelocationApp.class);
             final JFileChooser jfc = new JFileChooser(userPref.get(kSaveDir, System.getProperty("user.home")));
-            jfc.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-               "xrel",
-            }, "Relocation File"));
+            jfc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"xrel",}, "Relocation File"));
             final int option = jfc.showOpenDialog(RelocationApp.this);
-            if(option == JFileChooser.APPROVE_OPTION) {
+            if (option == JFileChooser.APPROVE_OPTION) {
                final File res = jfc.getSelectedFile();
                try {
                   try (final FileInputStream fis = new FileInputStream(res)) {
                      EPQXStream xs = EPQXStream.getInstance();
                      Object obj = xs.fromXML(fis);
-                     if(obj instanceof Translate2D)
+                     if (obj instanceof Translate2D)
                         setTranslate((Translate2D) obj, (ArrayList<CalibrationPoint>) null);
                   }
-               }
-               catch(final Exception e1) {
+               } catch (final Exception e1) {
                   ErrorDialog.createErrorMessage(RelocationApp.this, "Error saving HTML", e1);
                }
                userPref.put(kSaveDir, res.getParent());
@@ -418,7 +403,7 @@ public class RelocationApp
             dlg.setLocationRelativeTo(RelocationApp.this);
             dlg.setVisible(true);
             final Translate2D res = dlg.getResult();
-            if(res != null)
+            if (res != null)
                setTranslate(res, dlg.getCalibrationPoints());
          }
 
@@ -474,7 +459,8 @@ public class RelocationApp
             html.append("<tr><td align=center><i>nicholas.ritchie@nist.gov</i></td></tr>");
             html.append("</table></p>");
 
-            html.append("<p>Pursuant to title 17 Section 105 of the United States Code, this software is not subject to copyright protection and is in the public domain.</p>");
+            html.append(
+                  "<p>Pursuant to title 17 Section 105 of the United States Code, this software is not subject to copyright protection and is in the public domain.</p>");
             appendHTML(html.toString());
             mInRelocationTable = 0;
          }
@@ -493,7 +479,8 @@ public class RelocationApp
       add(new JScrollPane(resultPane));
 
       {
-         final FormLayout fl = new FormLayout("10dlu, pref, 4dlu, 45dlu, 10dlu, pref, 4dlu, 45dlu, 10dlu, pref, 4dlu, 45dlu, 4dlu, pref, 4dlu, pref", "pref");
+         final FormLayout fl = new FormLayout("10dlu, pref, 4dlu, 45dlu, 10dlu, pref, 4dlu, 45dlu, 10dlu, pref, 4dlu, 45dlu, 4dlu, pref, 4dlu, pref",
+               "pref");
          final PanelBuilder pb = new PanelBuilder(fl);
          final CellConstraints cc = new CellConstraints();
          final FocusListener fl1 = new FocusAdapter() {
@@ -523,15 +510,11 @@ public class RelocationApp
             public void actionPerformed(ActionEvent e) {
                final double x0 = parseField(x_Field);
                final double y0 = parseField(y_Field);
-               if(!(Double.isNaN(x0) || Double.isNaN(y0))) {
-                  final double[] res = mTranslate.compute(new double[] {
-                     x0,
-                     y0
-                  });
+               if (!(Double.isNaN(x0) || Double.isNaN(y0))) {
+                  final double[] res = mTranslate.compute(new double[]{x0, y0});
                   final NumberFormat tf = new HalfUpFormat("0.####");
-                  final String html = "<TH>" + tag_Field.getText() + "</TH><TD>" + x_Field.getText() + "</TD><TD>"
-                        + y_Field.getText() + "</TD><TD><B>" + tf.format(res[0]) + "</B></TD><TD><B>" + tf.format(res[1])
-                        + "</B></TD>";
+                  final String html = "<TH>" + tag_Field.getText() + "</TH><TD>" + x_Field.getText() + "</TD><TD>" + y_Field.getText()
+                        + "</TD><TD><B>" + tf.format(res[0]) + "</B></TD><TD><B>" + tf.format(res[1]) + "</B></TD>";
                   addToRelocatedTable(html);
                }
                x_Field.requestFocus();
@@ -544,14 +527,11 @@ public class RelocationApp
             public void actionPerformed(ActionEvent e) {
                final double x0 = parseField(x_Field);
                final double y0 = parseField(y_Field);
-               if(!(Double.isNaN(x0) || Double.isNaN(y0))) {
-                  final double[] res = mTranslate.inverse(new double[] {
-                     x0,
-                     y0
-                  });
+               if (!(Double.isNaN(x0) || Double.isNaN(y0))) {
+                  final double[] res = mTranslate.inverse(new double[]{x0, y0});
                   final NumberFormat tf = new HalfUpFormat("0.####");
-                  final String html = "<TH>" + tag_Field.getText() + "</TH><TD><B>" + tf.format(res[0]) + "</B></TD><TD><B>"
-                        + tf.format(res[1]) + "</B></TD><TD>" + x_Field.getText() + "</TD><TD>" + y_Field.getText() + "</TD>";
+                  final String html = "<TH>" + tag_Field.getText() + "</TH><TD><B>" + tf.format(res[0]) + "</B></TD><TD><B>" + tf.format(res[1])
+                        + "</B></TD><TD>" + x_Field.getText() + "</TD><TD>" + y_Field.getText() + "</TD>";
                   addToRelocatedTable(html);
                }
                x_Field.requestFocus();
@@ -567,7 +547,7 @@ public class RelocationApp
    @Override
    protected void processWindowEvent(WindowEvent e) {
       super.processWindowEvent(e);
-      if(e.getID() == WindowEvent.WINDOW_CLOSING) {
+      if (e.getID() == WindowEvent.WINDOW_CLOSING) {
          performAtExit();
          System.exit(0);
       }
@@ -585,17 +565,13 @@ public class RelocationApp
       };
 
       fc.setAcceptAllFileFilterUsed(true);
-      fc.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-         "csv",
-         "txt"
-      }, "Comma Separated Values"));
+      fc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"csv", "txt"}, "Comma Separated Values"));
       fc.setMultiSelectionEnabled(true);
-      if(fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-         for(final File f : fc.getSelectedFiles())
+      if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+         for (final File f : fc.getSelectedFiles())
             try {
                processCSVFile(f);
-            }
-            catch(final Exception e) {
+            } catch (final Exception e) {
                // TODO Auto-generated catch block
                e.printStackTrace();
             }
@@ -604,17 +580,17 @@ public class RelocationApp
    private String[] parseCSV(String str) {
       final ArrayList<String> strs = new ArrayList<String>();
       final StringBuffer sb = new StringBuffer(str.length());
-      for(int i = 0; i < str.length(); ++i) {
+      for (int i = 0; i < str.length(); ++i) {
          char c = str.charAt(i);
-         if(c == ',') {
+         if (c == ',') {
             strs.add(sb.toString().trim());
             sb.setLength(0);
             continue;
          }
-         if(c == '\"') {
-            for(++i; i < str.length(); ++i) {
+         if (c == '\"') {
+            for (++i; i < str.length(); ++i) {
                c = str.charAt(i);
-               if(c == '\"')
+               if (c == '\"')
                   break;
                else
                   sb.append(c);
@@ -623,13 +599,12 @@ public class RelocationApp
          } else
             sb.append(c);
       }
-      if(sb.length() > 0)
+      if (sb.length() > 0)
          strs.add(sb.toString().trim());
       return strs.toArray(new String[strs.size()]);
    }
 
-   private void processCSVFile(File f)
-         throws Exception {
+   private void processCSVFile(File f) throws Exception {
       final FileReader fr = new FileReader(f);
       try (final BufferedReader br = new BufferedReader(fr)) {
          int cx = 0;
@@ -637,21 +612,18 @@ public class RelocationApp
          mInRelocationTable = 0;
          appendHTML("<h2>Transforming points from a CSV file</h2>");
          appendHTML("<p><b>CSV file:</b> " + f.getCanonicalPath() + "</p>");
-         while(br.ready()) {
+         while (br.ready()) {
             final String[] items = parseCSV(br.readLine());
-            if(items.length >= 2) {
+            if (items.length >= 2) {
                int i = 0;
                String name = "Point " + Integer.toString(++cx);
-               if(items.length == 3)
+               if (items.length == 3)
                   name = items[i++];
                final double x = Double.parseDouble(items[i]);
                final double y = Double.parseDouble(items[i + 1]);
-               final double[] res = mTranslate.compute(new double[] {
-                  x,
-                  y
-               });
-               final String html = "<TH>" + name + "</TH><TD>" + items[i] + "</TD><TD>" + items[i + 1] + "</TD><TD><B>"
-                     + tf.format(res[0]) + "</B></TD><TD><B>" + tf.format(res[1]) + "</B></TD>";
+               final double[] res = mTranslate.compute(new double[]{x, y});
+               final String html = "<TH>" + name + "</TH><TD>" + items[i] + "</TD><TD>" + items[i + 1] + "</TD><TD><B>" + tf.format(res[0])
+                     + "</B></TD><TD><B>" + tf.format(res[1]) + "</B></TD>";
                addToRelocatedTable(html);
             }
          }
@@ -670,8 +642,7 @@ public class RelocationApp
       System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Relocation Utility");
       try {
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          e.printStackTrace();
       }
       final JFrame frame = new RelocationApp();

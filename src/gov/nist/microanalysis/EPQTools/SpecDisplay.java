@@ -107,8 +107,7 @@ public class SpecDisplay extends JComponent {
       }
 
       public boolean overlaps(Region r) {
-         return ((mLowEnergy <= r.mHighEnergy)
-               && (mHighEnergy >= r.mLowEnergy));
+         return ((mLowEnergy <= r.mHighEnergy) && (mHighEnergy >= r.mLowEnergy));
       }
 
       public void add(Region r) {
@@ -142,13 +141,11 @@ public class SpecDisplay extends JComponent {
 
       @Override
       public String toString() {
-         return "[" + Integer.toString((int) Math.round(mLowEnergy)) + " eV, "
-               + Integer.toString((int) Math.round(mHighEnergy)) + " eV]";
+         return "[" + Integer.toString((int) Math.round(mLowEnergy)) + " eV, " + Integer.toString((int) Math.round(mHighEnergy)) + " eV]";
       }
 
       public String toTabbedString() {
-         return "ROI (eV)\t" + Integer.toString((int) Math.round(mLowEnergy))
-               + "\t" + Integer.toString((int) Math.round(mHighEnergy));
+         return "ROI (eV)\t" + Integer.toString((int) Math.round(mLowEnergy)) + "\t" + Integer.toString((int) Math.round(mHighEnergy));
       }
 
       @Override
@@ -298,8 +295,7 @@ public class SpecDisplay extends JComponent {
             final ArrayList<Color> tmp = new ArrayList<Color>();
             for (final double[] row : csv) {
                if (row.length >= 3) {
-                  final Color c = new Color((int) Math.round(row[0]),
-                        (int) Math.round(row[1]), (int) Math.round(row[2]));
+                  final Color c = new Color((int) Math.round(row[0]), (int) Math.round(row[1]), (int) Math.round(row[2]));
                   tmp.add(c);
                }
             }
@@ -313,11 +309,8 @@ public class SpecDisplay extends JComponent {
    }
 
    private static Color[] getDefaultColors() {
-      return new Color[]{new Color(255, 66, 14), new Color(0, 69, 134),
-            new Color(87, 157, 28), new Color(126, 0, 33),
-            new Color(131, 202, 255), new Color(49, 64, 4),
-            new Color(174, 207, 0), new Color(75, 31, 111),
-            new Color(255, 149, 14), new Color(197, 0, 11),
+      return new Color[]{new Color(255, 66, 14), new Color(0, 69, 134), new Color(87, 157, 28), new Color(126, 0, 33), new Color(131, 202, 255),
+            new Color(49, 64, 4), new Color(174, 207, 0), new Color(75, 31, 111), new Color(255, 149, 14), new Color(197, 0, 11),
             new Color(0, 132, 209), new Color(255, 211, 32)};
    }
 
@@ -355,10 +348,8 @@ public class SpecDisplay extends JComponent {
 
    // / Inter spectrum scaling
    public enum SCALING_MODE {
-      COUNTS("Counts"), INTEGRAL("Fraction of integrate counts (%)"), MAX_PEAK(
-            "Fraction of highest peak (%)"), REGION_INTEGRAL(
-                  "Fraction of region integral (%)"), COUNTS_PER_NA_S(
-                        "Count/(nA新)"), COUNTS_PER_NA_S_EV("Counts/(nA新搪V)");
+      COUNTS("Counts"), INTEGRAL("Fraction of integrate counts (%)"), MAX_PEAK("Fraction of highest peak (%)"), REGION_INTEGRAL(
+            "Fraction of region integral (%)"), COUNTS_PER_NA_S("Count/(nA新)"), COUNTS_PER_NA_S_EV("Counts/(nA新搪V)");
 
       private final String mUserString;
 
@@ -396,8 +387,7 @@ public class SpecDisplay extends JComponent {
    private boolean mDragEnabled = true;
    private int mCursorPosition = Integer.MIN_VALUE;
    private int mVertScrollPos = Integer.MIN_VALUE;
-   private static final Color CURSOR_COLOR = new Color(
-         Color.white.getRGB() ^ Color.BLUE.getRGB());
+   private static final Color CURSOR_COLOR = new Color(Color.white.getRGB() ^ Color.BLUE.getRGB());
 
    private static final int MIN_DRAG_DELTA = 2;
    /**
@@ -406,10 +396,8 @@ public class SpecDisplay extends JComponent {
    private int mStaggerOffset = 0;
 
    private KLMLine.LabelType mLabelType = KLMLine.LabelType.ELEMENT_ABBREV;
-   private final NumberFormat mAxisLabelFormat = new HalfUpFormat("#,##0",
-         true);
-   private final NumberFormat mFractionalAxisLabelFormat = new HalfUpFormat(
-         "0.0##", true);
+   private final NumberFormat mAxisLabelFormat = new HalfUpFormat("#,##0", true);
+   private final NumberFormat mFractionalAxisLabelFormat = new HalfUpFormat("0.0##", true);
 
    private String mScaleText = mCurrentScalingMode.toString();
 
@@ -447,8 +435,7 @@ public class SpecDisplay extends JComponent {
                acc.append(prev);
             } else {
                // Find the longest substring in common
-               for (int i = 0; (i < prev.length()) && (i < lb.length())
-                     && (prev.charAt(i) == lb.charAt(i)); ++i)
+               for (int i = 0; (i < prev.length()) && (i < lb.length()) && (prev.charAt(i) == lb.charAt(i)); ++i)
                   hdr = prev.substring(0, i + 1);
                if (hdr.length() > 0) {
                   // Something in common
@@ -485,18 +472,15 @@ public class SpecDisplay extends JComponent {
       if (mTemporaryLines.size() > 0) {
          gr.setColor(Color.white);
          gr.setXORMode(Color.green);
-         gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-               RenderingHints.VALUE_ANTIALIAS_OFF);
+         gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
          gr.setStroke(new BasicStroke(2));
          drawLines(gr, LabelType.NONE, mTemporaryLines, false);
-         gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-               RenderingHints.VALUE_ANTIALIAS_ON);
+         gr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
          gr.setPaintMode();
       }
    }
 
-   protected void drawKLMLine(Graphics2D gr, int xPos, int hgt,
-         KLMLine.KLMLineType type, String str) {
+   protected void drawKLMLine(Graphics2D gr, int xPos, int hgt, KLMLine.KLMLineType type, String str) {
       // Mark top of transitions with shapes, edges with family letter,
       final int offset = gr.getFontMetrics().stringWidth("X") / 3;
       final int blobHgt = 2 * offset;
@@ -504,16 +488,13 @@ public class SpecDisplay extends JComponent {
          hgt += blobHgt;
          switch (type) {
             case KTransition :
-               gr.drawOval(xPos - (blobHgt / 2), hgt - blobHgt, blobHgt,
-                     blobHgt);
+               gr.drawOval(xPos - (blobHgt / 2), hgt - blobHgt, blobHgt, blobHgt);
                break;
             case LTransition :
-               gr.drawRect(xPos - (blobHgt / 2), hgt - blobHgt, blobHgt,
-                     blobHgt);
+               gr.drawRect(xPos - (blobHgt / 2), hgt - blobHgt, blobHgt, blobHgt);
                break;
             case MTransition : {
-               final int[] xPts = {xPos, xPos - (blobHgt / 2),
-                     xPos + (blobHgt / 2)};
+               final int[] xPts = {xPos, xPos - (blobHgt / 2), xPos + (blobHgt / 2)};
                final int[] yPts = {hgt, hgt - blobHgt, hgt - blobHgt};
                gr.drawPolygon(xPts, yPts, 3);
             }
@@ -522,20 +503,17 @@ public class SpecDisplay extends JComponent {
             case LEdge :
             case MEdge :
             case NEdge :
-               gr.fillOval(xPos - (blobHgt / 2), hgt - blobHgt, blobHgt,
-                     blobHgt);
+               gr.fillOval(xPos - (blobHgt / 2), hgt - blobHgt, blobHgt, blobHgt);
                break;
             case NTransition : {
-               final int[] xPts = {xPos, xPos - (blobHgt / 2),
-                     xPos + (blobHgt / 2)};
+               final int[] xPts = {xPos, xPos - (blobHgt / 2), xPos + (blobHgt / 2)};
                final int[] yPts = {hgt, hgt - blobHgt, hgt - blobHgt};
                gr.drawPolygon(xPts, yPts, 3);
             }
                break;
             case EscapePeak :
             case SumPeak :
-               gr.fillRect(xPos - (blobHgt / 2), hgt - blobHgt, blobHgt,
-                     blobHgt);
+               gr.fillRect(xPos - (blobHgt / 2), hgt - blobHgt, blobHgt, blobHgt);
                break;
             case Satellite :
             case InvalidType :
@@ -564,8 +542,7 @@ public class SpecDisplay extends JComponent {
             drawCallout(gr, x - offset, //
                   (int) Math.round(y - 0.2 * rect.getHeight() + rect.getY()), //
                   (int) Math.round(rect.getWidth() + 2.0 * offset), //
-                  (int) Math.round(0.5 * rect.getHeight() - rect.getY()),
-                  offset, offset);
+                  (int) Math.round(0.5 * rect.getHeight() - rect.getY()), offset, offset);
             gr.setColor(mKLMColor);
             gr.drawString(str, x, y);
          } finally {
@@ -585,24 +562,18 @@ public class SpecDisplay extends JComponent {
     * @return The x-choordinate of associated with this energy
     */
    private int xx(double energy) {
-      return mPlotRect.x
-            + (int) (((energy - mEMin) * mPlotRect.width) / (mEMax - mEMin));
+      return mPlotRect.x + (int) (((energy - mEMin) * mPlotRect.width) / (mEMax - mEMin));
    }
 
-   static List<EffectiveLine> buildEffectiveLines(Collection<KLMLine> lines,
-         double tolerance) {
+   static List<EffectiveLine> buildEffectiveLines(Collection<KLMLine> lines, double tolerance) {
       final List<EffectiveLine> effs = new ArrayList<EffectiveLine>();
       final ArrayList<KLMLine> dupLines = new ArrayList<KLMLine>(lines);
       // Sort by element and amplitude
       dupLines.sort(new Comparator<KLMLine>() {
          @Override
          public int compare(KLMLine o1, KLMLine o2) {
-            int res = Integer.compare(
-                  o1.getShell().getElement().getAtomicNumber(),
-                  o1.getShell().getElement().getAtomicNumber());
-            return res != 0
-                  ? res
-                  : -Double.compare(o1.mAmplitude, o2.mAmplitude);
+            int res = Integer.compare(o1.getShell().getElement().getAtomicNumber(), o1.getShell().getElement().getAtomicNumber());
+            return res != 0 ? res : -Double.compare(o1.mAmplitude, o2.mAmplitude);
          }
       });
       for (KLMLine line : dupLines) {
@@ -635,11 +606,9 @@ public class SpecDisplay extends JComponent {
       private boolean sameFamily(EffectiveLine eff) {
          if (!eff.mLines.get(0).getClass().equals(mLines.get(0).getClass()))
             return false;
-         if (eff.mLines.get(0).getShell().getElement() != mLines.get(0)
-               .getShell().getElement())
+         if (eff.mLines.get(0).getShell().getElement() != mLines.get(0).getShell().getElement())
             return false;
-         return eff.mLines.get(0).getShell().getFamily() == mLines.get(0)
-               .getShell().getFamily();
+         return eff.mLines.get(0).getShell().getFamily() == mLines.get(0).getShell().getFamily();
       }
 
       private boolean add(KLMLine klm) {
@@ -700,17 +669,14 @@ public class SpecDisplay extends JComponent {
       }
    }
 
-   private void drawLines(Graphics2D gr, KLMLine.LabelType lt,
-         Collection<KLMLine> lines, boolean forSvg) {
+   private void drawLines(Graphics2D gr, KLMLine.LabelType lt, Collection<KLMLine> lines, boolean forSvg) {
       final Shape oldClip = gr.getClip();
       try {
-         gr.setClip(mPlotRect.x, mPlotRect.y, mPlotRect.width,
-               mPlotRect.height);
+         gr.setClip(mPlotRect.x, mPlotRect.y, mPlotRect.width, mPlotRect.height);
          final Font oldFont = setLabelFont(gr, forSvg);
          try {
             final double tolerance = ToSI.eV((mEMax - mEMin) / 150);
-            final List<EffectiveLine> effs = buildEffectiveLines(lines,
-                  tolerance);
+            final List<EffectiveLine> effs = buildEffectiveLines(lines, tolerance);
             // Place the effective lines into families which are scaled
             // together.
             while (effs.size() > 0) {
@@ -718,10 +684,7 @@ public class SpecDisplay extends JComponent {
                final List<EffectiveLine> fam = new ArrayList<EffectiveLine>();
                fam.add(eff);
                final double xeffCenter = xx(eff.getCenter());
-               EffectiveLine maxLine = (xeffCenter >= mPlotRect.x)
-                     && (xeffCenter < mMaxHeight.length + mPlotRect.x)
-                           ? eff
-                           : null;
+               EffectiveLine maxLine = (xeffCenter >= mPlotRect.x) && (xeffCenter < mMaxHeight.length + mPlotRect.x) ? eff : null;
                // Find all lines of the same element and family (K, L, M)
                for (int i = effs.size() - 1; i >= 0; i--) {
                   final EffectiveLine el = effs.get(i);
@@ -729,24 +692,18 @@ public class SpecDisplay extends JComponent {
                      fam.add(el);
                      effs.remove(el);
                      final int xelCenter = xx(el.getCenter());
-                     if ((xelCenter >= mPlotRect.x)
-                           && (xelCenter < mMaxHeight.length + mPlotRect.x))
-                        if ((maxLine == null)
-                              || (el.mAmplitude > maxLine.mAmplitude))
+                     if ((xelCenter >= mPlotRect.x) && (xelCenter < mMaxHeight.length + mPlotRect.x))
+                        if ((maxLine == null) || (el.mAmplitude > maxLine.mAmplitude))
                            maxLine = el;
                   }
                }
                if (maxLine != null) {
                   final int xmaxCenter = xx(maxLine.getCenter());
                   final double maxHgt = mMaxHeight[xmaxCenter - mPlotRect.x];
-                  final double f = Math.max(0.05,
-                        ((mPlotRect.y + mPlotRect.height) - maxHgt)
-                              / mPlotRect.height);
+                  final double f = Math.max(0.05, ((mPlotRect.y + mPlotRect.height) - maxHgt) / mPlotRect.height);
                   for (final EffectiveLine feff : fam) {
                      final String label = feff.getType().isTransition()
-                           ? (feff.mAmplitude > mLabelThreshold
-                                 ? feff.toLabel(lt)
-                                 : "")
+                           ? (feff.mAmplitude > mLabelThreshold ? feff.toLabel(lt) : "")
                            : feff.toLabel(lt);
                      double scale = 1.0;
                      switch (feff.getType()) {
@@ -769,11 +726,8 @@ public class SpecDisplay extends JComponent {
                            scale = 1.0;
                            break;
                      }
-                     final double hh = (mPlotRect.y + mPlotRect.height)
-                           - ((mPlotRect.height * f * scale * feff.mAmplitude)
-                                 / maxLine.mAmplitude);
-                     drawKLMLine(gr, xx(feff.getCenter()), (int) Math.round(hh),
-                           feff.getType(), label);
+                     final double hh = (mPlotRect.y + mPlotRect.height) - ((mPlotRect.height * f * scale * feff.mAmplitude) / maxLine.mAmplitude);
+                     drawKLMLine(gr, xx(feff.getCenter()), (int) Math.round(hh), feff.getType(), label);
                   }
                }
             }
@@ -790,11 +744,9 @@ public class SpecDisplay extends JComponent {
    private Font setLabelFont(Graphics gr, boolean forSvg) {
       final Font oldFont = gr.getFont();
       if (mLabelType == LabelType.LARGE_ELEMENT)
-         gr.setFont(new Font(oldFont.getFamily(), Font.PLAIN,
-               forSvg ? 18 * PNG_SCALE : 15));
+         gr.setFont(new Font(oldFont.getFamily(), Font.PLAIN, forSvg ? 18 * PNG_SCALE : 15));
       else
-         gr.setFont(new Font(oldFont.getFamily(), Font.PLAIN,
-               forSvg ? 16 * PNG_SCALE : 12));
+         gr.setFont(new Font(oldFont.getFamily(), Font.PLAIN, forSvg ? 16 * PNG_SCALE : 12));
       return oldFont;
    }
 
@@ -902,8 +854,7 @@ public class SpecDisplay extends JComponent {
       gr.setColor(Color.green);
    }
 
-   protected double optimalStepSize(double min, double max, int labelDim,
-         int totalDim) {
+   protected double optimalStepSize(double min, double max, int labelDim, int totalDim) {
       int nLabels = totalDim / (5 * labelDim);
       if (nLabels < 2)
          nLabels = 2;
@@ -916,35 +867,28 @@ public class SpecDisplay extends JComponent {
       return 0.001 * trialStep;
    }
 
-   private void drawHiresImage(Graphics2D g, final int wXtra, final int hXtra,
-         final int cWidth, final int cHeight) {
+   private void drawHiresImage(Graphics2D g, final int wXtra, final int hXtra, final int cWidth, final int cHeight) {
       g.setBackground(Color.white);
       g.translate(wXtra, hXtra);
       final Font font = getGraphics().getFont();
-      g.setFont(new Font(font.getFamily(), font.getStyle(),
-            PNG_SCALE * font.getSize()));
-      g.setStroke(new BasicStroke(PNG_SCALE, BasicStroke.CAP_ROUND,
-            BasicStroke.JOIN_MITER));
+      g.setFont(new Font(font.getFamily(), font.getStyle(), PNG_SCALE * font.getSize()));
+      g.setStroke(new BasicStroke(PNG_SCALE, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));
       paintComponent(g, true);
    }
 
-   private Dimension saveAsImage(File outfile, String formatName)
-         throws EPQException {
+   private Dimension saveAsImage(File outfile, String formatName) throws EPQException {
       final int wXtra = (PNG_SCALE * getWidth()) / 20;
       final int hXtra = (PNG_SCALE * getHeight()) / 20;
       final int cWidth = ((PNG_SCALE * getWidth()) + (2 * wXtra));
       final int cHeight = ((PNG_SCALE * getHeight()) + (2 * hXtra));
       final BufferedImage bi = new BufferedImage(cWidth, cHeight,
-            formatName.equalsIgnoreCase("BMP")
-                  ? BufferedImage.TYPE_INT_RGB
-                  : BufferedImage.TYPE_4BYTE_ABGR);
+            formatName.equalsIgnoreCase("BMP") ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_4BYTE_ABGR);
       final Graphics2D g = bi.createGraphics();
       drawHiresImage(g, wXtra, hXtra, cWidth, cHeight);
       try {
          ImageIO.write(bi, formatName, outfile);
       } catch (final IOException e) {
-         ErrorDialog.createErrorMessage(SpecDisplay.this,
-               "Error writing spectrum to " + formatName + " file.", e);
+         ErrorDialog.createErrorMessage(SpecDisplay.this, "Error writing spectrum to " + formatName + " file.", e);
       }
       return new Dimension(cWidth, cHeight);
    }
@@ -964,8 +908,7 @@ public class SpecDisplay extends JComponent {
       }
    }
 
-   private void drawCallout(Graphics gr, int x, int y, int w, int h, int dx,
-         int dy) {
+   private void drawCallout(Graphics gr, int x, int y, int w, int h, int dx, int dy) {
       gr.setColor(makeTransparent(mPlotBackColor, TRANSPARENCY));
       gr.fillRoundRect(x, y, w, h, dx, dy);
       gr.setColor(makeTransparent(mMajorGridColor, TRANSPARENCY));
@@ -975,8 +918,7 @@ public class SpecDisplay extends JComponent {
    protected void paintComponent(Graphics g, boolean forPng) {
       int t0, l0, w0, h0;
       final Graphics2D dup = (Graphics2D) g;
-      dup.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON);
+      dup.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       final Color oldColor = dup.getColor();
       final FontMetrics fm = dup.getFontMetrics();
       dup.setColor(mPlotBackColor);
@@ -988,8 +930,7 @@ public class SpecDisplay extends JComponent {
       final int canvasWidth = scale * getWidth();
       final int canvasHeight = scale * getHeight();
       if (showVAxis) {
-         final int gutterWidth = (2 * scale)
-               + fm.stringWidth(formatAxisLabel(mVMax) + "=iXX");
+         final int gutterWidth = (2 * scale) + fm.stringWidth(formatAxisLabel(mVMax) + "=iXX");
          l0 = canvasWidth > (gutterWidth + 4) ? gutterWidth + 2 : 0;
          w0 = (canvasWidth - (l0 + 4)) > 40 ? canvasWidth - (l0 + 4) : 40;
       } else {
@@ -998,9 +939,7 @@ public class SpecDisplay extends JComponent {
       }
       t0 = 2;
       if (mShowHAxisLabels)
-         h0 = (canvasHeight - (t0 + 4)) > (2 * fm.getHeight())
-               ? canvasHeight - (t0 + (2 * fm.getHeight()))
-               : fm.getHeight();
+         h0 = (canvasHeight - (t0 + 4)) > (2 * fm.getHeight()) ? canvasHeight - (t0 + (2 * fm.getHeight())) : fm.getHeight();
       else
          h0 = canvasHeight - 5;
       mPlotRect.setBounds(l0, t0, w0, h0);
@@ -1020,32 +959,24 @@ public class SpecDisplay extends JComponent {
       final int MIN_GRID_SCALE = 5;
       {
          if (mShowHAxisLabels) {
-            final double step = optimalStepSize(mEMin, mEMax,
-                  fm.stringWidth("XXX"), mPlotRect.width) / MIN_GRID_SCALE;
+            final double step = optimalStepSize(mEMin, mEMax, fm.stringWidth("XXX"), mPlotRect.width) / MIN_GRID_SCALE;
             final double min = ((int) ((mEMin / step) + 0.999)) * step;
             final double max = ((int) (mEMax / step)) * step;
             final NumberFormat fmt = step <= MIN_GRID_SCALE * 4.0
                   ? new HalfUpFormat("0.00")
-                  : (step <= MIN_GRID_SCALE * 40.0
-                        ? new HalfUpFormat("0.0")
-                        : new HalfUpFormat("0"));
-            for (double m = min; m <= (max + 0.001); m += MIN_GRID_SCALE
-                  * step) {
+                  : (step <= MIN_GRID_SCALE * 40.0 ? new HalfUpFormat("0.0") : new HalfUpFormat("0"));
+            for (double m = min; m <= (max + 0.001); m += MIN_GRID_SCALE * step) {
                final String str = fmt.format(0.001 * m);
-               final int pos = (int) (l0
-                     + ((w0 * (m - mEMin)) / (mEMax - mEMin)));
+               final int pos = (int) (l0 + ((w0 * (m - mEMin)) / (mEMax - mEMin)));
                dup.drawLine(pos, (t0 + h0) - scale, pos, t0 + h0 + (5 * scale));
-               dup.drawString(str, pos - (fm.stringWidth(str) / 2),
-                     canvasHeight - fm.getHeight());
+               dup.drawString(str, pos - (fm.stringWidth(str) / 2), canvasHeight - fm.getHeight());
             }
-            dup.drawString(ENERGY_AXIS_LABEL_KEV, (int) (mPlotRect.x + (0.5
-                  * (mPlotRect.width - fm.stringWidth(ENERGY_AXIS_LABEL_KEV)))),
+            dup.drawString(ENERGY_AXIS_LABEL_KEV, (int) (mPlotRect.x + (0.5 * (mPlotRect.width - fm.stringWidth(ENERGY_AXIS_LABEL_KEV)))),
                   canvasHeight - fm.getDescent());
             dup.setColor(mMinorGridColor);
             int i = 0;
             for (double m = min; m < (max + 0.001); m += step, ++i) {
-               final int pos = (int) (l0
-                     + ((w0 * (m - mEMin)) / (mEMax - mEMin)));
+               final int pos = (int) (l0 + ((w0 * (m - mEMin)) / (mEMax - mEMin)));
                if ((pos > l0) && (pos < (l0 + w0))) {
                   if ((i % MIN_GRID_SCALE) == 0)
                      dup.setColor(mMajorGridColor);
@@ -1059,8 +990,7 @@ public class SpecDisplay extends JComponent {
       // Draw the cross lines
       switch (mVAxisType) {
          case LINEAR : { // Draw the labels
-            final double step = optimalStepSize(mVMin, mVMax, fm.getHeight(),
-                  mPlotRect.height) / MIN_GRID_SCALE;
+            final double step = optimalStepSize(mVMin, mVMax, fm.getHeight(), mPlotRect.height) / MIN_GRID_SCALE;
             final double min = ((int) (mVMin / step)) * step;
             final double max = ((int) (mVMax / step)) * step;
             dup.setColor(mMinorGridColor);
@@ -1068,16 +998,14 @@ public class SpecDisplay extends JComponent {
             for (double m = min; m <= (max + 0.001); m += step, ++i) {
                if ((i % MIN_GRID_SCALE) == 0)
                   dup.setColor(mMajorGridColor);
-               final int pos = (int) Math.round(
-                     t0 + (h0 * (1.0 - ((m - mVMin) / (mVMax - mVMin)))));
+               final int pos = (int) Math.round(t0 + (h0 * (1.0 - ((m - mVMin) / (mVMax - mVMin)))));
                if ((pos > t0) && (pos < (t0 + h0)))
                   dup.drawLine(l0 + scale, pos, (l0 + w0) - scale, pos);
                if ((i % MIN_GRID_SCALE) == 0) {
                   if (showVAxis) {
                      dup.setColor(alc);
                      final String str = formatAxisLabel(m);
-                     dup.drawString(str, l0 - fm.stringWidth(str) - (6 * scale),
-                           pos + (fm.getHeight() / 3));
+                     dup.drawString(str, l0 - fm.stringWidth(str) - (6 * scale), pos + (fm.getHeight() / 3));
                      dup.drawLine(l0 + scale, pos, l0 - (4 * scale), pos);
                   }
                   dup.setColor(mMinorGridColor);
@@ -1086,8 +1014,7 @@ public class SpecDisplay extends JComponent {
             }
             dup.setColor(alc);
             if (showVAxis) {
-               final int x = fm.getHeight(), y = (int) (mPlotRect.y
-                     + (0.5 * (mPlotRect.height + fm.stringWidth(mScaleText))));
+               final int x = fm.getHeight(), y = (int) (mPlotRect.y + (0.5 * (mPlotRect.height + fm.stringWidth(mScaleText))));
                final AffineTransform oldAf = dup.getTransform();
                dup.rotate(-0.5 * Math.PI, x, y);
                dup.drawString(mScaleText, x, y);
@@ -1099,23 +1026,20 @@ public class SpecDisplay extends JComponent {
             // Every power of 10.0
             dup.setColor(mMinorGridColor);
             final double vMax = (mVMax > LOG10_MIN ? mVMax : LOG10_MIN);
-            final double vMin = Math.pow(10.0,
-                  (int) Math.max(Math.log10(vMax / LOG10_RANGE), 0.0));
+            final double vMin = Math.pow(10.0, (int) Math.max(Math.log10(vMax / LOG10_RANGE), 0.0));
             for (double v = vMin; v < vMax; v *= 10.0)
                for (int j = 1; (j < 10) && ((j * v) < vMax); ++j) {
                   if (j == 1)
                      dup.setColor(mMajorGridColor);
                   final int a = (mPlotRect.y + mPlotRect.height)
-                        - (int) ((Math.log10((j * v) / vMin) * mPlotRect.height)
-                              / (Math.log10(vMax / vMin)));
+                        - (int) ((Math.log10((j * v) / vMin) * mPlotRect.height) / (Math.log10(vMax / vMin)));
                   if ((a > t0) && (a < (t0 + h0)))
                      dup.drawLine(l0, a, l0 + w0, a);
                   if (j == 1) {
                      if (showVAxis) {
                         dup.setColor(mAxisColor);
                         final String str = formatAxisLabel(v);
-                        dup.drawString(str, l0 - fm.stringWidth(str) - 4,
-                              a + (fm.getHeight() / 3));
+                        dup.drawString(str, l0 - fm.stringWidth(str) - 4, a + (fm.getHeight() / 3));
                      }
                      dup.setColor(mMinorGridColor);
                   }
@@ -1123,8 +1047,7 @@ public class SpecDisplay extends JComponent {
             dup.setColor(mAxisColor);
             if (showVAxis) {
                String vText = "Log(" + mScaleText + ")";
-               final int x = fm.getHeight(), y = (int) (mPlotRect.y
-                     + (0.5 * (mPlotRect.height + fm.stringWidth(vText))));
+               final int x = fm.getHeight(), y = (int) (mPlotRect.y + (0.5 * (mPlotRect.height + fm.stringWidth(vText))));
                final AffineTransform oldAf = dup.getTransform();
                dup.rotate(-0.5 * Math.PI, x, y);
                dup.drawString(vText, x, y);
@@ -1139,16 +1062,13 @@ public class SpecDisplay extends JComponent {
             double v = 1.0;
             while (v < vMax) {
                if ((v > vMin) && (v > (vMax / 32.0))) {
-                  final int a = (mPlotRect.y + mPlotRect.height)
-                        - (int) (((v - vMin) * mPlotRect.height)
-                              / (vMax - vMin));
+                  final int a = (mPlotRect.y + mPlotRect.height) - (int) (((v - vMin) * mPlotRect.height) / (vMax - vMin));
                   if ((a > t0) && (a < (t0 + h0)))
                      dup.drawLine(l0, a, l0 + w0, a);
                   if (showVAxis && (v > (vMax / 8.0))) {
                      dup.setColor(mAxisColor);
                      final String str = formatAxisLabel(v * v);
-                     dup.drawString(str, l0 - fm.stringWidth(str) - 4,
-                           a + (fm.getHeight() / 3));
+                     dup.drawString(str, l0 - fm.stringWidth(str) - 4, a + (fm.getHeight() / 3));
                      dup.setColor(mMinorGridColor);
                   }
                }
@@ -1157,8 +1077,7 @@ public class SpecDisplay extends JComponent {
             dup.setColor(mAxisColor);
             if (showVAxis) {
                String vText = "Sqrt(" + mScaleText + ")";
-               final int x = fm.getHeight(), y = (int) (mPlotRect.y
-                     + (0.5 * (mPlotRect.height + fm.stringWidth(vText))));
+               final int x = fm.getHeight(), y = (int) (mPlotRect.y + (0.5 * (mPlotRect.height + fm.stringWidth(vText))));
                final AffineTransform oldAf = dup.getTransform();
                dup.rotate(-0.5 * Math.PI, x, y);
                dup.drawString(vText, x, y);
@@ -1170,10 +1089,7 @@ public class SpecDisplay extends JComponent {
       dup.setColor(mBackTextColor);
       // Draw pixel dimensions on screen but not PNG
       if (!forPng)
-         dup.drawString(
-               Integer.toString(getWidth()) + " \u00D7 "
-                     + Integer.toString(getHeight()),
-               l0 + fm.charWidth('j'), t0 + fm.getHeight());
+         dup.drawString(Integer.toString(getWidth()) + " \u00D7 " + Integer.toString(getHeight()), l0 + fm.charWidth('j'), t0 + fm.getHeight());
       // Set up a clipping rectangle to simplify life...
       dup.clipRect(l0, t0, w0, h0);
       // Draw the selected regions
@@ -1200,28 +1116,22 @@ public class SpecDisplay extends JComponent {
          final int xOff = (l0 + w0) - (maxWidth + (2 * dx) + (2 * scale));
          final int ww = maxWidth + (2 * scale) + ((3 * dx) / 2);
          final int yOff = t0 + (h / 2);
-         final int hMax = Math.min((h * data.size()) + (h / 2),
-               (((h0 - h) / h) * h) + (h / 2));
-         drawCallout(dup, xOff - (dx / 2), yOff - (h / 4), ww, hMax, 5 * scale,
-               5 * scale);
+         final int hMax = Math.min((h * data.size()) + (h / 2), (((h0 - h) / h) * h) + (h / 2));
+         drawCallout(dup, xOff - (dx / 2), yOff - (h / 4), ww, hMax, 5 * scale, 5 * scale);
          pictPos = yOff + hMax + (h / 2);
          dup.setClip(xOff, yOff, ww - (dx / 2) - (2 * scale), hMax - (h / 4));
          for (final ISpectrumData spec : data) {
             final DisplayProperties dp = mProperties.get(spec);
             if (dp != null) {
-               if (((yOff + (h * (line + 1))) > (hMax - (h / 4)))
-                     && ((data.size() - line) > 1)) {
+               if (((yOff + (h * (line + 1))) > (hMax - (h / 4))) && ((data.size() - line) > 1)) {
                   dup.setColor(mAxisColor);
-                  dup.drawString("+ " + (data.size() - line) + " more...", xOff,
-                        yOff + (h * (line + 1)));
+                  dup.drawString("+ " + (data.size() - line) + " more...", xOff, yOff + (h * (line + 1)));
                   break;
                } else {
                   dup.setColor(mDataColor[dp.mColorIndex]);
-                  dup.fillRect(xOff, yOff + (h * line) + (3 * scale),
-                        h - (2 * scale), h - (2 * scale));
+                  dup.fillRect(xOff, yOff + (h * line) + (3 * scale), h - (2 * scale), h - (2 * scale));
                   dup.setColor(mAxisColor);
-                  dup.drawString(spec.toString(), xOff + h,
-                        yOff + (h * (line + 1)));
+                  dup.drawString(spec.toString(), xOff + h, yOff + (h * (line + 1)));
                }
                ++line;
             }
@@ -1234,22 +1144,16 @@ public class SpecDisplay extends JComponent {
             int width = 0;
             for (final String ll : lines) {
                final String[] cols = ll.split("\t");
-               final int w = (TAB_WIDTH * dx * (cols.length - 1))
-                     + fm.stringWidth(cols[cols.length - 1]);
+               final int w = (TAB_WIDTH * dx * (cols.length - 1)) + fm.stringWidth(cols[cols.length - 1]);
                if (w > width)
                   width = w;
             }
-            final int xOffAnnot = Math.min(xOff - (width + (2 * dx)),
-                  l0 + (w0 / 2));
-            final int hMaxAnnot = Math.min((h * lines.length) + (h / 2),
-                  (((h0 - h) / h) * h) + (h / 2));
-            dup.setClip(Math.max(l0, xOffAnnot - (dx / 2)), yOff - (h / 4),
-                  width + dx + 1, hMaxAnnot + 1);
-            drawCallout(dup, xOffAnnot - (dx / 2), yOff - (h / 4), width + dx,
-                  hMaxAnnot, 5 * scale, 5 * scale);
+            final int xOffAnnot = Math.min(xOff - (width + (2 * dx)), l0 + (w0 / 2));
+            final int hMaxAnnot = Math.min((h * lines.length) + (h / 2), (((h0 - h) / h) * h) + (h / 2));
+            dup.setClip(Math.max(l0, xOffAnnot - (dx / 2)), yOff - (h / 4), width + dx + 1, hMaxAnnot + 1);
+            drawCallout(dup, xOffAnnot - (dx / 2), yOff - (h / 4), width + dx, hMaxAnnot, 5 * scale, 5 * scale);
             dup.setColor(mAxisColor);
-            dup.setClip(Math.max(l0, xOffAnnot), yOff, width,
-                  hMaxAnnot - (h / 4));
+            dup.setClip(Math.max(l0, xOffAnnot), yOff, width, hMaxAnnot - (h / 4));
             for (final String ll : lines) {
                final String[] cols = ll.split("\t");
                int xx = xOffAnnot;
@@ -1270,20 +1174,16 @@ public class SpecDisplay extends JComponent {
             final ISpectrumData spec = data.get(j);
             if (spec.getProperties().isDefined(SpectrumProperties.MicroImage))
                try {
-                  final Image img = spec.getProperties()
-                        .getImageProperty(SpectrumProperties.MicroImage);
+                  final Image img = spec.getProperties().getImageProperty(SpectrumProperties.MicroImage);
                   if (img instanceof BufferedImage) {
                      final BufferedImage bi = (BufferedImage) img;
                      int height = bi.getHeight() * scale;
                      int width = bi.getWidth() * scale;
-                     while ((height + (scale * 20)) > (canvasHeight
-                           - pictPos)) {
+                     while ((height + (scale * 20)) > (canvasHeight - pictPos)) {
                         height /= 2;
                         width /= 2;
                      }
-                     ScaledImage.draw(bi, dup,
-                           (l0 + w0) - (width + (scale * 8)), pictPos, width,
-                           height);
+                     ScaledImage.draw(bi, dup, (l0 + w0) - (width + (scale * 8)), pictPos, width, height);
                   }
                } catch (final EPQException e) {
                   // Ignore it...
@@ -1317,11 +1217,9 @@ public class SpecDisplay extends JComponent {
       return v;
    }
 
-   protected void drawSpectrum(Graphics gr, ISpectrumData sd, double scale,
-         int idx, boolean forSvg) {
+   protected void drawSpectrum(Graphics gr, ISpectrumData sd, double scale, int idx, boolean forSvg) {
       final double channelWidth = sd.getChannelWidth();
-      final double chPerPixel = (mEMax - mEMin)
-            / (channelWidth * mPlotRect.width);
+      final double chPerPixel = (mEMax - mEMin) / (channelWidth * mPlotRect.width);
       double vMax = mVMax, vMin = mVMin;
       switch (mVAxisType) {
          case LOG : {
@@ -1339,10 +1237,8 @@ public class SpecDisplay extends JComponent {
       }
       final int off = idx * mStaggerOffset;
       if (forSvg || (chPerPixel < 1.0)) { // Stair steps
-         final int base_ch = SpectrumUtils.bound(sd,
-               SpectrumUtils.channelForEnergy(sd, mEMin));
-         final int top_ch = SpectrumUtils.bound(sd,
-               SpectrumUtils.channelForEnergy(sd, mEMax) + 1);
+         final int base_ch = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, mEMin));
+         final int top_ch = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, mEMax) + 1);
          final int[][] pts = new int[2][(2 * (top_ch - base_ch)) + 2];
          int ptIdx = 0;
          final int yOrigin = (mPlotRect.y + mPlotRect.height) - off;
@@ -1358,30 +1254,25 @@ public class SpecDisplay extends JComponent {
                case LINEAR :
                   break;
             }
-            final int yOff = (int) (((cx - vMin) * mPlotRect.height)
-                  / (vMax - vMin));
-            final int xMin = off + xx(
-                  Math.min(SpectrumUtils.minEnergyForChannel(sd, ch), mEMax));
+            final int yOff = (int) (((cx - vMin) * mPlotRect.height) / (vMax - vMin));
+            final int xMin = off + xx(Math.min(SpectrumUtils.minEnergyForChannel(sd, ch), mEMax));
             pts[0][ptIdx] = xMin;
             pts[1][ptIdx] = Math.max(yOrigin - yOff, -100);
             ++ptIdx;
-            final int xMax = off + xx(
-                  Math.min(SpectrumUtils.maxEnergyForChannel(sd, ch), mEMax));
+            final int xMax = off + xx(Math.min(SpectrumUtils.maxEnergyForChannel(sd, ch), mEMax));
             pts[0][ptIdx] = xMax;
             pts[1][ptIdx] = Math.max(yOrigin - yOff, -100);
             ++ptIdx;
             // Set mMaxHeight[i] to the pixel coordinate of the highest spectrum
             // data position of all displayed spectra
-            for (int i = Math.max(0, xMin - mPlotRect.x); i < Math
-                  .min(mMaxHeight.length, xMax - mPlotRect.x); ++i)
+            for (int i = Math.max(0, xMin - mPlotRect.x); i < Math.min(mMaxHeight.length, xMax - mPlotRect.x); ++i)
                mMaxHeight[i] = Math.min(yOrigin - yOff, mMaxHeight[i]);
          }
          if (ptIdx > 0)
             gr.drawPolyline(pts[0], pts[1], ptIdx);
       } else { // Connected vertical bars
          double base_ch = (mEMin - sd.getZeroOffset()) / channelWidth + 1;
-         final int top_ch = SpectrumUtils.bound(sd,
-               SpectrumUtils.channelForEnergy(sd, mEMax));
+         final int top_ch = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, mEMax));
          double low = Double.MAX_VALUE;
          double high = 0.0;
          for (int i = 0; i < mPlotRect.width; ++i) {
@@ -1398,9 +1289,7 @@ public class SpecDisplay extends JComponent {
                double datum = scale * sd.getCounts(j);
                switch (mVAxisType) {
                   case LOG :
-                     datum = datum > 0.0
-                           ? Math.max(Math.log10(datum), vMin)
-                           : vMin;
+                     datum = datum > 0.0 ? Math.max(Math.log10(datum), vMin) : vMin;
                      break;
                   case SQRT :
                      datum = datum > 0.0 ? Math.sqrt(datum) : 0.0;
@@ -1416,19 +1305,15 @@ public class SpecDisplay extends JComponent {
             base_ch += chPerPixel;
             {
                // Don't draw anything if out of range...
-               final int highPos = (int) ((mPlotRect.y + mPlotRect.height)
-                     - (((high - vMin) * mPlotRect.height) / (vMax - vMin)));
+               final int highPos = (int) ((mPlotRect.y + mPlotRect.height) - (((high - vMin) * mPlotRect.height) / (vMax - vMin)));
                if ((low < vMax) && (high > vMin)) {
                   if (high > vMax)
                      high = vMax;
                   if (low < vMin)
                      low = vMin;
                   gr.drawLine(i + mPlotRect.x + off,
-                        (int) ((mPlotRect.y + mPlotRect.height)
-                              - (((low - vMin) * mPlotRect.height)
-                                    / (vMax - vMin)))
-                              - off,
-                        i + mPlotRect.x + off, highPos - off);
+                        (int) ((mPlotRect.y + mPlotRect.height) - (((low - vMin) * mPlotRect.height) / (vMax - vMin))) - off, i + mPlotRect.x + off,
+                        highPos - off);
                }
                mMaxHeight[i] = Math.min(highPos, mMaxHeight[i]);
             }
@@ -1454,11 +1339,8 @@ public class SpecDisplay extends JComponent {
       for (final Object element : data) {
          final ISpectrumData sd = (ISpectrumData) element;
          final double scale = mProperties.get(sd).mScale;
-         final int minCh = Math.max(0,
-               SpectrumUtils.channelForEnergy(sd, 100.0));
-         final double scMax = sd.getCounts(
-               SpectrumUtils.maxChannel(sd, minCh, sd.getChannelCount()))
-               * scale;
+         final int minCh = Math.max(0, SpectrumUtils.channelForEnergy(sd, 100.0));
+         final double scMax = sd.getCounts(SpectrumUtils.maxChannel(sd, minCh, sd.getChannelCount())) * scale;
          if (scMax > max)
             max = scMax;
       }
@@ -1492,8 +1374,7 @@ public class SpecDisplay extends JComponent {
       final List<ISpectrumData> data = getData();
       for (int i = 0; i < data.size(); ++i) {
          final ISpectrumData sd = data.get(i);
-         final double val = SpectrumUtils.minEnergyForChannel(sd,
-               SpectrumUtils.largestNonZeroChannel(sd));
+         final double val = SpectrumUtils.minEnergyForChannel(sd, SpectrumUtils.largestNonZeroChannel(sd));
          if (val > max)
             max = val;
          if (sd.getZeroOffset() < min)
@@ -1510,8 +1391,7 @@ public class SpecDisplay extends JComponent {
       // Pick a pretty horizontal max
       final double scale = 1000.0;
       max = scale * Math.ceil(max / scale);
-      setHRange(min + ((max - min) * (minPercent / 100.0)),
-            min + ((max - min) * (maxPercent / 100.0)));
+      setHRange(min + ((max - min) * (minPercent / 100.0)), min + ((max - min) * (maxPercent / 100.0)));
    }
 
    private void startShift(int x) {
@@ -1539,8 +1419,7 @@ public class SpecDisplay extends JComponent {
    private void performShift(int x) {
       assert mActionMode == ActionMode.Shift;
       mShiftEnd = x;
-      final double delta = (((mShiftStart - mShiftEnd)
-            * (mShiftHMax - mShiftHMin)) / mPlotRect.width);
+      final double delta = (((mShiftStart - mShiftEnd) * (mShiftHMax - mShiftHMin)) / mPlotRect.width);
       mEMin = mShiftHMin + delta;
       mEMax = mShiftHMax + delta;
       repaint();
@@ -1551,8 +1430,7 @@ public class SpecDisplay extends JComponent {
       mActionMode = ActionMode.Drag;
       mDragStart = Integer.MIN_VALUE;
       mDragEnd = Integer.MIN_VALUE;
-      if ((x >= mPlotRect.x) && (x <= (mPlotRect.x + mPlotRect.width))
-            && mDragEnabled)
+      if ((x >= mPlotRect.x) && (x <= (mPlotRect.x + mPlotRect.width)) && mDragEnabled)
          mDragStart = x;
    }
 
@@ -1566,14 +1444,11 @@ public class SpecDisplay extends JComponent {
    private void endDrag(int x) {
       assert mActionMode == ActionMode.Drag;
       mActionMode = ActionMode.None;
-      if ((mDragStart != Integer.MIN_VALUE)
-            && (Math.abs(mDragStart - x) >= MIN_DRAG_DELTA)) {
+      if ((mDragStart != Integer.MIN_VALUE) && (Math.abs(mDragStart - x) >= MIN_DRAG_DELTA)) {
          if (mDragEnd != Integer.MIN_VALUE) {
             final Graphics gr = getGraphics().create();
             gr.setXORMode(Color.green);
-            gr.fillRect(mDragStart < mDragEnd ? mDragStart : mDragEnd,
-                  mPlotRect.y, Math.abs(mDragEnd - mDragStart),
-                  mPlotRect.height);
+            gr.fillRect(mDragStart < mDragEnd ? mDragStart : mDragEnd, mPlotRect.y, Math.abs(mDragEnd - mDragStart), mPlotRect.height);
 
          }
          mDragEnd = x;
@@ -1583,10 +1458,8 @@ public class SpecDisplay extends JComponent {
             mDragEnd = tmp;
          }
          {
-            double min = mEMin + (((mDragStart - mPlotRect.x) * (mEMax - mEMin))
-                  / mPlotRect.width);
-            double max = mEMin + (((mDragEnd - mPlotRect.x) * (mEMax - mEMin))
-                  / mPlotRect.width);
+            double min = mEMin + (((mDragStart - mPlotRect.x) * (mEMax - mEMin)) / mPlotRect.width);
+            double max = mEMin + (((mDragEnd - mPlotRect.x) * (mEMax - mEMin)) / mPlotRect.width);
             if (min < mEMin)
                min = mEMin;
             if (max > mEMax)
@@ -1594,14 +1467,11 @@ public class SpecDisplay extends JComponent {
             addRegion(min, max);
             final NumberFormat nf = NumberFormat.getInstance();
             nf.setMaximumFractionDigits(0);
-            String status = "E[low]  = " + nf.format(min) + " eV\nE[high] = "
-                  + nf.format(max) + " eV\nDelta   = " + nf.format(max - min)
-                  + " eV";
+            String status = "E[low]  = " + nf.format(min) + " eV\nE[high] = " + nf.format(max) + " eV\nDelta   = " + nf.format(max - min) + " eV";
             final List<ISpectrumData> data = getData();
             for (final ISpectrumData spec : data) {
-               final long cx = Math.round(SpectrumUtils.sumCounts(spec,
-                     SpectrumUtils.channelForEnergy(spec, min),
-                     SpectrumUtils.channelForEnergy(spec, max) + 1));
+               final long cx = Math
+                     .round(SpectrumUtils.sumCounts(spec, SpectrumUtils.channelForEnergy(spec, min), SpectrumUtils.channelForEnergy(spec, max) + 1));
                status += "\n" + Long.toString(cx) + "\t" + spec.toString();
             }
             setTemporaryAnnotation(status);
@@ -1633,18 +1503,13 @@ public class SpecDisplay extends JComponent {
 
    private void performDrag(int x) {
       assert mActionMode == ActionMode.Drag;
-      if ((mDragStart != Integer.MIN_VALUE) && (x != mDragStart)
-            && (x != mDragEnd)) {
+      if ((mDragStart != Integer.MIN_VALUE) && (x != mDragStart) && (x != mDragEnd)) {
          final Graphics gr = getGraphics().create();
          gr.setXORMode(Color.yellow);
          if (mDragEnd != Integer.MIN_VALUE)
-            gr.fillRect(mDragStart < mDragEnd ? mDragStart : mDragEnd,
-                  mPlotRect.y, Math.abs(mDragEnd - mDragStart),
-                  mPlotRect.height);
-         mDragEnd = Math2.bound(x, mPlotRect.x,
-               mPlotRect.x + mPlotRect.width + 1);
-         gr.fillRect(mDragStart < mDragEnd ? mDragStart : mDragEnd, mPlotRect.y,
-               Math.abs(mDragEnd - mDragStart), mPlotRect.height);
+            gr.fillRect(mDragStart < mDragEnd ? mDragStart : mDragEnd, mPlotRect.y, Math.abs(mDragEnd - mDragStart), mPlotRect.height);
+         mDragEnd = Math2.bound(x, mPlotRect.x, mPlotRect.x + mPlotRect.width + 1);
+         gr.fillRect(mDragStart < mDragEnd ? mDragStart : mDragEnd, mPlotRect.y, Math.abs(mDragEnd - mDragStart), mPlotRect.height);
       }
    }
 
@@ -1654,13 +1519,10 @@ public class SpecDisplay extends JComponent {
          final Graphics gr = getGraphics().create();
          gr.setXORMode(CURSOR_COLOR);
          if (mCursorPosition != Integer.MIN_VALUE)
-            gr.drawLine(mCursorPosition, mPlotRect.y, mCursorPosition,
-                  mPlotRect.y + mPlotRect.height);
+            gr.drawLine(mCursorPosition, mPlotRect.y, mCursorPosition, mPlotRect.y + mPlotRect.height);
          mCursorPosition = x;
          // Collect spectrum info
-         final double e = mEMin
-               + (((mCursorPosition - mPlotRect.x) * (mEMax - mEMin))
-                     / mPlotRect.width);
+         final double e = mEMin + (((mCursorPosition - mPlotRect.x) * (mEMax - mEMin)) / mPlotRect.width);
          final NumberFormat nf = NumberFormat.getInstance();
          final StringBuffer sb = new StringBuffer();
          nf.setMaximumFractionDigits(0);
@@ -1677,16 +1539,14 @@ public class SpecDisplay extends JComponent {
             }
          }
          setTemporaryAnnotation(sb.toString());
-         gr.drawLine(mCursorPosition, mPlotRect.y, mCursorPosition,
-               mPlotRect.y + mPlotRect.height);
+         gr.drawLine(mCursorPosition, mPlotRect.y, mCursorPosition, mPlotRect.y + mPlotRect.height);
       }
    }
 
    private void drawCursor(Graphics gr) {
       if (mCursorPosition != Integer.MIN_VALUE) {
          gr.setXORMode(CURSOR_COLOR);
-         gr.drawLine(mCursorPosition, mPlotRect.y, mCursorPosition,
-               mPlotRect.y + mPlotRect.height);
+         gr.drawLine(mCursorPosition, mPlotRect.y, mCursorPosition, mPlotRect.y + mPlotRect.height);
       }
    }
 
@@ -1698,8 +1558,7 @@ public class SpecDisplay extends JComponent {
    }
 
    private void doPopup(int x, int y) {
-      final double e = mEMin
-            + (((x - mPlotRect.x) * (mEMax - mEMin)) / mPlotRect.width);
+      final double e = mEMin + (((x - mPlotRect.x) * (mEMax - mEMin)) / mPlotRect.width);
       if (mRegions.inRegion(e))
          doRegionPopup(x, y);
       else
@@ -1755,8 +1614,7 @@ public class SpecDisplay extends JComponent {
     */
    public void zoomInBy(double d) {
       mZoom /= d;
-      Preferences.userNodeForPackage(SpecDisplay.class).putDouble("Zoom",
-            mZoom);
+      Preferences.userNodeForPackage(SpecDisplay.class).putDouble("Zoom", mZoom);
       mVMax = ((mVMax - mVMin) / d) + mVMin;
       repaint();
    }
@@ -1767,8 +1625,7 @@ public class SpecDisplay extends JComponent {
       final List<ISpectrumData> data = getData();
       for (final ISpectrumData spec : data) {
          final double sc = mProperties.get(spec).mScale;
-         gpf.addSpectrum(sc == 1.0 ? spec : SpectrumUtils.scale(sc, spec),
-               spec.toString());
+         gpf.addSpectrum(sc == 1.0 ? spec : SpectrumUtils.scale(sc, spec), spec.toString());
          showAxisScale &= (sc == 1.0);
       }
       gpf.setLabelYAxis(showAxisScale);
@@ -1789,10 +1646,8 @@ public class SpecDisplay extends JComponent {
     */
    public JPopupMenu getSimpleMenu() {
       final JPopupMenu pum = new JPopupMenu();
-      pum.add(new JMenuItem_Axis(jButtonGroup_AxisSimple,
-            SpecDisplay.AXIS_MODE.LINEAR));
-      pum.add(new JMenuItem_Axis(jButtonGroup_AxisSimple,
-            SpecDisplay.AXIS_MODE.LOG));
+      pum.add(new JMenuItem_Axis(jButtonGroup_AxisSimple, SpecDisplay.AXIS_MODE.LINEAR));
+      pum.add(new JMenuItem_Axis(jButtonGroup_AxisSimple, SpecDisplay.AXIS_MODE.LOG));
       pum.add(new JMenuItem_Zoom(0.0));
       pum.add(new JMenuItem_Zoom(1.0));
       return pum;
@@ -1821,8 +1676,7 @@ public class SpecDisplay extends JComponent {
                setAxisScalingMode(mMode);
                if (mGroup != null)
                   mGroup.setSelected(JMenuItem_Axis.this.getModel(), true);
-               Preferences.userNodeForPackage(SpecDisplay.class).put("Ordinate",
-                     mMode.name());
+               Preferences.userNodeForPackage(SpecDisplay.class).put("Ordinate", mMode.name());
             }
          });
       }
@@ -1835,9 +1689,7 @@ public class SpecDisplay extends JComponent {
          return "Zoom to all";
       else {
          final NumberFormat nf = new HalfUpFormat("0.#");
-         return factor > 1.0
-               ? "Zoom in " + nf.format(factor) + " \u00D7"
-               : "Zoom out " + nf.format(1.0 / factor) + " \u00D7";
+         return factor > 1.0 ? "Zoom in " + nf.format(factor) + " \u00D7" : "Zoom out " + nf.format(1.0 / factor) + " \u00D7";
       }
    }
 
@@ -1931,9 +1783,7 @@ public class SpecDisplay extends JComponent {
                if (mGroup != null)
                   mGroup.setSelected(JMenuItem_Compare.this.getModel(), true);
                Preferences.userNodeForPackage(SpecDisplay.class).put("Scaling",
-                     mMode != SCALING_MODE.REGION_INTEGRAL
-                           ? mMode.name()
-                           : SCALING_MODE.COUNTS.name());
+                     mMode != SCALING_MODE.REGION_INTEGRAL ? mMode.name() : SCALING_MODE.COUNTS.name());
             }
          });
       }
@@ -1982,8 +1832,7 @@ public class SpecDisplay extends JComponent {
                setKLMLabelType(mMode);
                if (mGroup != null)
                   mGroup.setSelected(JMenuItem_Label.this.getModel(), true);
-               Preferences.userNodeForPackage(SpecDisplay.class)
-                     .put(LabelType.class.getName(), mMode.name());
+               Preferences.userNodeForPackage(SpecDisplay.class).put(LabelType.class.getName(), mMode.name());
                setSelected(true);
             }
          });
@@ -2085,25 +1934,18 @@ public class SpecDisplay extends JComponent {
             public void actionPerformed(ActionEvent e) {
                try {
                   final String kBitmapDir = "Bitmap directory";
-                  final Preferences userPref = Preferences
-                        .userNodeForPackage(SpecDisplay.class);
-                  final JFileChooser jfc = new JFileChooser(userPref
-                        .get(kBitmapDir, System.getProperty("user.home")));
+                  final Preferences userPref = Preferences.userNodeForPackage(SpecDisplay.class);
+                  final JFileChooser jfc = new JFileChooser(userPref.get(kBitmapDir, System.getProperty("user.home")));
                   jfc.setAcceptAllFileFilterUsed(false);
-                  jfc.addChoosableFileFilter(new SimpleFileFilter(
-                        new String[]{"jpg",}, "JPEG Image"));
-                  jfc.addChoosableFileFilter(new SimpleFileFilter(
-                        new String[]{"bmp",}, "Windows Bitmap"));
-                  jfc.addChoosableFileFilter(new SimpleFileFilter(
-                        new String[]{"tif",}, "Tagged Image File Format"));
-                  final SimpleFileFilter png = new SimpleFileFilter(
-                        new String[]{"png",}, "Portable Network Graphic");
+                  jfc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"jpg",}, "JPEG Image"));
+                  jfc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"bmp",}, "Windows Bitmap"));
+                  jfc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"tif",}, "Tagged Image File Format"));
+                  final SimpleFileFilter png = new SimpleFileFilter(new String[]{"png",}, "Portable Network Graphic");
                   jfc.addChoosableFileFilter(png);
                   jfc.setFileFilter(png);
                   final int option = jfc.showSaveDialog(SpecDisplay.this);
                   if (option == JFileChooser.APPROVE_OPTION) {
-                     final SimpleFileFilter sff = (SimpleFileFilter) jfc
-                           .getFileFilter();
+                     final SimpleFileFilter sff = (SimpleFileFilter) jfc.getFileFilter();
                      File f = jfc.getSelectedFile();
                      final String ext = sff.getExtension(0);
                      if (!f.getName().endsWith(ext))
@@ -2112,8 +1954,7 @@ public class SpecDisplay extends JComponent {
                      userPref.put(kBitmapDir, f.getParent());
                   }
                } catch (final EPQException e1) {
-                  ErrorDialog.createErrorMessage(SpecDisplay.this,
-                        "Error saving file", e1);
+                  ErrorDialog.createErrorMessage(SpecDisplay.this, "Error saving file", e1);
                }
             }
          });
@@ -2129,12 +1970,9 @@ public class SpecDisplay extends JComponent {
                public void actionPerformed(ActionEvent e) {
                   try {
                      final String kBitmapDir = "Latex directory";
-                     final Preferences userPref = Preferences
-                           .userNodeForPackage(SpecDisplay.class);
-                     final JFileChooser jfc = new JFileChooser(userPref
-                           .get(kBitmapDir, System.getProperty("user.home")));
-                     jfc.addChoosableFileFilter(new SimpleFileFilter(
-                           new String[]{"tex",}, "LaTex file"));
+                     final Preferences userPref = Preferences.userNodeForPackage(SpecDisplay.class);
+                     final JFileChooser jfc = new JFileChooser(userPref.get(kBitmapDir, System.getProperty("user.home")));
+                     jfc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"tex",}, "LaTex file"));
                      jfc.setAcceptAllFileFilterUsed(false);
                      final int option = jfc.showSaveDialog(SpecDisplay.this);
                      if (option == JFileChooser.APPROVE_OPTION) {
@@ -2144,8 +1982,7 @@ public class SpecDisplay extends JComponent {
                         userPref.put(kBitmapDir, f.getParent());
                      }
                   } catch (final Exception e1) {
-                     ErrorDialog.createErrorMessage(SpecDisplay.this,
-                           "Error saving file", e1);
+                     ErrorDialog.createErrorMessage(SpecDisplay.this, "Error saving file", e1);
                   }
                }
             });
@@ -2160,29 +1997,21 @@ public class SpecDisplay extends JComponent {
                public void actionPerformed(ActionEvent e) {
                   try {
                      final String kBitmapDir = "PNG directory";
-                     final Preferences userPref = Preferences
-                           .userNodeForPackage(SpecDisplay.class);
-                     final JFileChooser jfc = new JFileChooser(userPref
-                           .get(kBitmapDir, System.getProperty("user.home")));
-                     jfc.addChoosableFileFilter(new SimpleFileFilter(
-                           new String[]{"eps",}, "Encapsulated Postscript"));
+                     final Preferences userPref = Preferences.userNodeForPackage(SpecDisplay.class);
+                     final JFileChooser jfc = new JFileChooser(userPref.get(kBitmapDir, System.getProperty("user.home")));
+                     jfc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"eps",}, "Encapsulated Postscript"));
                      jfc.setAcceptAllFileFilterUsed(false);
                      final int option = jfc.showSaveDialog(SpecDisplay.this);
                      if (option == JFileChooser.APPROVE_OPTION) {
                         final File f = jfc.getSelectedFile();
                         final GnuplotFile gpf = createGnuplot();
                         final NumberFormat df = new HalfUpFormat("0.00");
-                        final String yy = df
-                              .format((6.0 * SpecDisplay.this.getHeight())
-                                    / SpecDisplay.this.getWidth());
-                        gpf.generatePostscript(f,
-                              "eps enhanced color solid lw 2 size 6.0in, " + yy
-                                    + "in \"Times-Roman\" 16");
+                        final String yy = df.format((6.0 * SpecDisplay.this.getHeight()) / SpecDisplay.this.getWidth());
+                        gpf.generatePostscript(f, "eps enhanced color solid lw 2 size 6.0in, " + yy + "in \"Times-Roman\" 16");
                         userPref.put(kBitmapDir, f.getParent());
                      }
                   } catch (final Exception e1) {
-                     ErrorDialog.createErrorMessage(SpecDisplay.this,
-                           "Error saving file", e1);
+                     ErrorDialog.createErrorMessage(SpecDisplay.this, "Error saving file", e1);
                   }
                }
             });
@@ -2198,12 +2027,9 @@ public class SpecDisplay extends JComponent {
             public void actionPerformed(ActionEvent e) {
                try {
                   final String kBitmapDir = "GnuPlot directory";
-                  final Preferences userPref = Preferences
-                        .userNodeForPackage(SpecDisplay.class);
-                  final JFileChooser jfc = new JFileChooser(userPref
-                        .get(kBitmapDir, System.getProperty("user.home")));
-                  jfc.addChoosableFileFilter(new SimpleFileFilter(
-                        new String[]{"plt",}, "gnuPlot script"));
+                  final Preferences userPref = Preferences.userNodeForPackage(SpecDisplay.class);
+                  final JFileChooser jfc = new JFileChooser(userPref.get(kBitmapDir, System.getProperty("user.home")));
+                  jfc.addChoosableFileFilter(new SimpleFileFilter(new String[]{"plt",}, "gnuPlot script"));
                   jfc.setAcceptAllFileFilterUsed(false);
                   final int option = jfc.showSaveDialog(SpecDisplay.this);
                   if (option == JFileChooser.APPROVE_OPTION) {
@@ -2216,8 +2042,7 @@ public class SpecDisplay extends JComponent {
                      userPref.put(kBitmapDir, f.getParent());
                   }
                } catch (final Exception e1) {
-                  ErrorDialog.createErrorMessage(SpecDisplay.this,
-                        "Error saving file", e1);
+                  ErrorDialog.createErrorMessage(SpecDisplay.this, "Error saving file", e1);
                }
 
             }
@@ -2254,20 +2079,13 @@ public class SpecDisplay extends JComponent {
 
       final JMenu compareMenu = new JMenu("Spectrum Comparison");
 
-      compareMenu.add(
-            new JMenuItem_Compare(jButtonGroup_Scaling, SCALING_MODE.COUNTS));
-      compareMenu.add(new JMenuItem_Compare(jButtonGroup_Scaling,
-            SCALING_MODE.COUNTS_PER_NA_S));
-      compareMenu.add(new JMenuItem_Compare(jButtonGroup_Scaling,
-            SCALING_MODE.COUNTS_PER_NA_S_EV));
-      compareMenu.add(
-            new JMenuItem_Compare(jButtonGroup_Scaling, SCALING_MODE.MAX_PEAK));
-      compareMenu.add(
-            new JMenuItem_Compare(jButtonGroup_Scaling, SCALING_MODE.INTEGRAL));
-      compareMenu.add(new JMenuItem_Compare(jButtonGroup_Scaling,
-            SCALING_MODE.REGION_INTEGRAL));
-      setButtonGroupSelection(jButtonGroup_Scaling,
-            mCurrentScalingMode.toString());
+      compareMenu.add(new JMenuItem_Compare(jButtonGroup_Scaling, SCALING_MODE.COUNTS));
+      compareMenu.add(new JMenuItem_Compare(jButtonGroup_Scaling, SCALING_MODE.COUNTS_PER_NA_S));
+      compareMenu.add(new JMenuItem_Compare(jButtonGroup_Scaling, SCALING_MODE.COUNTS_PER_NA_S_EV));
+      compareMenu.add(new JMenuItem_Compare(jButtonGroup_Scaling, SCALING_MODE.MAX_PEAK));
+      compareMenu.add(new JMenuItem_Compare(jButtonGroup_Scaling, SCALING_MODE.INTEGRAL));
+      compareMenu.add(new JMenuItem_Compare(jButtonGroup_Scaling, SCALING_MODE.REGION_INTEGRAL));
+      setButtonGroupSelection(jButtonGroup_Scaling, mCurrentScalingMode.toString());
       compareMenu.addSeparator();
 
       {
@@ -2278,8 +2096,7 @@ public class SpecDisplay extends JComponent {
             public void itemStateChanged(ItemEvent e) {
                final JCheckBoxMenuItem cmi = (JCheckBoxMenuItem) e.getSource();
                setStaggerOffset(cmi.getState() ? 10 : 0);
-               Preferences.userNodeForPackage(SpecDisplay.class)
-                     .putInt("Stagger", getStaggerOffset());
+               Preferences.userNodeForPackage(SpecDisplay.class).putInt("Stagger", getStaggerOffset());
             }
          });
          compareMenu.add(cmi);
@@ -2288,20 +2105,15 @@ public class SpecDisplay extends JComponent {
 
       final JMenu klmMenu = new JMenu("KLM Labels");
       {
-         klmMenu
-               .add(new JMenuItem_Label(jButtonGroup_Label, LabelType.ELEMENT));
-         klmMenu.add(new JMenuItem_Label(jButtonGroup_Label,
-               LabelType.ELEMENT_ABBREV));
-         klmMenu.add(new JMenuItem_Label(jButtonGroup_Label,
-               LabelType.LARGE_ELEMENT));
-         klmMenu.add(
-               new JMenuItem_Label(jButtonGroup_Label, LabelType.SIEGBAHN));
+         klmMenu.add(new JMenuItem_Label(jButtonGroup_Label, LabelType.ELEMENT));
+         klmMenu.add(new JMenuItem_Label(jButtonGroup_Label, LabelType.ELEMENT_ABBREV));
+         klmMenu.add(new JMenuItem_Label(jButtonGroup_Label, LabelType.LARGE_ELEMENT));
+         klmMenu.add(new JMenuItem_Label(jButtonGroup_Label, LabelType.SIEGBAHN));
          klmMenu.add(new JMenuItem_Label(jButtonGroup_Label, LabelType.IUPAC));
          klmMenu.add(new JMenuItem_Label(jButtonGroup_Label, LabelType.FAMILY));
          klmMenu.add(new JMenuItem_Label(jButtonGroup_Label, LabelType.NONE));
          klmMenu.addSeparator();
-         final JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(
-               new LabelAllLinesAction());
+         final JCheckBoxMenuItem jCheckBoxMenuItem = new JCheckBoxMenuItem(new LabelAllLinesAction());
          jCheckBoxMenuItem.setSelected(mLabelThreshold < 0.01);
          klmMenu.add(jCheckBoxMenuItem);
       }
@@ -2316,8 +2128,7 @@ public class SpecDisplay extends JComponent {
          public void actionPerformed(ActionEvent e) {
             ROIDialog rd;
             Container c;
-            for (c = getParent(); !((c instanceof Dialog)
-                  || (c instanceof Frame)); c = c.getParent());
+            for (c = getParent(); !((c instanceof Dialog) || (c instanceof Frame)); c = c.getParent());
             if (c instanceof Dialog)
                rd = new ROIDialog((Dialog) c, "Create an ROI", true);
             else if (c instanceof Frame)
@@ -2330,13 +2141,10 @@ public class SpecDisplay extends JComponent {
                for (final ISpectrumData spec : data) {
                   if (spec.getZeroOffset() < min)
                      min = spec.getZeroOffset();
-                  if (SpectrumUtils.maxEnergyForChannel(spec,
-                        spec.getChannelCount()) > max)
-                     max = SpectrumUtils.maxEnergyForChannel(spec,
-                           spec.getChannelCount() - 1);
+                  if (SpectrumUtils.maxEnergyForChannel(spec, spec.getChannelCount()) > max)
+                     max = SpectrumUtils.maxEnergyForChannel(spec, spec.getChannelCount() - 1);
                }
-               rd.setLimits(1000.0 * Math.floor(min / 1000.0),
-                     1000.0 * Math.ceil(max / 1000.0));
+               rd.setLimits(1000.0 * Math.floor(min / 1000.0), 1000.0 * Math.ceil(max / 1000.0));
             }
             rd.setLocationRelativeTo(c);
             rd.setVisible(true);
@@ -2442,13 +2250,11 @@ public class SpecDisplay extends JComponent {
                      pu.add(new SumMenuItem(sum));
                }
             } else {
-               final JMenuItem none = new JMenuItem(
-                     "Please, select only one region.");
+               final JMenuItem none = new JMenuItem("Please, select only one region.");
                pu.add(none);
             }
             final Rectangle r = SpecDisplay.this.getBounds();
-            pu.show(SpecDisplay.this, r.x + (r.width / 4),
-                  r.y + (r.height / 2));
+            pu.show(SpecDisplay.this, r.x + (r.width / 4), r.y + (r.height / 2));
          }
 
       });
@@ -2508,13 +2314,11 @@ public class SpecDisplay extends JComponent {
          res += r.toTabbedString() + "\n" + header;
          final List<ISpectrumData> data = getData();
          for (final ISpectrumData sd : data) {
-            final double[] bci = SpectrumUtils.backgroundCorrectedIntegral(sd,
-                  r.getLowEnergy(), r.getHighEnergy() - ENERGY_EPS);
+            final double[] bci = SpectrumUtils.backgroundCorrectedIntegral(sd, r.getLowEnergy(), r.getHighEnergy() - ENERGY_EPS);
             final double err = bci[1];
             final double sum = bci[2];
             final double bkg = bci[3];
-            res += "\n" + nf.format(sum - bkg) + "\t" + nf.format(err) + "\t"
-                  + nf.format((sum - bkg) / err) + "\t" + sd.toString();
+            res += "\n" + nf.format(sum - bkg) + "\t" + nf.format(err) + "\t" + nf.format((sum - bkg) / err) + "\t" + sd.toString();
          }
       }
       setTemporaryAnnotation(res);
@@ -2531,14 +2335,10 @@ public class SpecDisplay extends JComponent {
          res += r.toTabbedString() + "\n" + header;
          final List<ISpectrumData> data = getData();
          for (final ISpectrumData sd : data) {
-            final int minCh = SpectrumUtils.channelForEnergy(sd,
-                  r.getLowEnergy() + ENERGY_EPS);
-            final int maxCh = SpectrumUtils.channelForEnergy(sd,
-                  r.getHighEnergy() - ENERGY_EPS) + 1;
+            final int minCh = SpectrumUtils.channelForEnergy(sd, r.getLowEnergy() + ENERGY_EPS);
+            final int maxCh = SpectrumUtils.channelForEnergy(sd, r.getHighEnergy() - ENERGY_EPS) + 1;
             final double sum = SpectrumUtils.sumCounts(sd, minCh, maxCh);
-            res += "\n" + nf.format(sum) + "\t" + nf.format(Math.sqrt(sum))
-                  + "\t" + Integer.toString(maxCh - minCh) + "\t"
-                  + sd.toString();
+            res += "\n" + nf.format(sum) + "\t" + nf.format(Math.sqrt(sum)) + "\t" + Integer.toString(maxCh - minCh) + "\t" + sd.toString();
          }
       }
       setTemporaryAnnotation(res);
@@ -2551,27 +2351,21 @@ public class SpecDisplay extends JComponent {
          nf.setGroupingUsed(true);
          final ArrayList<Region> rois = new ArrayList<Region>(mRegions.mList);
          Collections.sort(rois);
-         final Region low = rois.get(0), onPeak = rois.get(1),
-               high = rois.get(2);
+         final Region low = rois.get(0), onPeak = rois.get(1), high = rois.get(2);
          for (final ISpectrumData sd : getData()) {
-            final double[] tmp = SpectrumUtils.backgroundCorrectedIntegral(sd,
-                  onPeak.getLowEnergy(), onPeak.getHighEnergy(),
-                  low.getLowEnergy(), low.getHighEnergy(), high.getLowEnergy(),
-                  high.getHighEnergy());
-            res += "\n" + nf.format(tmp[0]) + "\t" + nf.format(tmp[1]) + "\t"
-                  + nf.format(tmp[0] / tmp[1]) + "\t" + sd.toString();
+            final double[] tmp = SpectrumUtils.backgroundCorrectedIntegral(sd, onPeak.getLowEnergy(), onPeak.getHighEnergy(), low.getLowEnergy(),
+                  low.getHighEnergy(), high.getLowEnergy(), high.getHighEnergy());
+            res += "\n" + nf.format(tmp[0]) + "\t" + nf.format(tmp[1]) + "\t" + nf.format(tmp[0] / tmp[1]) + "\t" + sd.toString();
          }
          setTemporaryAnnotation(res);
       } else
-         ErrorDialog.createErrorMessage(this, "Three region integration",
-               "Please highlight three and only three regions.",
+         ErrorDialog.createErrorMessage(this, "Three region integration", "Please highlight three and only three regions.",
                "Three region integration requires you to highlight a low energy\nbackground window, an on-peak window and a high energy background window.");
    }
 
    public void zoomToAll() {
       mZoom = DEFAULT_VZOOM;
-      Preferences.userNodeForPackage(SpecDisplay.class).putDouble("Zoom",
-            mZoom);
+      Preferences.userNodeForPackage(SpecDisplay.class).putDouble("Zoom", mZoom);
       autoScaleV(mZoom);
       autoScaleH(0.0, 100.0);
    }
@@ -2583,8 +2377,7 @@ public class SpecDisplay extends JComponent {
       final Clipboard clip = getToolkit().getSystemClipboard();
       // Turn the data from the selected spectrum into a string
       // and then turn the string into a transferable object
-      final StringSelection ss = new StringSelection(
-            writeSpectralDataToString());
+      final StringSelection ss = new StringSelection(writeSpectralDataToString());
       // Attach the data to the clipboard
       clip.setContents(ss, ss);
    }
@@ -2608,13 +2401,11 @@ public class SpecDisplay extends JComponent {
    }
 
    public Set<SumPeak> idSumPeak() {
-      final int[] lines = new int[]{XRayTransition.KA1, XRayTransition.KB1,
-            XRayTransition.LA1, XRayTransition.MA1};
+      final int[] lines = new int[]{XRayTransition.KA1, XRayTransition.KB1, XRayTransition.LA1, XRayTransition.MA1};
       final Region r = mRegions.get(0);
       final double low = ToSI.eV(r.getLowEnergy());
       final double high = ToSI.eV(r.getHighEnergy());
-      return KLMLine.SumPeak.suggestSumPeaks(getMarkedElements(), low, high, 2,
-            lines);
+      return KLMLine.SumPeak.suggestSumPeaks(getMarkedElements(), low, high, 2, lines);
    }
 
    // This class is used to hold an image while on the clipboard.
@@ -2639,8 +2430,7 @@ public class SpecDisplay extends JComponent {
 
       // Returns image
       @Override
-      public Object getTransferData(DataFlavor flavor)
-            throws UnsupportedFlavorException, IOException {
+      public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
          if (!DataFlavor.imageFlavor.equals(flavor))
             throw new UnsupportedFlavorException(flavor);
          return mImage;
@@ -2656,8 +2446,7 @@ public class SpecDisplay extends JComponent {
       final int hXtra = (PNG_SCALE * getHeight()) / 20;
       final int cWidth = ((PNG_SCALE * getWidth()) + (2 * wXtra));
       final int cHeight = ((PNG_SCALE * getHeight()) + (2 * hXtra));
-      final BufferedImage bi = new BufferedImage(cWidth, cHeight,
-            BufferedImage.TYPE_4BYTE_ABGR);
+      final BufferedImage bi = new BufferedImage(cWidth, cHeight, BufferedImage.TYPE_4BYTE_ABGR);
       final Graphics2D g = bi.createGraphics();
       drawHiresImage(g, wXtra, hXtra, cWidth, cHeight);
       Clipboard clp = getToolkit().getSystemClipboard();
@@ -2675,8 +2464,7 @@ public class SpecDisplay extends JComponent {
     * @param formatName
     * @throws EPQException
     */
-   public Dimension saveAs(File outfile, String formatName)
-         throws EPQException {
+   public Dimension saveAs(File outfile, String formatName) throws EPQException {
       return saveAsImage(outfile, formatName);
    }
 
@@ -2706,18 +2494,14 @@ public class SpecDisplay extends JComponent {
          // cycles through each region
          for (final Region r : mRegions.mList) {
             // Finds the start (left side) of the highlighted region
-            final int min = SpectrumUtils.bound(sd,
-                  SpectrumUtils.channelForEnergy(sd, r.getLowEnergy()));
+            final int min = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, r.getLowEnergy()));
             // Finds the end (right side) of the highlighted region
-            final int max = SpectrumUtils.bound(sd, SpectrumUtils
-                  .channelForEnergy(sd, r.getHighEnergy() - ENERGY_EPS));
+            final int max = SpectrumUtils.bound(sd, SpectrumUtils.channelForEnergy(sd, r.getHighEnergy() - ENERGY_EPS));
             // for each data point in the region, write out the energy and
             // the count at that specific point
             for (int i = min; i < max; i++)
-               IndividualSpectrumData
-                     .append(SpectrumUtils.minEnergyForChannel(sd, i) + '\t'
-                           + SpectrumUtils.maxEnergyForChannel(sd, i) + '\t'
-                           + sd.getCounts(i) + '\n');
+               IndividualSpectrumData.append(
+                     SpectrumUtils.minEnergyForChannel(sd, i) + '\t' + SpectrumUtils.maxEnergyForChannel(sd, i) + '\t' + sd.getCounts(i) + '\n');
          }
          // Adds one set of complete spectrum data to the larger stringbuffer
          AllSpectrumData.append(IndividualSpectrumData);
@@ -2735,16 +2519,13 @@ public class SpecDisplay extends JComponent {
          final List<ISpectrumData> data = getData();
          final ISpectrumData sd0 = data.get(0);
          // Finds the start (left side) of the highlighted region
-         final int min = SpectrumUtils.bound(sd0,
-               SpectrumUtils.channelForEnergy(sd0, r.getLowEnergy()));
+         final int min = SpectrumUtils.bound(sd0, SpectrumUtils.channelForEnergy(sd0, r.getLowEnergy()));
          // Finds the end (right side) of the highlighted region
-         final int max = SpectrumUtils.bound(sd0, SpectrumUtils
-               .channelForEnergy(sd0, r.getHighEnergy() - ENERGY_EPS));
+         final int max = SpectrumUtils.bound(sd0, SpectrumUtils.channelForEnergy(sd0, r.getHighEnergy() - ENERGY_EPS));
          // For each channel
          for (int i = min; i < max; i++) {
             // Re-initialize the list of spectra to the beginning
-            AllSpectrumData.append(SpectrumUtils.minEnergyForChannel(sd0, i)
-                  + "\t" + SpectrumUtils.maxEnergyForChannel(sd0, i) + "\t");
+            AllSpectrumData.append(SpectrumUtils.minEnergyForChannel(sd0, i) + "\t" + SpectrumUtils.maxEnergyForChannel(sd0, i) + "\t");
             for (final Object element : data) {
                final ISpectrumData sd = (ISpectrumData) element;
                // Add the current spectrum's count to the stringbuffer
@@ -2770,8 +2551,7 @@ public class SpecDisplay extends JComponent {
          final ISpectrumData sd = i0.next();
          while (i0.hasNext()) {
             final ISpectrumData next = i0.next();
-            if ((next.getChannelCount() != sd.getChannelCount())
-                  || (next.getChannelWidth() != sd.getChannelWidth())
+            if ((next.getChannelCount() != sd.getChannelCount()) || (next.getChannelWidth() != sd.getChannelWidth())
                   || (next.getZeroOffset() != sd.getZeroOffset()))
                return false;
          }
@@ -2788,24 +2568,20 @@ public class SpecDisplay extends JComponent {
       setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
       {
          // Restore previous preferences
-         final Preferences userPref = Preferences
-               .userNodeForPackage(SpecDisplay.class);
+         final Preferences userPref = Preferences.userNodeForPackage(SpecDisplay.class);
          try {
-            mLabelType = LabelType.valueOf(userPref
-                  .get(LabelType.class.getName(), LabelType.IUPAC.name()));
+            mLabelType = LabelType.valueOf(userPref.get(LabelType.class.getName(), LabelType.IUPAC.name()));
          } catch (final IllegalArgumentException e2) {
             mLabelType = LabelType.IUPAC;
          }
          setStaggerOffset(userPref.getInt("Stagger", 0));
          try {
-            setSpectrumScalingMode(SCALING_MODE.valueOf(
-                  userPref.get("Scaling", SCALING_MODE.COUNTS.name())));
+            setSpectrumScalingMode(SCALING_MODE.valueOf(userPref.get("Scaling", SCALING_MODE.COUNTS.name())));
          } catch (final IllegalArgumentException e1) {
             setSpectrumScalingMode(SCALING_MODE.COUNTS);
          }
          try {
-            setAxisScalingMode(AXIS_MODE
-                  .valueOf(userPref.get("Ordinate", AXIS_MODE.LINEAR.name())));
+            setAxisScalingMode(AXIS_MODE.valueOf(userPref.get("Ordinate", AXIS_MODE.LINEAR.name())));
          } catch (final IllegalArgumentException e1) {
             setAxisScalingMode(AXIS_MODE.LINEAR);
          }
@@ -2831,10 +2607,8 @@ public class SpecDisplay extends JComponent {
             final int yy = me.getY();
             if (me.isPopupTrigger())
                doPopup(xx, yy);
-            else if ((me.getButton() == MouseEvent.BUTTON1)
-                  && (mActionMode == ActionMode.None)) {
-               if ((mCursorPosition == Integer.MIN_VALUE)
-                     && (mVertScrollPos == Integer.MIN_VALUE))
+            else if ((me.getButton() == MouseEvent.BUTTON1) && (mActionMode == ActionMode.None)) {
+               if ((mCursorPosition == Integer.MIN_VALUE) && (mVertScrollPos == Integer.MIN_VALUE))
                   if (mOrdRect.contains(xx, yy))
                      startVerticalZoom(yy);
                   else if (mPlotRect.contains(xx, yy)) {
@@ -2859,8 +2633,7 @@ public class SpecDisplay extends JComponent {
             if (delta > 0)
                zoomInBy(Math.max(0.01, 1.0 - (delta / mOrdRect.height)));
             else
-               zoomInBy(mOrdRect.height / (mOrdRect.height
-                     - Math.min(mOrdRect.height - 2, -delta)));
+               zoomInBy(mOrdRect.height / (mOrdRect.height - Math.min(mOrdRect.height - 2, -delta)));
             mVertScrollPos = Integer.MIN_VALUE;
             mActionMode = ActionMode.None;
          }
@@ -2939,11 +2712,9 @@ public class SpecDisplay extends JComponent {
     * @param scaling
     *           double
     */
-   public synchronized void addSpectrum(ISpectrumData sd, int colorIndex,
-         double scaling) {
+   public synchronized void addSpectrum(ISpectrumData sd, int colorIndex, double scaling) {
       mData.add(sd);
-      mProperties.put(sd,
-            new DisplayProperties(scaling, colorIndex % mDataColor.length));
+      mProperties.put(sd, new DisplayProperties(scaling, colorIndex % mDataColor.length));
       repaint();
    }
 
@@ -2952,8 +2723,7 @@ public class SpecDisplay extends JComponent {
       int i = 0;
       for (ISpectrumData spec : specs)
          if (mProperties.containsKey(spec))
-            res[i++] = mDataColor[mProperties.get(spec).mColorIndex
-                  % mDataColor.length];
+            res[i++] = mDataColor[mProperties.get(spec).mColorIndex % mDataColor.length];
          else
             res[i++] = Color.darkGray;
       return res;
@@ -3061,8 +2831,7 @@ public class SpecDisplay extends JComponent {
     *           SCALING_MODE
     */
    public void setSpectrumScalingMode(SCALING_MODE mode) {
-      if ((mCurrentScalingMode != mode)
-            || (mode == SCALING_MODE.REGION_INTEGRAL)) {
+      if ((mCurrentScalingMode != mode) || (mode == SCALING_MODE.REGION_INTEGRAL)) {
          mCurrentScalingMode = mode;
          setButtonGroupSelection(jButtonGroup_Scaling, mode.toString());
          if (mCurrentScalingMode == SCALING_MODE.REGION_INTEGRAL)
@@ -3106,15 +2875,13 @@ public class SpecDisplay extends JComponent {
       switch (mCurrentScalingMode) {
          case COUNTS_PER_NA_S_EV : {
             final SpectrumProperties sp = sd.getProperties();
-            final double tmp = SpectrumUtils.getAverageFaradayCurrent(sp, 1.0)
-                  * sp.getNumericWithDefault(SpectrumProperties.LiveTime, 60.0)
+            final double tmp = SpectrumUtils.getAverageFaradayCurrent(sp, 1.0) * sp.getNumericWithDefault(SpectrumProperties.LiveTime, 60.0)
                   * sd.getChannelWidth();
             return 1.0 / tmp;
          }
          case COUNTS_PER_NA_S : {
             final SpectrumProperties sp = sd.getProperties();
-            final double dose = SpectrumUtils.getAverageFaradayCurrent(sp, 1.0)
-                  * sp.getNumericWithDefault(SpectrumProperties.LiveTime, 60.0);
+            final double dose = SpectrumUtils.getAverageFaradayCurrent(sp, 1.0) * sp.getNumericWithDefault(SpectrumProperties.LiveTime, 60.0);
             return 1.0 / dose;
          }
          case INTEGRAL : {
@@ -3123,16 +2890,14 @@ public class SpecDisplay extends JComponent {
          }
          case MAX_PEAK : {
             final int MIN_CHANNEL = 20;
-            final double c = sd.getCounts(SpectrumUtils.maxChannel(sd,
-                  MIN_CHANNEL, sd.getChannelCount()));
+            final double c = sd.getCounts(SpectrumUtils.maxChannel(sd, MIN_CHANNEL, sd.getChannelCount()));
             return c > 0.0 ? 100.0 / c : 100.0;
          }
          case REGION_INTEGRAL : {
             if (mScalingRegions != null) {
                double c = 0.0;
                for (final Region r : mScalingRegions.mList) {
-                  c += SpectrumUtils.integrate(sd, r.getLowEnergy(),
-                        r.getHighEnergy());
+                  c += SpectrumUtils.integrate(sd, r.getLowEnergy(), r.getHighEnergy());
                }
                return c > 0.0 ? 100.0 / c : 100.0;
             } else
@@ -3157,8 +2922,7 @@ public class SpecDisplay extends JComponent {
       if (bg != null) {
          final Enumeration<AbstractButton> e = bg.getElements();
          if (e.hasMoreElements())
-            for (AbstractButton btn = e.nextElement(); e
-                  .hasMoreElements(); btn = e.nextElement())
+            for (AbstractButton btn = e.nextElement(); e.hasMoreElements(); btn = e.nextElement())
                if (btn.getText().equals(text)) {
                   btn.setSelected(true);
                   break;
@@ -3280,8 +3044,7 @@ public class SpecDisplay extends JComponent {
     * @param old
     * @param replacement
     */
-   public synchronized void replaceSpectrum(ISpectrumData old,
-         ISpectrumData replacement) {
+   public synchronized void replaceSpectrum(ISpectrumData old, ISpectrumData replacement) {
       if (mData.contains(old) && mProperties.containsKey(old)) {
          mData.set(mData.indexOf(old), replacement);
          mProperties.put(replacement, mProperties.get(old));
@@ -3299,8 +3062,7 @@ public class SpecDisplay extends JComponent {
    public ISpectrumData trimSpectrum(ISpectrumData spec) {
       if (mRegions.mList.size() > 0) {
          for (final Region reg : mRegions.mList)
-            spec = SpectrumUtils.trimSpectrum(spec, reg.getLowEnergy(),
-                  reg.getHighEnergy() - ENERGY_EPS);
+            spec = SpectrumUtils.trimSpectrum(spec, reg.getLowEnergy(), reg.getHighEnergy() - ENERGY_EPS);
          return spec;
       } else
          return spec;
@@ -3323,8 +3085,7 @@ public class SpecDisplay extends JComponent {
    }
 
    public void setTextAnnotation(String textAnnotation) {
-      if ((mUserAnnotation == null)
-            || (!mUserAnnotation.equals(textAnnotation))) {
+      if ((mUserAnnotation == null) || (!mUserAnnotation.equals(textAnnotation))) {
          mUserAnnotation = textAnnotation;
          repaint();
       }

@@ -37,8 +37,7 @@ import java.io.OutputStream;
  * </pre>
  */
 
-public class LEDataOutputStream
-   implements DataOutput {
+public class LEDataOutputStream implements DataOutput {
 
    /** work array for composing output */
    byte w[];
@@ -53,8 +52,7 @@ public class LEDataOutputStream
    /**
     * @throws IOException
     */
-   public final void close()
-         throws IOException {
+   public final void close() throws IOException {
       d.close();
    }
 
@@ -63,8 +61,7 @@ public class LEDataOutputStream
    /**
     * @throws IOException
     */
-   public void flush()
-         throws IOException {
+   public void flush() throws IOException {
       d.flush();
    }
 
@@ -81,8 +78,7 @@ public class LEDataOutputStream
     * @see java.io.DataOutput#write(byte[])
     */
    @Override
-   public final void write(final byte b[])
-         throws IOException {
+   public final void write(final byte b[]) throws IOException {
       d.write(b, 0, b.length);
    }
 
@@ -92,8 +88,7 @@ public class LEDataOutputStream
     * @see java.io.DataOutput#write(byte[], int, int)
     */
    @Override
-   public final synchronized void write(final byte b[], final int off, final int len)
-         throws IOException {
+   public final synchronized void write(final byte b[], final int off, final int len) throws IOException {
       d.write(b, off, len);
    }
 
@@ -103,8 +98,7 @@ public class LEDataOutputStream
     * @see java.io.DataOutput#write(int)
     */
    @Override
-   public final synchronized void write(final int b)
-         throws IOException {
+   public final synchronized void write(final int b) throws IOException {
       d.write(b);
    }
 
@@ -115,8 +109,7 @@ public class LEDataOutputStream
     */
    /* Only writes one byte */
    @Override
-   public final void writeBoolean(final boolean v)
-         throws IOException {
+   public final void writeBoolean(final boolean v) throws IOException {
       d.writeBoolean(v);
    }
 
@@ -129,8 +122,7 @@ public class LEDataOutputStream
     * @see java.io.DataOutput#writeByte(int)
     */
    @Override
-   public final void writeByte(final int v)
-         throws IOException {
+   public final void writeByte(final int v) throws IOException {
       d.writeByte(v);
    }
 
@@ -140,8 +132,7 @@ public class LEDataOutputStream
     * @see java.io.DataOutput#writeBytes(java.lang.String)
     */
    @Override
-   public final void writeBytes(final String s)
-         throws IOException {
+   public final void writeBytes(final String s) throws IOException {
       d.writeBytes(s);
    }
 
@@ -152,8 +143,7 @@ public class LEDataOutputStream
     * @param v
     */
    @Override
-   public final void writeChar(final int v)
-         throws IOException {
+   public final void writeChar(final int v) throws IOException {
       // same code as writeShort
       w[0] = (byte) v;
       w[1] = (byte) (v >> 8);
@@ -164,10 +154,9 @@ public class LEDataOutputStream
     * like DataOutputStream.writeChars, flip each char. {@inheritDoc}
     */
    @Override
-   public final void writeChars(final String s)
-         throws IOException {
+   public final void writeChars(final String s) throws IOException {
       final int len = s.length();
-      for(int i = 0; i < len; i++)
+      for (int i = 0; i < len; i++)
          writeChar(s.charAt(i));
    } // end writeChars
 
@@ -175,8 +164,7 @@ public class LEDataOutputStream
     * like DataOutputStream.writeDouble. {@inheritDoc}
     */
    @Override
-   public final void writeDouble(final double v)
-         throws IOException {
+   public final void writeDouble(final double v) throws IOException {
       writeLong(Double.doubleToLongBits(v));
    }
 
@@ -184,8 +172,7 @@ public class LEDataOutputStream
     * like DataOutputStream.writeFloat. {@inheritDoc}
     */
    @Override
-   public final void writeFloat(final float v)
-         throws IOException {
+   public final void writeFloat(final float v) throws IOException {
       writeInt(Float.floatToIntBits(v));
    }
 
@@ -196,8 +183,7 @@ public class LEDataOutputStream
     * @throws IOException
     */
    @Override
-   public final void writeInt(final int v)
-         throws IOException {
+   public final void writeInt(final int v) throws IOException {
       w[0] = (byte) v;
       w[1] = (byte) (v >> 8);
       w[2] = (byte) (v >> 16);
@@ -212,8 +198,7 @@ public class LEDataOutputStream
     * @throws IOException
     */
    @Override
-   public final void writeLong(final long v)
-         throws IOException {
+   public final void writeLong(final long v) throws IOException {
       w[0] = (byte) v;
       w[1] = (byte) (v >> 8);
       w[2] = (byte) (v >> 16);
@@ -229,12 +214,12 @@ public class LEDataOutputStream
     * like DataOutputStream.writeShort. also acts as a writeUnsignedShort
     * {@inheritDoc}
     * 
-    * @param v the short you want written in little endian binary format
+    * @param v
+    *           the short you want written in little endian binary format
     * @throws IOException
     */
    @Override
-   public final void writeShort(final int v)
-         throws IOException {
+   public final void writeShort(final int v) throws IOException {
       w[0] = (byte) v;
       w[1] = (byte) (v >> 8);
       d.write(w, 0, 2);
@@ -246,16 +231,15 @@ public class LEDataOutputStream
     * @see java.io.DataOutput#writeUTF(java.lang.String)
     */
    @Override
-   public final void writeUTF(final String str)
-         throws IOException {
+   public final void writeUTF(final String str) throws IOException {
       d.writeUTF(str);
    }
 
    /**
     * constructor
     * 
-    * @param out the outputstream we ware to write little endian binary data
-    *           onto
+    * @param out
+    *           the outputstream we ware to write little endian binary data onto
     */
    public LEDataOutputStream(final OutputStream out) {
       this.d = new DataOutputStream(out);

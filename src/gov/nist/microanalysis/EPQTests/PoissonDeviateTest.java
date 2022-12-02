@@ -19,21 +19,17 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class PoissonDeviateTest
-   extends TestCase {
+public class PoissonDeviateTest extends TestCase {
    public PoissonDeviateTest(String test) {
       super(test);
    }
 
    public void testOne() {
-      final int[] na = {
-         (int) ((5 * Math.random()) + 6),
-         (int) ((50 * Math.random()) + 13)
-      };
-      for(final int n : na) {
+      final int[] na = {(int) ((5 * Math.random()) + 6), (int) ((50 * Math.random()) + 13)};
+      for (final int n : na) {
          final PoissonDeviate pd = new PoissonDeviate(100);
          final DescriptiveStatistics ds = new DescriptiveStatistics();
-         for(int i = 0; i < 1000000; ++i)
+         for (int i = 0; i < 1000000; ++i)
             ds.add(pd.randomDeviate(n));
          assertEquals(ds.average(), n, 0.04);
          assertEquals(ds.variance(), n, 0.1);

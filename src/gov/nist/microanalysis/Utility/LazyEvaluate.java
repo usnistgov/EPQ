@@ -25,7 +25,7 @@ public abstract class LazyEvaluate<H> {
     * be recomputed via a call to compute().
     */
    public void reset() {
-      synchronized(this) {
+      synchronized (this) {
          mValue = null;
       }
    }
@@ -42,9 +42,9 @@ public abstract class LazyEvaluate<H> {
     */
    public H get() {
       H res = mValue;
-      if(res == null) {
-         synchronized(this) {
-            if(mValue == null)
+      if (res == null) {
+         synchronized (this) {
+            if (mValue == null)
                mValue = compute();
             assert mValue != null;
             res = mValue;

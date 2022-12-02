@@ -20,13 +20,11 @@ package gov.nist.microanalysis.EPQLibrary;
  * Implements the IElasticCrossSection interface for the screened Rutherford
  * model of elastic scattered from a screened nucleus.
  */
-public class ScreenedRutherfordScatteringAngle
-   extends RandomizedScatter {
+public class ScreenedRutherfordScatteringAngle extends RandomizedScatter {
 
    static private final LitReference REFERENCE = new LitReference.CrudeReference("NBSMONTE.FOR");
 
-   public static class ScreenedRutherfordRandomizedScatterFactory
-      extends RandomizedScatterFactory {
+   public static class ScreenedRutherfordRandomizedScatterFactory extends RandomizedScatterFactory {
       public ScreenedRutherfordRandomizedScatterFactory() {
          super("Screened Rutherford elastic cross-section", REFERENCE);
       }
@@ -39,7 +37,7 @@ public class ScreenedRutherfordScatteringAngle
       @Override
       public RandomizedScatter get(Element elm) {
          final int z = elm.getAtomicNumber();
-         if(mScatter[z] == null)
+         if (mScatter[z] == null)
             mScatter[z] = new ScreenedRutherfordScatteringAngle(elm);
          return mScatter[z];
       }

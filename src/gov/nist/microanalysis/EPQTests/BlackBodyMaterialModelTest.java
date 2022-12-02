@@ -18,13 +18,8 @@ public class BlackBodyMaterialModelTest {
    private IMaterialScatterModel materialModel;
 
    @Before
-   public void setUp()
-         throws Exception {
-      dummyElectron = new Electron(new double[] {
-         0.0,
-         0.0,
-         1.0
-      }, ToSI.keV(15.0));
+   public void setUp() throws Exception {
+      dummyElectron = new Electron(new double[]{0.0, 0.0, 1.0}, ToSI.keV(15.0));
       materialModel = new BlackBodyMaterialModel();
    }
 

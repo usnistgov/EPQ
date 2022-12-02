@@ -28,13 +28,18 @@ public class ULagrangeInterpolation {
     * d1 - Performs interpolation of the 1-d function f(x). The values of the
     * function on the grid are provided in a double[] (1-d array).
     * 
-    * @param f - double[] 1D array of function values at the grid points
-    * @param x0 - double The value of x corresponding to f[0]
-    * @param xinc - double The grid spacing in x (difference between x[i] and
+    * @param f
+    *           - double[] 1D array of function values at the grid points
+    * @param x0
+    *           - double The value of x corresponding to f[0]
+    * @param xinc
+    *           - double The grid spacing in x (difference between x[i] and
     *           x[i-1])
-    * @param order - int The order of the interpolation (1 for linear, 3 for
-    *           cubic, etc.).
-    * @param x - double The x value at which the function value is to be
+    * @param order
+    *           - int The order of the interpolation (1 for linear, 3 for cubic,
+    *           etc.).
+    * @param x
+    *           - double The x value at which the function value is to be
     *           estimated.
     * @return double[] - An array of 2 values, the first of which is the
     *         estimate for f[x] and the second is an error estimate.
@@ -44,9 +49,9 @@ public class ULagrangeInterpolation {
        * The interpolation is performed by a call to neville, a separate static
        * method.
        */
-      if(xinc == 0.)
+      if (xinc == 0.)
          throw new IllegalArgumentException("Interval spacing must be nonzero.");
-      if((order < 1) || (f.length < (order + 1)))
+      if ((order < 1) || (f.length < (order + 1)))
          throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
       /*
        * The reduced coordinate is like an index into the array, but it can take
@@ -60,9 +65,9 @@ public class ULagrangeInterpolation {
        * end of the array, this might not be possible.
        */
       int index0 = (int) reducedx - (order / 2);
-      if(index0 < 0)
+      if (index0 < 0)
          index0 = 0;
-      else if(index0 > (f.length - order - 1))
+      else if (index0 > (f.length - order - 1))
          index0 = f.length - order - 1;
       return uNeville(f, index0, order, reducedx - index0);
    }
@@ -71,12 +76,16 @@ public class ULagrangeInterpolation {
     * uNeville -- A private utility that performs the actual 1-d interpolation,
     * using Neville's algorithm adapted to a uniform grid.
     * 
-    * @param f - double[] 1-D array of function values at the grid points
-    * @param offset - int The index of the first gridpoint to be included in the
+    * @param f
+    *           - double[] 1-D array of function values at the grid points
+    * @param offset
+    *           - int The index of the first gridpoint to be included in the
     *           interpolation
-    * @param order - int The order of the interpolation (1 for linear, 3 for
-    *           cubic, etc.).
-    * @param x - double The x value at which the function value is to be
+    * @param order
+    *           - int The order of the interpolation (1 for linear, 3 for cubic,
+    *           etc.).
+    * @param x
+    *           - double The x value at which the function value is to be
     *           estimated, in coordinates such that f[offset] corresponds to x=0
     *           f[offset+1] to x=1, etc.
     * @return double[] - An array of 2 values, the first of which is the
@@ -85,9 +94,9 @@ public class ULagrangeInterpolation {
    private static double[] uNeville(double[] f, int offset, int order, double x) {
 
       int ns = (int) Math.round(x); // Nearest grid point
-      if(ns < 0)
+      if (ns < 0)
          ns = 0;
-      else if(ns > order)
+      else if (ns > order)
          ns = order;
       final double[] c = new double[order + 1];
       final double[] d = new double[order + 1];
@@ -96,8 +105,8 @@ public class ULagrangeInterpolation {
 
       double y = c[ns--];
       double ho, hp, w, dy = 0;
-      for(int m = 1; m <= order; m++) {
-         for(int i = 0; i <= (order - m); i++) {
+      for (int m = 1; m <= order; m++) {
+         for (int i = 0; i <= (order - m); i++) {
             ho = i - x;
             hp = (i + m) - x;
             w = c[i + 1] - d[i];
@@ -108,10 +117,7 @@ public class ULagrangeInterpolation {
          y += dy;
       }
 
-      return new double[] {
-         y,
-         dy
-      };
+      return new double[]{y, dy};
    }
 
    /**
@@ -122,12 +128,17 @@ public class ULagrangeInterpolation {
     * f.length and j is another index ranging from 0 to f[0].length. The grid is
     * specified by providing appropriate x0[] and xinc[] arrays.
     * 
-    * @param f - double[][] 2-D array of function values at the grid points
-    * @param x0 - double[] An array of two values, [x1,x2], corresponding to
+    * @param f
+    *           - double[][] 2-D array of function values at the grid points
+    * @param x0
+    *           - double[] An array of two values, [x1,x2], corresponding to
     *           f[0][0]
-    * @param xinc - double[] The grid spacings.
-    * @param order - int The order of the interpolation.
-    * @param x - double[] Array of two values, [x1,x2], providing the
+    * @param xinc
+    *           - double[] The grid spacings.
+    * @param order
+    *           - int The order of the interpolation.
+    * @param x
+    *           - double[] Array of two values, [x1,x2], providing the
     *           coordinates of the point at which the function value is to be
     *           estimated.
     * @return double[] - An array of 2 values, the first of which is the
@@ -141,11 +152,11 @@ public class ULagrangeInterpolation {
        * interpolation routine to determine function values at nodes in the Nth
        * dimension, which can then be interpolated via 1-d interpolation.
        */
-      if((x0.length < 2) || (xinc.length < 2) || (x.length < 2))
+      if ((x0.length < 2) || (xinc.length < 2) || (x.length < 2))
          throw new IllegalArgumentException("Input array is too short.)");
-      if(xinc[0] == 0.)
+      if (xinc[0] == 0.)
          throw new IllegalArgumentException("Interval spacing must be nonzero.");
-      if(f.length < (order + 1))
+      if (f.length < (order + 1))
          throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
       /*
        * The reduced coordinate is like an index into the array, but it can take
@@ -160,13 +171,13 @@ public class ULagrangeInterpolation {
        * end of the array, this might not be possible.
        */
       int index0 = (int) reducedx1 - (order / 2);
-      if(index0 < 0)
+      if (index0 < 0)
          index0 = 0;
-      else if(index0 > (f.length - order - 1))
+      else if (index0 > (f.length - order - 1))
          index0 = f.length - order - 1;
       /* Generate and populate an array of function values at x2 */
       final double[] y = new double[order + 1];
-      for(int i = 0; i <= order; i++) {
+      for (int i = 0; i <= order; i++) {
          final double[] temp = d1(f[index0 + i], x0[1], xinc[1], order, x[1]);
          y[i] = temp[0];
       }
@@ -184,12 +195,17 @@ public class ULagrangeInterpolation {
     * respective dimensions. The grid is specified by providing appropriate x0[]
     * and xinc[] arrays.
     * 
-    * @param f - double[][][] 3-D array of function values at the grid points
-    * @param x0 - double[] An array of two values, [x1,x2], corresponding to
+    * @param f
+    *           - double[][][] 3-D array of function values at the grid points
+    * @param x0
+    *           - double[] An array of two values, [x1,x2], corresponding to
     *           f[0][0]
-    * @param xinc - double[] The grid spacings.
-    * @param order - int The order of the interpolation.
-    * @param x - double[] Array of two values, [x1,x2], providing the
+    * @param xinc
+    *           - double[] The grid spacings.
+    * @param order
+    *           - int The order of the interpolation.
+    * @param x
+    *           - double[] Array of two values, [x1,x2], providing the
     *           coordinates of the point at which the function value is to be
     *           estimated.
     * @return double[] - An array of 2 values, the first of which is the
@@ -203,11 +219,11 @@ public class ULagrangeInterpolation {
        * interpolation routine to determine function values at nodes in the Nth
        * dimension, which can then be interpolated via 1-d interpolation.
        */
-      if((x0.length < 3) || (xinc.length < 3) || (x.length < 3))
+      if ((x0.length < 3) || (xinc.length < 3) || (x.length < 3))
          throw new IllegalArgumentException("Input array is too short.)");
-      if(xinc[0] == 0.)
+      if (xinc[0] == 0.)
          throw new IllegalArgumentException("Interval spacing must be nonzero.");
-      if(f.length < (order + 1))
+      if (f.length < (order + 1))
          throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
 
       /*
@@ -223,25 +239,16 @@ public class ULagrangeInterpolation {
        * end of the array, this might not be possible.
        */
       int index0 = (int) reducedx1 - (order / 2);
-      if(index0 < 0)
+      if (index0 < 0)
          index0 = 0;
-      else if(index0 > (f.length - order - 1))
+      else if (index0 > (f.length - order - 1))
          index0 = f.length - order - 1;
       /* Generate and populate an array of function values at x2,x3 */
       final double[] y = new double[order + 1];
-      final double[] x0temp = new double[] {
-         x0[1],
-         x0[2]
-      };
-      final double[] xinctemp = new double[] {
-         xinc[1],
-         xinc[2]
-      };
-      final double[] xtemp = new double[] {
-         x[1],
-         x[2]
-      };
-      for(int i = 0; i <= order; i++) {
+      final double[] x0temp = new double[]{x0[1], x0[2]};
+      final double[] xinctemp = new double[]{xinc[1], xinc[2]};
+      final double[] xtemp = new double[]{x[1], x[2]};
+      for (int i = 0; i <= order; i++) {
          final double[] temp = d2(f[index0 + i], x0temp, xinctemp, order, xtemp);
          y[i] = temp[0];
       }
@@ -259,12 +266,17 @@ public class ULagrangeInterpolation {
     * 1 less than the lengths of their respective dimensions. The grid is
     * specified by providing appropriate x0[] and xinc[] arrays.
     * 
-    * @param f - double[][][][] 4-D array of function values at the grid points
-    * @param x0 - double[] An array of two values, [x1,x2], corresponding to
+    * @param f
+    *           - double[][][][] 4-D array of function values at the grid points
+    * @param x0
+    *           - double[] An array of two values, [x1,x2], corresponding to
     *           f[0][0]
-    * @param xinc - double[] The grid spacings.
-    * @param order - int The order of the interpolation.
-    * @param x - double[] Array of two values, [x1,x2], providing the
+    * @param xinc
+    *           - double[] The grid spacings.
+    * @param order
+    *           - int The order of the interpolation.
+    * @param x
+    *           - double[] Array of two values, [x1,x2], providing the
     *           coordinates of the point at which the function value is to be
     *           estimated.
     * @return double[] - An array of 2 values, the first of which is the
@@ -291,11 +303,11 @@ public class ULagrangeInterpolation {
        * generally robust error check as currently written is probably worth it.
        */
 
-      if((x0.length < 4) || (xinc.length < 4) || (x.length < 4))
+      if ((x0.length < 4) || (xinc.length < 4) || (x.length < 4))
          throw new IllegalArgumentException("Input array is too short.)");
-      if(xinc[0] == 0.)
+      if (xinc[0] == 0.)
          throw new IllegalArgumentException("Interval spacing must be nonzero.");
-      if(f.length < (order + 1))
+      if (f.length < (order + 1))
          throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
 
       /*
@@ -311,28 +323,16 @@ public class ULagrangeInterpolation {
        * end of the array, this might not be possible.
        */
       int index0 = (int) reducedx1 - (order / 2);
-      if(index0 < 0)
+      if (index0 < 0)
          index0 = 0;
-      else if(index0 > (f.length - order - 1))
+      else if (index0 > (f.length - order - 1))
          index0 = f.length - order - 1;
       /* Generate and populate an array of function values at x2,x3 */
       final double[] y = new double[order + 1];
-      final double[] x0temp = new double[] {
-         x0[1],
-         x0[2],
-         x0[3]
-      };
-      final double[] xinctemp = new double[] {
-         xinc[1],
-         xinc[2],
-         xinc[3]
-      };
-      final double[] xtemp = new double[] {
-         x[1],
-         x[2],
-         x[3]
-      };
-      for(int i = 0; i <= order; i++) {
+      final double[] x0temp = new double[]{x0[1], x0[2], x0[3]};
+      final double[] xinctemp = new double[]{xinc[1], xinc[2], xinc[3]};
+      final double[] xtemp = new double[]{x[1], x[2], x[3]};
+      for (int i = 0; i <= order; i++) {
          final double[] temp = d3(f[index0 + i], x0temp, xinctemp, order, xtemp);
          y[i] = temp[0];
       }

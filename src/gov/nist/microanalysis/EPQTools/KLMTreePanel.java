@@ -74,11 +74,7 @@ import gov.nist.microanalysis.EPQLibrary.XRayTransitionSet;
 import gov.nist.microanalysis.EPQTools.KLMActionEvent.KLMAction;
 import gov.nist.microanalysis.Utility.Math2;
 
-public class KLMTreePanel
-   extends
-   JPanel
-   implements
-   ActionListener {
+public class KLMTreePanel extends JPanel implements ActionListener {
 
    // Optional access to the database
    private Session mSession;
@@ -191,8 +187,7 @@ public class KLMTreePanel
       super();
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -208,35 +203,27 @@ public class KLMTreePanel
             double e1;
             try {
                e1 = o1.getEnergy();
-            }
-            catch(final EPQException e) {
+            } catch (final EPQException e) {
                return -1;
             }
             double e2;
             try {
                e2 = o2.getEnergy();
-            }
-            catch(final EPQException e) {
+            } catch (final EPQException e) {
                return 1;
             }
             return e1 < e2 ? -1 : (e1 > e2 ? 1 : 0);
          }
       };
       final TreeSet<XRayTransition> tmp = new TreeSet<XRayTransition>(comparator);
-      final int[] trs = new int[] {
-         XRayTransition.KA1,
-         XRayTransition.LA1,
-         XRayTransition.MA1,
-         XRayTransition.N5N6
-      };
-      for(int z = Element.elmH; z < Element.elmAm; ++z) {
+      final int[] trs = new int[]{XRayTransition.KA1, XRayTransition.LA1, XRayTransition.MA1, XRayTransition.N5N6};
+      for (int z = Element.elmH; z < Element.elmAm; ++z) {
          final Element elm = Element.byAtomicNumber(z);
-         for(final int tr : trs)
+         for (final int tr : trs)
             try {
-               if(XRayTransition.exists(elm, tr) && (XRayTransition.getEnergy(elm, tr) < ToSI.keV(30.0)))
+               if (XRayTransition.exists(elm, tr) && (XRayTransition.getEnergy(elm, tr) < ToSI.keV(30.0)))
                   tmp.add(new XRayTransition(elm, tr));
-            }
-            catch(final EPQException e) {
+            } catch (final EPQException e) {
                // Ignore
             }
       }
@@ -248,12 +235,11 @@ public class KLMTreePanel
       labels[1] = res[1].toString();
       int i = 2;
       final NumberFormat nf = new DecimalFormat("0.000 keV");
-      for(final XRayTransition xrt : tmp) {
+      for (final XRayTransition xrt : tmp) {
          res[i] = xrt.getElement();
          try {
             labels[i] = nf.format(FromSI.keV(xrt.getEnergy()));
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             labels[i] = "? keV";
          }
          i++;
@@ -262,14 +248,12 @@ public class KLMTreePanel
       mElementLabel = labels;
    }
 
-   class UpdateOrder
-      implements
-      ActionListener {
+   class UpdateOrder implements ActionListener {
 
       @Override
       public void actionPerformed(ActionEvent e) {
          final Element elm = currentElement();
-         if(jRadioButton_AtomicNumber.isSelected()) {
+         if (jRadioButton_AtomicNumber.isSelected()) {
             mElementOrder = Element.range(Element.H, Element.Cm);
             mElementLabel = null;
          } else
@@ -284,8 +268,7 @@ public class KLMTreePanel
                try {
                   mElementIndex = 1;
                   updateElement(brm.getValue());
-               }
-               catch(final EPQException e1) {
+               } catch (final EPQException e1) {
                   // Ignore it. Just don't
                }
             }
@@ -294,8 +277,7 @@ public class KLMTreePanel
          try {
             mElementIndex = 0;
             setElement(elm);
-         }
-         catch(final EPQException e1) {
+         } catch (final EPQException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
          }
@@ -303,33 +285,31 @@ public class KLMTreePanel
    };
 
    public Set<Element> parseElementField(String text) {
-      if(text.startsWith("\""))
+      if (text.startsWith("\""))
          text = text.substring(1);
-      if(text.endsWith("\""))
+      if (text.endsWith("\""))
          text = text.substring(0, text.length() - 1);
       final String[] items = text.split("[ \\t\\n\\x0B\\f\\r,]");
       final TreeSet<Element> elms = new TreeSet<Element>();
-      for(final String item : items) {
+      for (final String item : items) {
          Composition comp = null;
-         if(mSession != null)
+         if (mSession != null)
             try {
                comp = mSession.findStandard(item);
-            }
-            catch(final SQLException e1) {
+            } catch (final SQLException e1) {
                // assume it isn't in the database...
             }
-         if(comp == null)
+         if (comp == null)
             try {
                comp = MaterialFactory.createCompound(item);
-            }
-            catch(final EPQException ex) {
+            } catch (final EPQException ex) {
                // Assume that it is a name not a compound
             }
-         if(comp != null)
+         if (comp != null)
             elms.addAll(comp.getElementSet());
       }
       final ArrayList<KLMLine> setThese = new ArrayList<KLMLine>();
-      for(final Element elm : elms)
+      for (final Element elm : elms)
          setThese.addAll(getDefaultKLMs(elm));
       setKLMs(setThese);
       return elms;
@@ -338,19 +318,18 @@ public class KLMTreePanel
    private Collection<KLMLine> getDefaultKLMs(Element elm) {
       final TreeSet<KLMLine> res = new TreeSet<KLMLine>();
       int last = XRayTransition.MZ1 + 1;
-      if(elm.getAtomicNumber() < Element.elmB)
+      if (elm.getAtomicNumber() < Element.elmB)
          last = XRayTransition.KA1;
-      else if(elm.getAtomicNumber() < Element.elmCa)
+      else if (elm.getAtomicNumber() < Element.elmCa)
          last = XRayTransition.L3N2;
-      else if(elm.getAtomicNumber() < Element.elmBa)
+      else if (elm.getAtomicNumber() < Element.elmBa)
          last = XRayTransition.M1N2;
-      for(int tr = XRayTransition.KA1; tr < last; ++tr) {
+      for (int tr = XRayTransition.KA1; tr < last; ++tr) {
          final XRayTransition xrt = new XRayTransition(elm, tr);
          try {
-            if(xrt.exists()&& (xrt.getWeight(XRayTransition.NormalizeKLM) >= mMajorWeight) && (xrt.getEnergy() > ToSI.keV(0.1)))
+            if (xrt.exists() && (xrt.getWeight(XRayTransition.NormalizeKLM) >= mMajorWeight) && (xrt.getEnergy() > ToSI.keV(0.1)))
                res.add(new KLMLine.Transition(xrt));
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             // Just ignore it...
          }
       }
@@ -360,18 +339,18 @@ public class KLMTreePanel
    private void setKLMs(Collection<KLMLine> lines) {
       final ArrayList<KLMLine> toAdd = new ArrayList<KLMLine>();
       final ArrayList<KLMLine> toRemove = new ArrayList<KLMLine>();
-      for(final KLMLine line : lines)
-         if(!mSelected.contains(line))
+      for (final KLMLine line : lines)
+         if (!mSelected.contains(line))
             toAdd.add(line);
-      for(final KLMLine line : lines)
-         if(mTemporary.contains(line))
+      for (final KLMLine line : lines)
+         if (mTemporary.contains(line))
             toRemove.add(line);
-      if(toRemove.size() > 0) {
+      if (toRemove.size() > 0) {
          mTemporary.removeAll(toRemove);
          final KLMActionEvent kae = new KLMActionEvent(this, toRemove, KLMAction.REMOVE_LINES);
          fireTemporaryLinesActionPerformed(kae);
       }
-      if(toAdd.size() > 0) {
+      if (toAdd.size() > 0) {
          mSelected.addAll(toAdd);
          final KLMActionEvent kae = new KLMActionEvent(this, toAdd, KLMAction.ADD_LINES);
          fireVisibleLinesActionPerformed(kae);
@@ -380,7 +359,8 @@ public class KLMTreePanel
 
    private void initialize() {
       final CellConstraints cc0 = new CellConstraints(), cc1 = new CellConstraints();
-      final PanelBuilder pb = new PanelBuilder(new FormLayout("pref, 3dlu, pref, 3dlu, 80dlu", "pref, 3dlu, pref, 3dlu, pref, 3dlu, default, 5dlu, pref"), this);
+      final PanelBuilder pb = new PanelBuilder(
+            new FormLayout("pref, 3dlu, pref, 3dlu, 80dlu", "pref, 3dlu, pref, 3dlu, pref, 3dlu, default, 5dlu, pref"), this);
       jTextField_Element.setHorizontalAlignment(SwingConstants.CENTER);
       pb.addLabel("&Element", cc0.xy(1, 1), jTextField_Element, cc1.xy(3, 1));
       jTextField_Element.addFocusListener(new FocusListener() {
@@ -401,14 +381,13 @@ public class KLMTreePanel
          @Override
          public void keyReleased(KeyEvent arg0) {
 
-            if(arg0.getKeyCode() == KeyEvent.VK_ENTER)
-               if(arg0.isControlDown()) {
+            if (arg0.getKeyCode() == KeyEvent.VK_ENTER)
+               if (arg0.isControlDown()) {
                   final Set<Element> elms = parseElementField(jTextField_Element.getText());
-                  if(elms.size() > 0)
+                  if (elms.size() > 0)
                      try {
                         setElement(elms.iterator().next());
-                     }
-                     catch(final EPQException e) {
+                     } catch (final EPQException e) {
                         // ignore
                      }
                } else
@@ -419,26 +398,25 @@ public class KLMTreePanel
          @Override
          public void keyTyped(KeyEvent arg0) {
             int inc = 0;
-            switch(arg0.getKeyChar()) {
-               case '+':
-               case '=':
-                  if(!jTextField_Element.getText().startsWith("\""))
+            switch (arg0.getKeyChar()) {
+               case '+' :
+               case '=' :
+                  if (!jTextField_Element.getText().startsWith("\""))
                      inc = 1;
                   break;
-               case '-':
-               case '_':
-                  if(!jTextField_Element.getText().startsWith("\""))
+               case '-' :
+               case '_' :
+                  if (!jTextField_Element.getText().startsWith("\""))
                      inc = -1;
                   break;
-               default:
+               default :
                   break;
             }
-            if(inc != 0) {
+            if (inc != 0) {
                arg0.consume();
                try {
                   updateElement(mElementIndex + inc);
-               }
-               catch(final EPQException e) {
+               } catch (final EPQException e) {
                }
             }
          }
@@ -450,8 +428,7 @@ public class KLMTreePanel
             final int rot = e.getWheelRotation();
             try {
                updateElement(mElementIndex + rot);
-            }
-            catch(final EPQException e1) {
+            } catch (final EPQException e1) {
                // ignore it.
             }
          }
@@ -480,8 +457,7 @@ public class KLMTreePanel
             final BoundedRangeModel brm = (BoundedRangeModel) e.getSource();
             try {
                updateElement(brm.getValue());
-            }
-            catch(final EPQException e1) {
+            } catch (final EPQException e1) {
                // Ignore it. Just don't
             }
          }
@@ -497,10 +473,10 @@ public class KLMTreePanel
             try {
                final ArrayList<KLMLine> remove = new ArrayList<KLMLine>();
                final Element currentElement = currentElement();
-               for(final KLMLine klm : mSelected)
-                  if(klm.getShell().getElement().equals(currentElement))
+               for (final KLMLine klm : mSelected)
+                  if (klm.getShell().getElement().equals(currentElement))
                      remove.add(klm);
-               if(remove.size() > 0) {
+               if (remove.size() > 0) {
                   mSelected.removeAll(remove);
                   final int tmp = mElementIndex;
                   mElementIndex = -1;
@@ -508,8 +484,7 @@ public class KLMTreePanel
                   final KLMActionEvent kae = new KLMActionEvent(this, remove, KLMAction.REMOVE_LINES);
                   fireVisibleLinesActionPerformed(kae);
                }
-            }
-            catch(final EPQException e1) {
+            } catch (final EPQException e1) {
                e1.printStackTrace();
             }
          }
@@ -522,8 +497,7 @@ public class KLMTreePanel
          public void actionPerformed(ActionEvent e) {
             try {
                clearAll();
-            }
-            catch(final EPQException e1) {
+            } catch (final EPQException e1) {
                // Ignore it.
             }
          }
@@ -554,9 +528,7 @@ public class KLMTreePanel
       pb.add(new JScrollPane(jTree_Lines), cc0.xywh(5, 1, 1, 9));
    }
 
-   private class ToggleAction
-      extends
-      AbstractAction {
+   private class ToggleAction extends AbstractAction {
       private static final long serialVersionUID = -8418977950838230807L;
 
       final private String mID;
@@ -573,13 +545,13 @@ public class KLMTreePanel
    };
 
    private void toggle(String name, TreeNode cn) {
-      if(cn == null) {
+      if (cn == null) {
          final TreeModel model = jTree_Lines.getModel();
          cn = (CheckNode) model.getRoot();
       }
-      for(int i = 0; i < cn.getChildCount(); ++i) {
+      for (int i = 0; i < cn.getChildCount(); ++i) {
          final TreeNode ch = cn.getChildAt(i);
-         if(ch.toString().equals(name)) {
+         if (ch.toString().equals(name)) {
             final CheckNode chn = (CheckNode) ch;
             chn.setSelected(!chn.isSelected);
             return;
@@ -588,21 +560,19 @@ public class KLMTreePanel
       }
    }
 
-   public void clearAll()
-         throws EPQException {
+   public void clearAll() throws EPQException {
       setElement(Element.H);
       final KLMActionEvent kae = new KLMActionEvent(this, mSelected, KLMAction.REMOVE_LINES);
       fireVisibleLinesActionPerformed(kae);
       mSelected.clear();
    }
 
-   public void setElement(Element elm)
-         throws EPQException {
+   public void setElement(Element elm) throws EPQException {
       final int start = mElementOrder[mElementIndex].equals(elm) ? mElementIndex + 1 : 0;
       int idx = 0;
-      for(int i = 0; i < mElementOrder.length; ++i) {
+      for (int i = 0; i < mElementOrder.length; ++i) {
          final int pos = (i + start) % mElementOrder.length;
-         if(mElementOrder[pos].equals(elm)) {
+         if (mElementOrder[pos].equals(elm)) {
             idx = pos;
             break;
          }
@@ -610,77 +580,54 @@ public class KLMTreePanel
       updateElement(idx);
    }
 
-   public void updateElement(int idx)
-         throws EPQException {
+   public void updateElement(int idx) throws EPQException {
       final int newIdx = Math2.bound(idx, 0, mElementOrder.length);
-      if(mElementIndex != newIdx) {
+      if (mElementIndex != newIdx) {
          mElementIndex = newIdx;
          final Element elm = mElementOrder[mElementIndex];
-         if(mElementLabel != null)
+         if (mElementLabel != null)
             jLabel_Energy.setText(mElementLabel[mElementIndex]);
          else
             jLabel_Energy.setText(elm.toString());
-         if(true) {
+         if (true) {
             final KLMActionEvent kae = new KLMActionEvent(this, mTemporary, KLMAction.REMOVE_LINES);
             fireTemporaryLinesActionPerformed(kae);
             mTemporary.clear();
          }
          jTextField_Element.setText(elm.toAbbrev());
          jScrollBar_Z.getModel().setValue(mElementIndex);
-         final String[] kFam = new String[] {
-            XRayTransitionSet.K_ALPHA,
-            XRayTransitionSet.K_BETA
-         };
-         final String[] lFam = new String[] {
-            XRayTransitionSet.L_ALPHA,
-            XRayTransitionSet.L_BETA,
-            XRayTransitionSet.L_GAMMA,
-            XRayTransitionSet.L_OTHER
-         };
-         final String[] mFam = new String[] {
-            XRayTransitionSet.M_ALPHA,
-            XRayTransitionSet.M_BETA,
-            XRayTransitionSet.M_GAMMA,
-            XRayTransitionSet.M_OTHER
-         };
-         final String[] nFam = new String[] {
-            XRayTransitionSet.N_FAMILY
-         };
-         final String[] fams = new String[] {
-            XRayTransitionSet.K_FAMILY,
-            XRayTransitionSet.L_FAMILY,
-            XRayTransitionSet.M_FAMILY,
-            XRayTransitionSet.N_FAMILY,
-         };
-         final String[][] lines = new String[][] {
-            kFam,
-            lFam,
-            mFam,
-            nFam
-         };
+         final String[] kFam = new String[]{XRayTransitionSet.K_ALPHA, XRayTransitionSet.K_BETA};
+         final String[] lFam = new String[]{XRayTransitionSet.L_ALPHA, XRayTransitionSet.L_BETA, XRayTransitionSet.L_GAMMA,
+               XRayTransitionSet.L_OTHER};
+         final String[] mFam = new String[]{XRayTransitionSet.M_ALPHA, XRayTransitionSet.M_BETA, XRayTransitionSet.M_GAMMA,
+               XRayTransitionSet.M_OTHER};
+         final String[] nFam = new String[]{XRayTransitionSet.N_FAMILY};
+         final String[] fams = new String[]{XRayTransitionSet.K_FAMILY, XRayTransitionSet.L_FAMILY, XRayTransitionSet.M_FAMILY,
+               XRayTransitionSet.N_FAMILY,};
+         final String[][] lines = new String[][]{kFam, lFam, mFam, nFam};
          final CheckNode root = new CheckNode(elm.toAbbrev());
          root.addActionListener(this);
          CheckNode minor = null, esc = null;
          final TreeSet<AtomicShell> shells = new TreeSet<AtomicShell>();
-         for(int i = 0; i < fams.length; ++i) {
+         for (int i = 0; i < fams.length; ++i) {
             CheckNode fam = null, famMinor = null;
             final String[] names = lines[i];
-            for(final String name : names) {
+            for (final String name : names) {
                final XRayTransitionSet xrts = new XRayTransitionSet(elm, name, mMinWeight);
-               if(xrts.size() > 0) {
+               if (xrts.size() > 0) {
                   CheckNode dmtn = null, dmtn_m = null;
-                  for(final XRayTransition xrt : xrts.getTransitions()) {
-                     if(xrt.getEnergy() > mMaxEnergy)
+                  for (final XRayTransition xrt : xrts.getTransitions()) {
+                     if (xrt.getEnergy() > mMaxEnergy)
                         continue;
                      shells.add(xrt.getDestination());
                      final KLMLine.Transition klmTr = new KLMLine.Transition(xrt);
                      final CheckNode xrtNode = new CheckNode(klmTr);
                      xrtNode.addActionListener(this);
-                     if(xrt.getWeight(XRayTransition.NormalizeKLM) >= mMajorWeight) {
-                        if(dmtn == null) {
+                     if (xrt.getWeight(XRayTransition.NormalizeKLM) >= mMajorWeight) {
+                        if (dmtn == null) {
                            dmtn = new CheckNode(name);
                            dmtn.addActionListener(this);
-                           if(fam == null) {
+                           if (fam == null) {
                               fam = new CheckNode(fams[i]);
                               fam.addActionListener(this);
                               root.add(fam);
@@ -689,13 +636,13 @@ public class KLMTreePanel
                         }
                         dmtn.add(xrtNode);
                      } else {
-                        if(dmtn_m == null) {
+                        if (dmtn_m == null) {
                            dmtn_m = new CheckNode(name);
                            dmtn_m.addActionListener(this);
-                           if(famMinor == null) {
+                           if (famMinor == null) {
                               famMinor = new CheckNode(fams[i]);
                               famMinor.addActionListener(this);
-                              if(minor == null) {
+                              if (minor == null) {
                                  minor = new CheckNode("Minor");
                                  minor.addActionListener(this);
                               }
@@ -707,11 +654,11 @@ public class KLMTreePanel
                      }
                      final boolean trSel = mSelected.contains(klmTr);
                      xrtNode.setSelected(trSel);
-                     if(!trSel)
+                     if (!trSel)
                         mTemporary.add(klmTr);
-                     if((xrt.getWeight(XRayTransition.NormalizeKLM) >= mMinEscape)
+                     if ((xrt.getWeight(XRayTransition.NormalizeKLM) >= mMinEscape)
                            && (xrt.getEnergy() > (ToSI.keV(0.02) + mEscapeTransition.getEnergy()))) {
-                        if(esc == null) {
+                        if (esc == null) {
                            esc = new CheckNode(mEscapeTransition.getElement().toAbbrev() + " Escapes");
                            esc.addActionListener(this);
                         }
@@ -726,15 +673,15 @@ public class KLMTreePanel
                }
             }
          }
-         if(minor != null)
+         if (minor != null)
             root.add(minor);
-         if(esc != null)
+         if (esc != null)
             root.add(esc);
-         if(shells.size() > 0) {
+         if (shells.size() > 0) {
             final CheckNode shellNode = new CheckNode("Edges");
             shellNode.addActionListener(this);
-            for(final AtomicShell sh : shells)
-               if(sh.exists()) {
+            for (final AtomicShell sh : shells)
+               if (sh.exists()) {
                   final KLMLine.Edge klmEdge = new KLMLine.Edge(sh);
                   final CheckNode edgeNode = new CheckNode(klmEdge);
                   edgeNode.addActionListener(this);
@@ -754,12 +701,12 @@ public class KLMTreePanel
    }
 
    protected void fireTemporaryLinesActionPerformed(KLMActionEvent e) {
-      for(final ActionListener al : mTemporaryLinesActionListeners)
+      for (final ActionListener al : mTemporaryLinesActionListeners)
          al.actionPerformed(e);
    }
 
    public synchronized void removeTemporaryLinesActionListener(ActionListener l) {
-      if(mTemporaryLinesActionListeners.contains(l)) {
+      if (mTemporaryLinesActionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(mTemporaryLinesActionListeners);
          v.removeElement(l);
          mTemporaryLinesActionListeners = v;
@@ -767,7 +714,7 @@ public class KLMTreePanel
    }
 
    public synchronized void addTemporaryLinesActionListener(ActionListener l) {
-      if(!mTemporaryLinesActionListeners.contains(l)) {
+      if (!mTemporaryLinesActionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(mTemporaryLinesActionListeners);
          v.addElement(l);
          mTemporaryLinesActionListeners = v;
@@ -775,12 +722,12 @@ public class KLMTreePanel
    }
 
    protected void fireVisibleLinesActionPerformed(KLMActionEvent e) {
-      for(final ActionListener al : mVisibleLinesActionListeners)
+      for (final ActionListener al : mVisibleLinesActionListeners)
          al.actionPerformed(e);
    }
 
    public synchronized void removeVisibleLinesActionListener(ActionListener l) {
-      if(mVisibleLinesActionListeners.contains(l)) {
+      if (mVisibleLinesActionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(mVisibleLinesActionListeners);
          v.removeElement(l);
          mVisibleLinesActionListeners = v;
@@ -788,7 +735,7 @@ public class KLMTreePanel
    }
 
    public synchronized void addVisibleLinesActionListener(ActionListener l) {
-      if(!mVisibleLinesActionListeners.contains(l)) {
+      if (!mVisibleLinesActionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(mVisibleLinesActionListeners);
          v.addElement(l);
          mVisibleLinesActionListeners = v;
@@ -801,16 +748,16 @@ public class KLMTreePanel
    }
 
    private void updateTreeValues(CheckNode cn, boolean isSelected) {
-      if(cn.isLeaf()) {
+      if (cn.isLeaf()) {
          assert cn.getUserObject() instanceof KLMLine;
          final KLMLine klm = (KLMLine) cn.getUserObject();
-         if(isSelected)
+         if (isSelected)
             mSelected.add(klm);
          else
             mSelected.remove(klm);
       } else {
          final Enumeration<?> children = cn.children();
-         while(children.hasMoreElements()) {
+         while (children.hasMoreElements()) {
             final CheckNode ccn = (CheckNode) children.nextElement();
             updateTreeValues(ccn, isSelected);
          }
@@ -825,10 +772,10 @@ public class KLMTreePanel
       jTree_Lines.repaint(100);
       {
          final ArrayList<KLMLine> removed = new ArrayList<KLMLine>();
-         for(final KLMLine inBefore : before)
-            if(!mSelected.contains(inBefore))
+         for (final KLMLine inBefore : before)
+            if (!mSelected.contains(inBefore))
                removed.add(inBefore);
-         if(removed.size() > 0) {
+         if (removed.size() > 0) {
             mTemporary.addAll(removed);
             {
                final KLMActionEvent kae = new KLMActionEvent(this, removed, KLMAction.REMOVE_LINES);
@@ -842,10 +789,10 @@ public class KLMTreePanel
       }
       {
          final ArrayList<KLMLine> added = new ArrayList<KLMLine>();
-         for(final KLMLine inAfter : mSelected)
-            if(!before.contains(inAfter))
+         for (final KLMLine inAfter : mSelected)
+            if (!before.contains(inAfter))
                added.add(inAfter);
-         if(added.size() > 0) {
+         if (added.size() > 0) {
             mTemporary.removeAll(added);
             {
                final KLMActionEvent kae = new KLMActionEvent(this, added, KLMAction.REMOVE_LINES);
@@ -862,12 +809,10 @@ public class KLMTreePanel
    private void updateElementField() {
       try {
          setElement(Element.byName(jTextField_Element.getText()));
-      }
-      catch(final Exception jTextField1ReadError) {
+      } catch (final Exception jTextField1ReadError) {
          try {
             setElement(Element.byAtomicNumber(Integer.parseInt(jTextField_Element.getText())));
-         }
-         catch(final Exception jTextFieldReadError2) {
+         } catch (final Exception jTextFieldReadError2) {
             jTextField_Element.setText(currentElement().toAbbrev());
          }
       }
@@ -878,9 +823,7 @@ public class KLMTreePanel
    }
 }
 
-class NodeSelectionListener
-   extends
-   MouseAdapter {
+class NodeSelectionListener extends MouseAdapter {
    JTree tree;
 
    NodeSelectionListener(JTree tree) {
@@ -893,7 +836,7 @@ class NodeSelectionListener
       final int y = e.getY();
       final int row = tree.getRowForLocation(x, y);
       final TreePath path = tree.getPathForRow(row);
-      if(path != null) {
+      if (path != null) {
          final CheckNode node = (CheckNode) path.getLastPathComponent();
          final boolean isSelected = !(node.isSelected());
          node.setSelected(isSelected);
@@ -904,7 +847,7 @@ class NodeSelectionListener
           */
          ((DefaultTreeModel) tree.getModel()).nodeChanged(node);
          // I need revalidate if node is root. but why?
-         if(row == 0) {
+         if (row == 0) {
             tree.revalidate();
             tree.repaint();
          }
@@ -912,11 +855,7 @@ class NodeSelectionListener
    }
 }
 
-class CheckRenderer
-   extends
-   JPanel
-   implements
-   TreeCellRenderer {
+class CheckRenderer extends JPanel implements TreeCellRenderer {
 
    private static final long serialVersionUID = -6073213455442044351L;
 
@@ -933,7 +872,8 @@ class CheckRenderer
    }
 
    @Override
-   public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+   public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row,
+         boolean hasFocus) {
       final String stringValue = tree.convertValueToText(value, isSelected, expanded, leaf, row, hasFocus);
       setEnabled(tree.isEnabled());
       check.setSelected(((CheckNode) value).isSelected());
@@ -963,7 +903,7 @@ class CheckRenderer
       final Dimension d_label = label.getPreferredSize();
       int y_check = 0;
       int y_label = 0;
-      if(d_check.height < d_label.height)
+      if (d_check.height < d_label.height)
          y_check = (d_label.height - d_check.height) / 2;
       else
          y_label = (d_check.height - d_label.height) / 2;
@@ -975,14 +915,12 @@ class CheckRenderer
 
    @Override
    public void setBackground(Color color) {
-      if(color instanceof ColorUIResource)
+      if (color instanceof ColorUIResource)
          color = null;
       super.setBackground(color);
    }
 
-   public class TreeLabel
-      extends
-      JLabel {
+   public class TreeLabel extends JLabel {
 
       private static final long serialVersionUID = -5935367571393717722L;
 
@@ -995,7 +933,7 @@ class CheckRenderer
 
       @Override
       public void setBackground(Color color) {
-         if(color instanceof ColorUIResource)
+         if (color instanceof ColorUIResource)
             color = null;
          super.setBackground(color);
       }
@@ -1003,19 +941,19 @@ class CheckRenderer
       @Override
       public void paint(Graphics g) {
          String str;
-         if((str = getText()) != null)
-            if(0 < str.length()) {
-               if(isSelected)
+         if ((str = getText()) != null)
+            if (0 < str.length()) {
+               if (isSelected)
                   g.setColor(UIManager.getColor("Tree.selectionBackground"));
                else
                   g.setColor(UIManager.getColor("Tree.textBackground"));
                final Dimension d = getPreferredSize();
                int imageOffset = 0;
                final Icon currentI = getIcon();
-               if(currentI != null)
+               if (currentI != null)
                   imageOffset = currentI.getIconWidth() + Math.max(0, getIconTextGap() - 1);
                g.fillRect(imageOffset, 0, d.width - 1 - imageOffset, d.height);
-               if(hasFocus) {
+               if (hasFocus) {
                   g.setColor(UIManager.getColor("Tree.selectionBorderColor"));
                   g.drawRect(imageOffset, 0, d.width - 1 - imageOffset, d.height - 1);
                }
@@ -1026,7 +964,7 @@ class CheckRenderer
       @Override
       public Dimension getPreferredSize() {
          Dimension retDimension = super.getPreferredSize();
-         if(retDimension != null)
+         if (retDimension != null)
             retDimension = new Dimension(retDimension.width + 3, retDimension.height);
          return retDimension;
       }
@@ -1041,9 +979,7 @@ class CheckRenderer
    }
 }
 
-class CheckNode
-   extends
-   DefaultMutableTreeNode {
+class CheckNode extends DefaultMutableTreeNode {
 
    private static final long serialVersionUID = 5217585093764028204L;
 
@@ -1081,11 +1017,11 @@ class CheckNode
 
    public boolean setUpTree(boolean isSelected) {
       boolean res = false;
-      if(children != null) {
+      if (children != null) {
          final Enumeration<?> e = children.elements();
-         while(e.hasMoreElements()) {
+         while (e.hasMoreElements()) {
             final CheckNode node = (CheckNode) e.nextElement();
-            if(node.isSelected != isSelected) {
+            if (node.isSelected != isSelected) {
                res = true;
                node.isSelected = isSelected;
                node.setUpTree(isSelected);
@@ -1097,16 +1033,16 @@ class CheckNode
 
    public boolean setDownTree(boolean isSelected) {
       boolean res = false;
-      if(parent instanceof CheckNode) {
+      if (parent instanceof CheckNode) {
          final CheckNode pn = (CheckNode) parent;
          final Enumeration<?> e = pn.children();
          boolean checkParent = e.hasMoreElements();
-         while(e.hasMoreElements()) {
+         while (e.hasMoreElements()) {
             final Object obj = e.nextElement();
-            if(obj instanceof CheckNode)
+            if (obj instanceof CheckNode)
                checkParent &= ((CheckNode) obj).isSelected;
          }
-         if(pn.isSelected != checkParent) {
+         if (pn.isSelected != checkParent) {
             pn.isSelected = checkParent;
             res = true;
             pn.setDownTree(checkParent);
@@ -1116,9 +1052,9 @@ class CheckNode
    }
 
    public void setSelected(boolean isSelected) {
-      if(this.isSelected != isSelected) {
+      if (this.isSelected != isSelected) {
          this.isSelected = isSelected;
-         if(selectionMode == DIG_IN_SELECTION) {
+         if (selectionMode == DIG_IN_SELECTION) {
             setUpTree(isSelected);
             setDownTree(isSelected);
          }
@@ -1139,19 +1075,19 @@ class CheckNode
 
    @Override
    public void setUserObject(Object obj) {
-      if(obj instanceof Boolean)
+      if (obj instanceof Boolean)
          setSelected(((Boolean) obj).booleanValue());
       else
          super.setUserObject(obj);
    }
 
    public void addActionListener(ActionListener al) {
-      if(!mListeners.contains(al))
+      if (!mListeners.contains(al))
          mListeners.add(al);
    }
 
    public void removeActionListener(ActionListener al) {
-      if(mListeners.contains(al)) {
+      if (mListeners.contains(al)) {
          final ArrayList<ActionListener> rep = new ArrayList<ActionListener>(mListeners);
          rep.remove(al);
          mListeners = rep;
@@ -1161,7 +1097,7 @@ class CheckNode
    private void fireActionListener() {
       final ActionEvent ae = new ActionEvent(this, isSelected ? 1 : 0, "Selection changed", 0);
       final ArrayList<ActionListener> rep = mListeners;
-      for(final ActionListener al : rep)
+      for (final ActionListener al : rep)
          al.actionPerformed(ae);
    }
 

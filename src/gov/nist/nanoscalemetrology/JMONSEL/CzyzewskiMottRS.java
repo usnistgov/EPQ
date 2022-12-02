@@ -32,24 +32,17 @@ import gov.nist.microanalysis.Utility.Math2;
  * Company: National Institute of Standards and Technology
  * </p>
  *
- * @author Nicholas W. M. Ritchie (with addition of E &lt; 20 eV behavior by John
- *         Villarrubia)
+ * @author Nicholas W. M. Ritchie (with addition of E &lt; 20 eV behavior by
+ *         John Villarrubia)
  * @version 1.0
  */
 
-public class CzyzewskiMottRS
-   extends
-   RandomizedScatter {
+public class CzyzewskiMottRS extends RandomizedScatter {
 
-   static private final LitReference REFERENCE = new LitReference.JournalArticle(LitReference.JApplPhys, "68, No. 7", "", 1990, new LitReference.Author[] {
-      new LitReference.Author("", "Czyzewski"),
-      new LitReference.Author("", "MacCallum"),
-      LitReference.DJoy
-   });
+   static private final LitReference REFERENCE = new LitReference.JournalArticle(LitReference.JApplPhys, "68, No. 7", "", 1990,
+         new LitReference.Author[]{new LitReference.Author("", "Czyzewski"), new LitReference.Author("", "MacCallum"), LitReference.DJoy});
 
-   public static class CzyzewskiMottRandomizedScatterFactory
-      extends
-      RandomizedScatterFactory {
+   public static class CzyzewskiMottRandomizedScatterFactory extends RandomizedScatterFactory {
       public CzyzewskiMottRandomizedScatterFactory() {
          super("Czyzewski Mott cross-section", REFERENCE);
       }
@@ -62,7 +55,7 @@ public class CzyzewskiMottRS
       @Override
       public RandomizedScatter get(Element elm) {
          final int z = elm.getAtomicNumber();
-         if(mScatter[z] == null)
+         if (mScatter[z] == null)
             mScatter[z] = new CzyzewskiMottRS(elm);
          return mScatter[z];
       }
@@ -90,7 +83,8 @@ public class CzyzewskiMottRS
     * MottScatteringAngle - Creates a MottScatteringAngle object for the
     * specified element.
     * 
-    * @param el Element
+    * @param el
+    *           Element
     */
    public CzyzewskiMottRS(Element el) {
       super("Cyzewski", REFERENCE);
@@ -100,7 +94,7 @@ public class CzyzewskiMottRS
       mMeanFreePath = new double[CzyzewskiMottCrossSection.SpecialEnergyCount];
       mTotalCrossSection = new double[CzyzewskiMottCrossSection.SpecialEnergyCount];
       // Extract some useful stuff...
-      for(int i = 0; i < CzyzewskiMottCrossSection.SpecialEnergyCount; ++i) {
+      for (int i = 0; i < CzyzewskiMottCrossSection.SpecialEnergyCount; ++i) {
          final double e = CzyzewskiMottCrossSection.getSpecialEnergy(i);
          mMeanFreePath[i] = mcs.meanFreePath(e);
          mTotalCrossSection[i] = mcs.totalCrossSection(e);
@@ -109,10 +103,10 @@ public class CzyzewskiMottRS
       // number between
       // [0,1.00) onto a scattering angle.
       mCummulativeDF = new double[CzyzewskiMottCrossSection.SpecialEnergyCount][CzyzewskiMottCrossSection.SpecialAngleCount];
-      for(int r = 0; r < CzyzewskiMottCrossSection.SpecialEnergyCount; ++r) {
+      for (int r = 0; r < CzyzewskiMottCrossSection.SpecialEnergyCount; ++r) {
          final double energy = CzyzewskiMottCrossSection.getSpecialEnergy(r);
          mCummulativeDF[r][0] = 0.0;
-         for(int c = 1; c < CzyzewskiMottCrossSection.SpecialAngleCount; ++c) {
+         for (int c = 1; c < CzyzewskiMottCrossSection.SpecialAngleCount; ++c) {
             final double cm = mcs.partialCrossSection(CzyzewskiMottCrossSection.getSpecialAngle(c - 1), energy);
             final double cp = mcs.partialCrossSection(CzyzewskiMottCrossSection.getSpecialAngle(c), energy);
             final double am = CzyzewskiMottCrossSection.getSpecialAngle(c - 1);
@@ -120,7 +114,7 @@ public class CzyzewskiMottRS
             mCummulativeDF[r][c] = mCummulativeDF[r][c - 1] + (((cp + cm) * (ap - am)) / 2.0);
          }
          // Normalize to 1.0
-         for(int c = 0; c < CzyzewskiMottCrossSection.SpecialAngleCount; ++c)
+         for (int c = 0; c < CzyzewskiMottCrossSection.SpecialAngleCount; ++c)
             mCummulativeDF[r][c] = mCummulativeDF[r][c] / mCummulativeDF[r][CzyzewskiMottCrossSection.SpecialAngleCount - 1];
       }
       xSectMinE = this.totalCrossSection(MIN_CZYZEWSKI);
@@ -146,7 +140,7 @@ public class CzyzewskiMottRS
    private double scatteringAngleForSpecialEnergy(int ei, double rand) {
       final double[] r = mCummulativeDF[ei];
       int ai = Arrays.binarySearch(r, rand);
-      if(ai >= 0)
+      if (ai >= 0)
          return CzyzewskiMottCrossSection.getSpecialAngle(ai);
       else { // Interpolate between angles
          ai = -(ai + 1);
@@ -163,8 +157,10 @@ public class CzyzewskiMottRS
     * an energy within the tabulated interval (20 eV to 30 keV but expressed in
     * Joules), this function returns a scattering angle.
     * 
-    * @param energy double - In Joules
-    * @param rand double - On [0,1)
+    * @param energy
+    *           double - In Joules
+    * @param rand
+    *           double - On [0,1)
     * @return double
     */
    public double randomScatteringAngle(double energy, double rand) {
@@ -176,7 +172,7 @@ public class CzyzewskiMottRS
       final double e0 = CzyzewskiMottCrossSection.getSpecialEnergy(e);
       assert (energy <= e0);
       final double a0 = scatteringAngleForSpecialEnergy(e, rand);
-      if(energy == e0)
+      if (energy == e0)
          return a0;
       else {
          final double a1 = scatteringAngleForSpecialEnergy(e - 1, rand);
@@ -192,75 +188,73 @@ public class CzyzewskiMottRS
     * scatteringAngle - Same as scatteringAngle(energy,rand) except that this
     * function automatically selects a random \ number.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double
     */
    @Override
    public double randomScatteringAngle(double energy) {
-      if(energy < MIN_CZYZEWSKI) {
-         if(mBrowning == null) {
+      if (energy < MIN_CZYZEWSKI) {
+         if (mBrowning == null) {
             mBrowning = new BrowningEmpiricalCrossSection(mElement);
             sfBrowning = this.totalCrossSection(MIN_CZYZEWSKI) / mBrowning.totalCrossSection(MIN_CZYZEWSKI);
          }
          return mBrowning.randomScatteringAngle(energy);
-      } else if(energy < MAX_CZYZEWSKI)
+      } else if (energy < MAX_CZYZEWSKI)
          return randomScatteringAngle(energy, Math2.rgen.nextDouble());
       else {
-         if(mRutherford == null)
+         if (mRutherford == null)
             mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
          return mRutherford.randomScatteringAngle(energy);
       }
    }
 
-
-    /*
+   /*
     * meanFreePath - Calculates the mean free path at the specified energy by
     * interpolating between tabulated values.
     * 
     * @param energy double - In Joules
+    * 
     * @return double
     */
-   /* public double meanFreePath(double energy) {
-      if(energy < MIN_CZYZEWSKI) {
-         if(mBrowning == null) {
-            mBrowning = new BrowningEmpiricalCrossSection(mElement);
-            sfBrowning = this.totalCrossSection(MIN_CZYZEWSKI) / mBrowning.totalCrossSection(MIN_CZYZEWSKI);
-         }
-         return meanFreePath(MIN_CZYZEWSKI)*mBrowning.totalCrossSection(energy)/mBrowning.totalCrossSection(MIN_CZYZEWSKI);
-      } else if (energy <= MAX_CZYZEWSKI) {
-      int e = CzyzewskiMottCrossSection.getEnergyIndex(energy);
-      if(e == 0)
-         e = 1;
-      final double e0 = CzyzewskiMottCrossSection.getSpecialEnergy(e - 1);
-      final double e1 = CzyzewskiMottCrossSection.getSpecialEnergy(e);
-      assert (energy >= e0);
-      assert (energy <= e1);
-      return mMeanFreePath[e - 1] + ((mMeanFreePath[e] - mMeanFreePath[e - 1]) * ((energy - e0) / (e1 - e0)));
-      } else {
-         if(mRutherford == null)
-            mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
-         return meanFreePath(MAX_CZYZEWSKI)*mRutherford.totalCrossSection(energy)/mRutherford.totalCrossSection(MAX_CZYZEWSKI);      }
-   } */
-    
+   /*
+    * public double meanFreePath(double energy) { if(energy < MIN_CZYZEWSKI) {
+    * if(mBrowning == null) { mBrowning = new
+    * BrowningEmpiricalCrossSection(mElement); sfBrowning =
+    * this.totalCrossSection(MIN_CZYZEWSKI) /
+    * mBrowning.totalCrossSection(MIN_CZYZEWSKI); } return
+    * meanFreePath(MIN_CZYZEWSKI)*mBrowning.totalCrossSection(energy)/mBrowning.
+    * totalCrossSection(MIN_CZYZEWSKI); } else if (energy <= MAX_CZYZEWSKI) {
+    * int e = CzyzewskiMottCrossSection.getEnergyIndex(energy); if(e == 0) e =
+    * 1; final double e0 = CzyzewskiMottCrossSection.getSpecialEnergy(e - 1);
+    * final double e1 = CzyzewskiMottCrossSection.getSpecialEnergy(e); assert
+    * (energy >= e0); assert (energy <= e1); return mMeanFreePath[e - 1] +
+    * ((mMeanFreePath[e] - mMeanFreePath[e - 1]) * ((energy - e0) / (e1 - e0)));
+    * } else { if(mRutherford == null) mRutherford = new
+    * ScreenedRutherfordScatteringAngle(mElement); return
+    * meanFreePath(MAX_CZYZEWSKI)*mRutherford.totalCrossSection(energy)/
+    * mRutherford.totalCrossSection(MAX_CZYZEWSKI); } }
+    */
 
    /**
     * totalCrossSection - Calculates the total cross section at the specified
     * energy by interpolating between tabulated values.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double
     */
    @Override
    public double totalCrossSection(double energy) {
-      if(energy < MIN_CZYZEWSKI) {
-         if(mBrowning == null) {
+      if (energy < MIN_CZYZEWSKI) {
+         if (mBrowning == null) {
             mBrowning = new BrowningEmpiricalCrossSection(mElement);
             sfBrowning = xSectMinE / mBrowning.totalCrossSection(MIN_CZYZEWSKI);
          }
          return sfBrowning * mBrowning.totalCrossSection(energy);
-      } else if(energy <= MAX_CZYZEWSKI) {
+      } else if (energy <= MAX_CZYZEWSKI) {
          int e = CzyzewskiMottCrossSection.getEnergyIndex(energy);
-         if(e == 0)
+         if (e == 0)
             e = 1;
          final double e0 = CzyzewskiMottCrossSection.getSpecialEnergy(e - 1);
          final double e1 = CzyzewskiMottCrossSection.getSpecialEnergy(e);
@@ -268,7 +262,7 @@ public class CzyzewskiMottRS
          assert (energy <= e1);
          return mTotalCrossSection[e - 1] + ((mTotalCrossSection[e] - mTotalCrossSection[e - 1]) * ((energy - e0) / (e1 - e0)));
       } else {
-         if(mRutherford == null)
+         if (mRutherford == null)
             mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
          return mRutherford.totalCrossSection(energy);
       }

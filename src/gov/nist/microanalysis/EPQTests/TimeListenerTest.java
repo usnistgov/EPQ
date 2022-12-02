@@ -22,23 +22,14 @@ public class TimeListenerTest {
    private TimeListener listener;
 
    @Before
-   public void setUp()
-         throws Exception {
+   public void setUp() throws Exception {
       // Setup
       mcss = new MonteCarloSS();
       mcss.setBeamEnergy(ToSI.keV(20.0));
       mcss.setElectronGun(new GaussianBeam(10e-9));
 
       final Material mat = MaterialFactory.createPureElement(Element.Si);
-      final Shape shape = MultiPlaneShape.createSubstrate(new double[] {
-         0,
-         0,
-         -1
-      }, new double[] {
-         0,
-         0,
-         0
-      });
+      final Shape shape = MultiPlaneShape.createSubstrate(new double[]{0, 0, -1}, new double[]{0, 0, 0});
       mcss.addSubRegion(mcss.getChamber(), mat, shape);
 
       listener = new TimeListener(mcss);

@@ -21,8 +21,7 @@ import gov.nist.microanalysis.Utility.Math2;
  *
  * @author nicholas
  */
-final public class ComptonXRayGeneration3
-   extends BaseXRayGeneration3 {
+final public class ComptonXRayGeneration3 extends BaseXRayGeneration3 {
 
    /**
     * The max distance a photon may travel before being discarded as
@@ -47,8 +46,10 @@ final public class ComptonXRayGeneration3
     * Use this static method instead of the constructor to create instances of
     * this class and initialize it with an instance of the MonteCarloSS class. *
     *
-    * @param mcss An instance of MonteCarloSS
-    * @param src The source of the primary x-rays
+    * @param mcss
+    *           An instance of MonteCarloSS
+    * @param src
+    *           The source of the primary x-rays
     * @return FluorescenceXRayGeneration
     */
    public static ComptonXRayGeneration3 create(final MonteCarloSS mcss, final BaseXRayGeneration3 src) {
@@ -84,24 +85,24 @@ final public class ComptonXRayGeneration3
       assert e.getSource() instanceof BaseXRayGeneration3;
       assert e.getSource() == mSource;
       reset(); // Reset the result accumulator...
-      switch(e.getID()) {
-         case BaseXRayGeneration3.XRayGeneration: {
+      switch (e.getID()) {
+         case BaseXRayGeneration3.XRayGeneration : {
             // Randomly select only MODEL_FRAC of all x-rays to simulate Compton
-            if(mRandom.nextDouble() >= mModelFraction)
+            if (mRandom.nextDouble() >= mModelFraction)
                return;
             final MassAbsorptionCoefficient mac = (MassAbsorptionCoefficient) getAlgorithm(MassAbsorptionCoefficient.class);
             double[] pos = null;
             MonteCarloSS.RegionBase region = null;
             final BremsstrahlungAngularDistribution bremAngular = AlgorithmUser.getDefaultAngularDistribution();
-            for(int i = mSource.getEventCount() - 1; i >= 0; --i) {
+            for (int i = mSource.getEventCount() - 1; i >= 0; --i) {
                // Only model a fraction of the primary photons
                final BaseXRayGeneration3.XRay xr = mSource.getXRay(i);
                // Scale the intensity to account for the neglected events
                final double xrI = xr.getIntensity() / mModelFraction;
                assert xrI > 0.0;
-               if(xrI > 0.0)
+               if (xrI > 0.0)
                   try {
-                     if(xr.getPosition() != pos) {
+                     if (xr.getPosition() != pos) {
                         pos = xr.getPosition();
                         region = mMonte.findRegionContaining(pos);
                      }
@@ -110,7 +111,8 @@ final public class ComptonXRayGeneration3
                      final double[] dir = Math2.randomDir();
                      final BremsstrahlungXRay bxr = (xr instanceof BremsstrahlungXRay ? (BremsstrahlungXRay) xr : null);
                      // Account for Bremsstrahlung shape function if necessary.
-                     final double scale = (bxr == null ? 1.0
+                     final double scale = (bxr == null
+                           ? 1.0
                            : bremAngular.compute(bxr.getElement(), bxr.getAngle(dir), bxr.getElectronEnergy(), xr.getEnergy()));
                      final double[] eps = Math2.multiply(1.0e-12, dir);
                      MonteCarloSS.RegionBase startR, endR = region;
@@ -120,7 +122,7 @@ final public class ComptonXRayGeneration3
                      // scattered.
                      boolean isNone = false;
                      double absorb = 0.0;
-                     for(boolean step = true; step;) {
+                     for (boolean step = true; step;) {
                         startR = endR;
                         start = end;
                         // Generate a random step of absLen in direction dir
@@ -131,41 +133,40 @@ final public class ComptonXRayGeneration3
                         endR = startR.findEndOfStep(start, end);
                         step = (endR != startR) && (endR != null);
                         absorb += mac.compute(startMat, xrE) * startMat.getDensity() * Math2.magnitude(Math2.minus(end, start));
-                        if(Math2.magnitude(Math2.minus(pos, end)) > MAX_TRAVEL) {
+                        if (Math2.magnitude(Math2.minus(pos, end)) > MAX_TRAVEL) {
                            // Terminate event due to traveling outside detection
                            // region
                            isNone = true;
                            step = false;
                         }
-                        if(step)
+                        if (step)
                            // Pass through the interface and continue
                            end = Math2.plusEquals(end, eps);
                         assert startR != null;
                      }
                      // X-ray scatter event occurs at double[] 'end' in Region
                      // 'endR'
-                     if(!((endR == null) || isNone)) {
+                     if (!((endR == null) || isNone)) {
                         performCompton(scale * xrI * Math.exp(-absorb), pos, end, xr);
                      }
-                  }
-                  catch(final EPQException e1) {
+                  } catch (final EPQException e1) {
                      e1.printStackTrace();
                   }
             }
             fireXRayListeners(BaseXRayGeneration3.XRayGeneration);
          }
             break;
-         default:
+         default :
             fireXRayListeners(e.getID());
             break;
       }
    }
 
    private void performCompton(final double xrI, final double[] start, final double[] end, final XRay xr) {
-      for(final ActionListener al : mListener)
-         if(al instanceof XRayTransport3) {
+      for (final ActionListener al : mListener)
+         if (al instanceof XRayTransport3) {
             final double[] ray = Math2.minus(end, start);
-            if(Math2.magnitude(ray) > 0.0)
+            if (Math2.magnitude(ray) > 0.0)
                addComptonXRay(end, ray, xrI, xr);
          }
    }
@@ -185,7 +186,8 @@ final public class ComptonXRayGeneration3
     * x-rays which are used to estimate the secondary fluorescence. Default is
     * 0.1.
     *
-    * @param modelfraction The value to which to set modelfraction [0.01, 1.0]
+    * @param modelfraction
+    *           The value to which to set modelfraction [0.01, 1.0]
     */
    public static void setModelfraction(double modelfraction) {
       mModelFraction = Math2.bound(modelfraction, 0.01, 1.0);

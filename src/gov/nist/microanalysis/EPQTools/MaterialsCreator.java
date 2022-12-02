@@ -65,9 +65,7 @@ import gov.nist.microanalysis.EPQLibrary.ToSI;
  * @version 1.0
  */
 
-public class MaterialsCreator
-   extends
-   JDialog {
+public class MaterialsCreator extends JDialog {
 
    private static final long serialVersionUID = -2244980368216002637L;
 
@@ -106,10 +104,12 @@ public class MaterialsCreator
    /**
     * MaterialsCreator - Initializes a MaterialsCreator dialog instance
     * 
-    * @param frame Frame - The parent frame that will host the dialog
-    * @param title String - The title that will appear in the top bar of the
-    *           dialog
-    * @param modal boolean - if true then the dialog will disable access to the
+    * @param frame
+    *           Frame - The parent frame that will host the dialog
+    * @param title
+    *           String - The title that will appear in the top bar of the dialog
+    * @param modal
+    *           boolean - if true then the dialog will disable access to the
     *           parent/host frame until the dialog is closed.
     */
    public MaterialsCreator(final Frame frame, final String title, final boolean modal) {
@@ -117,8 +117,7 @@ public class MaterialsCreator
       try {
          initialize();
          jTextField_Name.grabFocus();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -126,9 +125,10 @@ public class MaterialsCreator
    /**
     * MaterialsCreator - Initializes a MaterialsCreator dialog instance
     * 
-    * @param window - The parent window that will host the dialog
-    * @param title String - The title that will appear in the top bar of the
-    *           dialog
+    * @param window
+    *           - The parent window that will host the dialog
+    * @param title
+    *           String - The title that will appear in the top bar of the dialog
     */
    public MaterialsCreator(final Window window, final String title) {
       super(window, title);
@@ -136,8 +136,7 @@ public class MaterialsCreator
       try {
          initialize();
          jTextField_Name.grabFocus();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
 
@@ -148,8 +147,7 @@ public class MaterialsCreator
       try {
          initialize();
          jTextField_Name.grabFocus();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -159,29 +157,20 @@ public class MaterialsCreator
       try {
          initialize();
          jTextField_Name.grabFocus();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
 
    private boolean ignoredCompNames(final Composition comp) {
-      final String[] names = new String[] {
-         "temp",
-         "tmp",
-         "crap",
-         "junk",
-         "stuff",
-         "Enter material name here"
-      };
+      final String[] names = new String[]{"temp", "tmp", "crap", "junk", "stuff", "Enter material name here"};
       boolean res = false;
-      for(final String name : names)
+      for (final String name : names)
          res |= (comp.toString().compareToIgnoreCase(name) == 0);
       return res;
    }
 
-   private void initialize()
-         throws Exception {
+   private void initialize() throws Exception {
       mDefaultFmt.setMaximumFractionDigits(4);
 
       jRadioButton_Weight.setToolTipText("Quantities will be measured in mass percent");
@@ -229,42 +218,40 @@ public class MaterialsCreator
          @Override
          public void actionPerformed(final ActionEvent e) {
             try {
-               if(storeData()) {
+               if (storeData()) {
                   setVisible(false);
                   final Composition comp = getMaterial();
-                  if((mSession != null) && (comp != null) && (comp.getElementCount() > 0))
-                     if(!ignoredCompNames(comp)) {
+                  if ((mSession != null) && (comp != null) && (comp.getElementCount() > 0))
+                     if (!ignoredCompNames(comp)) {
                         final Composition c2 = mSession.findStandard(comp.toString());
                         boolean update = false;
-                        if(!mInhibitUpdate) {
+                        if (!mInhibitUpdate) {
                            boolean ask = false;
-                           if(c2 == null)
+                           if (c2 == null)
                               update = true;
                            else {
-                              if(comp instanceof Material) {
-                                 if(c2 instanceof Material)
-                                    ask = (FromSI.gPerCC(Math.abs(((Material) c2).getDensity()
-                                          - ((Material) comp).getDensity())) > 0.009);
+                              if (comp instanceof Material) {
+                                 if (c2 instanceof Material)
+                                    ask = (FromSI.gPerCC(Math.abs(((Material) c2).getDensity() - ((Material) comp).getDensity())) > 0.009);
                                  else
                                     ask = true;
                               } else
                                  ask = c2 instanceof Material;
-                              if(!c2.almostEquals(comp, 1.0e-5))
+                              if (!c2.almostEquals(comp, 1.0e-5))
                                  ask = true;
-                              if(ask)
-                                 update = JOptionPane.showConfirmDialog(MaterialsCreator.this, "<html>The material called <i>"
-                                       + comp.toString() + "</i> is currently defined as<br>&nbsp;&nbsp;"
-                                       + c2.descriptiveString(false) + "<br>Update the database to define <i>" + comp.toString()
-                                       + "</i> as<br>&nbsp;&nbsp;"
-                                       + comp.descriptiveString(false), "Material Editor", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+                              if (ask)
+                                 update = JOptionPane.showConfirmDialog(MaterialsCreator.this,
+                                       "<html>The material called <i>" + comp.toString() + "</i> is currently defined as<br>&nbsp;&nbsp;"
+                                             + c2.descriptiveString(false) + "<br>Update the database to define <i>" + comp.toString()
+                                             + "</i> as<br>&nbsp;&nbsp;" + comp.descriptiveString(false),
+                                       "Material Editor", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
                            }
-                           if(update)
+                           if (update)
                               mSession.addStandard(comp);
                         }
                      }
                }
-            }
-            catch(final Exception ex) {
+            } catch (final Exception ex) {
                ex.printStackTrace(System.err);
             }
          }
@@ -388,7 +375,8 @@ public class MaterialsCreator
             btns = bbb.getPanel();
          }
          {
-            final PanelBuilder content = new PanelBuilder(new FormLayout("210dlu", "pref, pref, pref, pref, 5dlu, 80dlu, 5dlu, pref, 5dlu, pref, 4dlu, pref, 4dlu, pref"));
+            final PanelBuilder content = new PanelBuilder(
+                  new FormLayout("210dlu", "pref, pref, pref, pref, 5dlu, 80dlu, 5dlu, pref, 5dlu, pref, 4dlu, pref, 4dlu, pref"));
             content.addSeparator("Material", cc.xy(1, 1));
             content.add(top, cc.xy(1, 2));
             content.addSeparator("Mode", cc.xy(1, 3));
@@ -433,7 +421,7 @@ public class MaterialsCreator
     * @return Composition
     */
    public Composition getMaterial() {
-      if(isVisible())
+      if (isVisible())
          return storeData() ? mCurrentMaterial : null;
       else
          return mWasCanceled ? null : mCurrentMaterial;
@@ -443,7 +431,8 @@ public class MaterialsCreator
     * setMaterial - Replaces the current material with the one material set. The
     * dialog, open or not, will change appropriately to reflect the change
     * 
-    * @param comp Composition - the new material to replace the old one
+    * @param comp
+    *           Composition - the new material to replace the old one
     */
    public void setMaterial(final Composition comp) {
       assert comp != null;
@@ -454,7 +443,7 @@ public class MaterialsCreator
          final String density = b ? mDefaultFmt.format(FromSI.gPerCC(((Material) mCurrentMaterial).getDensity())) : "";
          jTextField_Density.setText(density);
       }
-      if(mCurrentMaterial.getName().isEmpty())
+      if (mCurrentMaterial.getName().isEmpty())
          jTextField_Name.setText("Enter material name here");
       else
          jTextField_Name.setText(mCurrentMaterial.getName());
@@ -467,27 +456,26 @@ public class MaterialsCreator
       try {
          final NumberFormat nf = NumberFormat.getInstance();
          String Quantitystr = jTextField_Quantity.getText();
-         if(Quantitystr.endsWith("%"))
+         if (Quantitystr.endsWith("%"))
             Quantitystr = Quantitystr.substring(0, (Quantitystr.indexOf("%")));
-         else if(Quantitystr.endsWith("atom(s)"))
+         else if (Quantitystr.endsWith("atom(s)"))
             Quantitystr = Quantitystr.substring(0, Quantitystr.indexOf("atom(s)"));
          Quantity = nf.parse(Quantitystr).doubleValue();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          jTextField_Quantity.grabFocus();
          jTextField_Quantity.selectAll();
          return;
       }
-      if(Element.isValid(atomicNumber) && (!mCurrentMaterial.containsElement(Element.byAtomicNumber(atomicNumber)))) {
-         if(buttonGroup_units.isSelected(jRadioButton_Weight.getModel()))
+      if (Element.isValid(atomicNumber) && (!mCurrentMaterial.containsElement(Element.byAtomicNumber(atomicNumber)))) {
+         if (buttonGroup_units.isSelected(jRadioButton_Weight.getModel()))
             mCurrentMaterial.addElement(atomicNumber, Quantity / 100);
-         else if(buttonGroup_units.isSelected(jRadioButton_Atomic.getModel()))
+         else if (buttonGroup_units.isSelected(jRadioButton_Atomic.getModel()))
             mCurrentMaterial.addElementByStoiciometry(Element.byAtomicNumber(atomicNumber), Quantity);
          jTable_Composition.setModel(new CompositionTableModel(mCurrentMaterial, false));
          formatQuantityTextField();
          jTextField_Element.grabFocus();
          jTextField_Element.selectAll();
-      } else if(Element.isValid(atomicNumber)) {
+      } else if (Element.isValid(atomicNumber)) {
          jTextField_Quantity.grabFocus();
          jTextField_Quantity.selectAll();
       } else {
@@ -510,7 +498,7 @@ public class MaterialsCreator
 
    private boolean storeData() {
       boolean res = true;
-      if(jTextField_Name.getText().length() > 0) {
+      if (jTextField_Name.getText().length() > 0) {
          mCurrentMaterial.setName(jTextField_Name.getText());
          jTextField_Name.setBackground(SystemColor.text);
       } else {
@@ -523,19 +511,18 @@ public class MaterialsCreator
       try {
          final NumberFormat nf = NumberFormat.getInstance();
          den = ToSI.gPerCC(nf.parse(jTextField_Density.getText().trim()).doubleValue());
-      }
-      catch(final ParseException e) {
+      } catch (final ParseException e) {
          den = Double.NaN;
       }
-      if(den <= 0.0)
+      if (den <= 0.0)
          den = Double.NaN;
-      if(!Double.isNaN(den)) {
-         if(!(mCurrentMaterial instanceof Material))
+      if (!Double.isNaN(den)) {
+         if (!(mCurrentMaterial instanceof Material))
             mCurrentMaterial = new Material(mCurrentMaterial, den);
          else
             ((Material) mCurrentMaterial).setDensity(den);
          jTextField_Density.setBackground(SystemColor.text);
-      } else if(mRequireDensity) {
+      } else if (mRequireDensity) {
          res = false;
          jTextField_Density.selectAll();
          jTextField_Density.requestFocus();
@@ -551,7 +538,7 @@ public class MaterialsCreator
 
    void jButton_Delete_actionPerformed(final ActionEvent e) {
       final int Index = jTable_Composition.getSelectedRow();
-      if(Index != -1) {
+      if (Index != -1) {
          final Element selected = (Element) jTable_Composition.getValueAt(Index, 0);
          mCurrentMaterial.removeElement(selected);
          jTable_Composition.setModel(new CompositionTableModel(mCurrentMaterial, false));
@@ -577,9 +564,9 @@ public class MaterialsCreator
    }
 
    private void formatQuantityTextField() {
-      if(buttonGroup_units.isSelected(jRadioButton_Weight.getModel()))
+      if (buttonGroup_units.isSelected(jRadioButton_Weight.getModel()))
          jTextField_Quantity.setText(mDefaultFmt.format((100 - (100.0 * mCurrentMaterial.sumWeightFraction()))) + "%");
-      else if(buttonGroup_units.isSelected(jRadioButton_Atomic.getModel()))
+      else if (buttonGroup_units.isSelected(jRadioButton_Atomic.getModel()))
          jTextField_Quantity.setText("1 atom(s)");
    }
 
@@ -588,30 +575,28 @@ public class MaterialsCreator
    }
 
    void jTextField_Name_focusLost(final FocusEvent e) {
-      if(mCurrentMaterial.getElementCount() == 0)
+      if (mCurrentMaterial.getElementCount() == 0)
          searchDatabase();
    }
 
    private void searchDatabase() {
       Composition comp = null;
       final String name = jTextField_Name.getText();
-      if(mSession != null)
+      if (mSession != null)
          try {
             comp = mSession.findStandard(name);
             jButton_Done.requestFocus();
-         }
-         catch(final SQLException e1) {
+         } catch (final SQLException e1) {
             // assume it isn't in the database...
          }
-      if(comp == null)
+      if (comp == null)
          try {
             comp = MaterialFactory.createCompound(name);
-            if(mCurrentMaterial instanceof Material)
+            if (mCurrentMaterial instanceof Material)
                setMaterial(new Material(comp, ((Material) mCurrentMaterial).getDensity()));
             else
                setMaterial(comp);
-         }
-         catch(final EPQException ex) {
+         } catch (final EPQException ex) {
             // Assume that it is a name not a compound
          }
       else {
@@ -651,9 +636,9 @@ public class MaterialsCreator
     * @param requireDensity
     */
    public void setRequireDensity(final boolean requireDensity) {
-      if(mRequireDensity != requireDensity) {
+      if (mRequireDensity != requireDensity) {
          mRequireDensity = requireDensity;
-         if(mRequireDensity) {
+         if (mRequireDensity) {
             jLabel_gPerCC.setText("<html>g/cm<sup>3</sup> (required)");
             jTextField_Density.setToolTipText("<html>Must be greater than zero.");
          } else {
@@ -695,9 +680,7 @@ public class MaterialsCreator
       return editMaterial(parent, null, ses, title, requireDensity);
    }
 
-   private static class MCRunnable
-      implements
-      Runnable {
+   private static class MCRunnable implements Runnable {
       private final MaterialsCreator mCreator;
       private Composition mComposition;
 
@@ -705,7 +688,7 @@ public class MaterialsCreator
          mCreator = new MaterialsCreator(parent, "Material Editor");
          mCreator.setModal(true);
          mCreator.setRequireDensity(requireDensity);
-         if(ses != null)
+         if (ses != null)
             mCreator.setSession(ses);
          mCreator.setLocationRelativeTo(parent);
          mComposition = comp;
@@ -718,13 +701,12 @@ public class MaterialsCreator
       @Override
       public void run() {
          try {
-            if(mComposition != null)
+            if (mComposition != null)
                mCreator.setMaterial(mComposition);
             mCreator.setModal(true);
             mCreator.setVisible(true);
             mComposition = mCreator.getMaterial();
-         }
-         catch(final RuntimeException e) {
+         } catch (final RuntimeException e) {
             System.err.print(e.getMessage());
             mCreator.setVisible(false);
          }
@@ -739,29 +721,28 @@ public class MaterialsCreator
       assert window != null;
       try {
          final MCRunnable t = new MCRunnable(window, comp, ses, requireDensity);
-         if(SwingUtilities.isEventDispatchThread())
+         if (SwingUtilities.isEventDispatchThread())
             t.run();
          else
             SwingUtilities.invokeAndWait(t);
          return t.mComposition;
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          return null;
       }
    }
 
-   public static Composition editMaterial(final Frame parent, final Composition comp, final Session ses, final String title, final boolean requireDensity) {
+   public static Composition editMaterial(final Frame parent, final Composition comp, final Session ses, final String title,
+         final boolean requireDensity) {
       try {
          final MCRunnable t = new MCRunnable(parent, comp, ses, requireDensity);
-         if(title != null)
+         if (title != null)
             t.setTitle(title);
-         if(SwingUtilities.isEventDispatchThread())
+         if (SwingUtilities.isEventDispatchThread())
             t.run();
          else
             SwingUtilities.invokeAndWait(t);
          return t.mComposition;
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          return null;
       }
    }
@@ -773,29 +754,28 @@ public class MaterialsCreator
    public static Composition editMaterial(final Dialog parent, final Composition comp, final Session ses, final boolean requireDensity) {
       try {
          final MCRunnable t = new MCRunnable(parent, comp, ses, requireDensity);
-         if(SwingUtilities.isEventDispatchThread())
+         if (SwingUtilities.isEventDispatchThread())
             t.run();
          else
             SwingUtilities.invokeAndWait(t);
          return t.mComposition;
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          System.err.print(e.getMessage());
          return null;
       }
    }
 
-   public static Composition editMaterial(final Dialog parent, final Composition comp, final Session ses, final String title, final boolean requireDensity) {
+   public static Composition editMaterial(final Dialog parent, final Composition comp, final Session ses, final String title,
+         final boolean requireDensity) {
       try {
          final MCRunnable t = new MCRunnable(parent, comp, ses, requireDensity);
          t.setTitle(title);
-         if(SwingUtilities.isEventDispatchThread())
+         if (SwingUtilities.isEventDispatchThread())
             t.run();
          else
             SwingUtilities.invokeAndWait(t);
          return t.mComposition;
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          System.err.print(e.getMessage());
          return null;
       }

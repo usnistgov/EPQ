@@ -42,18 +42,22 @@ public class WriteRaw {
     * of data items of datumSize bytes. The result is placed in a file named
     * filename.
     * 
-    * @param nRows int
-    * @param nCols int
-    * @param datumLength int - The number of atomic data items in each of the
-    *           nRows*nCols data blocks.
-    * @param itemSize int - The length of each atomic data item in bytes
-    *           (usually 1, 2, 4, or 8)
-    * @param filename String
+    * @param nRows
+    *           int
+    * @param nCols
+    *           int
+    * @param datumLength
+    *           int - The number of atomic data items in each of the nRows*nCols
+    *           data blocks.
+    * @param itemSize
+    *           int - The length of each atomic data item in bytes (usually 1,
+    *           2, 4, or 8)
+    * @param filename
+    *           String
     * @deprecated Use EPQTools.Ripple file instead
     */
    @Deprecated
-   public WriteRaw(int nRows, int nCols, int datumLength, int itemSize, String filename)
-         throws FileNotFoundException {
+   public WriteRaw(int nRows, int nCols, int datumLength, int itemSize, String filename) throws FileNotFoundException {
       mNRows = nRows;
       mNCols = nCols;
       mDatumLength = datumLength;
@@ -66,18 +70,22 @@ public class WriteRaw {
     * of data items of datumSize bytes. The result is placed in a file named
     * filename.
     * 
-    * @param nRows int
-    * @param nCols int
-    * @param datumLength int - The number of atomic data items in each of the
-    *           nRows*nCols data blocks.
-    * @param itemSize int - The length of each atomic data item in bytes
-    *           (usually 1, 2, 4, or 8)
-    * @param fos - A FileOutputStream into which to write the data
+    * @param nRows
+    *           int
+    * @param nCols
+    *           int
+    * @param datumLength
+    *           int - The number of atomic data items in each of the nRows*nCols
+    *           data blocks.
+    * @param itemSize
+    *           int - The length of each atomic data item in bytes (usually 1,
+    *           2, 4, or 8)
+    * @param fos
+    *           - A FileOutputStream into which to write the data
     * @deprecated Use EPQTools.Ripple file instead
     */
    @Deprecated
-   public WriteRaw(int nRows, int nCols, int datumLength, int itemSize, FileOutputStream fos)
-         throws FileNotFoundException {
+   public WriteRaw(int nRows, int nCols, int datumLength, int itemSize, FileOutputStream fos) throws FileNotFoundException {
       mNRows = nRows;
       mNCols = nCols;
       mDatumLength = datumLength;
@@ -90,12 +98,12 @@ public class WriteRaw {
     * describing the raw data file. Usually the file name for these files ends
     * in ".rpl".
     * 
-    * @param filename String
+    * @param filename
+    *           String
     * @deprecated Use EPQTools.Ripple file instead
     */
    @Deprecated
-   public void writeHeader(String filename)
-         throws EPQException {
+   public void writeHeader(String filename) throws EPQException {
       try {
          try (final PrintWriter pw = new PrintWriter(new FileOutputStream(filename))) {
             pw.println("key\tvalue");
@@ -112,8 +120,7 @@ public class WriteRaw {
             // Java
             pw.println("record-by\tvector");
          }
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          throw new EPQException(ex);
       }
    }
@@ -121,14 +128,16 @@ public class WriteRaw {
    /**
     * offset - Computes the offset to the beginning of the specified data item.
     * 
-    * @param row int
-    * @param col int
+    * @param row
+    *           int
+    * @param col
+    *           int
     * @return int
     */
    private long offset(int row, int col) {
-      if((row < 0) || (row >= mNRows))
+      if ((row < 0) || (row >= mNRows))
          throw new IllegalArgumentException("Row out of range in WriteRaw.offset");
-      if((col < 0) || (col >= mNCols))
+      if ((col < 0) || (col >= mNCols))
          throw new IllegalArgumentException("Column out of range in WriteRaw.offset");
       return (((long) row * (long) mNCols) + col) * (mDatumLength * mItemSize);
    }
@@ -141,8 +150,7 @@ public class WriteRaw {
    public int nextRow() {
       try {
          return (int) ((mData.getChannel().size() / (mDatumLength * mItemSize)) / mNCols);
-      }
-      catch(final IOException ex) {
+      } catch (final IOException ex) {
          return 0;
       }
    }
@@ -155,8 +163,7 @@ public class WriteRaw {
    public int nextColumn() {
       try {
          return (int) ((mData.getChannel().size() / (mDatumLength * mItemSize)) % mNCols);
-      }
-      catch(final IOException ex) {
+      } catch (final IOException ex) {
          return 0;
       }
    }
@@ -167,12 +174,13 @@ public class WriteRaw {
     * particular order although if the data is out of natural order, the
     * contents of the intervening data will contain undefined values.
     * 
-    * @param row int
-    * @param col int
+    * @param row
+    *           int
+    * @param col
+    *           int
     * @return OutputStream
     */
-   public OutputStream getStream(int row, int col)
-         throws IOException {
+   public OutputStream getStream(int row, int col) throws IOException {
       mData.getChannel().position(offset(row, col));
       return mData;
    }
@@ -182,8 +190,7 @@ public class WriteRaw {
     * 
     * @throws IOException
     */
-   public void close()
-         throws IOException {
+   public void close() throws IOException {
       mData.close();
    }
 }

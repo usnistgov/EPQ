@@ -28,25 +28,22 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author John Villarrubia
  * @version 1.0
  */
-public class IsotropicElecGun
-   implements ElectronGun {
+public class IsotropicElecGun implements ElectronGun {
 
    private final transient Random mRandom = Math2.rgen;
 
-   private final double[] center = new double[] {
-      0.,
-      0.,
-      0.
-   };
+   private final double[] center = new double[]{0., 0., 0.};
 
    private double beamEnergy;
 
    /**
     * Constructs an IsotropicElecGun
     *
-    * @param beamEnergy - the energy of the electrons in Joules
-    * @param center - an array of length 3 with x, y, and z coordinates where
-    *           the electrons are to originate.
+    * @param beamEnergy
+    *           - the energy of the electrons in Joules
+    * @param center
+    *           - an array of length 3 with x, y, and z coordinates where the
+    *           electrons are to originate.
     */
    public IsotropicElecGun(double beamEnergy, double[] center) {
       this.beamEnergy = beamEnergy;

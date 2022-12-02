@@ -26,8 +26,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author nritchie
  * @version 1.0
  */
-public class BoundedShapes
-   implements Shape {
+public class BoundedShapes implements Shape {
 
    private final ArrayList<Shape> mShapes;
    private final SimpleBlock mBounds;
@@ -53,9 +52,9 @@ public class BoundedShapes
       mShapes = new ArrayList<Shape>();
       final double[] c0 = Math2.v3(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
       final double[] c1 = Math2.v3(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE);
-      for(BoundedShapes bs : shapes) {
+      for (BoundedShapes bs : shapes) {
          mShapes.addAll(bs.mShapes);
-         for(int i = 0; i < 3; ++i) {
+         for (int i = 0; i < 3; ++i) {
             c0[i] = Math.min(c0[i], bs.getCorner0()[i]);
             c1[i] = Math.max(c1[i], bs.getCorner1()[i]);
          }
@@ -108,9 +107,9 @@ public class BoundedShapes
     */
    @Override
    public boolean contains(double[] pos) {
-      if(mBounds.contains(pos))
-         for(final Shape sh : mShapes)
-            if(sh.contains(pos))
+      if (mBounds.contains(pos))
+         for (final Shape sh : mShapes)
+            if (sh.contains(pos))
                return true;
       return false;
    }
@@ -125,11 +124,11 @@ public class BoundedShapes
    @Override
    public double getFirstIntersection(double[] pos0, double[] pos1) {
       final double test = mBounds.getFirstIntersection(pos0, pos1);
-      if(mBounds.contains(pos0) || ((test >= 0.0) && (test <= 1.0))) {
+      if (mBounds.contains(pos0) || ((test >= 0.0) && (test <= 1.0))) {
          double min = Double.MAX_VALUE;
-         for(final Shape sh : mShapes) {
+         for (final Shape sh : mShapes) {
             final double tmp = sh.getFirstIntersection(pos0, pos1);
-            if(tmp < min)
+            if (tmp < min)
                min = tmp;
          }
          return min;

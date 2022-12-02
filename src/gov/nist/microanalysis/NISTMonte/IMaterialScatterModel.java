@@ -38,7 +38,8 @@ public interface IMaterialScatterModel {
     * for the electron pe in the Material represented by this object. pe should
     * not be changed by this routine.
     * 
-    * @param pe -- the primary electron
+    * @param pe
+    *           -- the primary electron
     * @return double -- Free path in meters
     */
    double randomMeanPathLength(Electron pe);
@@ -68,9 +69,11 @@ public interface IMaterialScatterModel {
     * barrierScatter() creates such an electron, initializes it appropriately,
     * and returns it. Otherwise it returns null.
     * 
-    * @param pe Electron - a reference to the primary electron
-    * @param nextRegion RegionBase - A reference to the region on the far side
-    *           of the boundary
+    * @param pe
+    *           Electron - a reference to the primary electron
+    * @param nextRegion
+    *           RegionBase - A reference to the region on the far side of the
+    *           boundary
     * @return Electron - A secondary electron if one is generated or null if
     *         not.
     */
@@ -83,8 +86,10 @@ public interface IMaterialScatterModel {
     * calling routine is responsible for doing so if desired. This function
     * should return a negative number to represent an energy loss....
     * 
-    * @param len double - A distance in meters
-    * @param pe Electron - The primary electron
+    * @param len
+    *           double - A distance in meters
+    * @param pe
+    *           Electron - The primary electron
     * @return double - The energy loss in joules
     */
    double calculateEnergyLoss(double len, Electron pe);

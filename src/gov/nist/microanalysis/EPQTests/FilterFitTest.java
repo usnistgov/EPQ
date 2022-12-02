@@ -39,8 +39,7 @@ import junit.framework.TestCase;
  * @author nritchie
  * @version 1.0
  */
-public class FilterFitTest
-   extends TestCase {
+public class FilterFitTest extends TestCase {
 
    private ISpectrumData mAuSpec;
    private ISpectrumData mAgSpec;
@@ -55,8 +54,7 @@ public class FilterFitTest
    }
 
    @Override
-   protected void setUp()
-         throws EPQException, URISyntaxException {
+   protected void setUp() throws EPQException, URISyntaxException {
       mAuSpec = new ASPEXSpectrum(new File(FilterFitTest.class.getResource("TestData/Gold.tif").toURI()));
       mAuSpec.getProperties().setCompositionProperty(SpectrumProperties.StandardComposition, MaterialFactory.createPureElement(Element.Au));
       mAgSpec = new ASPEXSpectrum(new File(FilterFitTest.class.getResource("TestData/Silver.tif").toURI()));
@@ -69,8 +67,7 @@ public class FilterFitTest
       mAgSpec = null;
    }
 
-   public void testOne()
-         throws EPQException {
+   public void testOne() throws EPQException {
       // Load the reference spectra...
       // Construct an unknown from the references...
       final SpectrumMath unk = new SpectrumMath(mAuSpec);
@@ -85,8 +82,7 @@ public class FilterFitTest
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Ag)), 0.5, 0.01);
    }
 
-   public void testTwo()
-         throws EPQException {
+   public void testTwo() throws EPQException {
       final SpectrumMath unk = new SpectrumMath(mAuSpec);
       unk.add(mAgSpec, 0.5);
       final EDSDetector det = EDSDetector.createSiLiDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
@@ -99,8 +95,7 @@ public class FilterFitTest
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Ag)), 0.333, 0.01);
    }
 
-   public void testThree()
-         throws EPQException {
+   public void testThree() throws EPQException {
       final SpectrumMath unk = new SpectrumMath(mAgSpec);
       unk.add(mAuSpec, 0.5);
       final EDSDetector det = EDSDetector.createSiLiDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
@@ -113,59 +108,21 @@ public class FilterFitTest
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Ag)), 0.666, 0.01);
    }
 
-   public void testFour()
-         throws EPQException, IOException {
+   public void testFour() throws EPQException, IOException {
       // 'Unknown' spectrum
       final EMSAFile k3189 = new EMSAFile();
       k3189.read(FilterFitTest.class.getResourceAsStream("TestData/K3189_1.msa"));
       k3189.getProperties().setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
       k3189.getProperties().setNumericProperty(SpectrumProperties.LiveTime, 60.0);
-      final Object[][] refs = {
-         {
-            Element.O,
-            "TestData/MgO_ref1.msa",
-            MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide),
-            null
-         },
-         {
-            Element.Mg,
-            "TestData/Mg_ref1.msa",
-            MaterialFactory.createPureElement(Element.Mg),
-            null
-         },
-         {
-            Element.Al,
-            "TestData/Al_ref1.msa",
-            MaterialFactory.createPureElement(Element.Al),
-            null
-         },
-         {
-            Element.Si,
-            "TestData/Si_ref1.msa",
-            MaterialFactory.createPureElement(Element.Si),
-            null
-         },
-         {
-            Element.Ca,
-            "TestData/Ca_ref1.msa",
-            MaterialFactory.createPureElement(Element.Ca),
-            null
-         },
-         {
-            Element.Ti,
-            "TestData/Ti_ref1.msa",
-            MaterialFactory.createPureElement(Element.Ti),
-            null
-         },
-         {
-            Element.Fe,
-            "TestData/Fe_ref1.msa",
-            MaterialFactory.createPureElement(Element.Fe),
-            null
-         }
-      };
+      final Object[][] refs = {{Element.O, "TestData/MgO_ref1.msa", MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide), null},
+            {Element.Mg, "TestData/Mg_ref1.msa", MaterialFactory.createPureElement(Element.Mg), null},
+            {Element.Al, "TestData/Al_ref1.msa", MaterialFactory.createPureElement(Element.Al), null},
+            {Element.Si, "TestData/Si_ref1.msa", MaterialFactory.createPureElement(Element.Si), null},
+            {Element.Ca, "TestData/Ca_ref1.msa", MaterialFactory.createPureElement(Element.Ca), null},
+            {Element.Ti, "TestData/Ti_ref1.msa", MaterialFactory.createPureElement(Element.Ti), null},
+            {Element.Fe, "TestData/Fe_ref1.msa", MaterialFactory.createPureElement(Element.Fe), null}};
 
-      for(int i = 0; i < refs.length; ++i) {
+      for (int i = 0; i < refs.length; ++i) {
          final EMSAFile ref = new EMSAFile();
          ref.read(FilterFitTest.class.getResourceAsStream((String) refs[i][1]));
          ref.getProperties().setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
@@ -175,23 +132,24 @@ public class FilterFitTest
 
       final DescriptiveStatistics[] rs = new DescriptiveStatistics[refs.length];
       final DescriptiveStatistics[] var = new DescriptiveStatistics[refs.length];
-      for(int m = 0; m < refs.length; ++m) {
+      for (int m = 0; m < refs.length; ++m) {
          rs[m] = new DescriptiveStatistics();
          var[m] = new DescriptiveStatistics();
       }
 
-      final EDSDetector det = EDSDetector.createSiLiDetector(k3189.getChannelCount(), k3189.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(k3189, 135.0));
-      for(int j = 0; j < 10; ++j) {
+      final EDSDetector det = EDSDetector.createSiLiDetector(k3189.getChannelCount(), k3189.getChannelWidth(),
+            SpectrumUtils.getFWHMAtMnKA(k3189, 135.0));
+      for (int j = 0; j < 10; ++j) {
          final ISpectrumData unk = new NoisySpectrum(k3189, 1.0, (int) (Integer.MAX_VALUE * Math.random()));
          final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)));
-         for(final Object[] ref2 : refs) {
+         for (final Object[] ref2 : refs) {
             final ISpectrumData ref = SpectrumUtils.copy((ISpectrumData) ref2[3]);
             ref.getProperties().setCompositionProperty(SpectrumProperties.StandardComposition, (Material) ref2[2]);
             ff.addReference((Element) ref2[0], ref);
          }
          // Dump fit parameters...
          final KRatioSet krs = ff.getKRatios(unk);
-         for(int m = 0; m < refs.length; ++m) {
+         for (int m = 0; m < refs.length; ++m) {
             final XRayTransitionSet xrts = krs.optimalDatum((Element) refs[m][0]);
             rs[m].add(krs.getKRatio(xrts));
             var[m].add(krs.getError(xrts));

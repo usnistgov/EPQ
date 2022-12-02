@@ -135,7 +135,7 @@ abstract public class AlgorithmUser {
     */
    public Strategy getActiveStrategy() {
       final Strategy res = mLocalOverride != null ? (Strategy) mLocalOverride.clone() : new Strategy();
-      if(mGlobalOverride != null)
+      if (mGlobalOverride != null)
          res.apply(mGlobalOverride);
       return res;
    }
@@ -149,26 +149,26 @@ abstract public class AlgorithmUser {
     */
    public AlgorithmClass getAlgorithm(Class<?> cls) {
       AlgorithmClass res = null;
-      if(mGlobalOverride != null)
+      if (mGlobalOverride != null)
          res = mGlobalOverride.getAlgorithm(cls);
-      if((res == null) && (mLocalOverride != null))
+      if ((res == null) && (mLocalOverride != null))
          res = mLocalOverride.getAlgorithm(cls);
-      if(res == null) {
-         if(cls == CorrectionAlgorithm.class)
+      if (res == null) {
+         if (cls == CorrectionAlgorithm.class)
             res = getDefaultCorrectionAlgorithm();
-         else if(cls == BetheElectronEnergyLoss.class)
+         else if (cls == BetheElectronEnergyLoss.class)
             res = getDefaultBetheEnergyLoss();
-         else if(cls == BremsstrahlungAngularDistribution.class)
+         else if (cls == BremsstrahlungAngularDistribution.class)
             res = getDefaultAngularDistribution();
-         else if(cls == EdgeEnergy.class)
+         else if (cls == EdgeEnergy.class)
             res = getDefaultEdgeEnergy();
-         else if(cls == FluorescenceYield.class)
+         else if (cls == FluorescenceYield.class)
             res = getDefaultFluorescenceYield();
-         else if(cls == FluorescenceYieldMean.class)
+         else if (cls == FluorescenceYieldMean.class)
             res = getDefaultFluorescenceYieldMean();
-         else if(cls == MassAbsorptionCoefficient.class)
+         else if (cls == MassAbsorptionCoefficient.class)
             res = getDefaultMAC();
-         else if(cls == TransitionEnergy.class)
+         else if (cls == TransitionEnergy.class)
             res = getDefaultTransitionEnergy();
       }
       return res;
@@ -183,9 +183,9 @@ abstract public class AlgorithmUser {
     */
    public AlgorithmClass getAlgorithm(String clsName) {
       AlgorithmClass res = null;
-      if(mGlobalOverride != null)
+      if (mGlobalOverride != null)
          res = mGlobalOverride.getAlgorithm(clsName);
-      if((res == null) && (mLocalOverride != null))
+      if ((res == null) && (mLocalOverride != null))
          res = mLocalOverride.getAlgorithm(clsName);
       return res;
    }
@@ -197,7 +197,7 @@ abstract public class AlgorithmUser {
     * @param strat
     */
    static public void applyGlobalOverride(Strategy strat) {
-      if(strat != null) {
+      if (strat != null) {
          mGlobalOverride = strat;
          sDefaultTransitionEnergy = (TransitionEnergy) strat.getAlgorithm(TransitionEnergy.class);
          sDefaultEdgeEnergy = (EdgeEnergy) strat.getAlgorithm(EdgeEnergy.class);
@@ -255,7 +255,7 @@ abstract public class AlgorithmUser {
     */
    protected void addDefaultAlgorithm(Class<?> cls, AlgorithmClass ac) {
       assert ac != null;
-      if(mLocalOverride == null)
+      if (mLocalOverride == null)
          mLocalOverride = new Strategy();
       mLocalOverride.addAlgorithm(cls, ac);
    }
@@ -266,9 +266,8 @@ abstract public class AlgorithmUser {
     * @param wr
     * @throws IOException
     */
-   public void documentStrategy(Writer wr)
-         throws IOException {
-      for(final String cls : mGlobalOverride.getStrategyMap().keySet()) {
+   public void documentStrategy(Writer wr) throws IOException {
+      for (final String cls : mGlobalOverride.getStrategyMap().keySet()) {
          wr.write(getAlgorithm(cls).toString());
          wr.write('\n');
       }
@@ -276,10 +275,10 @@ abstract public class AlgorithmUser {
 
    private Strategy getEffectiveStrategyHelper() {
       final Strategy strat = new Strategy();
-      if(mLocalOverride != null) {
+      if (mLocalOverride != null) {
          strat.addAll(mLocalOverride);
          final Collection<AlgorithmClass> algs = mLocalOverride.getAlgorithms();
-         for(final AlgorithmClass ac : algs)
+         for (final AlgorithmClass ac : algs)
             strat.addAll(((AlgorithmUser) ac).getEffectiveStrategyHelper());
       }
       return strat;

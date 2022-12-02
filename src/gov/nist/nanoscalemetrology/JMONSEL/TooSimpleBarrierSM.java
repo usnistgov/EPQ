@@ -24,9 +24,7 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS.RegionBase;
  * @version 1.0
  */
 @Deprecated
-public class TooSimpleBarrierSM
-   implements
-   BarrierScatterMechanism {
+public class TooSimpleBarrierSM implements BarrierScatterMechanism {
 
    /**
     *
@@ -36,6 +34,7 @@ public class TooSimpleBarrierSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.BarrierScatterMechanism#barrierScatter
     * (gov.nist.microanalysis.NISTMonte.Electron,
@@ -46,7 +45,7 @@ public class TooSimpleBarrierSM
       /*
        *
        */
-      if(pe.getEnergy() < ((SEmaterial) pe.getCurrentRegion().getMaterial()).getWorkfunction())
+      if (pe.getEnergy() < ((SEmaterial) pe.getCurrentRegion().getMaterial()).getWorkfunction())
          pe.setEnergy(0.);
       else
          pe.setCurrentRegion(nextRegion);

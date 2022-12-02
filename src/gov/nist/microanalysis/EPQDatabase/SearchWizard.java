@@ -69,8 +69,7 @@ import gov.nist.microanalysis.Utility.HalfUpFormat;
  * @author nicholas
  * @version 1.0
  */
-public class SearchWizard
-   extends JWizardDialog {
+public class SearchWizard extends JWizardDialog {
 
    private static final long serialVersionUID = 2454447876045620922L;
 
@@ -86,8 +85,7 @@ public class SearchWizard
 
    private Session mSession = null;
 
-   private class StartPanel
-      extends JWizardPanel {
+   private class StartPanel extends JWizardPanel {
 
       private static final long serialVersionUID = 5665030135473354118L;
 
@@ -101,14 +99,14 @@ public class SearchWizard
 
       private void updateDetectors() {
          final Object obj = jComboBox_Instrument.getSelectedItem();
-         if(obj instanceof ElectronProbe) {
+         if (obj instanceof ElectronProbe) {
             final ElectronProbe ep = (ElectronProbe) obj;
             final String det = mPreferences.get("Det4" + ep.toString(), "");
             jComboBox_Detector.removeAllItems();
             Object sel = null;
-            for(final DetectorProperties xrd : mSession.getDetectors(ep)) {
+            for (final DetectorProperties xrd : mSession.getDetectors(ep)) {
                jComboBox_Detector.addItem(xrd);
-               if(xrd.toString().equals(det) || (sel == null))
+               if (xrd.toString().equals(det) || (sel == null))
                   sel = xrd;
             }
             jComboBox_Detector.setSelectedItem(sel);
@@ -120,17 +118,17 @@ public class SearchWizard
          final Object prev = jComboBox_Calibration.getSelectedItem();
          final Object sel = jComboBox_Detector.getSelectedItem();
          final DefaultComboBoxModel<Object> dcbm = new DefaultComboBoxModel<Object>();
-         if(sel instanceof DetectorProperties) {
+         if (sel instanceof DetectorProperties) {
             final List<DetectorCalibration> calibs = mSession.getCalibrations((DetectorProperties) sel);
             final String cal = calibs.contains(prev) ? prev.toString() : mPreferences.get("Cal4" + sel.toString(), "");
             DetectorCalibration selCal = null;
             dcbm.addElement("Any calibration");
-            for(final DetectorCalibration dc : calibs) {
+            for (final DetectorCalibration dc : calibs) {
                dcbm.addElement(dc);
-               if(dc.toString().equals(cal))
+               if (dc.toString().equals(cal))
                   selCal = dc;
             }
-            if(selCal != null)
+            if (selCal != null)
                dcbm.setSelectedItem(selCal);
          }
          jComboBox_Calibration.setModel(dcbm);
@@ -162,7 +160,7 @@ public class SearchWizard
             public void actionPerformed(ActionEvent e) {
                final Object inst = jComboBox_Instrument.getSelectedItem();
                final Object det = jComboBox_Detector.getSelectedItem();
-               if((inst != null) && (det != null))
+               if ((inst != null) && (det != null))
                   mPreferences.put("Det4" + inst.toString(), det.toString());
                updateCalibrations();
             }
@@ -173,7 +171,7 @@ public class SearchWizard
             public void actionPerformed(ActionEvent e) {
                final Object det = jComboBox_Detector.getSelectedItem();
                final Object cal = jComboBox_Calibration.getSelectedItem();
-               if((det != null) && (cal != null))
+               if ((det != null) && (cal != null))
                   mPreferences.put("Cal4" + det.toString(), cal.toString());
             }
          });
@@ -191,10 +189,9 @@ public class SearchWizard
          try {
             final NumberFormat nf = NumberFormat.getInstance();
             final double val = nf.parse(jTextField_BeamEnergy.getText()).doubleValue();
-            if((val >= 0.1) || (val <= 2000.0))
+            if ((val >= 0.1) || (val <= 2000.0))
                res = val;
-         }
-         catch(final ParseException e1) {
+         } catch (final ParseException e1) {
          }
          return res;
       }
@@ -217,7 +214,7 @@ public class SearchWizard
       private void setInstrument(ElectronProbe ep) {
          final ComboBoxModel<ElectronProbe> cbm = jComboBox_Instrument.getModel();
          cbm.setSelectedItem(ep);
-         if(cbm.getSelectedItem() != ep) {
+         if (cbm.getSelectedItem() != ep) {
             jComboBox_Instrument.addItem(ep);
             jComboBox_Instrument.setSelectedItem(ep);
          }
@@ -239,14 +236,13 @@ public class SearchWizard
          try {
             final NumberFormat nf = NumberFormat.getInstance();
             final double val = nf.parse(e0).doubleValue();
-            if((val < 0.1) || (val > 2000.0))
+            if ((val < 0.1) || (val > 2000.0))
                res = false;
-         }
-         catch(final ParseException e1) {
+         } catch (final ParseException e1) {
             res = false;
          }
          jTextField_BeamEnergy.setBackground(res ? SystemColor.text : Color.pink);
-         if(res) {
+         if (res) {
             mPreferences.put("Beam Energy", e0.toString());
             setMessageText("");
          } else
@@ -259,36 +255,35 @@ public class SearchWizard
          super(wiz, new FormLayout("right:pref, 5dlu, 100dlu, 3dlu, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
          try {
             initialize();
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             ex.printStackTrace();
          }
       }
 
       @Override
       public void onShow() {
-         if((mFirstShow) && (mSession != null)) {
+         if ((mFirstShow) && (mSession != null)) {
             {
                final String epStr = mPreferences.get("Instrument", "");
                Object sel = null;
-               for(final ElectronProbe ep : mSession.getElectronProbes().keySet()) {
+               for (final ElectronProbe ep : mSession.getElectronProbes().keySet()) {
                   jComboBox_Instrument.addItem(ep);
-                  if(ep.toString() == epStr)
+                  if (ep.toString() == epStr)
                      sel = ep;
                }
-               if(sel != null)
+               if (sel != null)
                   jComboBox_Instrument.setSelectedItem(sel);
                updateDetectors();
             }
             {
                final String pStr = mPreferences.get("Person", System.getProperty("user.name"));
                Object sel = null;
-               for(final String person : mSession.getPeople().keySet()) {
+               for (final String person : mSession.getPeople().keySet()) {
                   jComboBox_CollectedBy.addItem(person);
-                  if(person.equals(pStr))
+                  if (person.equals(pStr))
                      sel = person;
                }
-               if(sel != null)
+               if (sel != null)
                   jComboBox_CollectedBy.setSelectedItem(sel);
                jTextField_BeamEnergy.setText(mPreferences.get("Beam Energy", "20.0"));
 
@@ -303,12 +298,12 @@ public class SearchWizard
 
       @Override
       public boolean permitNext() {
-         if(!checkBeamEnergy())
+         if (!checkBeamEnergy())
             return false;
          final Object inst = jComboBox_Instrument.getSelectedItem();
          final Object det = jComboBox_Detector.getSelectedItem();
          final Object per = jComboBox_CollectedBy.getSelectedItem();
-         if((inst != null) && (per != null) && (det != null)) {
+         if ((inst != null) && (per != null) && (det != null)) {
             mPreferences.put("Instrument", inst.toString());
             mPreferences.put("Det4" + inst.toString(), det.toString());
             mPreferences.put("Person", per.toString());
@@ -317,8 +312,7 @@ public class SearchWizard
       }
    };
 
-   private class ModePanel
-      extends JWizardPanel {
+   private class ModePanel extends JWizardPanel {
 
       private static final long serialVersionUID = -4072841200850574253L;
 
@@ -368,19 +362,19 @@ public class SearchWizard
       private void updateSelection() {
          JWizardPanel next = null;
          String msg = "?";
-         if(jRadioButton_Measured.isSelected()) {
+         if (jRadioButton_Measured.isSelected()) {
             next = jWizardPanel_Composition;
             msg = "Specify measured composition";
-         } else if(jRadioButton_Standard.isSelected()) {
+         } else if (jRadioButton_Standard.isSelected()) {
             next = jWizardPanel_Standard;
             msg = "Select the standard by name";
-         } else if(jRadioButton_Particle.isSelected()) {
+         } else if (jRadioButton_Particle.isSelected()) {
             next = jWizardPanel_Result;
             msg = "Specify particle signature";
-         } else if(jRadioButton_Advanced.isSelected()) {
+         } else if (jRadioButton_Advanced.isSelected()) {
             next = jWizardPanel_Advanced;
             msg = "Specify advanced search string";
-         } else if(jRadioButton_Project.isSelected()) {
+         } else if (jRadioButton_Project.isSelected()) {
             next = jWizardPanel_Project;
             msg = "Specify a project";
          }
@@ -391,8 +385,7 @@ public class SearchWizard
          super(wiz, new FormLayout("pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
          try {
             initialize();
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             ex.printStackTrace();
          }
       }
@@ -407,8 +400,7 @@ public class SearchWizard
       }
    }
 
-   private class AdvancedPanel
-      extends JWizardPanel {
+   private class AdvancedPanel extends JWizardPanel {
 
       private static final long serialVersionUID = -2284703248238350664L;
 
@@ -421,8 +413,7 @@ public class SearchWizard
          super(wiz, new FormLayout("10dlu, 250dlu", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
          try {
             initialize();
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             ex.printStackTrace();
          }
       }
@@ -456,19 +447,18 @@ public class SearchWizard
       public boolean permitNext() {
          // TODO: Perform advanced search
          Session.ElementDataTypes edt;
-         if(jRadioButton_Measured.isSelected())
+         if (jRadioButton_Measured.isSelected())
             edt = Session.ElementDataTypes.MEASURED_COMPOSITION;
-         else if(jRadioButton_Particle.isSelected())
+         else if (jRadioButton_Particle.isSelected())
             edt = Session.ElementDataTypes.PARTICLE_SIGNATURE;
-         else if(jRadioButton_Standard.isSelected())
+         else if (jRadioButton_Standard.isSelected())
             edt = Session.ElementDataTypes.STANDARD_COMPOSITION;
          else
             return false;
          try {
             final TreeSet<Session.SpectrumSummary> res = mSession.findSpectra(jTextField_Search.getText(), edt, 1000);
             jWizardPanel_Result.addResults(res);
-         }
-         catch(final Exception e) {
+         } catch (final Exception e) {
             ErrorDialog.createErrorMessage(SearchWizard.this, "Search error", e);
          }
          return true;
@@ -476,8 +466,7 @@ public class SearchWizard
 
    };
 
-   private class ProjectPanel
-      extends JWizardPanel {
+   private class ProjectPanel extends JWizardPanel {
 
       private static final long serialVersionUID = -4748366640662414063L;
 
@@ -489,8 +478,7 @@ public class SearchWizard
          super(wiz, new FormLayout("pref, 5dlu, 100dlu", "pref"));
          try {
             initialize();
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             ex.printStackTrace();
          }
       }
@@ -503,8 +491,8 @@ public class SearchWizard
 
       @Override
       public void onShow() {
-         if(mFirstShow && (mSession != null)) {
-            for(final String str : mSession.getProjects().keySet())
+         if (mFirstShow && (mSession != null)) {
+            for (final String str : mSession.getProjects().keySet())
                jComboBox_Project.addItem(str);
             mFirstShow = false;
          }
@@ -517,14 +505,14 @@ public class SearchWizard
       @Override
       public boolean permitNext() {
          // Search by project...
-         jWizardPanel_Result.addResults(mSession.findSpectra((String) jComboBox_Project.getSelectedItem(), jWizardPanel_Start.getDetectorProperties(), jWizardPanel_Start.getDetectorCalibration(), jWizardPanel_Start.getCollectedBy(), jWizardPanel_Start.getBeamEnergy(), 100));
+         jWizardPanel_Result.addResults(mSession.findSpectra((String) jComboBox_Project.getSelectedItem(), jWizardPanel_Start.getDetectorProperties(),
+               jWizardPanel_Start.getDetectorCalibration(), jWizardPanel_Start.getCollectedBy(), jWizardPanel_Start.getBeamEnergy(), 100));
          return true;
       }
 
    };
 
-   private class CompositionPanel
-      extends JWizardPanel {
+   private class CompositionPanel extends JWizardPanel {
 
       private static final long serialVersionUID = -8890334923401808867L;
 
@@ -539,8 +527,7 @@ public class SearchWizard
          super(wiz, new FormLayout("10dlu, 150dlu, 5dlu, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
          try {
             initialize();
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             ex.printStackTrace();
          }
       }
@@ -563,7 +550,7 @@ public class SearchWizard
                mc.setMaterial(mComposition);
                mc.setLocationRelativeTo(SearchWizard.this);
                mc.setVisible(true);
-               if(mc.getMaterial() != null) {
+               if (mc.getMaterial() != null) {
                   mComposition = mc.getMaterial();
                   jTextField_Composition.setText(mc.getMaterial().descriptiveString(false));
                   jTextField_Composition.setCaretPosition(0);
@@ -574,9 +561,9 @@ public class SearchWizard
 
       @Override
       public void onShow() {
-         if(mFirstShow) {
+         if (mFirstShow) {
             final String xml = mPreferences.get("Composition", null);
-            if(xml != null)
+            if (xml != null)
                mComposition = (Composition) EPQXStream.getInstance().fromXML(xml);
             jTextField_Composition.setText(mComposition.descriptiveString(false));
             jTextField_Composition.setCaretPosition(0);
@@ -598,8 +585,7 @@ public class SearchWizard
 
    }
 
-   private class StandardPanel
-      extends JWizardPanel {
+   private class StandardPanel extends JWizardPanel {
 
       private static final long serialVersionUID = -1235424069972431010L;
 
@@ -610,8 +596,7 @@ public class SearchWizard
          super(wiz, new FormLayout("200dlu", "150dlu"));
          try {
             initialize();
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             ex.printStackTrace();
          }
       }
@@ -624,14 +609,13 @@ public class SearchWizard
 
       @Override
       public void onShow() {
-         if(mFirstShow && (mSession != null)) {
+         if (mFirstShow && (mSession != null)) {
             try {
                final DefaultListModel<String> dlm = new DefaultListModel<String>();
-               for(final String str : mSession.getStandards().keySet())
+               for (final String str : mSession.getStandards().keySet())
                   dlm.addElement(str);
                jList_Standards.setModel(dlm);
-            }
-            catch(final SQLException e) {
+            } catch (final SQLException e) {
                e.printStackTrace();
             }
             mFirstShow = false;
@@ -646,14 +630,14 @@ public class SearchWizard
       public boolean permitNext() {
          final String name = jList_Standards.getSelectedValue();
          try {
-            if(name != null) {
-               final TreeSet<Session.SpectrumSummary> res = mSession.findStandards(name, jWizardPanel_Start.getDetectorProperties(), jWizardPanel_Start.getBeamEnergy(), jWizardPanel_Start.getCollectedBy(), 10);
+            if (name != null) {
+               final TreeSet<Session.SpectrumSummary> res = mSession.findStandards(name, jWizardPanel_Start.getDetectorProperties(),
+                     jWizardPanel_Start.getBeamEnergy(), jWizardPanel_Start.getCollectedBy(), 10);
                jWizardPanel_Result.addResults(res);
                return true;
             }
 
-         }
-         catch(final Exception e) {
+         } catch (final Exception e) {
             setErrorText("An error occurred while searching for " + name);
             ErrorDialog.createErrorMessage(SearchWizard.this, "Search for standard", e);
             return true;
@@ -662,8 +646,7 @@ public class SearchWizard
       }
    }
 
-   private class ResultPanel
-      extends JWizardPanel {
+   private class ResultPanel extends JWizardPanel {
 
       private static final long serialVersionUID = -1105425782850288969L;
 
@@ -674,8 +657,7 @@ public class SearchWizard
          super(wiz, new FormLayout("320dlu", "70dlu, 70dlu"));
          try {
             initialize();
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             ex.printStackTrace();
          }
       }
@@ -692,12 +674,11 @@ public class SearchWizard
             public void valueChanged(ListSelectionEvent e) {
                jSpecDisplay_Preview.clearAllSpectra();
                boolean ok = false;
-               for(final Session.SpectrumSummary spec : jList_Results.getSelectedValuesList())
+               for (final Session.SpectrumSummary spec : jList_Results.getSelectedValuesList())
                   try {
                      jSpecDisplay_Preview.addSpectrum(spec.load());
                      ok = true;
-                  }
-                  catch(final Exception e1) {
+                  } catch (final Exception e1) {
                      e1.printStackTrace();
                   }
                getWizard().enableFinish(ok);
@@ -715,7 +696,7 @@ public class SearchWizard
 
       public void addResults(Collection<Session.SpectrumSummary> specs) {
          final DefaultListModel<Session.SpectrumSummary> dlm = (DefaultListModel<Session.SpectrumSummary>) (jList_Results.getModel());
-         for(final Session.SpectrumSummary spec : specs)
+         for (final Session.SpectrumSummary spec : specs)
             dlm.addElement(spec);
          mSession.initiateLoad(specs);
       }
@@ -723,12 +704,11 @@ public class SearchWizard
       private ArrayList<ISpectrumData> getResults() {
          final ArrayList<ISpectrumData> res = new ArrayList<ISpectrumData>();
          final DefaultListModel<Session.SpectrumSummary> dlm = (DefaultListModel<Session.SpectrumSummary>) (jList_Results.getModel());
-         for(int i = 0; i < dlm.size(); ++i)
+         for (int i = 0; i < dlm.size(); ++i)
             try {
-               if(jList_Results.isSelectedIndex(i))
+               if (jList_Results.isSelectedIndex(i))
                   res.add(dlm.getElementAt(i).load());
-            }
-            catch(final Exception e) {
+            } catch (final Exception e) {
                ErrorDialog.createErrorMessage(SearchWizard.this, "Error getting results", e);
             }
          return res;
@@ -745,13 +725,11 @@ public class SearchWizard
     * 
     * @throws HeadlessException
     */
-   public SearchWizard(Session ses)
-         throws HeadlessException {
+   public SearchWizard(Session ses) throws HeadlessException {
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -768,8 +746,7 @@ public class SearchWizard
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -785,8 +762,7 @@ public class SearchWizard
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -802,8 +778,7 @@ public class SearchWizard
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -820,8 +795,7 @@ public class SearchWizard
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -837,8 +811,7 @@ public class SearchWizard
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -854,8 +827,7 @@ public class SearchWizard
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
 
@@ -891,13 +863,11 @@ public class SearchWizard
          // Set up special look-and-feels
          final String laf = UIManager.getSystemLookAndFeelClassName();
          UIManager.setLookAndFeel(laf);
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          try {
             e.printStackTrace();
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-         }
-         catch(final Exception e1) {
+         } catch (final Exception e1) {
             e1.printStackTrace();
          }
       }

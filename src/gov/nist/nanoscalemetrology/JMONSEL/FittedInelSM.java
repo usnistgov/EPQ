@@ -34,8 +34,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author John Villarrubia
  * @version 1.0
  */
-public class FittedInelSM
-   extends ScatterMechanism {
+public class FittedInelSM extends ScatterMechanism {
 
    private final SlowingDownAlg sdAlg;
    private final double energySEgen; // Average energy for SE generation
@@ -80,7 +79,7 @@ public class FittedInelSM
     */
    @Override
    public double scatterRate(Electron pe) {
-      if(pe.getEnergy() <= (energySEgen + eFermi))
+      if (pe.getEnergy() <= (energySEgen + eFermi))
          return 0.;
       return (-sdAlg.compute(1.e-10, pe) * 1.e10) / energySEgen;
    }
@@ -103,8 +102,7 @@ public class FittedInelSM
     */
    @Override
    public String toString() {
-      return "FittedInelSM(" + Double.valueOf(eFermi).toString() + "," + Double.valueOf(energySEgen).toString() + "," + sdAlg.toString()
-            + ")";
+      return "FittedInelSM(" + Double.valueOf(eFermi).toString() + "," + Double.valueOf(energySEgen).toString() + "," + sdAlg.toString() + ")";
    }
 
 }

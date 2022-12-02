@@ -53,22 +53,21 @@ abstract public class Simplex {
    // ooze - Trys a single Simplex step by projecting one vertex of the Simplex
    // by a fractional amount (frac) and
    // evaluating function at the new point.
-   private double ooze(double[][] p, double[] y, double[] psum, int ihi, double fac)
-         throws UtilException {
+   private double ooze(double[][] p, double[] y, double[] psum, int ihi, double fac) throws UtilException {
       final int nDim = p.length - 1;
       assert (y.length == (nDim + 1));
       assert (p[0].length == nDim);
       assert (psum.length == nDim);
-      if((mPTry == null) || (mPTry.length != nDim))
+      if ((mPTry == null) || (mPTry.length != nDim))
          mPTry = new double[nDim];
       final double fac1 = (1.0 - fac) / nDim;
       final double fac2 = fac1 - fac;
-      for(int j = 0; j < nDim; ++j)
+      for (int j = 0; j < nDim; ++j)
          mPTry[j] = (psum[j] * fac1) - (p[ihi][j] * fac2);
       final double ytry = evaluateFunction(mPTry);
-      if(ytry < y[ihi]) {
+      if (ytry < y[ihi]) {
          y[ihi] = ytry;
-         for(int j = 0; j < nDim; ++j) {
+         for (int j = 0; j < nDim; ++j) {
             psum[j] += mPTry[j] - p[ihi][j];
             p[ihi][j] = mPTry[j];
          }
@@ -77,12 +76,11 @@ abstract public class Simplex {
    }
 
    // Tests the result from function for basic reasonableness
-   private double evaluateFunction(double[] x)
-         throws UtilException {
+   private double evaluateFunction(double[] x) throws UtilException {
       final double res = function(x);
-      if(Double.isNaN(res))
+      if (Double.isNaN(res))
          throw new UtilException("The function in the Simplex routine returned NaN at " + Arrays.toString(x));
-      if(Double.isInfinite(res))
+      if (Double.isInfinite(res))
          throw new UtilException("The function in the Simplex routine is not finite at " + Arrays.toString(x));
       return res;
    }
@@ -98,7 +96,8 @@ abstract public class Simplex {
     * only to the derived class. This facilitates using Simplex to derive
     * anonymous classes.
     * 
-    * @param params double[]
+    * @param params
+    *           double[]
     */
    public Simplex(Object[] params) {
       mParameters = params.clone();
@@ -121,7 +120,8 @@ abstract public class Simplex {
     * return Double.MAX_VALUE. The Simplex will see this as very poorly
     * optimized step and avoid taking it.
     * 
-    * @param x double[] - The nDim function arguments
+    * @param x
+    *           double[] - The nDim function arguments
     * @return double - The result
     */
    public abstract double function(double[] x);
@@ -130,8 +130,10 @@ abstract public class Simplex {
     * Create a randomized starting point based on the single point given in
     * center and an associated scale for each dimension given in scale.
     * 
-    * @param center double[]
-    * @param scale double[]
+    * @param center
+    *           double[]
+    * @param scale
+    *           double[]
     * @return double[][]
     */
    public static double[][] randomizedStartingPoints(double[] center, double[] scale) {
@@ -139,10 +141,10 @@ abstract public class Simplex {
       // randomized
       assert (center.length == scale.length);
       final double[][] res = new double[center.length + 1][center.length];
-      for(int j = 0; j < res[0].length; ++j)
+      for (int j = 0; j < res[0].length; ++j)
          res[0][j] = center[j];
-      for(int i = 1; i < res.length; ++i)
-         for(int j = 0; j < res[i].length; ++j)
+      for (int i = 1; i < res.length; ++i)
+         for (int j = 0; j < res[i].length; ++j)
             res[i][j] = center[j] + (scale[j] * (1.0 - (2.0 * r.nextDouble())));
       return res;
    }
@@ -154,16 +156,18 @@ abstract public class Simplex {
     * center point, the second point is offset by scale[0], the third by
     * scale[1], etc.
     * 
-    * @param center double[]
-    * @param scale double[]
+    * @param center
+    *           double[]
+    * @param scale
+    *           double[]
     * @return double[][]
     */
    public static double[][] regularizedStartingPoints(double[] center, double[] scale) {
       assert (center.length == scale.length);
       final double[][] res = new double[center.length + 1][center.length];
-      for(final double[] re : res)
+      for (final double[] re : res)
          System.arraycopy(center, 0, re, 0, center.length);
-      for(int i = 1; i < res.length; ++i)
+      for (int i = 1; i < res.length; ++i)
          res[i][i - 1] += scale[i - 1];
       return res;
    }
@@ -174,12 +178,12 @@ abstract public class Simplex {
     * array of doubles. All are within the tolerance of the minimum. (note:
     * Simplex deduces the number of dimensions in the problem from p[0].length.
     * 
-    * @param p double[][] - a double[n+1][n] dimension array
+    * @param p
+    *           double[][] - a double[n+1][n] dimension array
     * @return double[] - The best result
     * @throws UtilException
     */
-   public double[] perform(double[][] p)
-         throws UtilException {
+   public double[] perform(double[][] p) throws UtilException {
       final int nDim = p[0].length, mpts = nDim + 1;
       mEvaluationCount = nDim;
       assert (p.length == mpts);
@@ -188,59 +192,59 @@ abstract public class Simplex {
       final double[] psum = new double[nDim];
       final double[] y = new double[mpts];
       // Fill y with the function evaluated at the points in p
-      for(int i = 0; i < mpts; ++i)
+      for (int i = 0; i < mpts; ++i)
          y[i] = evaluateFunction(p[i]);
       // GET_PSUM
-      for(int j = 0; j < nDim; ++j) {
+      for (int j = 0; j < nDim; ++j) {
          double sum = 0.0;
-         for(int i = 0; i < mpts; ++i)
+         for (int i = 0; i < mpts; ++i)
             sum += p[i][j];
          psum[j] = sum;
       }
-      while(true) {
+      while (true) {
          int ilo = 0;
          int ihi = (y[0] > y[1] ? 0 : 1);
          int inhi = 1 - ihi;
-         for(int i = 0; i < mpts; ++i) {
-            if(y[i] <= y[ilo])
+         for (int i = 0; i < mpts; ++i) {
+            if (y[i] <= y[ilo])
                ilo = i;
-            if(y[i] > y[ihi]) {
+            if (y[i] > y[ihi]) {
                inhi = ihi;
                ihi = i;
-            } else if((y[i] > y[inhi]) && (i != ihi))
+            } else if ((y[i] > y[inhi]) && (i != ihi))
                inhi = i;
          }
          final double tol = Math.abs(y[ihi] - y[ilo]);
          final double rtol = (2.0 * tol) / (Math.abs(y[ihi]) + Math.abs(y[ilo]));
-         if((rtol < mTolerance) || (tol < mTolerance)) {
+         if ((rtol < mTolerance) || (tol < mTolerance)) {
             mBest = p[ilo];
             mResult = y[ilo];
             break; // out of while(true)
          }
-         if(mEvaluationCount > mMaxEvaluations) {
+         if (mEvaluationCount > mMaxEvaluations) {
             mBest = p[ilo];
             mResult = y[ilo];
             throw new UtilException("Exceeded the maximum number of iterations in Simplex algorithm.");
          }
          mEvaluationCount += 2;
          double yTry = ooze(p, y, psum, ihi, -1.0);
-         if(yTry <= y[ilo])
+         if (yTry <= y[ilo])
             yTry = ooze(p, y, psum, ihi, 2.0);
-         else if(yTry >= y[inhi]) {
+         else if (yTry >= y[inhi]) {
             final double ySave = y[ihi];
             yTry = ooze(p, y, psum, ihi, 0.5);
-            if(yTry >= ySave) {
-               for(int i = 0; i < mpts; ++i)
-                  if(i != ilo) {
-                     for(int j = 0; j < nDim; ++j)
+            if (yTry >= ySave) {
+               for (int i = 0; i < mpts; ++i)
+                  if (i != ilo) {
+                     for (int j = 0; j < nDim; ++j)
                         p[i][j] = (psum[j] = 0.5 * (p[i][j] + p[ilo][j]));
                      y[i] = evaluateFunction(psum);
                   }
                mEvaluationCount += nDim;
                // GET_PSUM
-               for(int j = 0; j < nDim; ++j) {
+               for (int j = 0; j < nDim; ++j) {
                   double sum = 0.0;
-                  for(int i = 0; i < mpts; ++i)
+                  for (int i = 0; i < mpts; ++i)
                      sum += p[i][j];
                   psum[j] = sum;
                }
@@ -275,7 +279,8 @@ abstract public class Simplex {
     * setTolerance - Set the fractional tolerance used to determine when to halt
     * the optimization. (Default 1.0e-8, Min 0.01)
     * 
-    * @param t double
+    * @param t
+    *           double
     */
    public void setTolerance(double t) {
       t = Math.abs(t);
@@ -298,7 +303,8 @@ abstract public class Simplex {
     * that Simplex.perform will take before aborting the optimization. (default
     * 5000, min 100)
     * 
-    * @param n int
+    * @param n
+    *           int
     */
    public void setMaxEvaluations(int n) {
       assert (n > MIN_EVALUATIONS);

@@ -27,19 +27,14 @@ import gov.nist.microanalysis.Utility.TextUtilities;
  * @author Nicholas
  * @version 1.0
  */
-public class RegionOfInterestSet
-   implements
-   Iterable<RegionOfInterestSet.RegionOfInterest>,
-   Comparable<RegionOfInterestSet> {
+public class RegionOfInterestSet implements Iterable<RegionOfInterestSet.RegionOfInterest>, Comparable<RegionOfInterestSet> {
 
    /**
     * Implements a simple model of a RegionOfInterest defined by a detector and
     * overlapping XRayTransitions.
     */
    // / TODO: Split ROI into BaseROI, SingleElementROI and MultiElementROI
-   public class RegionOfInterest
-      implements
-      Comparable<RegionOfInterest> {
+   public class RegionOfInterest implements Comparable<RegionOfInterest> {
       private double mMinEnergy = Double.MAX_VALUE;
       private double mMaxEnergy = Double.MIN_VALUE;
       final private Set<XRayTransition> mTransitions = new TreeSet<XRayTransition>();
@@ -98,18 +93,17 @@ public class RegionOfInterestSet
          try {
             final double e = xrt.getEnergy();
             final double w = xrt.getWeight(XRayTransition.NormalizeFamily);
-            if(w > mMinIntensity) {
+            if (w > mMinIntensity) {
                final double eV = FromSI.eV(e);
                final double low = e - (ToSI.eV(mModel.leftWidth(eV, mMinIntensity / w)) + mLowExtra);
                final double high = e + (ToSI.eV(mModel.rightWidth(eV, mMinIntensity / w)) + mHighExtra);
-               if(low < mMinEnergy)
+               if (low < mMinEnergy)
                   mMinEnergy = low;
-               if(high > mMaxEnergy)
+               if (high > mMaxEnergy)
                   mMaxEnergy = high;
             }
             mTransitions.add(xrt);
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             // Ignore it...
          }
       }
@@ -121,9 +115,9 @@ public class RegionOfInterestSet
        */
       private void add(RegionOfInterest roc) {
          assert parentsMatch(roc);
-         if(roc.mMinEnergy < mMinEnergy)
+         if (roc.mMinEnergy < mMinEnergy)
             mMinEnergy = roc.mMinEnergy;
-         if(roc.mMaxEnergy > mMaxEnergy)
+         if (roc.mMaxEnergy > mMaxEnergy)
             mMaxEnergy = roc.mMaxEnergy;
          mTransitions.addAll(roc.mTransitions);
       }
@@ -153,7 +147,8 @@ public class RegionOfInterestSet
       /**
        * Does this ROI contain the specified energy?
        * 
-       * @param e in Joules
+       * @param e
+       *           in Joules
        * @return boolean
        */
       public boolean contains(double e) {
@@ -163,8 +158,7 @@ public class RegionOfInterestSet
       public boolean contains(XRayTransition xrt) {
          try {
             return contains(xrt.getEnergy());
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             return false;
          }
       }
@@ -211,15 +205,15 @@ public class RegionOfInterestSet
       @Override
       public int compareTo(RegionOfInterest o) {
          int res = mMinEnergy < o.mMinEnergy ? -1 : (mMinEnergy > o.mMinEnergy ? 1 : 0);
-         if(res == 0)
+         if (res == 0)
             res = mMaxEnergy < o.mMaxEnergy ? -1 : (mMaxEnergy > o.mMaxEnergy ? 1 : 0);
          return res;
       }
 
       public XRayTransitionSet getXRayTransitionSet(Element elm) {
          final ArrayList<XRayTransition> xrts = new ArrayList<XRayTransition>();
-         for(final XRayTransition xrt : mTransitions)
-            if(xrt.getElement().equals(elm))
+         for (final XRayTransition xrt : mTransitions)
+            if (xrt.getElement().equals(elm))
                xrts.add(xrt);
          return new XRayTransitionSet(xrts);
       }
@@ -233,8 +227,8 @@ public class RegionOfInterestSet
          final int max = SpectrumUtils.bound(spec1, SpectrumUtils.channelForEnergy(spec1, FromSI.eV(mMaxEnergy)));
          assert min == SpectrumUtils.bound(spec2, SpectrumUtils.channelForEnergy(spec2, FromSI.eV(mMinEnergy)));
          assert max == SpectrumUtils.bound(spec2, SpectrumUtils.channelForEnergy(spec2, FromSI.eV(mMaxEnergy)));
-         for(int ch = min; ch < max; ++ch)
-            if(spec1.getCounts(ch) != spec2.getCounts(ch))
+         for (int ch = min; ch < max; ++ch)
+            if (spec1.getCounts(ch) != spec2.getCounts(ch))
                return false;
          return true;
       }
@@ -255,7 +249,7 @@ public class RegionOfInterestSet
       public String shortName() {
          final StringBuffer sb = new StringBuffer(1024);
          final ArrayList<String> strs = new ArrayList<String>();
-         for(final Element elm : getElementSet())
+         for (final Element elm : getElementSet())
             strs.add(getXRayTransitionSet(elm).toString());
          sb.append(TextUtilities.toList(strs));
          return sb.toString();
@@ -263,7 +257,7 @@ public class RegionOfInterestSet
 
       @Override
       public int hashCode() {
-         if(mHash == Integer.MAX_VALUE) {
+         if (mHash == Integer.MAX_VALUE) {
             final int PRIME = 31;
             int result = 1;
             long temp;
@@ -273,7 +267,7 @@ public class RegionOfInterestSet
             result = (PRIME * result) + (int) (temp ^ (temp >>> 32));
             result = (PRIME * result) + ((mTransitions == null) ? 0 : mTransitions.hashCode());
             mHash = result;
-            if(mHash == Integer.MAX_VALUE)
+            if (mHash == Integer.MAX_VALUE)
                mHash = Integer.MIN_VALUE;
          }
          return mHash;
@@ -281,18 +275,18 @@ public class RegionOfInterestSet
 
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(getClass() != obj.getClass())
+         if (getClass() != obj.getClass())
             return false;
          final RegionOfInterest other = (RegionOfInterest) obj;
-         if(Double.doubleToLongBits(mMaxEnergy) != Double.doubleToLongBits(other.mMaxEnergy))
+         if (Double.doubleToLongBits(mMaxEnergy) != Double.doubleToLongBits(other.mMaxEnergy))
             return false;
-         if(Double.doubleToLongBits(mMinEnergy) != Double.doubleToLongBits(other.mMinEnergy))
+         if (Double.doubleToLongBits(mMinEnergy) != Double.doubleToLongBits(other.mMinEnergy))
             return false;
-         if(!mTransitions.equals(other.mTransitions))
+         if (!mTransitions.equals(other.mTransitions))
             return false;
          return true;
       }
@@ -314,7 +308,7 @@ public class RegionOfInterestSet
        */
       public TreeSet<Element> getElementSet() {
          final TreeSet<Element> res = new TreeSet<Element>();
-         for(final XRayTransition xrt : mTransitions)
+         for (final XRayTransition xrt : mTransitions)
             res.add(xrt.getElement());
          return res;
       }
@@ -377,11 +371,15 @@ public class RegionOfInterestSet
     * such that the intensity model.compute(width+center,center)=minI/weight =
     * 0.001/0.4.
     * 
-    * @param model The DetectorLineshapeModel
-    * @param minI The minimum weighted intensity
-    * @param lowXtra In increment subtracted from the low energy side of the ROI
-    *           (in Joules)
-    * @param highXtra In increment added to the high energy side of the ROI (in
+    * @param model
+    *           The DetectorLineshapeModel
+    * @param minI
+    *           The minimum weighted intensity
+    * @param lowXtra
+    *           In increment subtracted from the low energy side of the ROI (in
+    *           Joules)
+    * @param highXtra
+    *           In increment added to the high energy side of the ROI (in
     *           Joules)
     */
    public RegionOfInterestSet(DetectorLineshapeModel model, double minI, double lowXtra, double highXtra) {
@@ -424,33 +422,32 @@ public class RegionOfInterestSet
     */
    public void add(XRayTransition xrt) {
       final RegionOfInterest newRoi = new RegionOfInterest(xrt);
-      if(!newRoi.isNull())
+      if (!newRoi.isNull())
          add(newRoi);
       else
          try {
             final double e = xrt.getEnergy();
-            for(final RegionOfInterest roi : mROIs)
-               if(roi.contains(e))
+            for (final RegionOfInterest roi : mROIs)
+               if (roi.contains(e))
                   roi.mTransitions.add(xrt);
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             // Ignore it...
          }
    }
 
    public void add(RegionOfInterest newRoi) {
       final ArrayList<RegionOfInterest> matches = new ArrayList<RegionOfInterest>();
-      for(final RegionOfInterest roi : mROIs)
-         if(newRoi.intersects(roi)) {
+      for (final RegionOfInterest roi : mROIs)
+         if (newRoi.intersects(roi)) {
             roi.add(newRoi);
             matches.add(roi);
          }
-      if(matches.size() == 0)
+      if (matches.size() == 0)
          mROIs.add(newRoi);
-      else if(matches.size() > 1) {
+      else if (matches.size() > 1) {
          // Merge rois together
          final RegionOfInterest roi0 = matches.get(0);
-         for(int i = 1; i < matches.size(); ++i) {
+         for (int i = 1; i < matches.size(); ++i) {
             final RegionOfInterest roiI = matches.get(i);
             roi0.add(roiI);
             mROIs.remove(roiI);
@@ -477,8 +474,8 @@ public class RegionOfInterestSet
     * @return boolean
     */
    public boolean intesects(XRayTransitionSet xrts) {
-      for(final XRayTransition xrt : xrts)
-         if(intersects(xrt))
+      for (final XRayTransition xrt : xrts)
+         if (intersects(xrt))
             return true;
       return false;
    }
@@ -503,36 +500,36 @@ public class RegionOfInterestSet
     * @param withOverlaps
     */
    public void add(XRayTransitionSet xrts, boolean withOverlaps) {
-      if(xrts.size() > 0) {
+      if (xrts.size() > 0) {
          boolean k = false, l = false, m = false;
-         for(final XRayTransition xrt : xrts) {
+         for (final XRayTransition xrt : xrts) {
             add(xrt);
-            if(withOverlaps)
-               switch(xrt.getFamily()) {
-                  case AtomicShell.KFamily:
+            if (withOverlaps)
+               switch (xrt.getFamily()) {
+                  case AtomicShell.KFamily :
                      k = true;
                      break;
-                  case AtomicShell.LFamily:
+                  case AtomicShell.LFamily :
                      l = true;
                      break;
-                  case AtomicShell.MFamily:
+                  case AtomicShell.MFamily :
                      m = true;
                      break;
                }
          }
-         if(withOverlaps) {
+         if (withOverlaps) {
             final Element elm = xrts.getElement();
             final XRayTransitionSet xrts3 = getXRayTransitionSet(elm);
-            if(k) {
+            if (k) {
                boolean added = true;
                final XRayTransitionSet xrts2 = new XRayTransitionSet(elm, AtomicShell.KFamily);
                // loop until no more transitions can be added
-               while(added) {
+               while (added) {
                   added = false;
-                  for(final XRayTransition xrt : xrts2)
-                     if(!xrts3.contains(xrt)) {
+                  for (final XRayTransition xrt : xrts2)
+                     if (!xrts3.contains(xrt)) {
                         final RegionOfInterest roi = new RegionOfInterest(xrt);
-                        if(intersects(roi)) {
+                        if (intersects(roi)) {
                            added = true;
                            add(xrt);
                            xrts3.add(xrt);
@@ -540,16 +537,16 @@ public class RegionOfInterestSet
                      }
                }
             }
-            if(l) {
+            if (l) {
                boolean added = true;
                final XRayTransitionSet xrts2 = new XRayTransitionSet(elm, AtomicShell.LFamily);
                // loop until no more transitions can be added
-               while(added) {
+               while (added) {
                   added = false;
-                  for(final XRayTransition xrt : xrts2)
-                     if(!xrts3.contains(xrt)) {
+                  for (final XRayTransition xrt : xrts2)
+                     if (!xrts3.contains(xrt)) {
                         final RegionOfInterest roi = new RegionOfInterest(xrt);
-                        if(intersects(roi)) {
+                        if (intersects(roi)) {
                            added = true;
                            add(xrt);
                            xrts3.add(xrt);
@@ -557,16 +554,16 @@ public class RegionOfInterestSet
                      }
                }
             }
-            if(m) {
+            if (m) {
                boolean added = true;
                final XRayTransitionSet xrts2 = new XRayTransitionSet(elm, AtomicShell.MFamily);
                // loop until no more transitions can be added
-               while(added) {
+               while (added) {
                   added = false;
-                  for(final XRayTransition xrt : xrts2)
-                     if(!xrts3.contains(xrt)) {
+                  for (final XRayTransition xrt : xrts2)
+                     if (!xrts3.contains(xrt)) {
                         final RegionOfInterest roi = new RegionOfInterest(xrt);
-                        if(intersects(roi)) {
+                        if (intersects(roi)) {
                            added = true;
                            add(xrt);
                            xrts3.add(xrt);
@@ -583,12 +580,13 @@ public class RegionOfInterestSet
     * maxEnergy to the RegionOfInterestSet.
     * 
     * @param elm
-    * @param maxEnergy Edge energy in SI (Joules)
+    * @param maxEnergy
+    *           Edge energy in SI (Joules)
     * @param minWeight
     */
    public void add(Element elm, double maxEnergy, double minWeight) {
-      for(int tr = FIRST_TRANSITION; tr <= LAST_TRANSITION; tr++)
-         if(XRayTransition.exists(elm, tr) && (XRayTransition.getEdgeEnergy(elm, tr) < maxEnergy)
+      for (int tr = FIRST_TRANSITION; tr <= LAST_TRANSITION; tr++)
+         if (XRayTransition.exists(elm, tr) && (XRayTransition.getEdgeEnergy(elm, tr) < maxEnergy)
                && (XRayTransition.getWeight(elm, tr, XRayTransition.NormalizeFamily) >= minWeight))
             add(new XRayTransition(elm, tr));
    }
@@ -600,13 +598,15 @@ public class RegionOfInterestSet
     * RegionOfInterestSet.
     * 
     * @param elm
-    * @param family AtomicShell.?Family where ? is K, L or M
-    * @param maxEnergy in SI (Joules)
+    * @param family
+    *           AtomicShell.?Family where ? is K, L or M
+    * @param maxEnergy
+    *           in SI (Joules)
     */
    public void add(Element elm, int family, double maxEnergy) {
-      for(int tr = FIRST_TRANSITION; tr <= LAST_TRANSITION; tr++)
-         if(XRayTransition.getFamily(tr) == family)
-            if(XRayTransition.exists(elm, tr) && (XRayTransition.getEdgeEnergy(elm, tr) < maxEnergy))
+      for (int tr = FIRST_TRANSITION; tr <= LAST_TRANSITION; tr++)
+         if (XRayTransition.getFamily(tr) == family)
+            if (XRayTransition.exists(elm, tr) && (XRayTransition.getEdgeEnergy(elm, tr) < maxEnergy))
                add(new XRayTransition(elm, tr));
    }
 
@@ -650,11 +650,11 @@ public class RegionOfInterestSet
    @Override
    public String toString() {
       final StringBuffer res = new StringBuffer(mROIs.size() * 20);
-      for(final RegionOfInterest roi : mROIs) {
+      for (final RegionOfInterest roi : mROIs) {
          res.append(res.length() == 0 ? "[" : ", ");
          res.append(roi.toString());
       }
-      if(res.length() > 0)
+      if (res.length() > 0)
          res.append("]");
       return res.toString();
    }
@@ -663,13 +663,14 @@ public class RegionOfInterestSet
     * Tests whether any of the RegionOfInterest items in this ROIS overlap with
     * any of the RegionOfInterest items in <code>rois</code>.
     * 
-    * @param rois RegionOfInterestSet
+    * @param rois
+    *           RegionOfInterestSet
     * @return true if any overlaps; false if none overlap
     */
    public boolean intersects(RegionOfInterestSet rois) {
-      for(final RegionOfInterest roi1 : this)
-         for(final RegionOfInterest roi2 : rois)
-            if(roi1.intersects(roi2))
+      for (final RegionOfInterest roi1 : this)
+         for (final RegionOfInterest roi2 : rois)
+            if (roi1.intersects(roi2))
                return true;
       return false;
    }
@@ -682,15 +683,15 @@ public class RegionOfInterestSet
     * @return true if any overlaps; false if none overlap
     */
    public boolean intersects(RegionOfInterest roi) {
-      for(final RegionOfInterest roi1 : this)
-         if(roi1.intersects(roi))
+      for (final RegionOfInterest roi1 : this)
+         if (roi1.intersects(roi))
             return true;
       return false;
    }
 
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE) {
+      if (mHash == Integer.MAX_VALUE) {
          final int PRIME = 31;
          int result = 1;
          long temp;
@@ -703,7 +704,7 @@ public class RegionOfInterestSet
          result = (PRIME * result) + ((mModel == null) ? 0 : mModel.hashCode());
          result = (PRIME * result) + ((mROIs == null) ? 0 : mROIs.hashCode());
          mHash = result;
-         if(mHash == Integer.MAX_VALUE)
+         if (mHash == Integer.MAX_VALUE)
             mHash = Integer.MIN_VALUE;
       }
       return mHash;
@@ -711,22 +712,22 @@ public class RegionOfInterestSet
 
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final RegionOfInterestSet other = (RegionOfInterestSet) obj;
-      if(Double.doubleToLongBits(mMinIntensity) != Double.doubleToLongBits(other.mMinIntensity))
+      if (Double.doubleToLongBits(mMinIntensity) != Double.doubleToLongBits(other.mMinIntensity))
          return false;
-      if(Double.doubleToLongBits(mHighExtra) != Double.doubleToLongBits(other.mHighExtra))
+      if (Double.doubleToLongBits(mHighExtra) != Double.doubleToLongBits(other.mHighExtra))
          return false;
-      if(Double.doubleToLongBits(mLowExtra) != Double.doubleToLongBits(other.mLowExtra))
+      if (Double.doubleToLongBits(mLowExtra) != Double.doubleToLongBits(other.mLowExtra))
          return false;
-      if(!mModel.equals(other.mModel))
+      if (!mModel.equals(other.mModel))
          return false;
-      if(!mROIs.equals(other.mROIs))
+      if (!mROIs.equals(other.mROIs))
          return false;
       return true;
    }
@@ -738,15 +739,15 @@ public class RegionOfInterestSet
     * @return boolean
     */
    public boolean contains(double e) {
-      for(final RegionOfInterest roi : mROIs)
-         if(roi.contains(e))
+      for (final RegionOfInterest roi : mROIs)
+         if (roi.contains(e))
             return true;
       return false;
    }
 
    public boolean contains(RegionOfInterest roi) {
-      for(final RegionOfInterest thisroi : this)
-         if(thisroi.equals(roi))
+      for (final RegionOfInterest thisroi : this)
+         if (thisroi.equals(roi))
             return true;
       return false;
    }
@@ -759,8 +760,8 @@ public class RegionOfInterestSet
     * @return boolean
     */
    public boolean fullyContains(RegionOfInterest roi) {
-      for(final RegionOfInterest thisRoi : mROIs)
-         if(thisRoi.fullyContains(roi))
+      for (final RegionOfInterest thisRoi : mROIs)
+         if (thisRoi.fullyContains(roi))
             return true;
       return false;
    }
@@ -781,25 +782,26 @@ public class RegionOfInterestSet
    /**
     * Combine all ROIs that are separated by less an energy dE.
     * 
-    * @param dE in Joules
+    * @param dE
+    *           in Joules
     */
    public void merge(double dE) {
       final Set<RegionOfInterest> rois = new TreeSet<RegionOfInterest>(mROIs);
-      for(final RegionOfInterest roi1 : mROIs) {
+      for (final RegionOfInterest roi1 : mROIs) {
          RegionOfInterest roi = null;
-         for(final RegionOfInterest roi2 : mROIs)
-            if(roi == null) {
-               if((roi1 == roi2) && rois.contains(roi1)) {
+         for (final RegionOfInterest roi2 : mROIs)
+            if (roi == null) {
+               if ((roi1 == roi2) && rois.contains(roi1)) {
                   roi = roi1;
                   rois.remove(roi1);
                }
-            } else if(rois.contains(roi2))
-               if(((roi.mMinEnergy < roi2.mMinEnergy) && ((roi.mMaxEnergy + dE) > roi2.mMinEnergy))
+            } else if (rois.contains(roi2))
+               if (((roi.mMinEnergy < roi2.mMinEnergy) && ((roi.mMaxEnergy + dE) > roi2.mMinEnergy))
                      || ((roi2.mMaxEnergy < roi.mMinEnergy) && ((roi2.mMaxEnergy + dE) > roi.mMinEnergy))) {
                   roi = new RegionOfInterest(roi, roi2);
                   rois.remove(roi2);
                }
-         if(roi != null)
+         if (roi != null)
             rois.add(roi);
       }
       mROIs.clear();
@@ -808,7 +810,7 @@ public class RegionOfInterestSet
 
    public XRayTransitionSet getXRayTransitionSet(Element elm) {
       final XRayTransitionSet res = new XRayTransitionSet();
-      for(final RegionOfInterest roi : mROIs)
+      for (final RegionOfInterest roi : mROIs)
          res.add(roi.getXRayTransitionSet(elm));
       return res;
    }
@@ -818,15 +820,15 @@ public class RegionOfInterestSet
       int res = 0;
       final Iterator<RegionOfInterest> thisI = mROIs.iterator();
       final Iterator<RegionOfInterest> oI = o.mROIs.iterator();
-      while(thisI.hasNext() && oI.hasNext()) {
+      while (thisI.hasNext() && oI.hasNext()) {
          res = thisI.next().compareTo(oI.next());
-         if(res != 0)
+         if (res != 0)
             break;
       }
-      if(res == 0) {
-         if(thisI.hasNext())
+      if (res == 0) {
+         if (thisI.hasNext())
             res = 1;
-         if(oI.hasNext())
+         if (oI.hasNext())
             res = -1;
       }
       return res;
@@ -839,14 +841,14 @@ public class RegionOfInterestSet
     */
    TreeSet<Element> getElementSet() {
       final TreeSet<Element> res = new TreeSet<Element>();
-      for(final RegionOfInterest roi : mROIs)
+      for (final RegionOfInterest roi : mROIs)
          res.addAll(roi.getElementSet());
       return res;
    }
 
    public boolean containsThisROI(RegionOfInterest roi) {
-      for(final RegionOfInterest thisRoi : mROIs)
-         if(thisRoi.compareTo(roi) == 0)
+      for (final RegionOfInterest thisRoi : mROIs)
+         if (thisRoi.compareTo(roi) == 0)
             return true;
       return false;
 
@@ -854,16 +856,16 @@ public class RegionOfInterestSet
 
    public double lowEnergy() {
       double min = Double.MAX_VALUE;
-      for(final RegionOfInterest roi : mROIs)
-         if(roi.lowEnergy() < min)
+      for (final RegionOfInterest roi : mROIs)
+         if (roi.lowEnergy() < min)
             min = roi.lowEnergy();
       return min;
    }
 
    public double highEnergy() {
       double max = -Double.MAX_VALUE;
-      for(final RegionOfInterest roi : mROIs)
-         if(roi.highEnergy() > max)
+      for (final RegionOfInterest roi : mROIs)
+         if (roi.highEnergy() > max)
             max = roi.highEnergy();
       return max;
    }

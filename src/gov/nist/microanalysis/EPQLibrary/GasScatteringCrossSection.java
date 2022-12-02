@@ -33,15 +33,12 @@ import gov.nist.microanalysis.Utility.Math2;
  * Edition, Plenum Press, NY &amp; London, 1996.
  * </p>
  */
-public class GasScatteringCrossSection
-   extends RandomizedScatter {
+public class GasScatteringCrossSection extends RandomizedScatter {
 
-   static LitReference.Book REFERENCE = new LitReference.Book("Electron Energy-Loss Spectroscopy in the Electron Microscope, Second Edition", "Plenum Press, NY & London", 1996, new LitReference.Author[] {
-      LitReference.RFEdgerton
-   });
+   static LitReference.Book REFERENCE = new LitReference.Book("Electron Energy-Loss Spectroscopy in the Electron Microscope, Second Edition",
+         "Plenum Press, NY & London", 1996, new LitReference.Author[]{LitReference.RFEdgerton});
 
-   public static class GasScatteringRandomizedScatterFactory
-      extends RandomizedScatterFactory {
+   public static class GasScatteringRandomizedScatterFactory extends RandomizedScatterFactory {
       GasScatteringRandomizedScatterFactory() {
          super("Gas scattering algorithm", REFERENCE);
       }
@@ -54,7 +51,7 @@ public class GasScatteringCrossSection
       @Override
       public RandomizedScatter get(Element elm) {
          final int z = elm.getAtomicNumber();
-         if(mScatter[z] == null)
+         if (mScatter[z] == null)
             mScatter[z] = new GasScatteringCrossSection(elm);
          return mScatter[z];
       }
@@ -70,8 +67,7 @@ public class GasScatteringCrossSection
    private final Element mElement;
    private RandomizedScatter mElastic;
 
-   private static final double E0 = PhysicalConstants.ElectronMass * PhysicalConstants.SpeedOfLight
-         * PhysicalConstants.SpeedOfLight;
+   private static final double E0 = PhysicalConstants.ElectronMass * PhysicalConstants.SpeedOfLight * PhysicalConstants.SpeedOfLight;
 
    /**
     * Constructs a GasScatteringCrossSection object
@@ -89,7 +85,7 @@ public class GasScatteringCrossSection
     * @param elastic
     */
    public void setElasticModel(RandomizedScatter elastic) {
-      if(!elastic.getElement().equals(mElement))
+      if (!elastic.getElement().equals(mElement))
          throw new IllegalArgumentException("The element for the elastic model must match the element for the inelastic model.");
       mElastic = elastic;
    }
@@ -148,7 +144,7 @@ public class GasScatteringCrossSection
     */
    @Override
    public double randomScatteringAngle(double energy) {
-      if((Math.random() * (1.0 + ratioInelasticOverElastic())) < 1.0)
+      if ((Math.random() * (1.0 + ratioInelasticOverElastic())) < 1.0)
          return mElastic.randomScatteringAngle(energy);
       else {
          // Electron velocity from energy
@@ -161,8 +157,7 @@ public class GasScatteringCrossSection
          final double thE2 = Math2.sqr(mElement.getIonizationEnergy() / (g * PhysicalConstants.ElectronMass * v * v)); // unitless
          final double th02 = Math2.sqr(1.0 / (k0 * rz));
          // Compute the maximum integrated cross section
-         final double siInt = Math.log((((Math.PI * Math.PI) + thE2) * (th02 + thE2))
-               / (thE2 * ((Math.PI * Math.PI) + th02 + thE2)));
+         final double siInt = Math.log((((Math.PI * Math.PI) + thE2) * (th02 + thE2)) / (thE2 * ((Math.PI * Math.PI) + th02 + thE2)));
          assert siInt > 0.0 : Double.toString(siInt);
          // Select a random integrated cross section
          final double exp_si = Math.exp(Math.random() * siInt);

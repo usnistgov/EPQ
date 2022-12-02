@@ -23,12 +23,13 @@ public class ReferenceDatabase {
     * Returns the singleton instance... The first call to this method should
     * probably hand the Session. Subsequent calls don't need to...
     * 
-    * @param session May be null
+    * @param session
+    *           May be null
     * @return ReferenceDatabase
     */
    public static ReferenceDatabase getInstance(Session session) {
-      if(mInstance == null)
-         synchronized(ReferenceDatabase.class) {
+      if (mInstance == null)
+         synchronized (ReferenceDatabase.class) {
             mInstance = new ReferenceDatabase(session);
          }
       return mInstance;
@@ -53,7 +54,7 @@ public class ReferenceDatabase {
     */
    public List<Composition> getSuggestions(Element elm) {
       final List<Composition> res = mData.get(elm);
-      return res != null ? res : Collections.<Composition> emptyList();
+      return res != null ? res : Collections.<Composition>emptyList();
    }
 
    private ReferenceDatabase(Session session) {
@@ -62,35 +63,32 @@ public class ReferenceDatabase {
       try (final InputStreamReader isr = new InputStreamReader(is, "UTF-8")) {
          try (final BufferedReader br = new BufferedReader(isr)) {
             boolean done = false;
-            while(true)
+            while (true)
                try {
                   final String line = br.readLine();
                   done = (line == null);
-                  if(done)
+                  if (done)
                      break;
                   final String[] items = line.split(",");
                   final Element elm = Element.byName(items[0]);
                   final ArrayList<Composition> comps = new ArrayList<Composition>();
-                  for(int i = 1; i < items.length; ++i)
+                  for (int i = 1; i < items.length; ++i)
                      try {
                         Composition comp = session != null ? session.findStandard(items[i].trim()) : null;
-                        if(comp == null)
+                        if (comp == null)
                            comp = MaterialFactory.createCompound(items[i]);
-                        if(comp != null)
+                        if (comp != null)
                            comps.add(comp);
-                     }
-                     catch(final Exception e) {
+                     } catch (final Exception e) {
                         // / Just ignore it...
                      }
-                  if(comps.size() > 0)
+                  if (comps.size() > 0)
                      res.put(elm, Collections.unmodifiableList(comps));
-               }
-               catch(final IOException e) {
+               } catch (final IOException e) {
                   e.printStackTrace();
                }
          }
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          // Ok, it failed, well too bad!
          e.printStackTrace();
       }

@@ -24,8 +24,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class SurfaceIonizationTest
-   extends TestCase {
+public class SurfaceIonizationTest extends TestCase {
 
    /**
     * Constructs a SurfaceIonizationTest
@@ -36,8 +35,7 @@ public class SurfaceIonizationTest
       super(arg0);
    }
 
-   public void testPouchou91A()
-         throws EPQException {
+   public void testPouchou91A() throws EPQException {
       final SurfaceIonization si = SurfaceIonization.Pouchou1991;
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
       final double e0 = ToSI.keV(20.0);
@@ -47,8 +45,7 @@ public class SurfaceIonizationTest
       }
    }
 
-   public void testPouchou91B()
-         throws EPQException {
+   public void testPouchou91B() throws EPQException {
       final SurfaceIonization si = SurfaceIonization.Pouchou1991;
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
       final double e0 = ToSI.keV(20.0);
@@ -58,8 +55,7 @@ public class SurfaceIonizationTest
       }
    }
 
-   public void testReuter1972A()
-         throws EPQException {
+   public void testReuter1972A() throws EPQException {
       final SurfaceIonization si = SurfaceIonization.Reuter1972;
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
       final double e0 = ToSI.keV(20.0);
@@ -69,8 +65,7 @@ public class SurfaceIonizationTest
       }
    }
 
-   public void testReuter1972B()
-         throws EPQException {
+   public void testReuter1972B() throws EPQException {
       final SurfaceIonization si = SurfaceIonization.Reuter1972;
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
       final double e0 = ToSI.keV(20.0);

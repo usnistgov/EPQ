@@ -20,9 +20,7 @@ import gov.nist.microanalysis.Utility.Transform3D;
  * @author John Villarrubia
  * @version 1.0
  */
-public class NormalSphereShape
-   extends Sphere
-   implements NormalShape {
+public class NormalSphereShape extends Sphere implements NormalShape {
 
    /*
     * NISTMonte's Sphere class does not, as of this writing, provide a get
@@ -45,8 +43,10 @@ public class NormalSphereShape
     * Constructs a NormalSphereShape with the specified center coordinates and
     * radius.
     *
-    * @param center - 3 coordinates specifying the center position
-    * @param radius - radius in meters
+    * @param center
+    *           - 3 coordinates specifying the center position
+    * @param radius
+    *           - radius in meters
     */
    public NormalSphereShape(double[] center, double radius) {
       super(center, radius);
@@ -57,14 +57,10 @@ public class NormalSphereShape
 
    @Override
    public boolean contains(double[] pos0, double[] pos1) {
-      final double[] posminuscenter = {
-         pos0[0] - mCenter[0],
-         pos0[1] - mCenter[1],
-         pos0[2] - mCenter[2]
-      };
+      final double[] posminuscenter = {pos0[0] - mCenter[0], pos0[1] - mCenter[1], pos0[2] - mCenter[2]};
       final double distSquared = (posminuscenter[0] * posminuscenter[0]) + (posminuscenter[1] * posminuscenter[1])
             + (posminuscenter[2] * posminuscenter[2]);
-      if(distSquared != mRadiusSquared)
+      if (distSquared != mRadiusSquared)
          return distSquared < mRadiusSquared;
       /*
        * Arrive here if pos is on the boundary. Is this inside or outside? We
@@ -72,11 +68,7 @@ public class NormalSphereShape
        * a component opposite the normal vector at the surface). Otherwise it is
        * outside.
        */
-      final double[] delta = {
-         pos1[0] - pos0[0],
-         pos1[1] - pos0[1],
-         pos1[2] - pos0[2]
-      };
+      final double[] delta = {pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2]};
       return ((delta[0] * posminuscenter[0]) + (delta[1] * posminuscenter[1]) + (delta[2] * posminuscenter[2])) < 0;
    }
 
@@ -86,33 +78,20 @@ public class NormalSphereShape
     */
    @Override
    public double[] getFirstNormal(double[] pos0, double[] pos1) {
-      result = new double[] {
-         0.,
-         0.,
-         0.,
-         Double.MAX_VALUE
-      };
+      result = new double[]{0., 0., 0., Double.MAX_VALUE};
       boolean posintersection = false;
       // Compute the intersection of the line between pos0 and pos1 and the
       // shell of the sphere.
-      final double[] deltap = {
-         pos1[0] - pos0[0],
-         pos1[1] - pos0[1],
-         pos1[2] - pos0[2]
-      };
-      final double[] p0wrtcenter = {
-         pos0[0] - mCenter[0],
-         pos0[1] - mCenter[1],
-         pos0[2] - mCenter[2]
-      };
+      final double[] deltap = {pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2]};
+      final double[] p0wrtcenter = {pos0[0] - mCenter[0], pos0[1] - mCenter[1], pos0[2] - mCenter[2]};
 
       // u is from solution of quadratic eqn. (-b^2 +/- Sqrt(b^2-4 a c))/(2a).
       // Following computes the constants
       final double a = (deltap[0] * deltap[0]) + (deltap[1] * deltap[1]) + (deltap[2] * deltap[2]);
       // Following is actually b/2
       final double b = (p0wrtcenter[0] * deltap[0]) + (p0wrtcenter[1] * deltap[1]) + (p0wrtcenter[2] * deltap[2]);
-      final double c = ((p0wrtcenter[0] * p0wrtcenter[0]) + (p0wrtcenter[1] * p0wrtcenter[1])
-            + (p0wrtcenter[2] * p0wrtcenter[2])) - (mRadius * mRadius);
+      final double c = ((p0wrtcenter[0] * p0wrtcenter[0]) + (p0wrtcenter[1] * p0wrtcenter[1]) + (p0wrtcenter[2] * p0wrtcenter[2]))
+            - (mRadius * mRadius);
       double term = (b * b) - (a * c); // This is actually (b^2-4ac)/4 Remember
       // the
       // factor of 2 in b.
@@ -132,7 +111,7 @@ public class NormalSphereShape
        * negative, neither.
        */
 
-      if(term > 0.) { // There are 2 intersections
+      if (term > 0.) { // There are 2 intersections
          /*
           * Determine the nearer one. Exclude u=0 on the grounds that u=0 means
           * the trajectory STARTS on the boundary. Everything having to do with
@@ -143,11 +122,11 @@ public class NormalSphereShape
          final double minusbovera = -b / a;
          final double u1 = minusbovera + term;
          final double u2 = minusbovera - term;
-         if(u1 > 0) {
+         if (u1 > 0) {
             result[3] = u1;
             posintersection = true;
          }
-         if((u2 > 0) && (u2 < u1)) {
+         if ((u2 > 0) && (u2 < u1)) {
             result[3] = u2;
             posintersection = true;
          }
@@ -155,7 +134,7 @@ public class NormalSphereShape
          // Compute normal vector, but only if one of the intersections was
          // for
          // u>0
-         if(posintersection) {
+         if (posintersection) {
             result[0] = (p0wrtcenter[0] + (result[3] * deltap[0])) / mRadius;
             result[1] = (p0wrtcenter[1] + (result[3] * deltap[1])) / mRadius;
             result[2] = (p0wrtcenter[2] + (result[3] * deltap[2])) / mRadius;

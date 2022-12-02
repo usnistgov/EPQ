@@ -24,9 +24,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class UncertainValue2Test
-   extends
-   TestCase {
+public class UncertainValue2Test extends TestCase {
 
    private final UncertainValue2 mA = new UncertainValue2(1.24, "A", 0.3);
    private final UncertainValue2 mA2a = makeA2a();
@@ -138,18 +136,10 @@ public class UncertainValue2Test
       assertEquals(UncertainValue2.add(-1.0, a, 1.0, b), new UncertainValue2(1.0, 0.1), 0.0001);
       assertEquals(UncertainValue2.add(-2.0, a, 1.0, b), new UncertainValue2(0.0, 0.0), 0.0001);
       // Example page 22 GUM
-      final UncertainValue2[] rsc = new UncertainValue2[] {
-         new UncertainValue2(1000.0, "R", 0.1),
-         new UncertainValue2(1000.0, "R", 0.1),
-         new UncertainValue2(1000.0, "R", 0.1),
-         new UncertainValue2(1000.0, "R", 0.1),
-         new UncertainValue2(1000.0, "R", 0.1),
-         new UncertainValue2(1000.0, "R", 0.1),
-         new UncertainValue2(1000.0, "R", 0.1),
-         new UncertainValue2(1000.0, "R", 0.1),
-         new UncertainValue2(1000.0, "R", 0.1),
-         new UncertainValue2(1000.0, "R", 0.1),
-      };
+      final UncertainValue2[] rsc = new UncertainValue2[]{new UncertainValue2(1000.0, "R", 0.1), new UncertainValue2(1000.0, "R", 0.1),
+            new UncertainValue2(1000.0, "R", 0.1), new UncertainValue2(1000.0, "R", 0.1), new UncertainValue2(1000.0, "R", 0.1),
+            new UncertainValue2(1000.0, "R", 0.1), new UncertainValue2(1000.0, "R", 0.1), new UncertainValue2(1000.0, "R", 0.1),
+            new UncertainValue2(1000.0, "R", 0.1), new UncertainValue2(1000.0, "R", 0.1),};
       assertEquals(UncertainValue2.add(rsc).uncertainty(), 1.0, 1.0e-10);
    }
 
@@ -164,18 +154,10 @@ public class UncertainValue2Test
       assertEquals(UncertainValue2.add(-1.0, a, 1.0, b), new UncertainValue2(1.0, Math.sqrt(0.05)), 0.0001);
       assertEquals(UncertainValue2.add(-2.0, a, 1.0, b), new UncertainValue2(0.0, Math.sqrt(0.08)), 0.0001);
       // Example page 22 GUM
-      final UncertainValue2[] rsu = new UncertainValue2[] {
-         new UncertainValue2(1000.0, "R0", 0.1),
-         new UncertainValue2(1000.0, "R1", 0.1),
-         new UncertainValue2(1000.0, "R2", 0.1),
-         new UncertainValue2(1000.0, "R3", 0.1),
-         new UncertainValue2(1000.0, "R4", 0.1),
-         new UncertainValue2(1000.0, "R5", 0.1),
-         new UncertainValue2(1000.0, "R6", 0.1),
-         new UncertainValue2(1000.0, "R7", 0.1),
-         new UncertainValue2(1000.0, "R8", 0.1),
-         new UncertainValue2(1000.0, "R9", 0.1),
-      };
+      final UncertainValue2[] rsu = new UncertainValue2[]{new UncertainValue2(1000.0, "R0", 0.1), new UncertainValue2(1000.0, "R1", 0.1),
+            new UncertainValue2(1000.0, "R2", 0.1), new UncertainValue2(1000.0, "R3", 0.1), new UncertainValue2(1000.0, "R4", 0.1),
+            new UncertainValue2(1000.0, "R5", 0.1), new UncertainValue2(1000.0, "R6", 0.1), new UncertainValue2(1000.0, "R7", 0.1),
+            new UncertainValue2(1000.0, "R8", 0.1), new UncertainValue2(1000.0, "R9", 0.1),};
       assertEquals(UncertainValue2.add(rsu).uncertainty(), 0.32, 0.005);
    }
 
@@ -183,11 +165,7 @@ public class UncertainValue2Test
       final UncertainValue2 a = new UncertainValue2(1.0, "A", 0.1);
       final UncertainValue2 b = new UncertainValue2(2.0, "B", 0.2);
       final UncertainValue2 c = new UncertainValue2(3.0, "A", 0.15);
-      final UncertainValue2[] uvs = new UncertainValue2[] {
-         a,
-         b,
-         c
-      };
+      final UncertainValue2[] uvs = new UncertainValue2[]{a, b, c};
       assertEquals(UncertainValue2.add(uvs), new UncertainValue2(6.0, Math.sqrt(0.0625 + 0.04)), 1e-6);
       assertEquals(UncertainValue2.add(uvs).formatLong(new DecimalFormat("0.000")), "6.000±0.250(A)±0.200(B)");
    }
@@ -209,8 +187,7 @@ public class UncertainValue2Test
       final UncertainValue2 c = new UncertainValue2(3.6, "A", 0.15);
       assertEquals(UncertainValue2.divide(b, a), new UncertainValue2(2.090909091, 0.26303852), 1.0e-6);
       assertEquals(UncertainValue2.divide(b, c), new UncertainValue2(0.6388888889, 0.06160408973), 1.0e-6);
-      assertEquals(UncertainValue2.divide(a, c), new UncertainValue2(0.3055555556, Math.abs((0.1 / 1.1) - (0.15 / 3.6))
-            * 0.3055555556), 1.0e-6);
+      assertEquals(UncertainValue2.divide(a, c), new UncertainValue2(0.3055555556, Math.abs((0.1 / 1.1) - (0.15 / 3.6)) * 0.3055555556), 1.0e-6);
       assertEquals(UncertainValue2.divide(2.0, c), UncertainValue2.divide(new UncertainValue2(2.0), c), 1.0e-6);
       assertEquals(UncertainValue2.divide(-2.0, c), UncertainValue2.divide(new UncertainValue2(-2.0), c), 1.0e-6);
       assertEquals(UncertainValue2.divide(c, 2.0), UncertainValue2.divide(c, new UncertainValue2(2.0)), 1.0e-6);
@@ -242,11 +219,8 @@ public class UncertainValue2Test
       final int iterations = 100000;
       // Addition
       {
-         UncertainValue2[] args = new UncertainValue2[] {
-            new UncertainValue2(1.1, "A", 0.1),
-            new UncertainValue2(2.3, "B", 0.2),
-            new UncertainValue2(-3.6, "C", 0.15)
-         };
+         UncertainValue2[] args = new UncertainValue2[]{new UncertainValue2(1.1, "A", 0.1), new UncertainValue2(2.3, "B", 0.2),
+               new UncertainValue2(-3.6, "C", 0.15)};
          MCUncertaintyEngine mue = new MCUncertaintyEngine(iterations, args) {
             @Override
             public UncertainValueMC compute(UncertainValueMC[] arguments) {
@@ -258,11 +232,8 @@ public class UncertainValue2Test
          assertEquals(resMC, res2, Math.abs(5 * res2.doubleValue() / Math.sqrt(iterations)));
       }
       {
-         UncertainValue2[] args = new UncertainValue2[] {
-            new UncertainValue2(1.1, "A", 0.1),
-            new UncertainValue2(2.3, "A", 0.2),
-            new UncertainValue2(-3.6, "A", 0.15)
-         };
+         UncertainValue2[] args = new UncertainValue2[]{new UncertainValue2(1.1, "A", 0.1), new UncertainValue2(2.3, "A", 0.2),
+               new UncertainValue2(-3.6, "A", 0.15)};
          MCUncertaintyEngine mue = new MCUncertaintyEngine(iterations, args) {
             @Override
             public UncertainValueMC compute(UncertainValueMC[] arguments) {
@@ -275,15 +246,13 @@ public class UncertainValue2Test
       }
       // Division and multiplication
       {
-         UncertainValue2[] args = new UncertainValue2[] {
-            new UncertainValue2(1.1, "A", 0.1),
-            new UncertainValue2(2.3, "B", 0.2),
-            new UncertainValue2(-3.6, "A", 0.15)
-         };
+         UncertainValue2[] args = new UncertainValue2[]{new UncertainValue2(1.1, "A", 0.1), new UncertainValue2(2.3, "B", 0.2),
+               new UncertainValue2(-3.6, "A", 0.15)};
          MCUncertaintyEngine mue = new MCUncertaintyEngine(iterations, args) {
             @Override
             public UncertainValueMC compute(UncertainValueMC[] arguments) {
-               return UncertainValueMC.multiply(arguments[2], UncertainValueMC.divide(arguments[0], UncertainValueMC.add(arguments[0], arguments[1])));
+               return UncertainValueMC.multiply(arguments[2],
+                     UncertainValueMC.divide(arguments[0], UncertainValueMC.add(arguments[0], arguments[1])));
             }
          };
          UncertainValue2 res2 = UncertainValue2.multiply(args[2], UncertainValue2.divide(args[0], UncertainValue2.add(args[0], args[1])));
@@ -291,15 +260,13 @@ public class UncertainValue2Test
          assertEquals(resMC, res2, Math.abs(5 * res2.doubleValue() / Math.sqrt(iterations)));
       }
       {
-         UncertainValue2[] args = new UncertainValue2[] {
-            new UncertainValue2(1.1, "A", 0.1),
-            new UncertainValue2(2.3, "A", 0.2),
-            new UncertainValue2(-3.6, "A", 0.15)
-         };
+         UncertainValue2[] args = new UncertainValue2[]{new UncertainValue2(1.1, "A", 0.1), new UncertainValue2(2.3, "A", 0.2),
+               new UncertainValue2(-3.6, "A", 0.15)};
          MCUncertaintyEngine mue = new MCUncertaintyEngine(iterations, args) {
             @Override
             public UncertainValueMC compute(UncertainValueMC[] arguments) {
-               return UncertainValueMC.multiply(arguments[2], UncertainValueMC.divide(arguments[0], UncertainValueMC.add(arguments[0], arguments[1])));
+               return UncertainValueMC.multiply(arguments[2],
+                     UncertainValueMC.divide(arguments[0], UncertainValueMC.add(arguments[0], arguments[1])));
             }
          };
          UncertainValue2 res2 = UncertainValue2.multiply(args[2], UncertainValue2.divide(args[0], UncertainValue2.add(args[0], args[1])));
@@ -308,15 +275,13 @@ public class UncertainValue2Test
       }
 
       {
-         UncertainValue2[] args = new UncertainValue2[] {
-            new UncertainValue2(1.1, "A", 0.1),
-            new UncertainValue2(2.3, "B", 0.2),
-            new UncertainValue2(-3.6, "C", 0.15)
-         };
+         UncertainValue2[] args = new UncertainValue2[]{new UncertainValue2(1.1, "A", 0.1), new UncertainValue2(2.3, "B", 0.2),
+               new UncertainValue2(-3.6, "C", 0.15)};
          MCUncertaintyEngine mue = new MCUncertaintyEngine(10000, args) {
             @Override
             public UncertainValueMC compute(UncertainValueMC[] arguments) {
-               return UncertainValueMC.multiply(arguments[2], UncertainValueMC.divide(arguments[0], UncertainValueMC.add(arguments[0], arguments[1])));
+               return UncertainValueMC.multiply(arguments[2],
+                     UncertainValueMC.divide(arguments[0], UncertainValueMC.add(arguments[0], arguments[1])));
             }
          };
          UncertainValue2 res2 = UncertainValue2.multiply(args[2], UncertainValue2.divide(args[0], UncertainValue2.add(args[0], args[1])));
@@ -324,27 +289,23 @@ public class UncertainValue2Test
          assertEquals(resMC, res2, Math.abs(5 * res2.doubleValue() / Math.sqrt(iterations)));
       }
       {
-         UncertainValue2[] args = new UncertainValue2[] {
-            new UncertainValue2(1.1, "A", 0.1),
-            new UncertainValue2(2.3, "B", 0.2),
-            new UncertainValue2(-3.6, "C", 0.15)
-         };
+         UncertainValue2[] args = new UncertainValue2[]{new UncertainValue2(1.1, "A", 0.1), new UncertainValue2(2.3, "B", 0.2),
+               new UncertainValue2(-3.6, "C", 0.15)};
          MCUncertaintyEngine mue = new MCUncertaintyEngine(10000, args) {
             @Override
             public UncertainValueMC compute(UncertainValueMC[] arguments) {
-               return UncertainValueMC.multiply(arguments[2], UncertainValueMC.divide(UncertainValueMC.log(arguments[0]), UncertainValueMC.add(arguments[0], UncertainValueMC.sqrt(arguments[1]))));
+               return UncertainValueMC.multiply(arguments[2], UncertainValueMC.divide(UncertainValueMC.log(arguments[0]),
+                     UncertainValueMC.add(arguments[0], UncertainValueMC.sqrt(arguments[1]))));
             }
          };
-         UncertainValue2 res2 = UncertainValue2.multiply(args[2], UncertainValue2.divide(UncertainValue2.log(args[0]), UncertainValue2.add(args[0], UncertainValue2.sqrt(args[1]))));
+         UncertainValue2 res2 = UncertainValue2.multiply(args[2],
+               UncertainValue2.divide(UncertainValue2.log(args[0]), UncertainValue2.add(args[0], UncertainValue2.sqrt(args[1]))));
          UncertainValue2 resMC = mue.getResult();
          assertEquals(resMC, res2, 0.03);
       }
       {
-         UncertainValue2[] args = new UncertainValue2[] {
-            new UncertainValue2(1.1, "A", 0.1),
-            new UncertainValue2(2.3, "B", 0.2),
-            new UncertainValue2(-3.6, "C", 0.15)
-         };
+         UncertainValue2[] args = new UncertainValue2[]{new UncertainValue2(1.1, "A", 0.1), new UncertainValue2(2.3, "B", 0.2),
+               new UncertainValue2(-3.6, "C", 0.15)};
          MCUncertaintyEngine mue = new MCUncertaintyEngine(10000, args) {
             @Override
             public UncertainValueMC compute(UncertainValueMC[] arguments) {
@@ -356,11 +317,8 @@ public class UncertainValue2Test
          assertEquals(resMC, res2, Math.abs(10 * res2.doubleValue() / Math.sqrt(iterations)));
       }
       {
-         UncertainValue2[] args = new UncertainValue2[] {
-            new UncertainValue2(1.1, "A", 0.1),
-            new UncertainValue2(2.3, "A", 0.2),
-            new UncertainValue2(-3.6, "A", 0.15)
-         };
+         UncertainValue2[] args = new UncertainValue2[]{new UncertainValue2(1.1, "A", 0.1), new UncertainValue2(2.3, "A", 0.2),
+               new UncertainValue2(-3.6, "A", 0.15)};
          MCUncertaintyEngine mue = new MCUncertaintyEngine(10000, args) {
             @Override
             public UncertainValueMC compute(UncertainValueMC[] arguments) {

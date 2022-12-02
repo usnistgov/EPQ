@@ -37,10 +37,10 @@ import gov.nist.microanalysis.Utility.Translate2D;
  */
 public class RelocationDialog extends JDialog {
 
-   private static final long     serialVersionUID = -8020349596488392051L;
-   private static final String   DIALOG_TITLE     = "Configure relocation";
-   private final RelocationPanel mRelocation      = new RelocationPanel();
-   private Translate2D           mResult          = null;
+   private static final long serialVersionUID = -8020349596488392051L;
+   private static final String DIALOG_TITLE = "Configure relocation";
+   private final RelocationPanel mRelocation = new RelocationPanel();
+   private Translate2D mResult = null;
 
    /**
     * Constructs a RelocationDialog

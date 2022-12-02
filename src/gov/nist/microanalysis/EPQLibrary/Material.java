@@ -25,9 +25,7 @@ import gov.nist.microanalysis.Utility.HalfUpFormat;
  * @version 1.0
  */
 
-public class Material
-   extends
-   Composition {
+public class Material extends Composition {
    private static final long serialVersionUID = 0x42;
    private static final double DEFAULT_DENSITY = ToSI.gPerCC(5.0);
    private double mDensity; // kilograms per cubic meter
@@ -47,10 +45,14 @@ public class Material
     * length of weighFracs is one less than the mass of elms then the last mass
     * fraction is calculated from the others assuming that the sum is 1.0.
     * 
-    * @param elms Element[] - The elements
-    * @param massFracs double[] - The associated mass fractions
-    * @param density double - In SI
-    * @param name String - User friendly
+    * @param elms
+    *           Element[] - The elements
+    * @param massFracs
+    *           double[] - The associated mass fractions
+    * @param density
+    *           double - In SI
+    * @param name
+    *           String - User friendly
     */
    protected Material(Element[] elms, double[] massFracs, double density, String name) {
       super(elms, massFracs, name);
@@ -65,20 +67,17 @@ public class Material
    }
 
    public Material(Element elm, double density) {
-      this(new Element[] {
-         elm
-      }, new double[] {
-         1.0
-      }, density, "Pure " + elm.toString());
+      this(new Element[]{elm}, new double[]{1.0}, density, "Pure " + elm.toString());
    }
 
    /**
     * setDensity - Sets the density of the material in kg pre cubic meter.
     * 
-    * @param den double
+    * @param den
+    *           double
     */
    public void setDensity(double den) {
-      if(mDensity != den)
+      if (mDensity != den)
          mDensity = den;
    }
 
@@ -98,9 +97,11 @@ public class Material
     * name of the element or an Element object. The value is the mass fraction
     * as a Double.
     * 
-    * @param map Map - keys are either Integer, String or Element types, values
+    * @param map
+    *           Map - keys are either Integer, String or Element types, values
     *           are Double
-    * @param den double - in kg/m^3
+    * @param den
+    *           double - in kg/m^3
     */
    public void defineByWeightFraction(Map<Object, Double> map, double den) {
       mDensity = den;
@@ -121,7 +122,8 @@ public class Material
     * for the specified element based on the composition and density of this
     * Material.
     * 
-    * @param elm Element
+    * @param elm
+    *           Element
     * @return double
     */
    public double atomsPerCubicMeter(Element elm) {
@@ -134,13 +136,15 @@ public class Material
     * compute the density based on the amount of each base material and the
     * density of the base material.
     * 
-    * @param mats Material[] - The base materials (ie SiO2, MgO,...)
-    * @param matFracs double[] - The proportion of each
+    * @param mats
+    *           Material[] - The base materials (ie SiO2, MgO,...)
+    * @param matFracs
+    *           double[] - The proportion of each
     */
    public void defineByMaterialFraction(Material[] mats, double[] matFracs) {
       super.defineByMaterialFraction(mats, matFracs);
       double den = 0.0;
-      for(int i = 0; i < mats.length; ++i)
+      for (int i = 0; i < mats.length; ++i)
          den += matFracs[i] * mats[i].getDensity();
       setDensity(den);
    }
@@ -150,9 +154,12 @@ public class Material
     * compute the density based on the amount of each base material and the
     * density of the base material.
     * 
-    * @param compositions Compositions[] - The base materials (ie SiO2, MgO,...)
-    * @param matFracs double[] - The proportion of each
-    * @param density - Density in kg/m^3
+    * @param compositions
+    *           Compositions[] - The base materials (ie SiO2, MgO,...)
+    * @param matFracs
+    *           double[] - The proportion of each
+    * @param density
+    *           - Density in kg/m^3
     */
    public void defineByMaterialFraction(Composition[] compositions, double[] matFracs, double density) {
       super.defineByMaterialFraction(compositions, matFracs);
@@ -163,12 +170,13 @@ public class Material
     * descriptiveId - A string describing this material terms of the constituent
     * element's weight percent and the material density.
     * 
-    * @param normalize Normalize weight percents to 100%?
+    * @param normalize
+    *           Normalize weight percents to 100%?
     * @return String
     */
    @Override
    public String descriptiveString(boolean normalize) {
-      if(this.getElementCount() > 0) {
+      if (this.getElementCount() > 0) {
          final NumberFormat nf = NumberFormat.getInstance();
          nf.setMaximumFractionDigits(1);
          final StringBuffer sb = new StringBuffer(super.descriptiveString(normalize));
@@ -182,7 +190,7 @@ public class Material
    @Override
    public int compareTo(Composition obj) {
       int res = super.compareTo(obj);
-      if((res == 0) && (obj instanceof Material))
+      if ((res == 0) && (obj instanceof Material))
          res = Double.compare(mDensity, ((Material) obj).mDensity);
       return res;
    }
@@ -194,7 +202,7 @@ public class Material
 
    @Override
    public Material clone() {
-	  super.clone();
+      super.clone();
       final Material res = new Material(mDensity);
       res.replicate(this);
       return res;
@@ -221,13 +229,13 @@ public class Material
     */
    @Override
    public int hashCode() {
-      if(mHashCode == Integer.MAX_VALUE) {
+      if (mHashCode == Integer.MAX_VALUE) {
          final int PRIME = 31;
          int result = super.hashCode();
          long temp;
          temp = Double.doubleToLongBits(mDensity);
          result = (PRIME * result) + (int) (temp ^ (temp >>> 32));
-         if(result == Integer.MAX_VALUE)
+         if (result == Integer.MAX_VALUE)
             result = Integer.MIN_VALUE;
          mHashCode = result;
       }
@@ -239,14 +247,14 @@ public class Material
     */
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(!super.equals(obj))
+      if (!super.equals(obj))
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final Material other = (Material) obj;
-      if(Double.doubleToLongBits(mDensity) != Double.doubleToLongBits(other.mDensity))
+      if (Double.doubleToLongBits(mDensity) != Double.doubleToLongBits(other.mDensity))
          return false;
       return true;
    }
@@ -254,7 +262,7 @@ public class Material
    @Override
    public boolean almostEquals(Composition other, double tol) {
       boolean res = super.almostEquals(other, tol);
-      if(other instanceof Material) {
+      if (other instanceof Material) {
          final Material otherMat = (Material) other;
          res = res && ((Math.abs(getDensity() - otherMat.getDensity()) / Math.max(getDensity(), otherMat.getDensity())) < tol);
       }
@@ -274,11 +282,11 @@ public class Material
       final NumberFormat nf = NumberFormat.getInstance(Locale.US);
       Composition comp = new Composition();
       final String[] items = str.split(",");
-      for(int i = 1; i < items.length; ++i)
+      for (int i = 1; i < items.length; ++i)
          try {
             final String tmp = items[i].trim();
             final int p = tmp.indexOf(":");
-            if(tmp.startsWith("(") && tmp.endsWith(")") && (p > 0)) {
+            if (tmp.startsWith("(") && tmp.endsWith(")") && (p > 0)) {
                final Element elm = Element.byName(tmp.substring(1, p).trim());
                final double qty = nf.parse(tmp.substring(p + 1, tmp.length() - 1).trim()).doubleValue();
                comp.addElement(elm, 0.01 * qty);
@@ -287,8 +295,7 @@ public class Material
                final double qty = nf.parse(tmp.substring(0, tmp.length()).trim()).doubleValue();
                comp = new Material(comp, ToSI.gPerCC(qty));
             }
-         }
-         catch(final ParseException e) {
+         } catch (final ParseException e) {
             // Just ignore it...
          }
       comp.setName(items[0]);

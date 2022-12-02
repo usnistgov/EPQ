@@ -29,11 +29,9 @@ import gov.nist.microanalysis.Utility.CSVReader;
  * @author nritchie
  * @version 1.0
  */
-abstract public class TransitionProbabilities
-   extends AlgorithmClass {
+abstract public class TransitionProbabilities extends AlgorithmClass {
 
-   static private class ElementDatum
-      implements Comparable<ElementDatum> {
+   static private class ElementDatum implements Comparable<ElementDatum> {
       private final int mIonized;
       private final XRayTransition mXRayTransition;
       private double mProbability;
@@ -51,15 +49,15 @@ abstract public class TransitionProbabilities
       @Override
       public int compareTo(ElementDatum o) {
          int res = mXRayTransition.getElement().compareTo(o.mXRayTransition.getElement());
-         if(res == 0)
+         if (res == 0)
             res = (mProbability > o.mProbability ? -1 : (mProbability < o.mProbability ? 1 : 0));
-         if(res == 0)
+         if (res == 0)
             res = (mIonized > o.mIonized ? 1 : (mIonized < o.mIonized ? -1 : 0));
-         if(res == 0) {
+         if (res == 0) {
             final int d0 = mXRayTransition.getDestinationShell(), d1 = o.mXRayTransition.getDestinationShell();
             res = (d0 > d1 ? 1 : (d0 < d1 ? -1 : 0));
          }
-         if(res == 0) {
+         if (res == 0) {
             final int d0 = mXRayTransition.getSourceShell(), d1 = o.mXRayTransition.getSourceShell();
             res = (d0 > d1 ? 1 : (d0 < d1 ? -1 : 0));
          }
@@ -90,10 +88,7 @@ abstract public class TransitionProbabilities
    public static final EndLib97Tweaked RelaxTweaked = new EndLib97Tweaked();
    public static final TransitionProbabilities Default = RelaxTweaked;
 
-   private static final AlgorithmClass[] mAllImplementations = {
-      Relax,
-      RelaxTweaked
-   };
+   private static final AlgorithmClass[] mAllImplementations = {Relax, RelaxTweaked};
 
    /**
     * <p>
@@ -113,8 +108,7 @@ abstract public class TransitionProbabilities
     * @author nritchie
     * @version 1.0
     */
-   static class EndLib97Tweaked
-      extends EndLib97 {
+   static class EndLib97Tweaked extends EndLib97 {
 
       private EndLib97Tweaked() {
          super();
@@ -124,13 +118,13 @@ abstract public class TransitionProbabilities
 
       private void tweak() {
          // Correct the problem that is making the L3-M1, L2-M1 too intense
-         for(final ArrayList<ElementDatum> elmData : mRadiative)
-            for(final ElementDatum elmDatum : elmData) {
+         for (final ArrayList<ElementDatum> elmData : mRadiative)
+            for (final ElementDatum elmDatum : elmData) {
                final XRayTransition xrt = elmDatum.mXRayTransition;
-               if(xrt.getSourceShell() == AtomicShell.MI) {
+               if (xrt.getSourceShell() == AtomicShell.MI) {
                   final double z = xrt.getElement().getAtomicNumber();
-                  if((xrt.getDestinationShell() == AtomicShell.LIII) || (xrt.getDestinationShell() == AtomicShell.LII))
-                     if(z >= Element.elmCu)
+                  if ((xrt.getDestinationShell() == AtomicShell.LIII) || (xrt.getDestinationShell() == AtomicShell.LII))
+                     if (z >= Element.elmCu)
                         elmDatum.mProbability *= Math.max(0.1, 0.1 + ((0.9 * (z - Element.elmCu)) / (Element.elmAu - Element.elmCu)));
                      else
                         elmDatum.mProbability *= Math.max(0.1, 0.2 - ((0.1 * (z - Element.elmTi)) / (Element.elmCu - Element.elmTi)));
@@ -141,8 +135,7 @@ abstract public class TransitionProbabilities
 
    }
 
-   static class EndLib97
-      extends TransitionProbabilities {
+   static class EndLib97 extends TransitionProbabilities {
 
       protected ArrayList<ArrayList<ElementDatum>> mRadiative = null;
       protected ArrayList<ArrayList<ElementDatum>> mCosterKronig = null;
@@ -157,8 +150,8 @@ abstract public class TransitionProbabilities
       }
 
       private void parse() {
-         synchronized(TransitionProbabilities.class) {
-            if(mRadiative == null) {
+         synchronized (TransitionProbabilities.class) {
+            if (mRadiative == null) {
                final CSVReader csv = new CSVReader.ResourceReader("relax.csv", true);
                final double[][] res = csv.getResource(TransitionProbabilities.class);
                int z = 0;
@@ -167,8 +160,8 @@ abstract public class TransitionProbabilities
                mCosterKronig = new ArrayList<ArrayList<ElementDatum>>();
                mCosterKronig.ensureCapacity(100);
                Element el = Element.None;
-               for(final double[] line : res) {
-                  while(Math.round(line[0]) > z) {
+               for (final double[] line : res) {
+                  while (Math.round(line[0]) > z) {
                      ++z;
                      el = Element.byAtomicNumber(z);
                      mRadiative.add(new ArrayList<ElementDatum>());
@@ -176,8 +169,9 @@ abstract public class TransitionProbabilities
                   }
                   // Data line format: Element, Ionized, Destination, Source,
                   // Probability
-                  final ElementDatum ed = new ElementDatum((int) Math.round(line[1]), el, (int) Math.round(line[3]), (int) Math.round(line[2]), line[4]);
-                  if(ed.isCosterKronig())
+                  final ElementDatum ed = new ElementDatum((int) Math.round(line[1]), el, (int) Math.round(line[3]), (int) Math.round(line[2]),
+                        line[4]);
+                  if (ed.isCosterKronig())
                      mCosterKronig.get(z - 1).add(ed);
                   else
                      mRadiative.get(z - 1).add(ed);
@@ -201,11 +195,11 @@ abstract public class TransitionProbabilities
          final int is = ionized.getShell();
          double max = 0.0;
          final ArrayList<ElementDatum> elmData = getElementDatum(ionized.getElement());
-         for(final ElementDatum ed : elmData)
-            if((ed.mIonized == is) && (ed.mProbability > max))
+         for (final ElementDatum ed : elmData)
+            if ((ed.mIonized == is) && (ed.mProbability > max))
                max = ed.mProbability;
-         for(final ElementDatum ed : elmData)
-            if((ed.mIonized == is) && (ed.mProbability >= (minWeight * max)) && ed.mXRayTransition.energyIsAvailable())
+         for (final ElementDatum ed : elmData)
+            if ((ed.mIonized == is) && (ed.mProbability >= (minWeight * max)) && ed.mXRayTransition.energyIsAvailable())
                res.put(ed.mXRayTransition, ed.mProbability);
          return res;
       }
@@ -218,11 +212,11 @@ abstract public class TransitionProbabilities
       public Set<AtomicShell> getExcitedShells(Element el, double beamE, double minWeight) {
          final boolean[] shells = new boolean[(AtomicShell.OIX - AtomicShell.K) + 1];
          Arrays.fill(shells, false);
-         for(final ElementDatum ed : getElementDatum(el))
+         for (final ElementDatum ed : getElementDatum(el))
             shells[ed.mIonized] |= (ed.mProbability >= minWeight);
          final Set<AtomicShell> res = new TreeSet<AtomicShell>();
-         for(int sh = AtomicShell.K; sh <= AtomicShell.OIX; ++sh)
-            if(shells[sh - AtomicShell.K])
+         for (int sh = AtomicShell.K; sh <= AtomicShell.OIX; ++sh)
+            if (shells[sh - AtomicShell.K])
                res.add(new AtomicShell(el, sh));
          return res;
       }
@@ -253,9 +247,11 @@ abstract public class TransitionProbabilities
     * XRayTransition objects generated when the specified AtomicShell is
     * ionized.
     * 
-    * @param ionized The ionized AtomicShell
-    * @param minWeight Minimum weight to return [0.0,1.0) as a fraction of the
-    *           most intense line
+    * @param ionized
+    *           The ionized AtomicShell
+    * @param minWeight
+    *           Minimum weight to return [0.0,1.0) as a fraction of the most
+    *           intense line
     * @return Map&lt;XRayTransition,Double&gt; where Double is the transition
     *         probability [minWeight,1.0]
     */
@@ -266,9 +262,12 @@ abstract public class TransitionProbabilities
     * probability greater than the specified weight that can be excited by an
     * electron of the specified energy .
     * 
-    * @param el The element
-    * @param beamE The beam energy (Joules)
-    * @param minWeight The minimum transition probability to consider
+    * @param el
+    *           The element
+    * @param beamE
+    *           The beam energy (Joules)
+    * @param minWeight
+    *           The minimum transition probability to consider
     * @return List&lt;XRayTransition&gt;
     */
    abstract public Set<AtomicShell> getExcitedShells(Element el, double beamE, double minWeight);
@@ -282,24 +281,23 @@ abstract public class TransitionProbabilities
    public double fluorescenceYield(AtomicShell ionized) {
       final TreeMap<XRayTransition, Double> tr = getTransitions(ionized, 0.0);
       double res = 0.0;
-      for(final Map.Entry<XRayTransition, Double> me : tr.entrySet())
-         if(me.getKey().getDestination().equals(ionized))
+      for (final Map.Entry<XRayTransition, Double> me : tr.entrySet())
+         if (me.getKey().getDestination().equals(ionized))
             res += me.getValue().doubleValue();
       return res;
    }
 
    public static void main(String[] args) {
       final TreeSet<ElementDatum> res = new TreeSet<ElementDatum>();
-      for(final ArrayList<ElementDatum> aed : Relax.mRadiative)
-         for(final ElementDatum ed : aed)
+      for (final ArrayList<ElementDatum> aed : Relax.mRadiative)
+         for (final ElementDatum ed : aed)
             res.add(ed);
       try {
          try (final PrintWriter pw = new PrintWriter(new FileOutputStream("c:\\relax_sorted.csv"))) {
-            for(final ElementDatum ed : res)
+            for (final ElementDatum ed : res)
                pw.println(ed.toString());
          }
-      }
-      catch(final FileNotFoundException e) {
+      } catch (final FileNotFoundException e) {
          e.printStackTrace();
       }
    }

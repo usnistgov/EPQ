@@ -25,7 +25,8 @@ public class CaveatBase {
    /**
     * isBroken - Is this implementation broken?
     * 
-    * @param str String - The result from a call to a caveat method
+    * @param str
+    *           String - The result from a call to a caveat method
     * @return boolean
     */
    public static boolean isBroken(String str) {
@@ -35,7 +36,8 @@ public class CaveatBase {
    /**
     * isNone - Are there no caveats identified with this algorithm?
     * 
-    * @param str String - The result from a call to a caveat method
+    * @param str
+    *           String - The result from a call to a caveat method
     * @return boolean
     */
    public static boolean isNone(String str) {
@@ -45,7 +47,8 @@ public class CaveatBase {
    /**
     * isNotImplemented - Is this algorithm not implemented?
     * 
-    * @param str String - The result from a call to a caveat method
+    * @param str
+    *           String - The result from a call to a caveat method
     * @return boolean
     */
    public static boolean isNotImplemented(String str) {
@@ -57,14 +60,16 @@ public class CaveatBase {
     * or both is CaveatBase.None this is handled correctly. If both are
     * CaveatBase.None then CaveatBase.None is returned.
     * 
-    * @param base String
-    * @param str String
+    * @param base
+    *           String
+    * @param str
+    *           String
     * @return String
     */
    public static String append(String base, String str) {
-      if(base.equals(None))
+      if (base.equals(None))
          return str;
-      else if(!str.equals(None))
+      else if (!str.equals(None))
          return base + "\n" + str;
       else
          return base;
@@ -75,8 +80,10 @@ public class CaveatBase {
     * identified along with the caveat. If the caveat equals CaveatBase.None
     * then CaveatBase.None is returned.
     * 
-    * @param obj Object
-    * @param str String
+    * @param obj
+    *           Object
+    * @param str
+    *           String
     * @return String
     */
    public static String format(Object obj, String str) {

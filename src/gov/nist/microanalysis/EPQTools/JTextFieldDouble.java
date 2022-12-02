@@ -16,8 +16,7 @@ import javax.swing.JTextField;
 import gov.nist.microanalysis.Utility.HalfUpFormat;
 import gov.nist.microanalysis.Utility.Math2;
 
-public class JTextFieldDouble
-   extends JTextField {
+public class JTextFieldDouble extends JTextField {
 
    private NumberFormat mFormat;
    private final NumberFormat mParser = NumberFormat.getInstance();
@@ -52,7 +51,7 @@ public class JTextFieldDouble
       addFocusListener(new FocusAdapter() {
          @Override
          public void focusLost(FocusEvent e) {
-            if(!e.isTemporary())
+            if (!e.isTemporary())
                parseText(getText().trim());
          }
 
@@ -72,8 +71,8 @@ public class JTextFieldDouble
    }
 
    private void parseText(final String textVal) {
-      if((mAltValue != null) && textVal.equalsIgnoreCase(mAltValue)) {
-         if(!Double.isNaN(mValue)) {
+      if ((mAltValue != null) && textVal.equalsIgnoreCase(mAltValue)) {
+         if (!Double.isNaN(mValue)) {
             mValue = Double.NaN;
             updateAltValue();
             fireValueChange();
@@ -81,21 +80,20 @@ public class JTextFieldDouble
       } else {
          try {
             double val = mParser.parse(textVal).doubleValue();
-            if((val < mMin) || (val > mMax)) {
+            if ((val < mMin) || (val > mMax)) {
                val = mValue;
                JTextFieldDouble.super.setText(mFormat.format(mValue));
                setBackground(Color.yellow);
                Toolkit.getDefaultToolkit().beep();
             } else
                setBackground(SystemColor.text);
-            if(val != mValue) {
+            if (val != mValue) {
                mValue = val;
                mModified = true;
                mText = getText();
                fireValueChange();
             }
-         }
-         catch(final ParseException ex) {
+         } catch (final ParseException ex) {
             JTextFieldDouble.super.setText(mText);
             setBackground(Color.pink);
             Toolkit.getDefaultToolkit().beep();
@@ -106,7 +104,7 @@ public class JTextFieldDouble
    public void setAlternativeValue(String val, boolean update) {
       mAltValue = val;
       setToolTipText("A value in the range " + mFormat.format(mMin) + " to " + mFormat.format(mMax) + " or \"" + val + "\".");
-      if(update)
+      if (update)
          updateAltValue();
    }
 
@@ -137,7 +135,7 @@ public class JTextFieldDouble
    }
 
    public void setValue(double val) {
-      if(Double.isNaN(val) && (mAltValue != null)) {
+      if (Double.isNaN(val) && (mAltValue != null)) {
          updateAltValue();
       } else {
          mValue = Math2.bound(val, mMin, mMax);
@@ -174,7 +172,7 @@ public class JTextFieldDouble
    private void fireValueChange() {
       ActionEvent ae = new ActionEvent(JTextFieldDouble.this, 0, "ValueChange", System.currentTimeMillis(), 0);
       ArrayList<ActionListener> dup = new ArrayList<ActionListener>(mValueChange);
-      for(ActionListener al : dup)
+      for (ActionListener al : dup)
          al.actionPerformed(ae);
    }
 

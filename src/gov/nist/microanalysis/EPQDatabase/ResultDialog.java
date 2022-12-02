@@ -52,8 +52,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author nritchie
  * @version 1.0
  */
-public class ResultDialog
-   extends JDialog {
+public class ResultDialog extends JDialog {
    private static final long serialVersionUID = 5066921759652675420L;
    private SpecDisplay jSpecDisplay_Main;
    private JTable jTable_Spectra;
@@ -65,7 +64,8 @@ public class ResultDialog
    private ArrayList<Session.SpectrumSummary> mSpectra;
 
    private void initialize() {
-      final FormLayout fl = new FormLayout("200dlu, 5dlu, fill:max(250dlu;pref):grow(1.0)", "pref, 5dlu, 150dlu, 5dlu, pref, 5dlu, fill:max(100dlu;pref):grow(1.0), 25dlu");
+      final FormLayout fl = new FormLayout("200dlu, 5dlu, fill:max(250dlu;pref):grow(1.0)",
+            "pref, 5dlu, 150dlu, 5dlu, pref, 5dlu, fill:max(100dlu;pref):grow(1.0), 25dlu");
       final PanelBuilder panel = new PanelBuilder(fl);
       final CellConstraints cc = new CellConstraints();
       panel.addSeparator("Spectra", cc.xy(1, 1));
@@ -79,7 +79,7 @@ public class ResultDialog
          public void valueChanged(ListSelectionEvent e) {
             jSpecDisplay_Main.clearAllSpectra();
             final Collection<ISpectrumData> specs = getSpectra();
-            for(final ISpectrumData spec : specs)
+            for (final ISpectrumData spec : specs)
                jSpecDisplay_Main.addSpectrum(spec);
             jTable_Properties.setModel(new SpectrumPropertiesTableModel(specs));
             jSpecDisplay_Main.autoScaleV(100.0);
@@ -135,8 +135,7 @@ public class ResultDialog
       super(owner, title, modal);
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -157,21 +156,16 @@ public class ResultDialog
       super(owner, title, modal);
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
 
-   class SpectrumTableModel
-      extends AbstractTableModel {
+   class SpectrumTableModel extends AbstractTableModel {
 
       private static final long serialVersionUID = -8877874828275180489L;
 
-      private final String[] COLUMN_NAMES = new String[] {
-         "Acquired",
-         "Description"
-      };
+      private final String[] COLUMN_NAMES = new String[]{"Acquired", "Description"};
 
       SpectrumTableModel(Collection<Session.SpectrumSummary> specs) {
          mSpectra = new ArrayList<Session.SpectrumSummary>(specs);
@@ -206,10 +200,10 @@ public class ResultDialog
        */
       @Override
       public Object getValueAt(int rowIndex, int columnIndex) {
-         switch(columnIndex) {
-            case 0:
+         switch (columnIndex) {
+            case 0 :
                return DateFormat.getDateInstance().format(mSpectra.get(rowIndex).getTimestamp());
-            default:
+            default :
                return mSpectra.get(rowIndex).toString();
 
          }
@@ -231,12 +225,11 @@ public class ResultDialog
    public ArrayList<ISpectrumData> getSpectra() {
       final int[] rows = jTable_Spectra.getSelectedRows();
       final ArrayList<ISpectrumData> specs = new ArrayList<ISpectrumData>();
-      for(final int r : rows)
+      for (final int r : rows)
          try {
-            if(jTable_Spectra.isRowSelected(r))
+            if (jTable_Spectra.isRowSelected(r))
                specs.add(mSpectra.get(r).load());
-         }
-         catch(final Exception e1) {
+         } catch (final Exception e1) {
             e1.printStackTrace();
          }
       return specs;
@@ -251,13 +244,11 @@ public class ResultDialog
          // Set up special look-and-feels
          final String laf = UIManager.getSystemLookAndFeelClassName();
          UIManager.setLookAndFeel(laf);
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          try {
             e.printStackTrace();
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-         }
-         catch(final Exception e1) {
+         } catch (final Exception e1) {
             e1.printStackTrace();
          }
       }
@@ -266,23 +257,15 @@ public class ResultDialog
       final Session ses = new Session("C:\\Documents and Settings\\nritchie\\My Documents\\Trixy Reports\\Database");
       try {
          final Random r = new Random();
-         final TreeSet<Session.SpectrumSummary> specs = ses.readSpectra(new int[] {
-            r.nextInt(100),
-            r.nextInt(100),
-            r.nextInt(100),
-            r.nextInt(100),
-            r.nextInt(100),
-            r.nextInt(100),
-            r.nextInt(100)
-         });
+         final TreeSet<Session.SpectrumSummary> specs = ses.readSpectra(
+               new int[]{r.nextInt(100), r.nextInt(100), r.nextInt(100), r.nextInt(100), r.nextInt(100), r.nextInt(100), r.nextInt(100)});
          ses.initiateLoad(specs);
          rs.setSpectra(specs);
          rs.setSingleSelect(false);
-         if(rs.showDialog())
-            for(final ISpectrumData spec : rs.getSpectra())
+         if (rs.showDialog())
+            for (final ISpectrumData spec : rs.getSpectra())
                System.out.println(spec.toString());
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          e.printStackTrace();
       }
    }

@@ -34,8 +34,10 @@ public interface SlowingDownAlg {
     * eK traversing distance d. The return value is negative if the electron
     * loses energy.
     *
-    * @param d double -- the distance moved by the electron
-    * @param pe Electron, the primary electron
+    * @param d
+    *           double -- the distance moved by the electron
+    * @param pe
+    *           Electron, the primary electron
     * @return double -- the energy change
     */
    double compute(double d, Electron pe);

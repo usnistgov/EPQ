@@ -29,8 +29,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author nritchie
  * @version 1.0
  */
-public class JProgressDialog
-   extends JDialog {
+public class JProgressDialog extends JDialog {
 
    private static final long serialVersionUID = -3818437128678948095L;
 
@@ -55,12 +54,10 @@ public class JProgressDialog
       final SwingWorker<Object, Object> sw = new SwingWorker<Object, Object>() {
 
          @Override
-         protected Object doInBackground()
-               throws Exception {
+         protected Object doInBackground() throws Exception {
             try {
                runnable.run();
-            }
-            finally {
+            } finally {
                SwingUtilities.invokeAndWait(new Runnable() {
                   @Override
                   public void run() {
@@ -75,11 +72,9 @@ public class JProgressDialog
          sw.execute();
          setVisible(true);
          sw.get();
-      }
-      catch(InterruptedException e) {
+      } catch (InterruptedException e) {
          e.printStackTrace();
-      }
-      catch(ExecutionException e) {
+      } catch (ExecutionException e) {
          e.printStackTrace();
       }
       setVisible(false);

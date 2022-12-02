@@ -50,12 +50,11 @@ public class BiCubicSpline {
    public BiCubicSpline(double[] x1, double[] x2, double[][] y) {
       this.nPoints = x1.length;
       this.mPoints = x2.length;
-      if(this.nPoints != y.length)
+      if (this.nPoints != y.length)
          throw new IllegalArgumentException("Arrays x1 and y-row are of different length " + this.nPoints + " " + y.length);
-      if(this.mPoints != y[0].length)
-         throw new IllegalArgumentException("Arrays x2 and y-column are of different length " + this.mPoints + " "
-               + y[0].length);
-      if((this.nPoints < 3) || (this.mPoints < 3))
+      if (this.mPoints != y[0].length)
+         throw new IllegalArgumentException("Arrays x2 and y-column are of different length " + this.mPoints + " " + y[0].length);
+      if ((this.nPoints < 3) || (this.mPoints < 3))
          throw new IllegalArgumentException("The data matrix must have a minimum size of 3 X 3");
 
       this.csm = new CubicSpline(this.nPoints);
@@ -64,12 +63,12 @@ public class BiCubicSpline {
       this.x2 = new double[this.mPoints];
       this.y = new double[this.nPoints][this.mPoints];
       this.d2ydx2inner = new double[this.nPoints][this.mPoints];
-      for(int i = 0; i < this.nPoints; i++)
+      for (int i = 0; i < this.nPoints; i++)
          this.x1[i] = x1[i];
-      for(int j = 0; j < this.mPoints; j++)
+      for (int j = 0; j < this.mPoints; j++)
          this.x2[j] = x2[j];
-      for(int i = 0; i < this.nPoints; i++)
-         for(int j = 0; j < this.mPoints; j++)
+      for (int i = 0; i < this.nPoints; i++)
+         for (int j = 0; j < this.mPoints; j++)
             this.y[i][j] = y[i][j];
    }
 
@@ -78,7 +77,7 @@ public class BiCubicSpline {
    public BiCubicSpline(int nP, int mP) {
       this.nPoints = nP;
       this.mPoints = mP;
-      if((this.nPoints < 3) || (this.mPoints < 3))
+      if ((this.nPoints < 3) || (this.mPoints < 3))
          throw new IllegalArgumentException("The data matrix must have a minimum size of 3 X 3");
 
       this.csm = new CubicSpline(this.nPoints);
@@ -94,23 +93,23 @@ public class BiCubicSpline {
    // Resets the x1, x2, y data arrays
    // Primarily for use in TiCubicSpline
    public void resetData(double[] x1, double[] x2, double[][] y) {
-      if(x1.length != y.length)
+      if (x1.length != y.length)
          throw new IllegalArgumentException("Arrays x1 and y row are of different length");
-      if(x2.length != y[0].length)
+      if (x2.length != y[0].length)
          throw new IllegalArgumentException("Arrays x2 and y column are of different length");
-      if(this.nPoints != x1.length)
+      if (this.nPoints != x1.length)
          throw new IllegalArgumentException("Original array length not matched by new array length");
-      if(this.mPoints != x2.length)
+      if (this.mPoints != x2.length)
          throw new IllegalArgumentException("Original array length not matched by new array length");
 
-      for(int i = 0; i < this.nPoints; i++)
+      for (int i = 0; i < this.nPoints; i++)
          this.x1[i] = x1[i];
 
-      for(int i = 0; i < this.mPoints; i++)
+      for (int i = 0; i < this.mPoints; i++)
          this.x2[i] = x2[i];
 
-      for(int i = 0; i < this.nPoints; i++)
-         for(int j = 0; j < this.mPoints; j++)
+      for (int i = 0; i < this.nPoints; i++)
+         for (int j = 0; j < this.mPoints; j++)
             this.y[i][j] = y[i][j];
    }
 
@@ -118,7 +117,7 @@ public class BiCubicSpline {
    // array values to zero with natural spline default
    // Primarily for use in this.oneDarray for TiCubicSpline
    public static BiCubicSpline zero(int nP, int mP) {
-      if((nP < 3) || (mP < 3))
+      if ((nP < 3) || (mP < 3))
          throw new IllegalArgumentException("A minimum of three x three data points is needed");
       final BiCubicSpline aa = new BiCubicSpline(nP, mP);
       return aa;
@@ -128,10 +127,10 @@ public class BiCubicSpline {
    // of internal array size mP x lP
    // Primarily for use in TriCubicSpline
    public static BiCubicSpline[] oneDarray(int nP, int mP, int lP) {
-      if((mP < 3) || (lP < 3))
+      if ((mP < 3) || (lP < 3))
          throw new IllegalArgumentException("A minimum of three x three data points is needed");
       final BiCubicSpline[] a = new BiCubicSpline[nP];
-      for(int i = 0; i < nP; i++)
+      for (int i = 0; i < nP; i++)
          a[i] = BiCubicSpline.zero(mP, lP);
       return a;
    }
@@ -155,12 +154,12 @@ public class BiCubicSpline {
 
       final double[] yTempn = new double[mPoints];
 
-      for(int i = 0; i < this.nPoints; i++) {
+      for (int i = 0; i < this.nPoints; i++) {
 
-         for(int j = 0; j < mPoints; j++)
+         for (int j = 0; j < mPoints; j++)
             yTempn[j] = y[i][j];
          this.csn[i].resetData(x2, yTempn);
-         if(!this.derivCalculated)
+         if (!this.derivCalculated)
             this.csn[i].calcDeriv();
          this.d2ydx2inner[i] = this.csn[i].getDeriv();
       }
@@ -168,7 +167,7 @@ public class BiCubicSpline {
 
       final double[] yTempm = new double[this.nPoints];
 
-      for(int i = 0; i < this.nPoints; i++) {
+      for (int i = 0; i < this.nPoints; i++) {
          this.csn[i].setDeriv(this.d2ydx2inner[i]);
          yTempm[i] = this.csn[i].interpolate(xx2);
       }

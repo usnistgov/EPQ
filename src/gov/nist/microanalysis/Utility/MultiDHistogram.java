@@ -20,8 +20,10 @@ public class MultiDHistogram {
        * Returns the lower and upper limits for the specified bin in the
        * specified dimension.
        * 
-       * @param bin int
-       * @param dim int the dimension index
+       * @param bin
+       *           int
+       * @param dim
+       *           int the dimension index
        * @return double[2] -&gt; [ min, max ]
        */
       public double[] limits(int bin, int dim);
@@ -35,8 +37,7 @@ public class MultiDHistogram {
 
    }
 
-   static public class LinearBins
-      implements IBinning {
+   static public class LinearBins implements IBinning {
 
       private final int mDimCount;
       private final double mWidth;
@@ -51,7 +52,7 @@ public class MultiDHistogram {
       @Override
       public int[] compute(double[] vals) {
          final int[] res = new int[vals.length];
-         for(int i = 0; i < vals.length; ++i)
+         for (int i = 0; i < vals.length; ++i)
             res[i] = Math2.bound((int) (vals[i] / mWidth), 0, mDimLength);
          return res;
       }
@@ -60,11 +61,8 @@ public class MultiDHistogram {
       public double[] limits(int bin, int dim) {
          assert (bin >= 0) && (bin < mDimLength);
          assert (dim >= 0) && (dim < mDimCount);
-         if((bin >= 0) && (bin < mDimLength) && (dim >= 0) && (dim < mDimCount))
-            return new double[] {
-               bin * mWidth,
-               bin * (mWidth + 1)
-            };
+         if ((bin >= 0) && (bin < mDimLength) && (dim >= 0) && (dim < mDimCount))
+            return new double[]{bin * mWidth, bin * (mWidth + 1)};
          else
             return null;
       }
@@ -84,8 +82,7 @@ public class MultiDHistogram {
 
    public static final int NO_ISLAND = Integer.MAX_VALUE;
 
-   static public class Bin
-      implements Comparable<Bin> {
+   static public class Bin implements Comparable<Bin> {
       static private final int DEFAULT_CAPACITY = 10;
       /**
        * mIndex uniquely identifies the bin via integer indices
@@ -147,7 +144,7 @@ public class MultiDHistogram {
       private void add(int item) {
          final int requiredCapacity = DEFAULT_CAPACITY * (((mSize + 1 + DEFAULT_CAPACITY) - 1) / DEFAULT_CAPACITY);
          assert requiredCapacity >= (mSize + 1);
-         if(requiredCapacity > mItem.length)
+         if (requiredCapacity > mItem.length)
             mItem = Arrays.copyOf(mItem, requiredCapacity);
          mItem[mSize] = item;
          ++mSize;
@@ -175,9 +172,9 @@ public class MultiDHistogram {
       public boolean adjacent(Bin vox, int m) {
          assert mIndex.length == vox.mIndex.length;
          int dist = 0;
-         for(int d = 0; d < mIndex.length; ++d) {
+         for (int d = 0; d < mIndex.length; ++d) {
             final int delta = Math.abs(mIndex[d] - vox.mIndex[d]);
-            if(delta > 1)
+            if (delta > 1)
                return false;
             dist += delta;
          }
@@ -193,7 +190,7 @@ public class MultiDHistogram {
       public double distance(Bin vox) {
          assert mIndex.length == vox.mIndex.length;
          double dist = 0.0;
-         for(int d = 0; d < mIndex.length; ++d)
+         for (int d = 0; d < mIndex.length; ++d)
             dist += Math.abs(mIndex[d] - vox.mIndex[d]);
          return Math.sqrt(dist);
       }
@@ -209,8 +206,8 @@ public class MultiDHistogram {
        * @return boolean
        */
       public boolean contains(int item) {
-         for(int i = 0; i < mSize; ++i)
-            if(mItem[i] == item)
+         for (int i = 0; i < mSize; ++i)
+            if (mItem[i] == item)
                return true;
          return false;
       }
@@ -236,7 +233,7 @@ public class MultiDHistogram {
       @Override
       public String toString() {
          final StringBuffer res = new StringBuffer();
-         for(final int element : mIndex) {
+         for (final int element : mIndex) {
             res.append(element);
             res.append(", ");
          }
@@ -250,10 +247,10 @@ public class MultiDHistogram {
       @Override
       public int compareTo(Bin o) {
          assert mIndex.length == o.mIndex.length;
-         for(int i = 0; i < mIndex.length; ++i)
-            if(mIndex[i] < o.mIndex[i])
+         for (int i = 0; i < mIndex.length; ++i)
+            if (mIndex[i] < o.mIndex[i])
                return -1;
-            else if(mIndex[i] > o.mIndex[i])
+            else if (mIndex[i] > o.mIndex[i])
                return 1;
          return 0;
       }
@@ -265,11 +262,11 @@ public class MultiDHistogram {
 
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(getClass() != obj.getClass())
+         if (getClass() != obj.getClass())
             return false;
          final Bin other = (Bin) obj;
          return Arrays.equals(mIndex, other.mIndex);
@@ -305,8 +302,8 @@ public class MultiDHistogram {
       mBinning = src.mBinning;
       mData = new TreeSet<Bin>();
       mIslandCount = 0;
-      for(final Bin vox : src.mData)
-         if(vox.mSize >= minMembers)
+      for (final Bin vox : src.mData)
+         if (vox.mSize >= minMembers)
             add(vox);
    }
 
@@ -316,14 +313,15 @@ public class MultiDHistogram {
     * histogram through the length of the <code>index</code> argument.
     * 
     * @param data
-    * @param item Item index
+    * @param item
+    *           Item index
     */
    public void add(double[] data, int item) {
       final int[] index = mBinning.compute(data);
-      if(index != null) {
+      if (index != null) {
          final Bin newBin = new Bin(index, item);
          final Bin b = find(newBin);
-         if(b != null)
+         if (b != null)
             b.add(item);
          else
             addBin(newBin);
@@ -364,9 +362,9 @@ public class MultiDHistogram {
       /*
        * Check if this bin is connected to another bin...
        */
-      for(final Bin b1 : mData)
-         if(b1.adjacent(newBin) && (newBin.mIsland != b1.mIsland))
-            if(newBin.mIsland == NO_ISLAND) {
+      for (final Bin b1 : mData)
+         if (b1.adjacent(newBin) && (newBin.mIsland != b1.mIsland))
+            if (newBin.mIsland == NO_ISLAND) {
                newBin.mIsland = b1.mIsland;
                assert mIslandCount > newBin.mIsland;
             } else {
@@ -378,17 +376,17 @@ public class MultiDHistogram {
                final int larger = Math.max(newBin.mIsland, b1.mIsland);
                assert larger > smaller;
                assert mIslandCount > larger;
-               for(final Bin b2 : mData) {
-                  if(b2.mIsland == larger)
+               for (final Bin b2 : mData) {
+                  if (b2.mIsland == larger)
                      b2.mIsland = smaller;
-                  if(b2.mIsland > larger)
+                  if (b2.mIsland > larger)
                      --b2.mIsland;
                }
                newBin.mIsland = smaller;
                --mIslandCount;
                assert mIslandCount > smaller;
             }
-      if(newBin.mIsland == NO_ISLAND) {
+      if (newBin.mIsland == NO_ISLAND) {
          /*
           * Not in an existing island, create a new one.
           */
@@ -403,10 +401,10 @@ public class MultiDHistogram {
    private boolean islandCheck() {
       final Boolean[] present = new Boolean[mIslandCount];
       Arrays.fill(present, false);
-      for(final Bin b : mData)
+      for (final Bin b : mData)
          present[b.mIsland] = true;
       boolean res = true;
-      for(final Boolean element : present)
+      for (final Boolean element : present)
          res &= element;
       return res;
    }
@@ -420,8 +418,8 @@ public class MultiDHistogram {
     */
    public MultiDHistogram getIsland(int ni) {
       final MultiDHistogram res = new MultiDHistogram(mBinning);
-      for(final Bin bin : mData)
-         if(bin.mIsland == ni)
+      for (final Bin bin : mData)
+         if (bin.mIsland == ni)
             res.add(bin);
       return res;
    }
@@ -434,8 +432,8 @@ public class MultiDHistogram {
     */
    public int getIslandSize(int ni) {
       int cx = 0;
-      for(final Bin bin : mData)
-         if(bin.mIsland == ni)
+      for (final Bin bin : mData)
+         if (bin.mIsland == ni)
             ++cx;
       return cx;
    }
@@ -453,8 +451,8 @@ public class MultiDHistogram {
 
    private int checkIslandCount() {
       int largest = -1;
-      for(final Bin bin : mData)
-         if(bin.mIsland > largest)
+      for (final Bin bin : mData)
+         if (bin.mIsland > largest)
             largest = bin.mIsland;
       return largest + 1;
    }
@@ -466,7 +464,7 @@ public class MultiDHistogram {
     */
    public int getTotalCount() {
       int total = 0;
-      for(final Bin bin : mData)
+      for (final Bin bin : mData)
          total += bin.getCount();
       return total;
    }
@@ -478,8 +476,8 @@ public class MultiDHistogram {
     * @return int
     */
    public int findItemsIsland(int item) {
-      for(final Bin bin : mData)
-         if(bin.contains(item))
+      for (final Bin bin : mData)
+         if (bin.contains(item))
             return bin.mIsland;
       return NO_ISLAND;
    }
@@ -496,9 +494,9 @@ public class MultiDHistogram {
       final int nn = getIslandSize(n);
       final int[] res = new int[nn];
       int cx = 0;
-      for(final Bin bin : mData)
-         if(bin.mIsland == n)
-            for(int i = 0; i < bin.mSize; ++i, ++cx)
+      for (final Bin bin : mData)
+         if (bin.mIsland == n)
+            for (int i = 0; i < bin.mSize; ++i, ++cx)
                res[cx] = bin.mItem[i];
       Arrays.sort(res);
       return res;
@@ -513,19 +511,19 @@ public class MultiDHistogram {
     */
    public int[] connected(int starter) {
       Bin vox = null;
-      for(final Bin datum : mData)
-         if(datum.contains(starter)) {
+      for (final Bin datum : mData)
+         if (datum.contains(starter)) {
             vox = datum;
             break;
          }
       final MultiDHistogram nbd = vox != null ? getIsland(vox.mIsland) : new MultiDHistogram(mBinning);
       int cx = 0;
-      for(final Bin datum : nbd.mData)
+      for (final Bin datum : nbd.mData)
          cx += datum.mSize;
       final int[] res = new int[cx];
       int i = 0;
-      for(final Bin datum : nbd.mData)
-         for(int j = 0; j < datum.mSize; ++j)
+      for (final Bin datum : nbd.mData)
+         for (int j = 0; j < datum.mSize; ++j)
             res[i++] = datum.mItem[j];
       assert i == cx;
       Arrays.sort(res);
@@ -549,10 +547,10 @@ public class MultiDHistogram {
     * dissimilar.
     * 
     * @param mdh2
-    * @param minSize Discard bins with less than this number of members in
-    *           md1+md2
-    * @param confidenceLevel Typically 0.683, 0.90, 0.954, 0.99, 0.9973 or
-    *           0.9999
+    * @param minSize
+    *           Discard bins with less than this number of members in md1+md2
+    * @param confidenceLevel
+    *           Typically 0.683, 0.90, 0.954, 0.99, 0.9973 or 0.9999
     * @return double
     */
    public double chiSquaredTest(MultiDHistogram mdh2, int minSize, double confidenceLevel) {
@@ -562,13 +560,13 @@ public class MultiDHistogram {
       final TreeSet<Bin> allBins = new TreeSet<Bin>();
       allBins.addAll(mData);
       allBins.addAll(mdh2.mData);
-      for(final Bin ba : allBins) {
+      for (final Bin ba : allBins) {
          final Bin b1 = mData.floor(ba);
          final Bin b2 = mdh2.mData.floor(ba);
          final double x1 = (b1 != null) && b1.equals(ba) ? b1.mSize : 0;
          final double x2 = (b2 != null) && b2.equals(ba) ? b2.mSize : 0;
          final double s = x1 + x2;
-         if(s >= minSize) {
+         if (s >= minSize) {
             n1 += x1;
             n2 += x2;
             chi1 += (x1 * x1) / s;

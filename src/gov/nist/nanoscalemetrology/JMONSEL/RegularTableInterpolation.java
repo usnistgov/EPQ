@@ -57,13 +57,13 @@ public class RegularTableInterpolation {
     * getInstance - Returns an instance of a RegularTableInterpolation object
     * for the table contained in the named resource.
     *
-    * @param tableFileName - A String providing the name of the resource (data
-    *           file) that stores the table to be interpolated.
+    * @param tableFileName
+    *           - A String providing the name of the resource (data file) that
+    *           stores the table to be interpolated.
     */
-   public static RegularTableInterpolation getInstance(String tableFileName)
-         throws FileNotFoundException {
+   public static RegularTableInterpolation getInstance(String tableFileName) throws FileNotFoundException {
       RegularTableInterpolation uniqueInstance = instanceMap.get(tableFileName);
-      if(uniqueInstance == null) {
+      if (uniqueInstance == null) {
          uniqueInstance = new RegularTableInterpolation(tableFileName);
          instanceMap.put(tableFileName, uniqueInstance);
       }
@@ -93,11 +93,11 @@ public class RegularTableInterpolation {
     * varying most rapidly, the N-1st next, and so on, with the 1st varying most
     * slowly.
     *
-    * @param tableFileName - A String providing the name of the resource (data
-    *           file) that stores the table to be interpolated.
+    * @param tableFileName
+    *           - A String providing the name of the resource (data file) that
+    *           stores the table to be interpolated.
     */
-   private RegularTableInterpolation(String tableFileName)
-         throws FileNotFoundException {
+   private RegularTableInterpolation(String tableFileName) throws FileNotFoundException {
       this.tableFileName = tableFileName;
       ReadTable(tableFileName);
    }
@@ -106,42 +106,41 @@ public class RegularTableInterpolation {
     * interpolate - Interpolates this object's table to determine the value at
     * the supplied input coordinate.
     *
-    * @param xval - double[] of length in principle equal to the dimension of
-    *           the table. For convenience it is allowed to be greater, in which
+    * @param xval
+    *           - double[] of length in principle equal to the dimension of the
+    *           table. For convenience it is allowed to be greater, in which
     *           case the unnecessary values at the end of the array are ignored.
-    * @param order - int The interpolation order, 1 for linear, 3 for cubic,
-    *           etc.
+    * @param order
+    *           - int The interpolation order, 1 for linear, 3 for cubic, etc.
     * @return double - The estimated value of the tabulated function at the
     *         supplied coordinate.
     */
    public double interpolate(double[] xval, int order) {
-      if(xval.length < dim)
-         throw new IllegalArgumentException("Attempt to interpolate " + tableFileName + " at x with " + String.valueOf(dim)
-               + "dimensions");
-      switch(dim) {
-         case 1:
+      if (xval.length < dim)
+         throw new IllegalArgumentException("Attempt to interpolate " + tableFileName + " at x with " + String.valueOf(dim) + "dimensions");
+      switch (dim) {
+         case 1 :
             return ULagrangeInterpolation.d1(table1d, xmin[0], xinc[0], order, xval[0])[0];
-         case 2:
+         case 2 :
             return ULagrangeInterpolation.d2(table2d, xmin, xinc, order, xval)[0];
-         case 3:
+         case 3 :
             return ULagrangeInterpolation.d3(table3d, xmin, xinc, order, xval)[0];
-         case 4:
+         case 4 :
             return ULagrangeInterpolation.d4(table4d, xmin, xinc, order, xval)[0];
-         default:
+         default :
             throw new IllegalArgumentException("Table dimensions must be 1<=dim<=4");
       }
    }
 
-   private void ReadTable(String tableFileName)
-         throws FileNotFoundException {
+   private void ReadTable(String tableFileName) throws FileNotFoundException {
       final InputStream is = RegularTableInterpolation.class.getResourceAsStream(tableFileName);
-      if(is == null)
+      if (is == null)
          throw new FileNotFoundException("Could not locate " + tableFileName);
       final Scanner s = new Scanner(is);
       s.useLocale(Locale.US);
       try {
          dim = s.nextInt();
-         if((dim < 1) || (dim > 4))
+         if ((dim < 1) || (dim > 4))
             throw new IllegalArgumentException("Table dimensions must be 1<=dim<=4");
          /*
           * Note: I think I could write a general N-dimension interpolation
@@ -153,44 +152,43 @@ public class RegularTableInterpolation {
          final double[][] x = new double[dim][];
          xmin = new double[dim];
 
-         for(int i = 0; i < dim; i++) {
+         for (int i = 0; i < dim; i++) {
             nPoints[i] = s.nextInt();
             xmin[i] = s.nextDouble();
             xinc[i] = s.nextDouble();
             x[i] = new double[nPoints[i]];
-            for(int j = 0; j < nPoints[i]; j++)
+            for (int j = 0; j < nPoints[i]; j++)
                x[i][j] = xmin[i] + (j * xinc[i]);
          }
-         switch(dim) {
-            case 1:
+         switch (dim) {
+            case 1 :
                table1d = new double[nPoints[0]];
-               for(int i = 0; i < nPoints[0]; i++)
+               for (int i = 0; i < nPoints[0]; i++)
                   table1d[i] = s.nextDouble();
                break;
-            case 2:
+            case 2 :
                table2d = new double[nPoints[0]][nPoints[1]];
-               for(int i = 0; i < nPoints[0]; i++)
-                  for(int j = 0; j < nPoints[1]; j++)
+               for (int i = 0; i < nPoints[0]; i++)
+                  for (int j = 0; j < nPoints[1]; j++)
                      table2d[i][j] = s.nextDouble();
                break;
-            case 3:
+            case 3 :
                table3d = new double[nPoints[0]][nPoints[1]][nPoints[2]];
-               for(int i = 0; i < nPoints[0]; i++)
-                  for(int j = 0; j < nPoints[1]; j++)
-                     for(int k = 0; k < nPoints[2]; k++)
+               for (int i = 0; i < nPoints[0]; i++)
+                  for (int j = 0; j < nPoints[1]; j++)
+                     for (int k = 0; k < nPoints[2]; k++)
                         table3d[i][j][k] = s.nextDouble();
                break;
-            case 4:
+            case 4 :
                table4d = new double[nPoints[0]][nPoints[1]][nPoints[2]][nPoints[3]];
-               for(int i = 0; i < nPoints[0]; i++)
-                  for(int j = 0; j < nPoints[1]; j++)
-                     for(int k = 0; k < nPoints[2]; k++)
-                        for(int m = 0; m < nPoints[3]; m++)
+               for (int i = 0; i < nPoints[0]; i++)
+                  for (int j = 0; j < nPoints[1]; j++)
+                     for (int k = 0; k < nPoints[2]; k++)
+                        for (int m = 0; m < nPoints[3]; m++)
                            table4d[i][j][k][m] = s.nextDouble();
                break;
          }
-      }
-      finally {
+      } finally {
          s.close();
       }
    }

@@ -17,8 +17,7 @@ package gov.nist.microanalysis.EPQLibrary;
  * @version 1.0
  */
 
-public class EPQFatalException
-   extends RuntimeException {
+public class EPQFatalException extends RuntimeException {
    private static final long serialVersionUID = 0x1;
 
    public EPQFatalException() {

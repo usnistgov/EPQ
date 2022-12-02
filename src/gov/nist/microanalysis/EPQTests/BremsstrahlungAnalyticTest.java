@@ -18,21 +18,16 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 
-public class BremsstrahlungAnalyticTest
-   extends TestCase {
+public class BremsstrahlungAnalyticTest extends TestCase {
 
-   public void testFitBackground()
-         throws Exception {
+   public void testFitBackground() throws Exception {
       final ISpectrumData spec = new ASPEXSpectrum(new File(FilterFitTest.class.getResource("TestData/Gold.tif").toURI()));
       final EDSDetector det = EDSDetector.createSiLiDetector(2048, 10.0, 132.0);
       final Composition comp = MaterialFactory.createPureElement(Element.Au);
       final BremsstrahlungAnalytic ba = BremsstrahlungAnalytic.Small87;
       ba.initialize(comp, ToSI.keV(spec.getProperties().getNumericProperty(SpectrumProperties.BeamEnergy)), Math.toRadians(40));
       final Collection<int[]> rois = new ArrayList<int[]>();
-      rois.add(new int[] {
-         350,
-         370
-      });
+      rois.add(new int[]{350, 370});
       final ISpectrumData brem = ba.fitBackground(det, spec, rois);
       final FileOutputStream fos = new FileOutputStream("/home/nicholas/Desktop/BremFitTest/AuBrem.emsa");
       WriteSpectrumAsEMSA1_0.write(brem, fos, WriteSpectrumAsEMSA1_0.Mode.COMPATIBLE);

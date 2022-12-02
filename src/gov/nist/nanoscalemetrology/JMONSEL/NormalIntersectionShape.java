@@ -24,8 +24,7 @@ import gov.nist.microanalysis.EPQLibrary.ITransform;
  * @author John Villarrubia
  * @version 1.0
  */
-public class NormalIntersectionShape
-   implements NormalShape, ITransform {
+public class NormalIntersectionShape implements NormalShape, ITransform {
 
    private final NormalShape shapeA;
 
@@ -37,8 +36,10 @@ public class NormalIntersectionShape
     * Construct a NormalIntersectionShape that corresponds to the intersection
     * of the two input shapes.
     *
-    * @param shapeA - (NormalShape) One of the two shapes.
-    * @param shapeB - (NormalShape) The other shape.
+    * @param shapeA
+    *           - (NormalShape) One of the two shapes.
+    * @param shapeB
+    *           - (NormalShape) The other shape.
     */
    public NormalIntersectionShape(NormalShape shapeA, NormalShape shapeB) {
       this.shapeA = shapeA;
@@ -47,6 +48,7 @@ public class NormalIntersectionShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape#contains(double[])
     */
@@ -57,6 +59,7 @@ public class NormalIntersectionShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see gov.nist.nanoscalemetrology.JMONSEL.NormalShape#contains(double[],
     * double[])
     */
@@ -67,18 +70,14 @@ public class NormalIntersectionShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.NormalShape#getFirstNormal(double[],
     * double[])
     */
    @Override
    public double[] getFirstNormal(double[] pos0, double[] pos1) {
-      final double[] nointersection = {
-         0.,
-         0.,
-         0.,
-         Double.MAX_VALUE
-      };
+      final double[] nointersection = {0., 0., 0., Double.MAX_VALUE};
 
       int adepth, bdepth;
       double u;
@@ -93,17 +92,13 @@ public class NormalIntersectionShape
        */
 
       // Get 1st A and B intersections and whether we are inside or outside
-      final double[] delta = {
-         pos1[0] - pos0[0],
-         pos1[1] - pos0[1],
-         pos1[2] - pos0[2]
-      };
+      final double[] delta = {pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2]};
       double nva[] = shapeA.getFirstNormal(pos0, pos1);
-      if(nva[3] <= 1.)
+      if (nva[3] <= 1.)
          adepth = ((delta[0] * nva[0]) + (delta[1] * nva[1]) + (delta[2] * nva[2])) > 0 ? 1 : 0;
       else { // If the crossing is inside-out, then at p0 we are inside.
          // To come back to: What about delta.nva==0?
-         if(!shapeA.contains(pos0, pos1)) // pos0 is outside A, hence
+         if (!shapeA.contains(pos0, pos1)) // pos0 is outside A, hence
             // outside
             // intersection, and can never enter
             // because there are no A boundary
@@ -113,17 +108,17 @@ public class NormalIntersectionShape
       }
 
       double nvb[] = shapeB.getFirstNormal(pos0, pos1);
-      if(nvb[3] <= 1.)
+      if (nvb[3] <= 1.)
          bdepth = ((delta[0] * nvb[0]) + (delta[1] * nvb[1]) + (delta[2] * nvb[2])) > 0 ? 1 : 0;
       else { // If the crossing is inside-out, then at p0 we are inside.
          // To come back to: What about delta.nva==0?
-         if(!shapeB.contains(pos0, pos1)) // pos0 is outside B, hence
+         if (!shapeB.contains(pos0, pos1)) // pos0 is outside B, hence
             // outside
             // intersection, and can never enter
             // because there are no B boundary
             // crossings
             return nointersection;
-         if(adepth == 1) {
+         if (adepth == 1) {
             result = nva;
             return nva; // We're inside B. If also inside A then next A
             // crossing is our boundary.
@@ -137,9 +132,9 @@ public class NormalIntersectionShape
       // meter
       // step.
 
-      for(;;)
-         if(nva[3] < nvb[3]) { // shape A provides the first intersection
-            if(bdepth == 1) { //
+      for (;;)
+         if (nva[3] < nvb[3]) { // shape A provides the first intersection
+            if (bdepth == 1) { //
                result = nva;
                return nva; // c toggles from 1 to 2
                // or vice versa so this is a boundary
@@ -168,30 +163,29 @@ public class NormalIntersectionShape
              */
             u = nva[3] + EXTRAU; // Save the distance to our new start
             // point
-            nva = shapeA.getFirstNormal(new double[] {
-               pos0[0] + (u * delta[0]), // This is pos0+u*delta
-               pos0[1] + (u * delta[1]),
-               pos0[2] + (u * delta[2])
-            }, pos1); // Find
+            nva = shapeA.getFirstNormal(new double[]{pos0[0] + (u * delta[0]), // This
+                                                                               // is
+                                                                               // pos0+u*delta
+                  pos0[1] + (u * delta[1]), pos0[2] + (u * delta[2])}, pos1); // Find
             // the
             // next
             // one
             // after
             // that
 
-            if(nva[3] < Double.MAX_VALUE)
+            if (nva[3] < Double.MAX_VALUE)
                nva[3] = (nva[3] * (1. - u)) + u;
-            if(nva[3] > 1)
-               if(cdepth == 0)
+            if (nva[3] > 1)
+               if (cdepth == 0)
                   return nointersection;
                else {
                   result = nvb;
                   return nvb;
                }
             adepth = adepth ^ 1; // Toggle depth in A
-         } else if(nva[3] > nvb[3]) { // Same as above, with A and B roles
+         } else if (nva[3] > nvb[3]) { // Same as above, with A and B roles
             // reversed
-            if(adepth == 1) {//
+            if (adepth == 1) {//
                result = nvb;
                return nvb; // c toggles from 1 to 2 or vice versa so this
                // is a
@@ -204,21 +198,20 @@ public class NormalIntersectionShape
             // Get the next intersection in A
             u = nvb[3] + EXTRAU; // Save the distance to our new start
             // point
-            nvb = shapeB.getFirstNormal(new double[] {
-               pos0[0] + (u * delta[0]), // This is pos0+u*delta
-               pos0[1] + (u * delta[1]),
-               pos0[2] + (u * delta[2])
-            }, pos1); // Find
+            nvb = shapeB.getFirstNormal(new double[]{pos0[0] + (u * delta[0]), // This
+                                                                               // is
+                                                                               // pos0+u*delta
+                  pos0[1] + (u * delta[1]), pos0[2] + (u * delta[2])}, pos1); // Find
             // the
             // next
             // one
             // after
             // that
 
-            if(nvb[3] < Double.MAX_VALUE)
+            if (nvb[3] < Double.MAX_VALUE)
                nvb[3] = (nvb[3] * (1. - u)) + u;
-            if(nvb[3] > 1)
-               if(cdepth == 0)
+            if (nvb[3] > 1)
+               if (cdepth == 0)
                   return nointersection;
                else {
                   result = nva;
@@ -229,34 +222,42 @@ public class NormalIntersectionShape
             // simultaneously hit A and B boundaries. Depth changes
             // by 0 or 2
             final int depthchange = (((adepth ^ 1) - adepth) + (bdepth ^ 1)) - bdepth;
-            if(depthchange == 0) { // We simultaneously went into one as we
+            if (depthchange == 0) { // We simultaneously went into one as we
                // went out of the other
                // Update information for both A and B
                // Get the next intersection in both, A first
                u = nva[3] + EXTRAU; // Save the distance to our new
                // start point
-               nva = shapeA.getFirstNormal(new double[] {
-                  pos0[0] + (u * delta[0]), // This is pos0+u*delta
-                  pos0[1] + (u * delta[1]),
-                  pos0[2] + (u * delta[2])
-               }, pos1); // Find the next one after that
-               if(nva[3] < Double.MAX_VALUE)
+               nva = shapeA.getFirstNormal(new double[]{pos0[0] + (u * delta[0]), // This
+                                                                                  // is
+                                                                                  // pos0+u*delta
+                     pos0[1] + (u * delta[1]), pos0[2] + (u * delta[2])}, pos1); // Find
+                                                                                 // the
+                                                                                 // next
+                                                                                 // one
+                                                                                 // after
+                                                                                 // that
+               if (nva[3] < Double.MAX_VALUE)
                   nva[3] = (nva[3] * (1. - u)) + u;
 
                // Get the next intersection in B
                u = nvb[3] + EXTRAU; // Save the distance to our new
                // start point
-               nvb = shapeB.getFirstNormal(new double[] {
-                  pos0[0] + (u * delta[0]), // This is pos0+u*delta
-                  pos0[1] + (u * delta[1]),
-                  pos0[2] + (u * delta[2])
-               }, pos1); // Find the next one after that
-               if(nvb[3] < Double.MAX_VALUE)
+               nvb = shapeB.getFirstNormal(new double[]{pos0[0] + (u * delta[0]), // This
+                                                                                  // is
+                                                                                  // pos0+u*delta
+                     pos0[1] + (u * delta[1]), pos0[2] + (u * delta[2])}, pos1); // Find
+                                                                                 // the
+                                                                                 // next
+                                                                                 // one
+                                                                                 // after
+                                                                                 // that
+               if (nvb[3] < Double.MAX_VALUE)
                   nvb[3] = (nvb[3] * (1. - u)) + u;
 
-               if(nva[3] > 1)
+               if (nva[3] > 1)
                   // in A
-                  if(adepth == 0) {// Remember, we've just had a depth
+                  if (adepth == 0) {// Remember, we've just had a depth
                      // change in
                      // A and B but have not updated the variables. This
                      // means adepth
@@ -267,9 +268,9 @@ public class NormalIntersectionShape
                      return nvb;
                   } else
                      return nointersection;
-               if(nvb[3] > 1)
+               if (nvb[3] > 1)
                   // in A
-                  if(bdepth == 0) {// Remember, we've just had a depth
+                  if (bdepth == 0) {// Remember, we've just had a depth
                      // change in
                      // A and B but have not updated the variables. This
                      // means bdepth
@@ -288,12 +289,7 @@ public class NormalIntersectionShape
                 * boundary. Return average of the two normal vectors. (nva[3]
                 * and nvb[3] are the same, so either will do.)
                 */
-               result = new double[] {
-                  (nva[0] + nvb[0]) / 2.,
-                  (nva[1] + nvb[1]) / 2.,
-                  (nva[2] + nvb[2]) / 2.,
-                  nva[3]
-               };
+               result = new double[]{(nva[0] + nvb[0]) / 2., (nva[1] + nvb[1]) / 2., (nva[2] + nvb[2]) / 2., nva[3]};
                return result;
             }
          } // End simultaneous boundaries block
@@ -301,6 +297,7 @@ public class NormalIntersectionShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape#getFirstIntersection
     * (double[], double[])
@@ -313,29 +310,31 @@ public class NormalIntersectionShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see gov.nist.microanalysis.EPQLibrary.ITransform#rotate(double[], double,
     * double, double)
     */
    @Override
    public void rotate(double[] pivot, double phi, double theta, double psi) {
-      if(!(shapeA instanceof ITransform))
+      if (!(shapeA instanceof ITransform))
          throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
       ((ITransform) shapeA).rotate(pivot, phi, theta, psi);
-      if(!(shapeB instanceof ITransform))
+      if (!(shapeB instanceof ITransform))
          throw new EPQFatalException(shapeB.toString() + " does not support transformation.");
       ((ITransform) shapeB).rotate(pivot, phi, theta, psi);
    }
 
    /*
     * (non-Javadoc)
+    * 
     * @see gov.nist.microanalysis.EPQLibrary.ITransform#translate(double[])
     */
    @Override
    public void translate(double[] distance) {
-      if(!(shapeA instanceof ITransform))
+      if (!(shapeA instanceof ITransform))
          throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
       ((ITransform) shapeA).translate(distance);
-      if(!(shapeB instanceof ITransform))
+      if (!(shapeB instanceof ITransform))
          throw new EPQFatalException(shapeB.toString() + " does not support transformation.");
       ((ITransform) shapeB).translate(distance);
    }

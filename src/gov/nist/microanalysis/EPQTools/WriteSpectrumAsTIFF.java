@@ -32,8 +32,8 @@ import gov.nist.microanalysis.Utility.HalfUpFormat;
 public class WriteSpectrumAsTIFF {
 
    static void addItem(StringBuffer sb, String name, String value) {
-      if(value != null) {
-         if(sb.length() > 0)
+      if (value != null) {
+         if (sb.length() > 0)
             sb.append("\n");
          sb.append(name);
          sb.append("=");
@@ -42,20 +42,18 @@ public class WriteSpectrumAsTIFF {
    }
 
    static void addItem(StringBuffer sb, String name, double value, String fmt) {
-      if(!Double.isNaN(value)) {
+      if (!Double.isNaN(value)) {
          final NumberFormat df = new HalfUpFormat(fmt);
          addItem(sb, name, df.format(value));
       }
    }
 
-   public static void write(ISpectrumData spec, String filepath)
-         throws IOException {
+   public static void write(ISpectrumData spec, String filepath) throws IOException {
       write(spec, new FileOutputStream(filepath));
       // Closed in write(...)
    }
 
-   public static void write(ISpectrumData spec, FileOutputStream os)
-         throws IOException {
+   public static void write(ISpectrumData spec, FileOutputStream os) throws IOException {
       try {
          final ArrayList<TIFFImageFileDir> ifds = new ArrayList<>();
          final SpectrumProperties sp = spec.getProperties();
@@ -73,7 +71,7 @@ public class WriteSpectrumAsTIFF {
             ifds.add(ifd);
             {
                final Object obj = sp.getObjectWithDefault(SpectrumProperties.MicroImage, null);
-               if((obj != null) && (obj instanceof BufferedImage))
+               if ((obj != null) && (obj instanceof BufferedImage))
                   ifd.addBWImage((BufferedImage) obj);
                else {
                   // Give spectra a thumbnail image
@@ -84,13 +82,13 @@ public class WriteSpectrumAsTIFF {
          }
          {
             Object obj = sp.getObjectWithDefault(SpectrumProperties.MicroImage2, null);
-            if((obj != null) && (obj instanceof BufferedImage)) {
+            if ((obj != null) && (obj instanceof BufferedImage)) {
                final TIFFImageFileDir ifd2 = new TIFFImageFileDir();
                ifd2.addBWImage((BufferedImage) obj);
                ifds.add(ifd2);
             } else {
                obj = sp.getObjectWithDefault(SpectrumProperties.MacroImage, null);
-               if((obj != null) && (obj instanceof ScaledImage)) {
+               if ((obj != null) && (obj instanceof ScaledImage)) {
                   final TIFFImageFileDir ifd2 = new TIFFImageFileDir();
                   ifd2.addBWImage((ScaledImage) obj);
                   ifds.add(ifd2);
@@ -98,30 +96,28 @@ public class WriteSpectrumAsTIFF {
             }
          }
          int size = 4096;
-         for(final TIFFImageFileDir ifd : ifds)
+         for (final TIFFImageFileDir ifd : ifds)
             size += ifd.estimateSize();
          final ByteBuffer bb = ByteBuffer.allocate(size);
          bb.order(ByteOrder.LITTLE_ENDIAN);
          bb.put(TIFFImageFileDir.LITTLE_MAGIC);
          int nextIfd = bb.position();
          bb.putInt(TIFFImageFileDir.PLACEHOLDER);
-         for(final TIFFImageFileDir ifd : ifds)
+         for (final TIFFImageFileDir ifd : ifds)
             nextIfd = ifd.write(bb, nextIfd);
          os.write(bb.array(), 0, bb.position());
          os.flush();
-      }
-      finally {
+      } finally {
          os.close();
       }
    }
-
 
    public static void writeMicroImages(File file, ISpectrumData spec) throws IOException {
       FileOutputStream os = new FileOutputStream(file);
       try {
          final ArrayList<TIFFImageFileDir> ifds = new ArrayList<>();
          final SpectrumProperties sp = spec.getProperties();
-         if(!(sp.isDefined(SpectrumProperties.MicroImage) || sp.isDefined(SpectrumProperties.MicroImage2)))
+         if (!(sp.isDefined(SpectrumProperties.MicroImage) || sp.isDefined(SpectrumProperties.MicroImage2)))
             return;
          {
             final TIFFImageFileDir ifd = new TIFFImageFileDir();
@@ -129,37 +125,35 @@ public class WriteSpectrumAsTIFF {
             ifd.addField(new Field(ASPEXSpectrum.SOFTWARE, "NIST EPQ Library"));
             {
                final Object obj = sp.getObjectWithDefault(SpectrumProperties.MicroImage, null);
-               if((obj != null) && (obj instanceof BufferedImage))
+               if ((obj != null) && (obj instanceof BufferedImage))
                   ifd.addBWImage((BufferedImage) obj);
             }
             ifds.add(ifd);
          }
          {
             Object obj = sp.getObjectWithDefault(SpectrumProperties.MicroImage2, null);
-            if((obj != null) && (obj instanceof BufferedImage)) {
+            if ((obj != null) && (obj instanceof BufferedImage)) {
                final TIFFImageFileDir ifd2 = new TIFFImageFileDir();
                ifd2.addBWImage((BufferedImage) obj);
                ifds.add(ifd2);
             }
          }
          int size = 4096;
-         for(final TIFFImageFileDir ifd : ifds)
+         for (final TIFFImageFileDir ifd : ifds)
             size += ifd.estimateSize();
          final ByteBuffer bb = ByteBuffer.allocate(size);
          bb.order(ByteOrder.LITTLE_ENDIAN);
          bb.put(TIFFImageFileDir.LITTLE_MAGIC);
          int nextIfd = bb.position();
          bb.putInt(TIFFImageFileDir.PLACEHOLDER);
-         for(final TIFFImageFileDir ifd : ifds)
+         for (final TIFFImageFileDir ifd : ifds)
             nextIfd = ifd.write(bb, nextIfd);
          os.write(bb.array(), 0, bb.position());
          os.flush();
-      }
-      finally {
+      } finally {
          os.close();
       }
    }
-
 
    private static String buildImageDescription(SpectrumProperties sp) {
       final StringBuffer sb = new StringBuffer(2048);
@@ -168,19 +162,19 @@ public class WriteSpectrumAsTIFF {
       addItem(sb, "probe_current", SpectrumUtils.getAverageFaradayCurrent(sp, Double.NaN), "0.00000");
       {
          final Composition comp = sp.getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
-         if(comp != null) {
+         if (comp != null) {
             final NumberFormat df = new HalfUpFormat("0.000");
-            for(final Element elm : comp.getElementSet())
+            for (final Element elm : comp.getElementSet())
                addItem(sb, "element_percent", elm.toAbbrev() + "," + df.format(100.0 * comp.atomicPercent(elm)));
          }
       }
       final double k = 3.5 * 25.4e-3;
       Object obj = sp.getObjectWithDefault(SpectrumProperties.MicroImage, null);
-      if((obj != null) && (obj instanceof ScaledImage)) {
+      if ((obj != null) && (obj instanceof ScaledImage)) {
          final ScaledImage img = (ScaledImage) obj;
          addItem(sb, "mag", k / img.getHorizontalFieldOfView(), "0.0");
          final Object obj2 = sp.getObjectWithDefault(SpectrumProperties.MicroImage, null);
-         if((obj2 != null) && (obj2 instanceof ScaledImage)) {
+         if ((obj2 != null) && (obj2 instanceof ScaledImage)) {
             final ScaledImage img2 = (ScaledImage) obj2;
             final double zoom = img.getHorizontalFieldOfView() / img2.getHorizontalFieldOfView();
             addItem(sb, "zoom", zoom, "0.0000");
@@ -188,7 +182,7 @@ public class WriteSpectrumAsTIFF {
       }
 
       final StageCoordinate pos = (StageCoordinate) sp.getObjectWithDefault(SpectrumProperties.StagePosition, null);
-      if(pos != null) {
+      if (pos != null) {
          addItem(sb, "stage_x", pos.get(Axis.X), "0.0000");
          addItem(sb, "stage_y", pos.get(Axis.Y), "0.0000");
          addItem(sb, "stage_z", pos.get(Axis.Z), "0.0000");
@@ -200,7 +194,7 @@ public class WriteSpectrumAsTIFF {
       addItem(sb, "accelerating_voltage", sp.getNumericWithDefault(SpectrumProperties.BeamEnergy, Double.NaN), "0.00");
       addItem(sb, "working_distance", sp.getNumericWithDefault(SpectrumProperties.WorkingDistance, Double.NaN), "0.00");
       final Date ts = sp.getTimestampWithDefault(SpectrumProperties.AcquisitionTime, null);
-      if(ts != null) {
+      if (ts != null) {
          final DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
          addItem(sb, "analysis_date", df.format(ts));
          final DateFormat tf = new SimpleDateFormat("HH:mm:ss");
@@ -220,9 +214,7 @@ public class WriteSpectrumAsTIFF {
       return sb.toString();
    }
 
-
-   public static void write(ScaledImage img, FileOutputStream os, SpectrumProperties sp)
-         throws IOException {
+   public static void write(ScaledImage img, FileOutputStream os, SpectrumProperties sp) throws IOException {
       try {
          final ArrayList<TIFFImageFileDir> ifds = new ArrayList<>();
          {
@@ -236,17 +228,16 @@ public class WriteSpectrumAsTIFF {
             ifds.add(ifd);
          }
          int size = 4096;
-         for(final TIFFImageFileDir ifd : ifds)
+         for (final TIFFImageFileDir ifd : ifds)
             size += ifd.estimateSize();
          final ByteBuffer bb = ByteBuffer.allocate(size);
          bb.put(TIFFImageFileDir.LITTLE_MAGIC);
          int nextIfd = bb.position();
          bb.putInt(TIFFImageFileDir.PLACEHOLDER);
-         for(final TIFFImageFileDir ifd : ifds)
+         for (final TIFFImageFileDir ifd : ifds)
             nextIfd = ifd.write(bb, nextIfd);
          os.write(bb.array(), 0, bb.position());
-      }
-      finally {
+      } finally {
          os.close();
       }
    }

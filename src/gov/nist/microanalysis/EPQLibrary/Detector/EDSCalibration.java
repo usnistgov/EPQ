@@ -21,8 +21,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumUtils;
  * @author nritchie
  * @version 1.0
  */
-abstract public class EDSCalibration
-   extends DetectorCalibration {
+abstract public class EDSCalibration extends DetectorCalibration {
 
    /**
     * Contamination on the face of the detector or one the window acts like an
@@ -52,9 +51,12 @@ abstract public class EDSCalibration
     * Constructs an EDSCalibration object suitable for a Si(Li) detector with
     * the specified calibration parameters.
     * 
-    * @param scale Channel width in eV per channel
-    * @param offset Channel offset in eV
-    * @param fwhm FWHM at Mn Ka in eV
+    * @param scale
+    *           Channel width in eV per channel
+    * @param offset
+    *           Channel offset in eV
+    * @param fwhm
+    *           FWHM at Mn Ka in eV
     */
    public EDSCalibration(String name, double scale, double offset, double fwhm) {
       super();
@@ -70,10 +72,14 @@ abstract public class EDSCalibration
     * Constructs an EDSCalibration object suitable for a Si(Li) detector with
     * the specified calibration parameters.
     * 
-    * @param scale Channel width in eV per channel
-    * @param offset Channel offset in eV
-    * @param fanoFactor Fano factor (nominally 0.122)
-    * @param noise Noise factor
+    * @param scale
+    *           Channel width in eV per channel
+    * @param offset
+    *           Channel offset in eV
+    * @param fanoFactor
+    *           Fano factor (nominally 0.122)
+    * @param noise
+    *           Noise factor
     */
    public EDSCalibration(String name, double scale, double offset, double fanoFactor, double noise) {
       super();
@@ -89,11 +95,16 @@ abstract public class EDSCalibration
     * Constructs an EDSCalibration object suitable for a Si(Li) detector with
     * the specified calibration parameters.
     * 
-    * @param scale Channel width in eV per channel
-    * @param offset Channel offset in eV
-    * @param quadratic Quadratic factor (eV/ch^2)
-    * @param fanoFactor Fano factor (nominally 0.122)
-    * @param noise Noise factor
+    * @param scale
+    *           Channel width in eV per channel
+    * @param offset
+    *           Channel offset in eV
+    * @param quadratic
+    *           Quadratic factor (eV/ch^2)
+    * @param fanoFactor
+    *           Fano factor (nominally 0.122)
+    * @param noise
+    *           Noise factor
     */
    public EDSCalibration(String name, double scale, double offset, double quadratic, double fanoFactor, double noise) {
       super();
@@ -117,9 +128,12 @@ abstract public class EDSCalibration
     * Constructs an EDSCalibration object suitable for a Si(Li) detector with
     * the specified calibration parameters.
     * 
-    * @param scale Channel width in eV per channel
-    * @param offset Channel offset in eV
-    * @param dlm DetectorLineshapeModel
+    * @param scale
+    *           Channel width in eV per channel
+    * @param offset
+    *           Channel offset in eV
+    * @param dlm
+    *           DetectorLineshapeModel
     */
    public EDSCalibration(String name, double scale, double offset, DetectorLineshapeModel dlm) {
       super();
@@ -136,10 +150,14 @@ abstract public class EDSCalibration
     * the specified calibration parameters.
     * 
     * @param name
-    * @param scale Channel width in eV per channel
-    * @param offset Channel offset in eV
-    * @param quadratic Channel quadratic scale (eV/ch^2)
-    * @param dlm DetectorLineshapeModel
+    * @param scale
+    *           Channel width in eV per channel
+    * @param offset
+    *           Channel offset in eV
+    * @param quadratic
+    *           Channel quadratic scale (eV/ch^2)
+    * @param dlm
+    *           DetectorLineshapeModel
     */
    public EDSCalibration(String name, double scale, double offset, double quadratic, DetectorLineshapeModel dlm) {
       super();
@@ -214,10 +232,7 @@ abstract public class EDSCalibration
 
    public void setContaminationModel(SpectrumProperties sp, IXRayWindowProperties contamination) {
       mContamination = contamination;
-      mProperties.clear(new SpectrumProperties.PropertyId[] {
-         SpectrumProperties.IceThickness,
-         SpectrumProperties.OilThickness
-      });
+      mProperties.clear(new SpectrumProperties.PropertyId[]{SpectrumProperties.IceThickness, SpectrumProperties.OilThickness});
       mProperties.addAll(sp);
    }
 
@@ -239,14 +254,14 @@ abstract public class EDSCalibration
 
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE) {
+      if (mHash == Integer.MAX_VALUE) {
          final int prime = 31;
          int result = super.hashCode();
          result = (prime * result) + ((mContamination == null) ? 0 : mContamination.hashCode());
          result = (prime * result) + ((mLineshape == null) ? 0 : mLineshape.hashCode());
          result = (prime * result) + ((mName == null) ? 0 : mName.hashCode());
          result = (prime * result) + Double.toString(mFudgeFactor).hashCode();
-         if(result == Integer.MAX_VALUE)
+         if (result == Integer.MAX_VALUE)
             result = Integer.MIN_VALUE;
          mHash = result;
       }
@@ -256,29 +271,29 @@ abstract public class EDSCalibration
 
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final EDSCalibration other = (EDSCalibration) obj;
-      if(!super.equals(obj))
+      if (!super.equals(obj))
          return false;
-      if(mContamination == null) {
-         if(other.mContamination != null)
+      if (mContamination == null) {
+         if (other.mContamination != null)
             return false;
-      } else if(!mContamination.equals(other.mContamination))
+      } else if (!mContamination.equals(other.mContamination))
          return false;
-      if(mLineshape == null) {
-         if(other.mLineshape != null)
+      if (mLineshape == null) {
+         if (other.mLineshape != null)
             return false;
-      } else if(!mLineshape.equals(other.mLineshape))
+      } else if (!mLineshape.equals(other.mLineshape))
          return false;
-      if(mName == null) {
-         if(other.mName != null)
+      if (mName == null) {
+         if (other.mName != null)
             return false;
-      } else if(!mName.equals(other.mName))
+      } else if (!mName.equals(other.mName))
          return false;
       return mFudgeFactor == other.mFudgeFactor;
    }

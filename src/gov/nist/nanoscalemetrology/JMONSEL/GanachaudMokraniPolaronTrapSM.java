@@ -25,8 +25,7 @@ import gov.nist.microanalysis.NISTMonte.Electron;
  * @author John Villarrubia
  * @version 1.0
  */
-public class GanachaudMokraniPolaronTrapSM
-   extends ScatterMechanism {
+public class GanachaudMokraniPolaronTrapSM extends ScatterMechanism {
 
    private final double prefactor;
    private final double extinction;
@@ -38,18 +37,18 @@ public class GanachaudMokraniPolaronTrapSM
     * prefactor*exp(-extinction*energy), where energy is the electron's kinetic
     * energy and the other variables are parameters.
     *
-    * @param prefactor - parameter (in inverse meters) in the exponential
-    *           expression
-    * @param extinction - parameter (in inverse joules) in the exponential
-    *           expression
+    * @param prefactor
+    *           - parameter (in inverse meters) in the exponential expression
+    * @param extinction
+    *           - parameter (in inverse joules) in the exponential expression
     */
    public GanachaudMokraniPolaronTrapSM(double prefactor, double extinction) {
       super();
       this.prefactor = prefactor;
       this.extinction = extinction;
-      if(prefactor < 0.)
+      if (prefactor < 0.)
          throw new EPQFatalException("Nonpositive prefactor in GanachaudMokraniPolaronTrapSM constructor.");
-      if(extinction < 0.)
+      if (extinction < 0.)
          throw new EPQFatalException("Nonpositive extinction in GanachaudMokraniPolaronTrapSM constructor.");
       CUTOFF = -Math.log(10. / prefactor) / extinction;
    }
@@ -75,7 +74,7 @@ public class GanachaudMokraniPolaronTrapSM
    @Override
    public double scatterRate(Electron pe) {
       final double kE0 = pe.getEnergy();
-      if(kE0 > CUTOFF)
+      if (kE0 > CUTOFF)
          return 0.;
       final double result = prefactor * Math.exp(-extinction * kE0);
       return result;
@@ -102,7 +101,6 @@ public class GanachaudMokraniPolaronTrapSM
     */
    @Override
    public String toString() {
-      return "GanachaudMokraniPolaronTrapSM(" + Double.valueOf(prefactor).toString() + "," + Double.valueOf(extinction).toString()
-            + ")";
+      return "GanachaudMokraniPolaronTrapSM(" + Double.valueOf(prefactor).toString() + "," + Double.valueOf(extinction).toString() + ")";
    }
 }

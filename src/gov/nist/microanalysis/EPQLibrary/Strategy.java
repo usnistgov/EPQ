@@ -42,8 +42,7 @@ import java.util.TreeMap;
  * across a calculation.
  * </p>
  */
-public class Strategy
-   implements Cloneable {
+public class Strategy implements Cloneable {
    private final SortedMap<String, AlgorithmClass> mMap;
 
    /**
@@ -87,9 +86,9 @@ public class Strategy
     * @param st
     */
    public void apply(Strategy st) {
-      for(final Entry<String, AlgorithmClass> me : st.mMap.entrySet()) {
+      for (final Entry<String, AlgorithmClass> me : st.mMap.entrySet()) {
          final String k = me.getKey();
-         if(mMap.containsKey(k))
+         if (mMap.containsKey(k))
             mMap.put(k, me.getValue());
       }
    }
@@ -101,19 +100,21 @@ public class Strategy
     * @param st
     */
    public void addAll(Strategy st) {
-      for(final Map.Entry<String, AlgorithmClass> me : st.mMap.entrySet())
+      for (final Map.Entry<String, AlgorithmClass> me : st.mMap.entrySet())
          mMap.put(me.getKey(), me.getValue());
    }
 
    /**
     * Specify an implentation of an AlgorithmClass-derived abstract base class.
     * 
-    * @param cls - One of AbsorptionCorrection.class, BackscatterFactor.class,
+    * @param cls
+    *           - One of AbsorptionCorrection.class, BackscatterFactor.class,
     *           ...
-    * @param value - A class derived from the class specified in cls
+    * @param value
+    *           - A class derived from the class specified in cls
     */
    public void addAlgorithm(Class<?> cls, AlgorithmClass value) {
-      if(!cls.isAssignableFrom(value.getClass()))
+      if (!cls.isAssignableFrom(value.getClass()))
          throw new IllegalArgumentException(value.toString() + " is not derived from " + cls.toString());
       mMap.put(cls.toString(), value);
    }

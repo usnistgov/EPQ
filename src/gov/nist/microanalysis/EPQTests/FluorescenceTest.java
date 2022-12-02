@@ -23,8 +23,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class FluorescenceTest
-   extends TestCase {
+public class FluorescenceTest extends TestCase {
 
    /**
     * Constructs a FluorescenceTest
@@ -52,13 +51,7 @@ public class FluorescenceTest
    public void testTwo() {
       final double beamE = ToSI.keV(25.0);
       final double takeOff = Math.toRadians(40.0);
-      final Composition comp = new Composition(new Element[] {
-         Element.Fe,
-         Element.Ni
-      }, new double[] {
-         0.5,
-         0.5
-      });
+      final Composition comp = new Composition(new Element[]{Element.Fe, Element.Ni}, new double[]{0.5, 0.5});
       final XRayTransition xrt = new XRayTransition(Element.Fe, XRayTransition.KA1);
       assertEquals(Fluorescence.Reed.compute(comp, xrt, beamE, takeOff), 1.10, 0.005);
    }

@@ -50,7 +50,8 @@ public class STEMinSEMQuant {
             double f = 1.0;
             if (rhoz > 0.0) {
                double chi = MassAbsorptionCoefficient.Default.compute(comp, xrt) / Math.sin(toa);
-               // Use the previous estimate of rhoz to estimate the absorption correction
+               // Use the previous estimate of rhoz to estimate the absorption
+               // correction
                f = (1.0 - Math.exp(-chi * rhoz)) / (chi * rhoz);
             }
             UncertainValue2 tmp = UncertainValue2.multiply(cas * iprz / f, krs.getKRatioU(trs));

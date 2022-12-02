@@ -18,19 +18,18 @@ import org.python.util.InteractiveInterpreter;
 
 /**
  * <p>
- * A simple implementation of the JCommandLine.PerformCommand
- * interface for the Jython interpreter.
+ * A simple implementation of the JCommandLine.PerformCommand interface for the
+ * Jython interpreter.
  * </p>
  * <p>
- * Not copyright: In the public domain * 
+ * Not copyright: In the public domain *
  * </p>
  *
  * @author Nicholas W. M. Ritchie
  * @version 1.0
  */
 
-public class JythonExecutive
-   implements JCommandLine.PerformCommand {
+public class JythonExecutive implements JCommandLine.PerformCommand {
    private JCommandLine mCmdLine;
    private InteractiveConsole mInterpreter;
    private JCommandLine.StyleWriter mErrorWriter;
@@ -42,44 +41,45 @@ public class JythonExecutive
     * JythonExecutive - Create a JythonExecutive associated with the specified
     * JCommandLine command line editor window.
     *
-    * @param jCmdLine JCommandLine
+    * @param jCmdLine
+    *           JCommandLine
     */
    public JythonExecutive(JCommandLine jCmdLine) {
       mCmdLine = jCmdLine;
       mCmdLine.setCommandExecutive(this);
       mErrorWriter = mCmdLine.createStyleWriter("IIError");
       StyleConstants.setForeground(mErrorWriter.getStyle(), Color.RED);
-      StyleConstants.setFontFamily(mErrorWriter.getStyle(),"Courier");
-      StyleConstants.setFontSize(mErrorWriter.getStyle(),12);
+      StyleConstants.setFontFamily(mErrorWriter.getStyle(), "Courier");
+      StyleConstants.setFontSize(mErrorWriter.getStyle(), 12);
       mOutputWriter = mCmdLine.createStyleWriter("IIOut");
       StyleConstants.setItalic(mOutputWriter.getStyle(), true);
-      StyleConstants.setFontFamily(mOutputWriter.getStyle(),"Courier");
-      StyleConstants.setFontSize(mOutputWriter.getStyle(),12);
+      StyleConstants.setFontFamily(mOutputWriter.getStyle(), "Courier");
+      StyleConstants.setFontSize(mOutputWriter.getStyle(), 12);
       mInterpreter = new InteractiveConsole();
       mInterpreter.setErr(mErrorWriter);
       mInterpreter.setOut(mOutputWriter);
-      mInterpreter.set("PathSep",System.getProperty("file.separator"));
-      mInterpreter.set("ScriptFile","?");
+      mInterpreter.set("PathSep", System.getProperty("file.separator"));
+      mInterpreter.set("ScriptFile", "?");
       setScriptSource(null);
-      mInterpreter.set("stdOut",mOutputWriter);
-      mInterpreter.set("stdErr",mErrorWriter);
+      mInterpreter.set("stdOut", mOutputWriter);
+      mInterpreter.set("stdErr", mErrorWriter);
       mCmdLine.addBanner(InteractiveConsole.getDefaultBanner());
       String str = System.getProperty("java.compiler");
-      if(str != null) {
+      if (str != null) {
          mCmdLine.addBanner(str);
       }
       ByteArrayOutputStream bas = new ByteArrayOutputStream();
       PrintStream oldPs = System.err;
       System.setErr(new PrintStream(bas));
       { // Add any jars in the same directory as this jar to the Jython package
-         // list
+        // list
          String cp = System.getProperty("java.class.path").toLowerCase();
-         if(cp != null) {
+         if (cp != null) {
             int i = cp.toLowerCase().indexOf("\\jythongui.jar");
-            if(i != -1) {
+            if (i != -1) {
                cp = cp.substring(0, i); // up to start of
                i = cp.lastIndexOf(";");
-               if(i != -1) {
+               if (i != -1) {
                   cp = cp.substring(i + 1);
                }
                PySystemState.packageManager.addJarDir(cp, true);
@@ -87,7 +87,7 @@ public class JythonExecutive
          }
       }
       String res = bas.toString();
-      if(res.length() > 0) {
+      if (res.length() > 0) {
          mCmdLine.addBanner(res);
       }
       System.setErr(oldPs);
@@ -98,49 +98,48 @@ public class JythonExecutive
     * InteractiveInterpreter. If a result is generated the result will be
     * displayed on the JCommandLine instance.
     *
-    * @param cmd String
+    * @param cmd
+    *           String
     */
    public void Do(String cmd) {
       try {
          mInterpreter.push(cmd);
          mOutputWriter.flush();
          mErrorWriter.flush();
-      }
-      catch(Exception ex) {
+      } catch (Exception ex) {
          try {
             mErrorWriter.write(ex.toString());
-         }
-         catch(IOException ioe) {
+         } catch (IOException ioe) {
             System.err.print(ioe.toString());
          }
       }
    }
 
-   public void setScriptSource(File file){
-      mInterpreter.set("ScriptFile",file);
-      if(file!=null){
-         String name=file.getName();
+   public void setScriptSource(File file) {
+      mInterpreter.set("ScriptFile", file);
+      if (file != null) {
+         String name = file.getName();
          // Remove the extension...
-         int p=name.lastIndexOf('.');
-         if(p>0)
-            name=name.substring(0,p);
-         mInterpreter.set("DefaultOutput",file.getParent()+File.separator+name);
+         int p = name.lastIndexOf('.');
+         if (p > 0)
+            name = name.substring(0, p);
+         mInterpreter.set("DefaultOutput", file.getParent() + File.separator + name);
       } else
-         mInterpreter.set("DefaultOutput",System.getProperty("user.home")+File.separator+"Jython");
+         mInterpreter.set("DefaultOutput", System.getProperty("user.home") + File.separator + "Jython");
    }
 
    public void executeScript(InputStream is) {
       long st = System.currentTimeMillis();
       try {
-         if(mScriptWriter == null) {
+         if (mScriptWriter == null) {
             mScriptWriter = mCmdLine.createStyleWriter("script");
          }
          InputStreamReader isr = new InputStreamReader(is);
          BufferedReader br = new BufferedReader(isr);
          String str = br.readLine();
          StringBuffer script = new StringBuffer(4096);
-         while(str != null) {
-            if(mDisplayScript) {
+         while (str != null) {
+            if (mDisplayScript) {
                mScriptWriter.write(str + "\n");
                mScriptWriter.flush();
             }
@@ -149,26 +148,22 @@ public class JythonExecutive
          }
          mInterpreter.exec(script.toString());
          mInterpreter.cleanup();
-      }
-      catch(PyException pe) {
+      } catch (PyException pe) {
          try {
-            if(pe.type.toString().indexOf("ThreadDeath") != -1) {
+            if (pe.type.toString().indexOf("ThreadDeath") != -1) {
                mErrorWriter.write("The script was canceled.\n");
                mErrorWriter.flush();
             } else {
                mErrorWriter.write(pe.toString());
                mErrorWriter.flush();
             }
+         } catch (IOException ioex) {
          }
-         catch(IOException ioex) {
-         }
-      }
-      catch(Exception ex) {
+      } catch (Exception ex) {
          try {
             mErrorWriter.write(ex.toString());
             mErrorWriter.flush();
-         }
-         catch(IOException ioex) {
+         } catch (IOException ioex) {
          }
       }
       long delta = (System.currentTimeMillis() - st) / 100;
@@ -177,11 +172,10 @@ public class JythonExecutive
          int mins = (int) ((delta / 600) % 60);
          int secs = (int) ((delta / 10) % 60);
          int tenths = (int) (delta % 10);
-         mScriptWriter.write("Execution time: " + Integer.toString(hrs) + (mins > 9 ? ":" : ":0") + Integer.toString(mins)
-               + (secs > 9 ? ":" : ":0") + Integer.toString(secs) + "." + Integer.toString(tenths));
+         mScriptWriter.write("Execution time: " + Integer.toString(hrs) + (mins > 9 ? ":" : ":0") + Integer.toString(mins) + (secs > 9 ? ":" : ":0")
+               + Integer.toString(secs) + "." + Integer.toString(tenths));
          mScriptWriter.flush();
-      }
-      catch(IOException ex1) {
+      } catch (IOException ex1) {
       }
    }
 
@@ -192,8 +186,7 @@ public class JythonExecutive
     */
    public InteractiveInterpreter getInteractiveInterpreter() {
       return mInterpreter;
-      
+
    }
-   
 
 }

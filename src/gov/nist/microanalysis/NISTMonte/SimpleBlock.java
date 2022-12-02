@@ -25,8 +25,7 @@ import java.util.Locale;
  * @version 1.0
  */
 
-public class SimpleBlock
-   implements MonteCarloSS.Shape, TrajectoryVRML.IRender {
+public class SimpleBlock implements MonteCarloSS.Shape, TrajectoryVRML.IRender {
    private final double[] mCorner0;
    private final double[] mCorner1;
 
@@ -39,8 +38,10 @@ public class SimpleBlock
     * SimpleBlock - Constructs a SimpleBlock, simple shape definition class that
     * implements the Shape interface.
     * 
-    * @param corner0 double[] - The x,y &amp; z coordinates of one corner
-    * @param corner1 double[] - The coordinates of the diagonal corner
+    * @param corner0
+    *           double[] - The x,y &amp; z coordinates of one corner
+    * @param corner1
+    *           double[] - The coordinates of the diagonal corner
     */
    public SimpleBlock(double[] corner0, double[] corner1) {
       assert (corner0.length == 3);
@@ -48,8 +49,8 @@ public class SimpleBlock
       mCorner0 = corner0.clone();
       mCorner1 = corner1.clone();
       // Normalize coordinates so that mCorner0[i]<=mCorner1[i]
-      for(int i = 0; i < 3; ++i)
-         if(mCorner0[i] > mCorner1[i]) {
+      for (int i = 0; i < 3; ++i)
+         if (mCorner0[i] > mCorner1[i]) {
             final double tmp = mCorner0[i];
             mCorner0[i] = mCorner1[i];
             mCorner1[i] = tmp;
@@ -59,8 +60,7 @@ public class SimpleBlock
    @Override
    public boolean contains(double[] pos) {
       assert (pos.length == 3);
-      return between(pos[0], mCorner0[0], mCorner1[0]) && between(pos[1], mCorner0[1], mCorner1[1])
-            && between(pos[2], mCorner0[2], mCorner1[2]);
+      return between(pos[0], mCorner0[0], mCorner1[0]) && between(pos[1], mCorner0[1], mCorner1[1]) && between(pos[2], mCorner0[2], mCorner1[2]);
    }
 
    @Override
@@ -68,16 +68,16 @@ public class SimpleBlock
       assert (pos0.length == 3);
       assert (pos1.length == 3);
       double t = Double.MAX_VALUE;
-      for(int i = 2; i >= 0; --i) {
+      for (int i = 2; i >= 0; --i) {
          final int j = (i + 1) % 3, k = (i + 2) % 3;
-         if(pos1[i] != pos0[i]) {
+         if (pos1[i] != pos0[i]) {
             double u = (mCorner0[i] - pos0[i]) / (pos1[i] - pos0[i]);
-            if((u >= 0.0) && (u <= t) && between(pos0[j] + (u * (pos1[j] - pos0[j])), mCorner0[j], mCorner1[j])
+            if ((u >= 0.0) && (u <= t) && between(pos0[j] + (u * (pos1[j] - pos0[j])), mCorner0[j], mCorner1[j])
                   && between(pos0[k] + (u * (pos1[k] - pos0[k])), mCorner0[k], mCorner1[k]))
                t = u;
             // Bottom of block
             u = (mCorner1[i] - pos0[i]) / (pos1[i] - pos0[i]);
-            if((u >= 0.0) && (u <= t) && between(pos0[j] + (u * (pos1[j] - pos0[j])), mCorner0[j], mCorner1[j])
+            if ((u >= 0.0) && (u <= t) && between(pos0[j] + (u * (pos1[j] - pos0[j])), mCorner0[j], mCorner1[j])
                   && between(pos0[k] + (u * (pos1[k] - pos0[k])), mCorner0[k], mCorner1[k]))
                t = u;
          }
@@ -95,8 +95,7 @@ public class SimpleBlock
     *      java.io.Writer)
     */
    @Override
-   public void render(TrajectoryVRML.RenderContext rc, Writer wr)
-         throws IOException {
+   public void render(TrajectoryVRML.RenderContext rc, Writer wr) throws IOException {
       final NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
       nf.setMaximumFractionDigits(3);
       nf.setGroupingUsed(false);

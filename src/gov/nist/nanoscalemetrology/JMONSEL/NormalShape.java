@@ -27,9 +27,7 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape;
  * @author John Villarrubia
  * @version 1.0
  */
-public interface NormalShape
-   extends
-   Shape {
+public interface NormalShape extends Shape {
    /**
     * <p>
     * contains - This is an overloaded version of the Shape class contains()
@@ -68,8 +66,10 @@ public interface NormalShape
     * length.)
     * </p>
     *
-    * @param pos0 double[] - 3 element array, initial position
-    * @param pos1 double[] - 3 element array, final position
+    * @param pos0
+    *           double[] - 3 element array, initial position
+    * @param pos1
+    *           double[] - 3 element array, final position
     * @return boolean - Returns true if pos0 is inside the shape, false if not.
     */
    public boolean contains(double[] pos0, double[] pos1);
@@ -91,8 +91,10 @@ public interface NormalShape
     * Likewise, the normal vector need not be calculated when u&gt;1.
     * </p>
     *
-    * @param pos0 double[] - 3 element array
-    * @param pos1 double[] - 3 element array
+    * @param pos0
+    *           double[] - 3 element array
+    * @param pos1
+    *           double[] - 3 element array
     * @return double[] - A 4-element array. If a ray from pos0 in the direction
     *         of pos1 intersects a boundary of the shape, the first 3 elements
     *         of this array are the components of the outward pointing normal of

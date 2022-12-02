@@ -61,23 +61,21 @@ public class StandardBundle {
       return mElement;
    }
 
-   public void checkSuitableAsStandard(final ISpectrumData spec)
-         throws EPQException {
-	   if(spec == null)
-		   throw new EPQException("No standard spectrum has been specified.");
-      if(!(spec.getProperties().getDetector() instanceof EDSDetector))
+   public void checkSuitableAsStandard(final ISpectrumData spec) throws EPQException {
+      if (spec == null)
+         throw new EPQException("No standard spectrum has been specified.");
+      if (!(spec.getProperties().getDetector() instanceof EDSDetector))
          throw new EPQException("No EDS detector is defined for this standard.");
-      if(spec.getProperties().getNumericWithDefault(SpectrumProperties.BeamEnergy, -1.0) == -1.0)
+      if (spec.getProperties().getNumericWithDefault(SpectrumProperties.BeamEnergy, -1.0) == -1.0)
          throw new EPQException("The beam energy is not defined for this standard. ");
       final Composition std = spec.getProperties().getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
-      if(std == null)
+      if (std == null)
          throw new EPQException("The standard composition is not defined for this spectrum. ");
-      if(!std.containsElement(mElement))
+      if (!std.containsElement(mElement))
          throw new EPQException("The standard composition does not contain the required element. ");
    }
 
-   public StandardBundle(final Element elm, final ISpectrumData spec, final Set<Element> stripElms)
-         throws EPQException {
+   public StandardBundle(final Element elm, final ISpectrumData spec, final Set<Element> stripElms) throws EPQException {
       mElement = elm;
       checkSuitableAsStandard(spec);
       mStandard = spec;
@@ -89,8 +87,7 @@ public class StandardBundle {
       mStrip = new TreeSet<Element>(stripElms);
    }
 
-   public void updateStandard(final ISpectrumData spec)
-         throws EPQException {
+   public void updateStandard(final ISpectrumData spec) throws EPQException {
       assert spec.getProperties().getDetector() == mDetector;
       checkSuitableAsStandard(spec);
       mStandard = spec;
@@ -116,9 +113,9 @@ public class StandardBundle {
 
    public boolean isSuitableAsReference(final RegionOfInterest roi, final ISpectrumData spec) {
       final Set<RegionOfInterest> rois = mOutline.suitableAsReference(spec.getProperties().getElements());
-      for(final RegionOfInterest roi2 : rois)
-         if(roi2.fullyContains(roi))
-            return roi2.getElementSet().size()==1;
+      for (final RegionOfInterest roi2 : rois)
+         if (roi2.fullyContains(roi))
+            return roi2.getElementSet().size() == 1;
       return false;
    }
 
@@ -126,10 +123,10 @@ public class StandardBundle {
       assert roi.getElementSet().size() == 1;
       RegionOfInterest best = null;
       double bestScore = 0.95;
-      for(final RegionOfInterest reqRoi : rois) {
+      for (final RegionOfInterest reqRoi : rois) {
          assert reqRoi.getElementSet().size() == 1;
          final double score = score(reqRoi, roi);
-         if(score > bestScore) {
+         if (score > bestScore) {
             bestScore = score;
             best = reqRoi;
          }
@@ -148,33 +145,27 @@ public class StandardBundle {
       final Set<XRayTransition> xrts1 = new TreeSet<XRayTransition>(roi1.getAllTransitions().getTransitions());
       final XRayTransitionSet xrts2 = roi2.getAllTransitions();
       double sum = 0.0, all = 0.0;
-      for(final XRayTransition xrt : xrts2.getTransitions()) {
+      for (final XRayTransition xrt : xrts2.getTransitions()) {
          all += xrt.getNormalizedWeight();
-         if(xrts1.contains(xrt)) {
+         if (xrts1.contains(xrt)) {
             sum += xrt.getNormalizedWeight();
             xrts1.remove(xrt);
          }
       }
-      for(final XRayTransition xrt : xrts1)
+      for (final XRayTransition xrt : xrts1)
          all += xrt.getNormalizedWeight();
       return sum / all;
    }
 
-   public void addRemappedReference(final RegionOfInterest roi, final ISpectrumData spec)
-         throws EPQException {
-      final RegionOfInterest matchBest = mReferences.containsKey(roi) ? roi
-            : bestMatch(roi, mOutline.getAllRequiredReferences(false));
-      if(matchBest != null)
+   public void addRemappedReference(final RegionOfInterest roi, final ISpectrumData spec) throws EPQException {
+      final RegionOfInterest matchBest = mReferences.containsKey(roi) ? roi : bestMatch(roi, mOutline.getAllRequiredReferences(false));
+      if (matchBest != null)
          addReference(matchBest, spec);
    }
 
-   public void addReference(final RegionOfInterest roi, final ISpectrumData spec)
-         throws EPQException {
+   public void addReference(final RegionOfInterest roi, final ISpectrumData spec) throws EPQException {
       mOutline.addReference(roi, roi.getElementSet());
-      spec.getProperties().clear(new PropertyId[] {
-         SpectrumProperties.StandardComposition,
-         SpectrumProperties.MicroanalyticalComposition
-      });
+      spec.getProperties().clear(new PropertyId[]{SpectrumProperties.StandardComposition, SpectrumProperties.MicroanalyticalComposition});
       spec.getProperties().setElements(roi.getElementSet());
       mReferences.put(roi, spec);
    }
@@ -222,8 +213,7 @@ public class StandardBundle {
       private final Map<RegionOfInterest, String> References = new HashMap<RegionOfInterest, String>();
    }
 
-   private void write(final String name, final ISpectrumData spec, final ZipOutputStream zos)
-         throws IOException, EPQException {
+   private void write(final String name, final ISpectrumData spec, final ZipOutputStream zos) throws IOException, EPQException {
       final File temp = File.createTempFile("spec", "msa");
       final FileOutputStream fos = new FileOutputStream(temp);
       WriteSpectrumAsEMSA1_0.write(spec, fos, WriteSpectrumAsEMSA1_0.Mode.COMPATIBLE);
@@ -234,13 +224,12 @@ public class StandardBundle {
       final BufferedInputStream bis = new BufferedInputStream(fis, 4096);
       final byte[] data = new byte[4096];
       int size = -1;
-      while((size = bis.read(data, 0, data.length)) != -1)
+      while ((size = bis.read(data, 0, data.length)) != -1)
          zos.write(data, 0, size);
       bis.close();
    }
 
-   public void write(final File f)
-         throws IOException, EPQException {
+   public void write(final File f) throws IOException, EPQException {
       final ZipFileHeader zfh = new ZipFileHeader();
       zfh.Version = 2;
       zfh.Element = mElement;
@@ -249,7 +238,7 @@ public class StandardBundle {
       zfh.Strip.addAll(mStrip);
       assert zfh.StandardComp != null;
       int i = 0;
-      for(final Map.Entry<RegionOfInterest, ISpectrumData> me : mReferences.entrySet()) {
+      for (final Map.Entry<RegionOfInterest, ISpectrumData> me : mReferences.entrySet()) {
          final RegionOfInterest roi = me.getKey();
          assert roi.getElementSet().size() == 1;
          zfh.References.put(roi, "Reference[" + i++ + "," + roi.toString() + "]");
@@ -266,42 +255,39 @@ public class StandardBundle {
          // Write standard spectrum
          write("Standard", mStandard, zip);
          // Write reference spectra
-         for(final Map.Entry<RegionOfInterest, String> me : zfh.References.entrySet())
+         for (final Map.Entry<RegionOfInterest, String> me : zfh.References.entrySet())
             write(me.getValue(), mReferences.get(me.getKey()), zip);
       }
    }
 
-   private static final ISpectrumData read(final String name, final ZipFile zf)
-         throws IOException {
+   private static final ISpectrumData read(final String name, final ZipFile zf) throws IOException {
       final ZipEntry ze = new ZipEntry(name);
       try (final InputStream zis = zf.getInputStream(ze)) {
          return new EMSAFile(zis);
       }
    }
 
-   public static StandardBundle read(final File f, final EDSDetector det)
-         throws IOException, EPQException {
+   public static StandardBundle read(final File f, final EDSDetector det) throws IOException, EPQException {
       try (ZipFile zf = new ZipFile(f)) {
          final ZipEntry ze = zf.getEntry("Header");
          try (InputStream is = zf.getInputStream(ze)) {
             final InputStreamReader isr = new InputStreamReader(is, "UTF-8");
             final ZipFileHeader zfh = (ZipFileHeader) EPQXStream.getInstance().fromXML(isr);
-            if(zfh.Version < 1)
+            if (zfh.Version < 1)
                throw new EPQException("DRAT! Older SVU standard bundles are no longer supported.");
             StandardBundle res;
             final String guid = det.getProperties().getTextWithDefault(SpectrumProperties.DetectorGUID, "Unknown");
-            if(!(zfh.DetectorName.equals(guid) || zfh.DetectorName.equals(det.getName())))
+            if (!(zfh.DetectorName.equals(guid) || zfh.DetectorName.equals(det.getName())))
                throw new EPQException("The standard does not appear to have been collected on the same detector as the unknown.");
             final ISpectrumData std = read("Standard", zf);
             std.getProperties().setCompositionProperty(SpectrumProperties.StandardComposition, zfh.StandardComp);
             std.getProperties().setDetector(det);
             res = new StandardBundle(zfh.Element, std, zfh.Strip);
-            for(final Map.Entry<RegionOfInterest, String> me : zfh.References.entrySet())
+            for (final Map.Entry<RegionOfInterest, String> me : zfh.References.entrySet())
                try {
                   res.addRemappedReference(me.getKey(), read(me.getValue(), zf));
-               }
-               catch(Exception e) {
-                  if(zfh.Version == 1)
+               } catch (Exception e) {
+                  if (zfh.Version == 1)
                      System.err.println("DRAT! A version 1 bundle with a bug resolved in version 2. - " + me.getValue());
                }
             return res;
@@ -312,19 +298,17 @@ public class StandardBundle {
    public static boolean isInstance(final File f) {
       try (ZipFile zf = new ZipFile(f)) {
          final ZipEntry ze = zf.getEntry("Header");
-         if(ze != null)
+         if (ze != null)
             try (InputStream is = zf.getInputStream(ze)) {
                final Object zfh = EPQXStream.getInstance().fromXML(is);
                return zfh instanceof ZipFileHeader;
             }
-      }
-      catch(final IOException e) {
+      } catch (final IOException e) {
       }
       return false;
    }
 
-   public static List<ISpectrumData> readSpectra(final File f)
-         throws IOException, EPQException {
+   public static List<ISpectrumData> readSpectra(final File f) throws IOException, EPQException {
       final ArrayList<ISpectrumData> res = new ArrayList<ISpectrumData>();
       try (ZipFile zf = new ZipFile(f)) {
          final ZipEntry ze = zf.getEntry("Header");
@@ -333,7 +317,7 @@ public class StandardBundle {
             final ISpectrumData std = read("Standard", zf);
             std.getProperties().setCompositionProperty(SpectrumProperties.StandardComposition, zfh.StandardComp);
             res.add(std);
-            for(final Map.Entry<RegionOfInterest, String> me : zfh.References.entrySet())
+            for (final Map.Entry<RegionOfInterest, String> me : zfh.References.entrySet())
                res.add(read(me.getValue(), zf));
             return res;
          }

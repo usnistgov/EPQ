@@ -3,8 +3,7 @@ package gov.nist.microanalysis.EPQTests;
 import gov.nist.microanalysis.Utility.Integrator;
 import junit.framework.TestCase;
 
-public class IntegratorTest
-   extends TestCase {
+public class IntegratorTest extends TestCase {
 
    public void testCompare1() {
       final Integrator i2 = new Integrator(1.0e-6) {

@@ -86,10 +86,10 @@ public class WriteHyperspectral {
       private void write(PrettyPrintWriter ppw) {
          ppw.startNode("axis");
          ppw.addAttribute("length", Integer.toString(mLength));
-         if(!Double.isNaN(mExtent)) {
+         if (!Double.isNaN(mExtent)) {
             ppw.addAttribute("unit", mUnit.mAbbrev);
             ppw.addAttribute("extent", Double.toString(mExtent));
-            if(!Double.isNaN(mOffset))
+            if (!Double.isNaN(mOffset))
                ppw.addAttribute("offset", Double.toString(mOffset));
          }
          ppw.setValue(mName);
@@ -97,9 +97,7 @@ public class WriteHyperspectral {
       }
    }
 
-   static class ImageHeader
-      extends
-      DataHeader {
+   static class ImageHeader extends DataHeader {
       private final double[] mFOV;
       private final String mDescription;
       private final String mSignal;
@@ -107,10 +105,7 @@ public class WriteHyperspectral {
 
       private ImageHeader(ScaledImage sc, String name, String desc, String signal) {
          super(DataType.Image, name);
-         mFOV = new double[] {
-            sc.getHorizontalFieldOfView(),
-            sc.getVerticalFieldOfView()
-         };
+         mFOV = new double[]{sc.getHorizontalFieldOfView(), sc.getVerticalFieldOfView()};
          mDescription = desc;
          mSignal = signal;
       }
@@ -119,10 +114,10 @@ public class WriteHyperspectral {
          final StringWriter sw = new StringWriter();
          final PrettyPrintWriter ppw = new PrettyPrintWriter(sw);
          int items = 0;
-         if((base == null) || (!Arrays.equals(mFOV, base.mFOV))) {
+         if ((base == null) || (!Arrays.equals(mFOV, base.mFOV))) {
             ppw.startNode("field-of-view");
             ppw.addAttribute("unit", "m");
-            for(int i = 0; i < mFOV.length; ++i) {
+            for (int i = 0; i < mFOV.length; ++i) {
                ppw.startNode("extent");
                ppw.addAttribute("axis", Integer.toString(i));
                ppw.setValue(Double.toString(mFOV[i]));
@@ -131,13 +126,13 @@ public class WriteHyperspectral {
             items++;
             ppw.endNode();
          }
-         if((base == null) || (!mDescription.equals(base.mDescription))) {
+         if ((base == null) || (!mDescription.equals(base.mDescription))) {
             ppw.startNode("description");
             ppw.setValue(mDescription);
             ppw.endNode();
             items++;
          }
-         if((base == null) || (!mSignal.equals(base.mSignal))) {
+         if ((base == null) || (!mSignal.equals(base.mSignal))) {
             ppw.startNode("signal");
             ppw.setValue(mSignal);
             ppw.endNode();
@@ -158,9 +153,7 @@ public class WriteHyperspectral {
 
    }
 
-   static class EDSHeader
-      extends
-      DataHeader {
+   static class EDSHeader extends DataHeader {
       final double BeamEnergy;
       final double ProbeCurrent;
       final double WorkingDistance;
@@ -184,7 +177,7 @@ public class WriteHyperspectral {
          mYScale = new double[props.isDefined(SpectrumProperties.EnergyQuadratic) ? 3 : 2];
          mYScale[0] = props.getNumericWithDefault(SpectrumProperties.EnergyOffset, 0.0);
          mYScale[1] = props.getNumericWithDefault(SpectrumProperties.EnergyScale, 1.0);
-         if(mYScale.length > 2)
+         if (mYScale.length > 2)
             mYScale[2] = props.getNumericWithDefault(SpectrumProperties.EnergyQuadratic, 0.0);
       }
 
@@ -195,52 +188,52 @@ public class WriteHyperspectral {
          int items = 0;
          ppw.startNode("data");
          ppw.addAttribute("type", DataType.ElectronProbeEDS.mAbbrev);
-         if(mName != null)
+         if (mName != null)
             ppw.addAttribute("name", mName);
-         if((base == null) || (this.BeamEnergy != base.BeamEnergy)) {
+         if ((base == null) || (this.BeamEnergy != base.BeamEnergy)) {
             ppw.startNode("beam_energy");
             ppw.addAttribute("unit", "keV");
             ppw.setValue(Double.toString(BeamEnergy));
             ppw.endNode();
             items++;
          }
-         if((base == null) || (this.ProbeCurrent != base.ProbeCurrent))
-            if(!Double.isNaN(ProbeCurrent)) {
+         if ((base == null) || (this.ProbeCurrent != base.ProbeCurrent))
+            if (!Double.isNaN(ProbeCurrent)) {
                ppw.startNode("probe_current");
                ppw.addAttribute("unit", "A");
                ppw.setValue(Double.toString(1.0e-9 * ProbeCurrent));
                ppw.endNode();
                items++;
             }
-         if((base == null) || (this.LiveTime != base.LiveTime))
-            if(!Double.isNaN(LiveTime)) {
+         if ((base == null) || (this.LiveTime != base.LiveTime))
+            if (!Double.isNaN(LiveTime)) {
                ppw.startNode("live_time");
                ppw.addAttribute("unit", "s");
                ppw.setValue(Double.toString(LiveTime));
                ppw.endNode();
                items++;
             }
-         if((base == null) || (!this.Description.equals(base.Description)))
-            if(Description != null) {
+         if ((base == null) || (!this.Description.equals(base.Description)))
+            if (Description != null) {
                ppw.startNode("description");
                ppw.setValue(Description);
                ppw.endNode();
                items++;
             }
-         if((base == null) || (this.WorkingDistance != base.WorkingDistance))
-            if(!Double.isNaN(WorkingDistance)) {
+         if ((base == null) || (this.WorkingDistance != base.WorkingDistance))
+            if (!Double.isNaN(WorkingDistance)) {
                ppw.startNode("working_distance");
                ppw.addAttribute("unit", "m");
                ppw.setValue(Double.toString(WorkingDistance));
                ppw.endNode();
                items++;
             }
-         if((base != null) && (!StagePos.equals(base.StagePos))) {
+         if ((base != null) && (!StagePos.equals(base.StagePos))) {
             final StageCoordinate d = base.StagePos.delta(StagePos);
             assert d.size() > 0;
             ppw.startNode("stage_position");
-            for(final StageCoordinate.Axis axis : StageCoordinate.Axis.values())
-               if(d.isPresent(axis)) {
+            for (final StageCoordinate.Axis axis : StageCoordinate.Axis.values())
+               if (d.isPresent(axis)) {
                   ppw.startNode(axis.toString());
                   ppw.addAttribute("unit", axis.unit());
                   ppw.setValue(Double.toString(d.get(axis)));
@@ -249,11 +242,11 @@ public class WriteHyperspectral {
             ppw.endNode();
             items++;
          }
-         if(this.StandardComposition != null)
-            if((base == null) || (!this.StandardComposition.equals(base.StandardComposition))) {
+         if (this.StandardComposition != null)
+            if ((base == null) || (!this.StandardComposition.equals(base.StandardComposition))) {
                ppw.startNode("standard_composition");
                ppw.addAttribute("name", StandardComposition.toString());
-               for(final Element elm : StandardComposition.getElementSet()) {
+               for (final Element elm : StandardComposition.getElementSet()) {
                   ppw.startNode("element");
                   ppw.addAttribute("z", Integer.toString(elm.getAtomicNumber()));
                   ppw.setValue(Double.toString(StandardComposition.weightFraction(elm, false)));
@@ -262,8 +255,8 @@ public class WriteHyperspectral {
                ppw.endNode();
                items++;
             }
-         if(this.Timestamp != null) {
-            if((base == null) || (!Timestamp.equals(base.Timestamp))) {
+         if (this.Timestamp != null) {
+            if ((base == null) || (!Timestamp.equals(base.Timestamp))) {
                final Calendar c = Calendar.getInstance();
                c.setTime(Timestamp);
                ppw.startNode("acquisition_time");
@@ -277,10 +270,10 @@ public class WriteHyperspectral {
             }
             items++;
          }
-         if((base == null) || (!Arrays.equals(this.mYScale, base.mYScale))) {
+         if ((base == null) || (!Arrays.equals(this.mYScale, base.mYScale))) {
             ppw.startNode("y_axis_scale");
             ppw.addAttribute("unit", "eV");
-            for(int i = 0; i < mYScale.length; ++i) {
+            for (int i = 0; i < mYScale.length; ++i) {
                ppw.startNode("coefficient");
                ppw.addAttribute("index", Integer.toString(i));
                ppw.setValue(Double.toString(mYScale[i]));
@@ -298,15 +291,14 @@ public class WriteHyperspectral {
    static private String formatInt(int i, int len) {
       final StringBuffer sb = new StringBuffer();
       final String tmp = Integer.toString(i);
-      for(int cx = len - tmp.length(); cx > 0; --cx)
+      for (int cx = len - tmp.length(); cx > 0; --cx)
          sb.append("0");
       sb.append(tmp);
       return sb.toString();
    }
 
    static private String formatDate(Calendar c) {
-      return formatInt(c.get(Calendar.YEAR), 4) + "-" + formatInt(c.get(Calendar.MONTH) + 1, 2) + "-"
-            + formatInt(c.get(Calendar.DAY_OF_MONTH), 2);
+      return formatInt(c.get(Calendar.YEAR), 4) + "-" + formatInt(c.get(Calendar.MONTH) + 1, 2) + "-" + formatInt(c.get(Calendar.DAY_OF_MONTH), 2);
    }
 
    static private String formatTime(Calendar c) {
@@ -348,9 +340,9 @@ public class WriteHyperspectral {
    protected String toXML() {
       final StringWriter sw = new StringWriter();
       final PrettyPrintWriter ppw = new PrettyPrintWriter(sw);
-      if(mDimensions.size() > 0) {
+      if (mDimensions.size() > 0) {
          ppw.startNode("dimensions");
-         for(final Dimension dim : mDimensions)
+         for (final Dimension dim : mDimensions)
             dim.write(ppw);
          ppw.endNode();
          ppw.flush();
@@ -358,9 +350,8 @@ public class WriteHyperspectral {
       return sw.toString();
    }
 
-   private void writeHeader(File dir, String xml)
-         throws IOException {
-      if(xml.length() > 0) {
+   private void writeHeader(File dir, String xml) throws IOException {
+      if (xml.length() > 0) {
          dir.mkdirs();
          final File outFile = new File(dir, "header.xml");
          try (final OutputStream os = new FileOutputStream(outFile)) {
@@ -372,17 +363,16 @@ public class WriteHyperspectral {
       }
    }
 
-   private void writeEDS(File dir, String name, ISpectrumData spec, boolean xy)
-         throws IOException {
+   private void writeEDS(File dir, String name, ISpectrumData spec, boolean xy) throws IOException {
       dir.mkdirs();
       final StringBuffer sb = new StringBuffer((xy ? 2 : 1) * 10 * spec.getChannelCount());
-      for(int i = 0; i < spec.getChannelCount(); ++i) {
-         if(xy) {
+      for (int i = 0; i < spec.getChannelCount(); ++i) {
+         if (xy) {
             sb.append(Double.toString(SpectrumUtils.minEnergyForChannel(spec, i)));
             sb.append(",");
          }
          final double counts = spec.getCounts(i);
-         if(Math.round(counts) == counts)
+         if (Math.round(counts) == counts)
             sb.append(Long.toString(Math.round(counts)));
          else
             sb.append(Double.toString(counts));
@@ -397,19 +387,17 @@ public class WriteHyperspectral {
       os.close();
    }
 
-   private void writeImage(File file, ImageHeader imgHdr)
-         throws IOException {
+   private void writeImage(File file, ImageHeader imgHdr) throws IOException {
       file.mkdirs();
       final Image img = imgHdr.mImage;
       RenderedImage ri = null;
-      if(img instanceof RenderedImage) {
+      if (img instanceof RenderedImage) {
          ri = (RenderedImage) img;
          ImageIO.write(ri, "tif", new File(file, "image.tif"));
       }
    }
 
-   public static void write(File file, RippleSpectrum ripple, double[] fov)
-         throws IOException {
+   public static void write(File file, RippleSpectrum ripple, double[] fov) throws IOException {
       file.mkdirs();
       final int rows = ripple.getRows(), cols = ripple.getColumns();
       final WriteHyperspectral whs = new WriteHyperspectral(file);
@@ -419,12 +407,12 @@ public class WriteHyperspectral {
       final EDSHeader base = new EDSHeader(ripple.getProperties(), name);
       final String root = whs.toXML();
       whs.writeHeader(file, (root.length() > 0 ? root + "\n" : "") + base.toXML(null));
-      for(int y = 0; y < rows; ++y) {
+      for (int y = 0; y < rows; ++y) {
          final File yDir = new File(file, whs.mDimensions.get(0).mName + "[" + Integer.toString(y) + "]");
          ripple.setPosition(y, 0);
          final EDSHeader yHdr = new EDSHeader(ripple.getProperties(), name);
          whs.writeHeader(yDir, yHdr.toXML(base));
-         for(int x = 0; x < cols; ++x) {
+         for (int x = 0; x < cols; ++x) {
             final File xDir = new File(yDir, whs.mDimensions.get(1).mName + "[" + Integer.toString(x) + "]");
             ripple.setPosition(y, x);
             final EDSHeader xHdr = new EDSHeader(ripple.getProperties(), name);
@@ -434,22 +422,21 @@ public class WriteHyperspectral {
       }
    }
 
-   public static void write(File file, ISpectrumData spec)
-         throws IOException {
+   public static void write(File file, ISpectrumData spec) throws IOException {
       file.mkdirs();
       final WriteHyperspectral whs = new WriteHyperspectral(file);
       final String name = "eds0";
       final SpectrumProperties props = spec.getProperties();
       final EDSHeader base = new EDSHeader(props, name);
       ImageHeader img = null;
-      if(props.isDefined(SpectrumProperties.MicroImage)) {
+      if (props.isDefined(SpectrumProperties.MicroImage)) {
          final Image micro = (Image) props.getObjectWithDefault(SpectrumProperties.MicroImage, null);
-         if(micro instanceof ScaledImage)
+         if (micro instanceof ScaledImage)
             img = new ImageHeader((ScaledImage) micro, "Microimage", "", "?");
       }
       whs.writeHeader(file, whs.toXML() + "\n" + base.toXML(null));
       whs.writeEDS(file, name, spec, false);
-      if(img != null)
+      if (img != null)
          whs.writeImage(file, img);
    }
 
@@ -457,37 +444,39 @@ public class WriteHyperspectral {
     * Writes a collection of spectra as a single dimensional hyperspectral data
     * set. This format might be appropriate for a standard library or similar.
     * 
-    * @param file A file to which to write
-    * @param dim The name of the dimension (arbitrary)
-    * @param specs The spectra
+    * @param file
+    *           A file to which to write
+    * @param dim
+    *           The name of the dimension (arbitrary)
+    * @param specs
+    *           The spectra
     * @throws IOException
     */
-   public static void write(File file, String dim, Collection<ISpectrumData> specs)
-         throws IOException {
+   public static void write(File file, String dim, Collection<ISpectrumData> specs) throws IOException {
       file.mkdirs();
       final WriteHyperspectral whs = new WriteHyperspectral(file);
       whs.addDimension(dim, Unit.None, 1.0, specs.size());
       final String name = "eds0";
       SpectrumProperties baseProps = null;
-      for(final ISpectrumData spec : specs)
+      for (final ISpectrumData spec : specs)
          baseProps = SpectrumProperties.merge(baseProps, spec.getProperties());
       final EDSHeader base = new EDSHeader(baseProps, null);
       final String root = whs.toXML();
       whs.writeHeader(file, (root.length() > 0 ? root + "\n" : "") + base.toXML(null));
       int y = 0;
-      for(final ISpectrumData spec : specs) {
+      for (final ISpectrumData spec : specs) {
          final File yDir = new File(file, whs.mDimensions.get(0).mName + "[" + Integer.toString(y) + "]");
          final EDSHeader yHdr = new EDSHeader(spec.getProperties(), name);
          whs.writeHeader(yDir, yHdr.toXML(base));
          final SpectrumProperties props = spec.getProperties();
          ImageHeader img = null;
-         if(props.isDefined(SpectrumProperties.MicroImage)) {
+         if (props.isDefined(SpectrumProperties.MicroImage)) {
             final Image micro = (Image) props.getObjectWithDefault(SpectrumProperties.MicroImage, null);
-            if(micro instanceof ScaledImage)
+            if (micro instanceof ScaledImage)
                img = new ImageHeader((ScaledImage) micro, "Microimage", "", "?");
          }
          whs.writeEDS(new File(yDir, name), name, spec, false);
-         if(img != null)
+         if (img != null)
             whs.writeImage(file, img);
          ++y;
       }

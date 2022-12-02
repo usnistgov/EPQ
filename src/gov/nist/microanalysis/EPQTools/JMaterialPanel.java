@@ -40,8 +40,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author nritchie
  * @version 1.0
  */
-public class JMaterialPanel
-   extends JPanel {
+public class JMaterialPanel extends JPanel {
 
    private static final long serialVersionUID = -5485189264137306015L;
 
@@ -95,7 +94,7 @@ public class JMaterialPanel
    private void fireMaterialChange() {
       ActionEvent ae = new ActionEvent(JMaterialPanel.this, 0, "MaterialChange", System.currentTimeMillis(), 0);
       ArrayList<ActionListener> dup = new ArrayList<ActionListener>(mMaterialChange);
-      for(ActionListener al : dup)
+      for (ActionListener al : dup)
          al.actionPerformed(ae);
    }
 
@@ -104,20 +103,19 @@ public class JMaterialPanel
     */
    private Composition extractComposition() {
       final String name = jTextField_Name.getText();
-      if(mWithNone && ((name.toLowerCase().equals("none")) || (name.trim().length() == 0)))
+      if (mWithNone && ((name.toLowerCase().equals("none")) || (name.trim().length() == 0)))
          return NONE;
       try {
          return mSession.findStandard(name);
-      }
-      catch(SQLException e) {
+      } catch (SQLException e) {
          return null;
       }
    }
 
    private void updateNameField() {
-      if(mResult != null) {
+      if (mResult != null) {
          jTextField_Name.setText(mResult.getName());
-         if(mWithDensity && (!(mResult instanceof Material))) {
+         if (mWithDensity && (!(mResult instanceof Material))) {
             jTextField_Name.setBackground(SystemColor.yellow);
             jTextField_Name.setToolTipText("Please specify a density.");
             Toolkit.getDefaultToolkit().beep();
@@ -135,10 +133,10 @@ public class JMaterialPanel
 
    private Window getParentWindow() {
       Component p = getParent();
-      while(p != null) {
-         if(p instanceof Dialog)
+      while (p != null) {
+         if (p instanceof Dialog)
             return (Window) p;
-         if(p instanceof Frame)
+         if (p instanceof Frame)
             return (Window) p;
          p = p.getParent();
       }
@@ -150,7 +148,7 @@ public class JMaterialPanel
          @Override
          public void focusLost(FocusEvent arg0) {
             Composition comp = extractComposition();
-            if((comp != null) && (!comp.equals(mResult))) {
+            if ((comp != null) && (!comp.equals(mResult))) {
                mResult = comp;
                fireMaterialChange();
             }
@@ -162,7 +160,7 @@ public class JMaterialPanel
          @Override
          public void actionPerformed(ActionEvent arg0) {
             Composition comp = MaterialsCreator.editMaterial(getParentWindow(), mResult, mSession, mWithDensity);
-            if((comp != null) && (!comp.equals(mResult))) {
+            if ((comp != null) && (!comp.equals(mResult))) {
                mResult = comp;
                fireMaterialChange();
             }
@@ -175,7 +173,7 @@ public class JMaterialPanel
          @Override
          public void actionPerformed(ActionEvent e) {
             Composition comp = Material.Null;
-            if((comp != null) && (!comp.equals(mResult))) {
+            if ((comp != null) && (!comp.equals(mResult))) {
                mResult = comp;
                fireMaterialChange();
             }
@@ -185,7 +183,7 @@ public class JMaterialPanel
 
       add(jTextField_Name, CC.xy(1, 1));
       add(jButton_Edit, CC.xy(3, 1));
-      if(mWithNone)
+      if (mWithNone)
          add(jButton_None, CC.xy(5, 1));
    }
 

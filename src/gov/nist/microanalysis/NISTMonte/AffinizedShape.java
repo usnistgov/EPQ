@@ -31,8 +31,7 @@ import Jama.Matrix;
  * @author Bin Ming, John Villarrubia
  * @version 1.0
  */
-public class AffinizedShape
-   implements IAffineTransform, Shape {
+public class AffinizedShape implements IAffineTransform, Shape {
 
    private final Shape baseShape;
    // a 4*4 affine transformation matrx
@@ -45,7 +44,8 @@ public class AffinizedShape
     * matrix equal to the identity matrix.) It may be subsequently transformed
     * using one or more of the provided affine transform methods.
     * 
-    * @param baseShape -
+    * @param baseShape
+    *           -
     */
    public AffinizedShape(Shape baseShape) {
       this.baseShape = baseShape;
@@ -64,18 +64,9 @@ public class AffinizedShape
     * @return double[]
     */
    private double[] matrixTimesVector(Matrix matrix, double[] vector) {
-      final Matrix pVector = new Matrix(new double[] {
-         vector[0],
-         vector[1],
-         vector[2],
-         1.
-      }, 4);
+      final Matrix pVector = new Matrix(new double[]{vector[0], vector[1], vector[2], 1.}, 4);
       final Matrix t = matrix.times(pVector);
-      return new double[] {
-         t.get(0, 0),
-         t.get(1, 0),
-         t.get(2, 0)
-      };
+      return new double[]{t.get(0, 0), t.get(1, 0), t.get(2, 0)};
    }
 
    /**
@@ -126,7 +117,7 @@ public class AffinizedShape
       newRotation.set(2, 1, sin_phi * sin_theta);
       newRotation.set(2, 2, cos_theta);
 
-      if((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
+      if ((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
          affine = newRotation.times(affine);
          inverseAffine = affine.inverse();
       } else {
@@ -157,18 +148,17 @@ public class AffinizedShape
    public void customAffineTransform(Matrix m) {
       // the user supplied matrix must be 3 * 4 in size
       final Matrix newTransform = Matrix.identity(4, 4);
-      if((m.getRowDimension() == 3) && (m.getColumnDimension() == 4)) {
+      if ((m.getRowDimension() == 3) && (m.getColumnDimension() == 4)) {
          newTransform.setMatrix(0, 2, 0, 3, m);
          affine = newTransform.times(affine);
          try {
             inverseAffine = affine.inverse();
-         }
-         catch(final Exception e) {
+         } catch (final Exception e) {
             throw new EPQFatalException("Error inverting matrix: " + e.getMessage());
          }
       } else
-         throw new EPQFatalException("customAffineTransform(m) called with incorrectly dimensioned argument ("
-               + m.getRowDimension() + "," + m.getColumnDimension() + ")");
+         throw new EPQFatalException(
+               "customAffineTransform(m) called with incorrectly dimensioned argument (" + m.getRowDimension() + "," + m.getColumnDimension() + ")");
    }
 
    /**
@@ -193,7 +183,7 @@ public class AffinizedShape
     */
    @Override
    public void shear(int shi, int shj, double shear) {
-      if((shi > -1) && (shi < 3) && (shj > -1) && (shj < 3) && (shi != shj)) {
+      if ((shi > -1) && (shi < 3) && (shj > -1) && (shj < 3) && (shi != shj)) {
          final Matrix newShear = Matrix.identity(4, 4);
          newShear.set(shi, shj, shear);
          affine = newShear.times(affine);
@@ -209,17 +199,17 @@ public class AffinizedShape
    public void reflect(int axis) {
       // axis may assume the values of 0 (reflection by X), 1 (reflection by Y)
       // or 2 (reflection by Z)
-      switch(axis) {
-         case 0:
+      switch (axis) {
+         case 0 :
             scale(-1., 1., 1.);
             break;
-         case 1:
+         case 1 :
             scale(1., -1., 1.);
             break;
-         case 2:
+         case 2 :
             scale(1., 1., -1.);
             break;
-         default:
+         default :
             throw new EPQFatalException("reflect() called with axis out of bounds: Axis = " + axis);
       }
    }
@@ -247,7 +237,7 @@ public class AffinizedShape
       newRotation.set(2, 1, -sin_theta * cos_phi);
       newRotation.set(2, 2, cos_theta);
 
-      if((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
+      if ((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
          affine = newRotation.times(affine);
          inverseAffine = affine.inverse();
       } else {
@@ -279,7 +269,7 @@ public class AffinizedShape
       rotZ.set(1, 0, sin);
       rotZ.set(1, 1, cos);
 
-      if((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
+      if ((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
          affine = rotZ.times(affine);
          inverseAffine = affine.inverse();
       } else {
@@ -306,7 +296,7 @@ public class AffinizedShape
       rotX.set(2, 1, sin);
       rotX.set(2, 2, cos);
 
-      if((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
+      if ((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
          affine = rotX.times(affine);
          inverseAffine = affine.inverse();
       } else {
@@ -333,7 +323,7 @@ public class AffinizedShape
       rotY.set(0, 2, sin);
       rotY.set(2, 2, cos);
 
-      if((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
+      if ((pivot[0] == 0.) && (pivot[1] == 0.) && (pivot[2] == 0.)) {
          affine = rotY.times(affine);
          inverseAffine = affine.inverse();
       } else {

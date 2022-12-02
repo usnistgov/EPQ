@@ -23,12 +23,10 @@ import gov.nist.microanalysis.EPQLibrary.StageCoordinate.Axis;
  */
 public class ASPEXImage {
 
-   public static BufferedImage[] read(File fn)
-         throws IOException, EPQException {
+   public static BufferedImage[] read(File fn) throws IOException, EPQException {
       List<TIFFImageFileDir> images = TIFFImageFileDir.readIFD(fn);
       final TIFFImageFileDir dir = images.get(0);
-      final TIFFImageFileDir.Field field = dir
-            .getField(ASPEXSpectrum.IMAGE_DESCRIPTION);
+      final TIFFImageFileDir.Field field = dir.getField(ASPEXSpectrum.IMAGE_DESCRIPTION);
       double macroFov = Double.NaN, microFov = Double.NaN; // meters
       final StageCoordinate stgPos = new StageCoordinate();
       if (field != null) {
@@ -63,8 +61,7 @@ public class ASPEXImage {
          macroFov = (1.0e-6 * (3.5 * 25.4 * 1000.0)) / mag;
          microFov = macroFov / zoom; // meters
       }
-      final Iterator<ImageReader> irs = ImageIO
-            .getImageReadersByFormatName("tiff");
+      final Iterator<ImageReader> irs = ImageIO.getImageReadersByFormatName("tiff");
       final ImageReader ir = irs.next();
       try (final FileImageInputStream fiis = new FileImageInputStream(fn)) {
          ir.setInput(fiis);
@@ -73,16 +70,12 @@ public class ASPEXImage {
          if (nImgs > 0) {
             res[0] = ir.read(0);
             if (!Double.isNaN(microFov))
-               res[0] = new ScaledImage(res[0], microFov,
-                     (microFov * res[0].getHeight()) / res[0].getWidth(),
-                     stgPos, "SE");
+               res[0] = new ScaledImage(res[0], microFov, (microFov * res[0].getHeight()) / res[0].getWidth(), stgPos, "SE");
          }
          if (nImgs > 1) {
             res[1] = ir.read(1);
             if (!Double.isNaN(macroFov))
-               res[1] = new ScaledImage(res[1], macroFov,
-                     (macroFov * res[1].getHeight()) / res[1].getWidth(),
-                     stgPos, "BSE");
+               res[1] = new ScaledImage(res[1], macroFov, (macroFov * res[1].getHeight()) / res[1].getWidth(), stgPos, "BSE");
          }
          return res;
       }

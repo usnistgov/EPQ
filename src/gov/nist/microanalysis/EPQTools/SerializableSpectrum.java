@@ -22,9 +22,7 @@ import java.io.Serializable;
  * @author nritchie
  * @version 1.0
  */
-public class SerializableSpectrum
-   extends BaseSpectrum
-   implements Serializable {
+public class SerializableSpectrum extends BaseSpectrum implements Serializable {
 
    private final static long serialVersionUID = 0x42;
 
@@ -43,7 +41,7 @@ public class SerializableSpectrum
    public SerializableSpectrum(ISpectrumData src) {
       super();
       mChannels = new double[src.getChannelCount()];
-      for(int i = 0; i < mChannels.length; ++i)
+      for (int i = 0; i < mChannels.length; ++i)
          mChannels[i] = src.getCounts(i);
       mProperties = src.getProperties().clone();
       setEnergyScale(src.getZeroOffset(), src.getChannelWidth());
@@ -83,14 +81,12 @@ public class SerializableSpectrum
       return mProperties;
    }
 
-   private void writeObject(java.io.ObjectOutputStream out)
-         throws IOException {
+   private void writeObject(java.io.ObjectOutputStream out) throws IOException {
       out.writeObject(mProperties);
       out.writeObject(mChannels);
    }
 
-   private void readObject(java.io.ObjectInputStream in)
-         throws IOException, ClassNotFoundException {
+   private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
       initializeSpectrumIndex();
       mProperties = (SpectrumProperties) in.readObject();
       mChannels = (double[]) in.readObject();

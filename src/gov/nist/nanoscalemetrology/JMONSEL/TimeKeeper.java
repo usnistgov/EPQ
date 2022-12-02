@@ -43,7 +43,7 @@ public class TimeKeeper {
     * @return - Existing or new TimeKeeper
     */
    static public TimeKeeper getTimeKeeper() {
-      if(tk == null)
+      if (tk == null)
          tk = new TimeKeeper();
       return tk;
    }
@@ -64,10 +64,11 @@ public class TimeKeeper {
    /**
     * Sets the value assigned to time.
     *
-    * @param time The value to which to set time.
+    * @param time
+    *           The value to which to set time.
     */
    public void setTime(double time) {
-      if(this.time != time)
+      if (this.time != time)
          this.time = time;
    }
 

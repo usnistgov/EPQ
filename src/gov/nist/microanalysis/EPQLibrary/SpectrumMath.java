@@ -22,7 +22,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumProperties.PropertyId;
  */
 public class SpectrumMath extends DerivedSpectrum {
    private final double[] mData;
-   private int            mNSpectra;
+   private int mNSpectra;
 
    /**
     * Constructs a SpectrumMath DerivedSpectrum from the specified src file
@@ -34,7 +34,7 @@ public class SpectrumMath extends DerivedSpectrum {
       mData = new double[src.getChannelCount()];
       for (int i = src.getChannelCount() - 1; i >= 0; --i)
          mData[i] = src.getCounts(i);
-      getProperties().clear(new PropertyId[] { SpectrumProperties.SourceFile });
+      getProperties().clear(new PropertyId[]{SpectrumProperties.SourceFile});
       getProperties().setTextProperty(SpectrumProperties.SpecimenDesc, src.toString());
       mNSpectra = 1;
    }
@@ -49,8 +49,7 @@ public class SpectrumMath extends DerivedSpectrum {
     */
    public void add(ISpectrumData src, double k) {
       if ((Math.abs(getChannelWidth() - src.getChannelWidth()) * 100.0) > getChannelWidth())
-         throw new EPQFatalException(
-               "The spectrum " + src.toString() + " does not have similar channel width as " + toString() + ".");
+         throw new EPQFatalException("The spectrum " + src.toString() + " does not have similar channel width as " + toString() + ".");
       // Account for differences in zero offset
       final int offset = (int) Math.round((getZeroOffset() - src.getZeroOffset()) / getChannelWidth());
       final int min = Math.max(0, -offset);
@@ -61,11 +60,10 @@ public class SpectrumMath extends DerivedSpectrum {
       SpectrumProperties sp = getProperties();
       final SpectrumProperties ssp = src.getProperties();
       String name = sp.getTextWithDefault(SpectrumProperties.SpecimenDesc, "Base");
-      final double realTime = sp.getNumericWithDefault(SpectrumProperties.RealTime, -Double.MAX_VALUE / 3.0) + (k != 0.0
-            ? k * ssp.getNumericWithDefault(SpectrumProperties.RealTime, -Double.MAX_VALUE / (3.0 * k)) : 0.0);
+      final double realTime = sp.getNumericWithDefault(SpectrumProperties.RealTime, -Double.MAX_VALUE / 3.0)
+            + (k != 0.0 ? k * ssp.getNumericWithDefault(SpectrumProperties.RealTime, -Double.MAX_VALUE / (3.0 * k)) : 0.0);
       final double lt0 = sp.getNumericWithDefault(SpectrumProperties.LiveTime, -Double.MAX_VALUE / 3.0);
-      final double lt1 = Math.abs(k)
-            * ssp.getNumericWithDefault(SpectrumProperties.LiveTime, -Double.MAX_VALUE / (3.0 * Math.abs(k)));
+      final double lt1 = Math.abs(k) * ssp.getNumericWithDefault(SpectrumProperties.LiveTime, -Double.MAX_VALUE / (3.0 * Math.abs(k)));
       if (mNSpectra < 20) {
          if (k < 0.0) {
             if (k == -1.0)

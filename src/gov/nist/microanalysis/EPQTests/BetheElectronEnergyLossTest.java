@@ -20,8 +20,7 @@ import junit.framework.TestCase;
  * @author nritchie
  * @version 1.0
  */
-public class BetheElectronEnergyLossTest
-   extends TestCase {
+public class BetheElectronEnergyLossTest extends TestCase {
 
    /**
     * Constructs a BetheElectronEnergyLossTest
@@ -36,6 +35,6 @@ public class BetheElectronEnergyLossTest
       assertEquals(BetheElectronEnergyLoss.toNatural(BetheElectronEnergyLoss.JoyLuo1989.compute(Element.Mn, ToSI.keV(10.0))), -0.135042498, 1.0e-6);
       assertEquals(BetheElectronEnergyLoss.toNatural(BetheElectronEnergyLoss.JoyLuo1989.compute(Element.U, ToSI.keV(1.0))), -0.255337998, 1.0e-6);
       assertEquals(BetheElectronEnergyLoss.toNatural(BetheElectronEnergyLoss.Bethe1930.compute(Element.Mn, ToSI.keV(10.0))), -0.134247687, 1.0e-6);
-   
+
    }
 }

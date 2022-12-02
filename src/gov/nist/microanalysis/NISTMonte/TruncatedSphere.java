@@ -20,34 +20,35 @@ import gov.nist.microanalysis.Utility.Math2;
  * @version 1.0
  */
 
-public class TruncatedSphere
-   extends Intersection {
+public class TruncatedSphere extends Intersection {
    private final Sphere mSphere;
 
    /**
     * Constructs a Sphere with the specified center and radius truncated at the
     * upper and lower bounds in the z-dimension.
     *
-    * @param center double[] - The x,y &amp; z coordinates of the center of the
+    * @param center
+    *           double[] - The x,y &amp; z coordinates of the center of the
     *           sphere (meters)
-    * @param radius double - The radius of the sphere in meters.
-    * @param top in range (-radius, radius) or Double.NaN - Cut off top of
-    *           sphere
-    * @param bottom in range (top, radius) or Double.NaN - Cut off bottom of
-    *           sphere
+    * @param radius
+    *           double - The radius of the sphere in meters.
+    * @param top
+    *           in range (-radius, radius) or Double.NaN - Cut off top of sphere
+    * @param bottom
+    *           in range (top, radius) or Double.NaN - Cut off bottom of sphere
     */
    public TruncatedSphere(double[] center, double radius, double top, double bottom) {
       super();
       mSphere = new Sphere(center, radius);
       add(mSphere);
-      if(top > bottom) {
+      if (top > bottom) {
          final double tmp = top;
          top = bottom;
          bottom = tmp;
       }
-      if((!Double.isNaN(top)) && (top > -radius) && (top < radius))
+      if ((!Double.isNaN(top)) && (top > -radius) && (top < radius))
          add(new MultiPlaneShape.Plane(Math2.MINUS_Z_AXIS, Math2.add(center, Math2.v3(0.0, 0.0, top))));
-      if((!Double.isNaN(bottom)) && (bottom > top) && (bottom < radius))
+      if ((!Double.isNaN(bottom)) && (bottom > top) && (bottom < radius))
          add(new MultiPlaneShape.Plane(Math2.Z_AXIS, Math2.add(center, Math2.v3(0.0, 0.0, bottom))));
    }
 
@@ -60,7 +61,7 @@ public class TruncatedSphere
 
    public void add(double[] normal, double distance) {
       normal = Math2.normalize(normal);
-      if(Math.abs(distance) < getRadius())
+      if (Math.abs(distance) < getRadius())
          add(new MultiPlaneShape.Plane(Math2.normalize(normal), Math2.add(getCenter(), Math2.multiply(distance, normal))));
    }
 

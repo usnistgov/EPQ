@@ -32,8 +32,7 @@ import gov.nist.microanalysis.EPQLibrary.XRayTransitionSet;
  * @version 1.0
  */
 @SuppressWarnings("deprecation")
-public class CompositionFromKRatiosTest
-   extends TestCase {
+public class CompositionFromKRatiosTest extends TestCase {
 
    /**
     * Constructs a ComputeZAFCorrectionTest
@@ -44,8 +43,7 @@ public class CompositionFromKRatiosTest
       super(arg0);
    }
 
-   public void testOne()
-         throws EPQException {
+   public void testOne() throws EPQException {
       final Strategy strategy = new Strategy();
       strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.SimpleIteration);
       AlgorithmUser.applyGlobalOverride(strategy);
@@ -62,8 +60,9 @@ public class CompositionFromKRatiosTest
       final CompositionFromKRatios czc = new CompositionFromKRatios();
       czc.setConvergenceCriterion(1.0e-4);
 
-      for(final Element el : mat.getElementSet()) {
-         final Composition ref = el.equals(Element.O) ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
+      for (final Element el : mat.getElementSet()) {
+         final Composition ref = el.equals(Element.O)
+               ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
                : MaterialFactory.createPureElement(el);
          final XRayTransitionSet xrts = new XRayTransitionSet(el, XRayTransitionSet.K_FAMILY);
          cz.addStandard(xrts, ref, props);
@@ -79,8 +78,7 @@ public class CompositionFromKRatiosTest
       assertEquals(redux.difference(mat), 0.0, 1.0e-4);
    }
 
-   public void testTwo()
-         throws EPQException {
+   public void testTwo() throws EPQException {
       final Strategy strategy = new Strategy();
       strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       AlgorithmUser.applyGlobalOverride(strategy);
@@ -98,8 +96,9 @@ public class CompositionFromKRatiosTest
       final CompositionFromKRatios czc = new CompositionFromKRatios();
       czc.setConvergenceCriterion(1.0e-4);
 
-      for(final Element el : mat.getElementSet()) {
-         final Composition ref = el.equals(Element.O) ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
+      for (final Element el : mat.getElementSet()) {
+         final Composition ref = el.equals(Element.O)
+               ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
                : MaterialFactory.createPureElement(el);
          final XRayTransitionSet xrts = new XRayTransitionSet(el, XRayTransitionSet.K_FAMILY);
          cz.addStandard(xrts, ref, props);
@@ -116,8 +115,7 @@ public class CompositionFromKRatiosTest
       assertEquals(redux.difference(mat), 0.0, 1.0e-4);
    }
 
-   public void testThree()
-         throws EPQException {
+   public void testThree() throws EPQException {
       AlgorithmUser.clearGlobalOverride();
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
 
@@ -132,8 +130,9 @@ public class CompositionFromKRatiosTest
       final CompositionFromKRatios czc = new CompositionFromKRatios();
       czc.setConvergenceCriterion(1.0e-4);
 
-      for(final Element el : mat.getElementSet()) {
-         final Composition ref = el.equals(Element.O) ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
+      for (final Element el : mat.getElementSet()) {
+         final Composition ref = el.equals(Element.O)
+               ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
                : MaterialFactory.createPureElement(el);
          final XRayTransitionSet xrts = new XRayTransitionSet(el, XRayTransitionSet.K_FAMILY);
          cz.addStandard(xrts, ref, props);
@@ -151,8 +150,7 @@ public class CompositionFromKRatiosTest
       assertEquals(redux.difference(mat), 0.0, 3.0e-4);
    }
 
-   public void testSimple()
-         throws EPQException {
+   public void testSimple() throws EPQException {
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
 
       final KRatioSet result = new KRatioSet();
@@ -165,8 +163,9 @@ public class CompositionFromKRatiosTest
       final ComputeZAF cz = new ComputeZAF();
       final CompositionFromKRatios czc = new CompositionFromKRatios();
       czc.setConvergenceCriterion(1.0e-4);
-      for(final Element el : mat.getElementSet()) {
-         final Composition ref = el.equals(Element.O) ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
+      for (final Element el : mat.getElementSet()) {
+         final Composition ref = el.equals(Element.O)
+               ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
                : MaterialFactory.createPureElement(el);
          final XRayTransitionSet xrts = new XRayTransitionSet(el, XRayTransitionSet.K_FAMILY);
          cz.addStandard(xrts, ref, props);
@@ -187,8 +186,7 @@ public class CompositionFromKRatiosTest
       assertEquals(redux.difference(mat), 0.0, 3.0e-4);
    }
 
-   public void testHyperbolic()
-         throws EPQException {
+   public void testHyperbolic() throws EPQException {
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
 
       final KRatioSet result = new KRatioSet();
@@ -201,8 +199,9 @@ public class CompositionFromKRatiosTest
       final ComputeZAF cz = new ComputeZAF();
       final CompositionFromKRatios czc = new CompositionFromKRatios();
       czc.setConvergenceCriterion(1.0e-4);
-      for(final Element el : mat.getElementSet()) {
-         final Composition ref = el.equals(Element.O) ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
+      for (final Element el : mat.getElementSet()) {
+         final Composition ref = el.equals(Element.O)
+               ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
                : MaterialFactory.createPureElement(el);
          final XRayTransitionSet xrts = new XRayTransitionSet(el, XRayTransitionSet.K_FAMILY);
          cz.addStandard(xrts, ref, props);
@@ -223,8 +222,7 @@ public class CompositionFromKRatiosTest
       assertEquals(redux.difference(mat), 0.0, 3.0e-4);
    }
 
-   public void testPAP()
-         throws EPQException {
+   public void testPAP() throws EPQException {
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
 
       final KRatioSet result = new KRatioSet();
@@ -237,8 +235,9 @@ public class CompositionFromKRatiosTest
       final ComputeZAF cz = new ComputeZAF();
       final CompositionFromKRatios czc = new CompositionFromKRatios();
       czc.setConvergenceCriterion(1.0e-4);
-      for(final Element el : mat.getElementSet()) {
-         final Composition ref = el.equals(Element.O) ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
+      for (final Element el : mat.getElementSet()) {
+         final Composition ref = el.equals(Element.O)
+               ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
                : MaterialFactory.createPureElement(el);
          final XRayTransitionSet xrts = new XRayTransitionSet(el, XRayTransitionSet.K_FAMILY);
          cz.addStandard(xrts, ref, props);
@@ -260,8 +259,7 @@ public class CompositionFromKRatiosTest
       assertEquals(redux.difference(mat), 0.0, 3.0e-4);
    }
 
-   public void testPAP2()
-         throws EPQException {
+   public void testPAP2() throws EPQException {
       final KRatioSet result = new KRatioSet();
       final XRayTransitionSet xrtsAu = new XRayTransitionSet(Element.Au, XRayTransitionSet.M_ALPHA);
       final XRayTransitionSet xrtsAg = new XRayTransitionSet(Element.Ag, XRayTransitionSet.L_ALPHA);
@@ -291,8 +289,7 @@ public class CompositionFromKRatiosTest
       assertEquals(redux.weightFraction(Element.Ag, false), 0.6, 0.01);
    }
 
-   public void testPAP3()
-         throws EPQException {
+   public void testPAP3() throws EPQException {
       final KRatioSet result = new KRatioSet();
       final XRayTransitionSet xrtsAu = new XRayTransitionSet(Element.Au, XRayTransitionSet.M_ALPHA);
       final XRayTransitionSet xrtsAg = new XRayTransitionSet(Element.Ag, XRayTransitionSet.L_ALPHA);
@@ -320,8 +317,7 @@ public class CompositionFromKRatiosTest
       assertEquals(redux.weightFraction(Element.Ag, false), 0.6, 0.003);
    }
 
-   public void testWegstein()
-         throws EPQException {
+   public void testWegstein() throws EPQException {
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
       final KRatioSet result = new KRatioSet();
       // Use the same SpectrumProperties for references and unknown
@@ -332,8 +328,9 @@ public class CompositionFromKRatiosTest
       final ComputeZAF cz = new ComputeZAF();
       final CompositionFromKRatios czc = new CompositionFromKRatios();
       czc.setConvergenceCriterion(1.0e-6);
-      for(final Element el : mat.getElementSet()) {
-         final Composition ref = el.equals(Element.O) ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
+      for (final Element el : mat.getElementSet()) {
+         final Composition ref = el.equals(Element.O)
+               ? MaterialFactory.createMaterial(MaterialFactory.MagnesiumOxide)
                : MaterialFactory.createPureElement(el);
          final XRayTransitionSet xrts = new XRayTransitionSet(el, XRayTransitionSet.K_FAMILY);
          cz.addStandard(xrts, ref, props);
@@ -360,8 +357,7 @@ public class CompositionFromKRatiosTest
       assertEquals(redux.difference(mat), 0.0, 3.0e-4);
    }
 
-   public void testCompoundsSimple()
-         throws EPQException {
+   public void testCompoundsSimple() throws EPQException {
       final Strategy strategy = new Strategy();
       strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.SimpleIteration);
       AlgorithmUser.applyGlobalOverride(strategy);
@@ -447,8 +443,7 @@ public class CompositionFromKRatiosTest
       }
    }
 
-   public void testCompoundsHyperbolic()
-         throws EPQException {
+   public void testCompoundsHyperbolic() throws EPQException {
       final Strategy strategy = new Strategy();
       strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       AlgorithmUser.applyGlobalOverride(strategy);
@@ -535,8 +530,7 @@ public class CompositionFromKRatiosTest
       }
    }
 
-   public void testCompoundsPAP()
-         throws EPQException {
+   public void testCompoundsPAP() throws EPQException {
       final Strategy strategy = new Strategy();
       strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       AlgorithmUser.applyGlobalOverride(strategy);
@@ -623,8 +617,7 @@ public class CompositionFromKRatiosTest
       }
    }
 
-   public void testCompoundsWegstein()
-         throws EPQException {
+   public void testCompoundsWegstein() throws EPQException {
       final Strategy strategy = new Strategy();
       strategy.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       AlgorithmUser.applyGlobalOverride(strategy);

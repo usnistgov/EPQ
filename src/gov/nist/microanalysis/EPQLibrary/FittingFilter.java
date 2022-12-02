@@ -61,8 +61,7 @@ abstract public class FittingFilter {
     * 
     * @author nicholas
     */
-   static public class TopHatFilter
-      extends FittingFilter {
+   static public class TopHatFilter extends FittingFilter {
 
       public TopHatFilter(double width, double chWidth) {
          super(width, chWidth);
@@ -71,12 +70,12 @@ abstract public class FittingFilter {
          final int n = m;
          final int filterLen = (2 * n) + (2 * m) + 1;
          mFilter = new double[filterLen];
-         for(int i = 0; i < n; ++i) {
+         for (int i = 0; i < n; ++i) {
             mFilter[i] = -1.0;
             mFilter[i + n + (2 * m) + 1] = -1.0;
          }
          final double k = (2.0 * n) / ((2.0 * m) + 1.0);
-         for(int i = 0; i < ((2 * m) + 1); ++i)
+         for (int i = 0; i < ((2 * m) + 1); ++i)
             mFilter[i + n] = k;
          mVarCorrection = defaultVarianceCorrectionFactor(m, 2 * m + 1);
          mName = "TopHat[m=" + m + ", n=" + n + "]";
@@ -88,8 +87,7 @@ abstract public class FittingFilter {
     * 
     * @author nicholas
     */
-   static public class GaussianFilter
-      extends FittingFilter {
+   static public class GaussianFilter extends FittingFilter {
 
       public GaussianFilter(double width, double chWidth) {
          super(width, chWidth);
@@ -98,12 +96,12 @@ abstract public class FittingFilter {
          double sum = 0.0;
          final double w = filterLen / 6.0;
          mFilter = new double[filterLen];
-         for(int i = 0; i < filterLen; ++i) {
+         for (int i = 0; i < filterLen; ++i) {
             mFilter[i] = Math.exp(-((i - (filterLen / 2)) / w) * ((i - (filterLen / 2)) / w));
             sum += mFilter[i];
          }
          sum /= filterLen;
-         for(int i = 0; i < filterLen; ++i)
+         for (int i = 0; i < filterLen; ++i)
             mFilter[i] -= sum;
          final NumberFormat nf = new HalfUpFormat("0.0");
          mVarCorrection = defaultVarianceCorrectionFactor(tmp, 2 * tmp + 1);
@@ -116,8 +114,7 @@ abstract public class FittingFilter {
     * 
     * @author nicholas
     */
-   static public class SavitskyGolayFilter
-      extends FittingFilter {
+   static public class SavitskyGolayFilter extends FittingFilter {
 
       public SavitskyGolayFilter(double width, double chWidth) {
          super(width, chWidth);
@@ -126,7 +123,7 @@ abstract public class FittingFilter {
          mFilter = new double[filterLen];
          final double m = (filterLen / 2);
          final double sum = ((2.0 * m) - 1.0) * ((2.0 * m) + 1.0) * ((2.0 * m) + 3.0);
-         for(int jp = 0; jp < filterLen; ++jp) {
+         for (int jp = 0; jp < filterLen; ++jp) {
             final double j = jp - m;
             mFilter[jp] = ((3.0 * (((3.0 * m * m) + (3.0 * m)) - 1.0 - (5.0 * j * j))) / sum) - (1.0 / filterLen);
          }
@@ -141,8 +138,7 @@ abstract public class FittingFilter {
     * 
     * @author nicholas
     */
-   static public class D2Gaussian
-      extends FittingFilter {
+   static public class D2Gaussian extends FittingFilter {
 
       public D2Gaussian(double width, double chWidth) {
          super(width, chWidth);
@@ -151,14 +147,14 @@ abstract public class FittingFilter {
          mFilter = new double[filterLen];
          final double w = filterLen / 6.0;
          double sum = 0.0;
-         for(int i = 0; i < filterLen; ++i) {
+         for (int i = 0; i < filterLen; ++i) {
             final double x = ((double) filterLen * (double) (i - (filterLen / 2))) / (filterLen - 1);
             final double y = -Math2.sqr(x / w);
             mFilter[i] = ((2.0 * Math.exp(y)) / w) * (1 + (2.0 * y));
             sum += mFilter[i];
          }
          sum /= filterLen;
-         for(int i = 0; i < filterLen; ++i)
+         for (int i = 0; i < filterLen; ++i)
             mFilter[i] -= sum;
          final NumberFormat nf = new HalfUpFormat("0.0");
          mVarCorrection = defaultVarianceCorrectionFactor(tmp, 2 * tmp + 1);

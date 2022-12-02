@@ -14,8 +14,8 @@ import gov.nist.microanalysis.Utility.Translate2D;
 public class StageCoordinate implements Cloneable {
 
    public static enum Axis {
-      X("X", " mm", "0.000"), Y("Y", " mm", "0.000"), Z("Z", " mm", "0.000"), R("Rotate", "\u00B0", "0.00"), T("Tilt", "\u00B0",
-            "0.00"), B("Bank", "\u00B0", "0.00");
+      X("X", " mm", "0.000"), Y("Y", " mm", "0.000"), Z("Z", " mm", "0.000"), R("Rotate", "\u00B0", "0.00"), T("Tilt", "\u00B0", "0.00"), B("Bank",
+            "\u00B0", "0.00");
 
       private final String mName;
       private final String mUnit;
@@ -33,8 +33,8 @@ public class StageCoordinate implements Cloneable {
       }
 
       public static Axis fromString(String str) {
-         for(final Axis axis : Axis.values())
-            if(axis.mName.equals(str))
+         for (final Axis axis : Axis.values())
+            if (axis.mName.equals(str))
                return axis;
          return null;
       }
@@ -60,10 +60,7 @@ public class StageCoordinate implements Cloneable {
 
    public StageCoordinate(StageCoordinate sc, Translate2D t2d) {
       mData = new TreeMap<Axis, Double>(sc.mData);
-      final double[] oldCoord = new double[] {
-         mData.get(Axis.X),
-         mData.get(Axis.Y)
-      };
+      final double[] oldCoord = new double[]{mData.get(Axis.X), mData.get(Axis.Y)};
       final double[] newCoord = t2d.compute(oldCoord);
       mData.put(Axis.X, newCoord[0]);
       mData.put(Axis.Y, newCoord[1]);
@@ -122,9 +119,9 @@ public class StageCoordinate implements Cloneable {
    @Override
    public String toString() {
       final StringBuffer res = new StringBuffer();
-      for(final Axis axis : Axis.values()) {
+      for (final Axis axis : Axis.values()) {
          final Double v = mData.get(axis);
-         if(v != null) {
+         if (v != null) {
             res.append(res.length() == 0 ? "{" : ",");
             res.append(axis.mName);
             res.append(":");
@@ -135,23 +132,21 @@ public class StageCoordinate implements Cloneable {
       return res.toString();
    }
 
-   public static StageCoordinate fromString(String str)
-         throws EPQException {
-      if((str.charAt(0) != '{') || (str.charAt(str.length() - 1) != '}'))
+   public static StageCoordinate fromString(String str) throws EPQException {
+      if ((str.charAt(0) != '{') || (str.charAt(str.length() - 1) != '}'))
          throw new EPQException("The stage point string is not formatted correctly");
       final StageCoordinate sp = new StageCoordinate();
       final String[] items = str.substring(1, str.length() - 1).split(",");
-      if(items.length == 0)
+      if (items.length == 0)
          throw new EPQException("The stage point string does not contain any points.");
-      for(final String item : items) {
+      for (final String item : items) {
          final String[] line = item.split(":");
-         if(line.length == 2)
+         if (line.length == 2)
             try {
                final Axis ax = Axis.fromString(line[0].trim());
-               if(ax != null)
+               if (ax != null)
                   sp.set(ax, Double.parseDouble(line[1].trim()));
-            }
-            catch(final NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                // Ignore it...
             }
       }
@@ -175,6 +170,7 @@ public class StageCoordinate implements Cloneable {
 
    /*
     * (non-Javadoc)
+    * 
     * @see java.lang.Object#hashCode()
     */
    @Override
@@ -187,34 +183,35 @@ public class StageCoordinate implements Cloneable {
 
    /*
     * (non-Javadoc)
+    * 
     * @see java.lang.Object#equals(java.lang.Object)
     */
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(!(obj instanceof StageCoordinate))
+      if (!(obj instanceof StageCoordinate))
          return false;
       final StageCoordinate other = (StageCoordinate) obj;
-      if(mData == null) {
-         if(other.mData != null)
+      if (mData == null) {
+         if (other.mData != null)
             return false;
-      } else if(!mData.equals(other.mData))
+      } else if (!mData.equals(other.mData))
          return false;
       return true;
    }
 
    public StageCoordinate delta(StageCoordinate sp1) {
       final StageCoordinate res = new StageCoordinate();
-      if(!equals(sp1))
-         for(final Axis axis : Axis.values()) {
+      if (!equals(sp1))
+         for (final Axis axis : Axis.values()) {
             final Double d0 = mData.get(axis);
             final Double d1 = sp1.mData.get(axis);
-            if(d0 == d1)
+            if (d0 == d1)
                continue;
-            if((d0 != null) && (d1 != null) && (!d0.equals(d1)))
+            if ((d0 != null) && (d1 != null) && (!d0.equals(d1)))
                res.set(axis, d1);
          }
       return res;

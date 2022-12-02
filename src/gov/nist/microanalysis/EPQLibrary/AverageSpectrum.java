@@ -5,8 +5,7 @@ import java.util.Iterator;
 
 import gov.nist.microanalysis.Utility.Math2;
 
-public class AverageSpectrum
-   extends BaseSpectrum {
+public class AverageSpectrum extends BaseSpectrum {
 
    private double[] mSum = null;
    private double[] mSumOfSqrs = null;
@@ -26,10 +25,9 @@ public class AverageSpectrum
     * @param specs
     * @throws EPQException
     */
-   public AverageSpectrum(Iterator<ISpectrumData> specs)
-         throws EPQException {
+   public AverageSpectrum(Iterator<ISpectrumData> specs) throws EPQException {
       super();
-      while(specs.hasNext())
+      while (specs.hasNext())
          include(specs.next());
    }
 
@@ -39,10 +37,9 @@ public class AverageSpectrum
     * 
     * @param spec
     */
-   public void include(ISpectrumData spec)
-         throws EPQException {
+   public void include(ISpectrumData spec) throws EPQException {
       boolean notFirst = true;
-      if(mSum == null) {
+      if (mSum == null) {
          mSum = new double[spec.getChannelCount()];
          mSumOfSqrs = new double[spec.getChannelCount()];
          Arrays.fill(mSum, 0.0);
@@ -51,10 +48,10 @@ public class AverageSpectrum
          setEnergyScale(spec.getZeroOffset(), spec.getChannelWidth());
          notFirst = false;
       }
-      if(SpectrumUtils.areCompatible(this, spec)) {
-         if(notFirst)
+      if (SpectrumUtils.areCompatible(this, spec)) {
+         if (notFirst)
             mProperties = SpectrumProperties.merge(mProperties, spec.getProperties());
-         for(int ch = mSum.length - 1; ch >= 0; --ch) {
+         for (int ch = mSum.length - 1; ch >= 0; --ch) {
             mSum[ch] += spec.getCounts(ch);
             mSumOfSqrs[ch] += Math2.sqr(spec.getCounts(ch));
          }

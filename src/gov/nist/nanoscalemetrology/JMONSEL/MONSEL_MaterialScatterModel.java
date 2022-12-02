@@ -43,10 +43,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author John Villarrubia
  * @version 1.0
  */
-public class MONSEL_MaterialScatterModel
-   implements
-   Cloneable,
-   IMaterialScatterModel {
+public class MONSEL_MaterialScatterModel implements Cloneable, IMaterialScatterModel {
 
    private final SEmaterial mat; // The material for which this is the scatter
    // model
@@ -123,7 +120,7 @@ public class MONSEL_MaterialScatterModel
        * we never drop an electron from the simulation when it is in vacuum, but
        * rather wait for it to either enter a material or be detected.
        */
-      if(mat.getElementCount() == 0)
+      if (mat.getElementCount() == 0)
          minEforTracking = Double.NEGATIVE_INFINITY;
       else {
          /*
@@ -133,7 +130,7 @@ public class MONSEL_MaterialScatterModel
           * than the conduction band bottom, refers to a trapped state.
           */
          minEforTracking = -mat.getEnergyCBbottom();
-         if(minEforTracking < 0.)
+         if (minEforTracking < 0.)
             minEforTracking = 0.;
       }
    }
@@ -156,10 +153,10 @@ public class MONSEL_MaterialScatterModel
        * 3. Cache the scatter rates for later use.
        */
       totalScatterRate = 0.;
-      if(scatterArray == null)
+      if (scatterArray == null)
          return;
       int index = 0;
-      for(final ScatterMechanism mech : scatterArray) {
+      for (final ScatterMechanism mech : scatterArray) {
          totalScatterRate += mech.scatterRate(pe);
          // Cache cumulative scatterRate
          cached_cumulativeScatterRate[index++] = totalScatterRate;
@@ -188,7 +185,7 @@ public class MONSEL_MaterialScatterModel
        * leading to numerical imprecision.
        */
       final double maxFreePath = 2. * MonteCarloSS.ChamberRadius;
-      if(totalScatterRate != 0.) {
+      if (totalScatterRate != 0.) {
          final double freepath = -Math.log(Math2.rgen.nextDouble()) / totalScatterRate;
          return freepath > maxFreePath ? maxFreePath : freepath;
       }
@@ -199,7 +196,7 @@ public class MONSEL_MaterialScatterModel
        * having these lock up an otherwise good simulation, just drop the
        * electron.
        */
-      if(pe.getStepCount() > 1000000)
+      if (pe.getStepCount() > 1000000)
          pe.setTrajectoryComplete(true);
       return maxFreePath;
    }
@@ -214,7 +211,7 @@ public class MONSEL_MaterialScatterModel
        */
 
       final double eK = pe.getPreviousEnergy();
-      if(eK != cached_eK) {
+      if (eK != cached_eK) {
          /*
           * scattering is based on energy at conclusion of previous step, but
           * scatterRate methods used to set the cache use the current energy.
@@ -231,7 +228,7 @@ public class MONSEL_MaterialScatterModel
        * assigned to this material. In this case the totalScatterRate will be 0.
        * In this event we do nothing.
        */
-      if(totalScatterRate == 0.)
+      if (totalScatterRate == 0.)
          return null;
 
       // Find the scatter mechanism that produced this scattering event
@@ -241,7 +238,7 @@ public class MONSEL_MaterialScatterModel
       int index = 0; // Index is first index
 
       // Increment index and mechanism until cumulative scatter rate exceeds r
-      while(cached_cumulativeScatterRate[index] < r)
+      while (cached_cumulativeScatterRate[index] < r)
          index++;
 
       return scatterArray[index].scatter(pe);
@@ -269,7 +266,8 @@ public class MONSEL_MaterialScatterModel
     * Specifies the slowing down algorithm operative in this material. The
     * default is ZeroCSD().
     *
-    * @param csd - the slowing down algorithm to use
+    * @param csd
+    *           - the slowing down algorithm to use
     */
    public void setCSD(SlowingDownAlg csd) {
       this.csd = csd;
@@ -291,14 +289,13 @@ public class MONSEL_MaterialScatterModel
     * Adds a scattering mechanism to the list of those operative in this
     * material.
     */
-   public boolean addScatterMechanism(ScatterMechanism mech)
-         throws CloneNotSupportedException {
+   public boolean addScatterMechanism(ScatterMechanism mech) throws CloneNotSupportedException {
       // final ScatterMechanism mechCopy = mech.clone(); // Make a copy of the
       // scatter
       // mechanism
       // mechCopy.setMaterial(mat); // Initialize the copy for this material
       // if(scatterSet.add(mechCopy)) {
-      if(scatterSet.add(mech)) {
+      if (scatterSet.add(mech)) {
          scatterArray = scatterSet.toArray(new ScatterMechanism[1]);
          nscattermech = scatterArray.length;
          cached_cumulativeScatterRate = new double[nscattermech];

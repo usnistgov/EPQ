@@ -38,8 +38,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class CorrectionAlgorithmTest
-   extends TestCase {
+public class CorrectionAlgorithmTest extends TestCase {
 
    PandPDatabase mPapd;
 
@@ -52,15 +51,13 @@ public class CorrectionAlgorithmTest
       super(arg0);
    }
 
-   protected PandPDatabase getDatabase()
-         throws IOException {
-      if(mPapd == null)
+   protected PandPDatabase getDatabase() throws IOException {
+      if (mPapd == null)
          mPapd = new PandPDatabase();
       return mPapd;
    }
 
-   private DescriptiveStatistics helper(CorrectionAlgorithm ca, MassAbsorptionCoefficient mac)
-         throws IOException {
+   private DescriptiveStatistics helper(CorrectionAlgorithm ca, MassAbsorptionCoefficient mac) throws IOException {
       final Strategy strat = new Strategy();
       strat.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       strat.addAlgorithm(MassAbsorptionCoefficient.class, mac);
@@ -69,7 +66,7 @@ public class CorrectionAlgorithmTest
       AlgorithmUser.applyGlobalOverride(strat);
       final PandPDatabase papd = getDatabase();
       final DescriptiveStatistics ds = new DescriptiveStatistics();
-      for(int ii = 0; ii < papd.getSize(); ++ii) {
+      for (int ii = 0; ii < papd.getSize(); ++ii) {
          final Material mat = papd.createMaterial(ii);
          final XRayTransition xrt = papd.transition(ii);
          final SpectrumProperties unkProp = new SpectrumProperties();
@@ -77,16 +74,14 @@ public class CorrectionAlgorithmTest
          unkProp.setNumericProperty(SpectrumProperties.TakeOffAngle, Math.toDegrees(papd.takeOffAngle(ii)));
          try {
             ds.add((mat.weightFraction(xrt.getElement(), true) * ca.relativeZAF(mat, xrt, unkProp)[3]) / papd.kRatio(ii));
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             e.printStackTrace();
          }
       }
       return ds;
    }
 
-   public void testPouchouAndPichoir()
-         throws Exception {
+   public void testPouchouAndPichoir() throws Exception {
 
       final Strategy strat = new Strategy();
       strat.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
@@ -97,7 +92,7 @@ public class CorrectionAlgorithmTest
 
       final DescriptiveStatistics ds = new DescriptiveStatistics();
       final PandPDatabase papd = getDatabase();
-      for(int ii = 0; ii < papd.getSize(); ++ii) {
+      for (int ii = 0; ii < papd.getSize(); ++ii) {
          final Material mat = papd.createMaterial(ii);
          try {
             final XRayTransitionSet xrts = new XRayTransitionSet(papd.transition(ii));
@@ -116,8 +111,7 @@ public class CorrectionAlgorithmTest
             final Composition res = cfk.compute(krs, unkProp);
             final double r = res.weightFraction(xrts.getElement(), false) / mat.weightFraction(xrts.getElement(), false);
             ds.add(r);
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             System.out.println(ex.getMessage());
             System.out.println(Integer.toString(ii) + ": " + mat.toString() + "failed");
          }
@@ -127,15 +121,13 @@ public class CorrectionAlgorithmTest
       assertEquals(0.0192, ds.standardDeviation(), 0.0001);
    }
 
-   public void testPouchouAndPichoir2()
-         throws Exception {
+   public void testPouchouAndPichoir2() throws Exception {
       final DescriptiveStatistics ds = helper(CorrectionAlgorithm.PouchouAndPichoir, MassAbsorptionCoefficient.Pouchou1991);
       assertEquals(1.0000, ds.average(), 0.001);
       assertEquals(0.00, ds.standardDeviation(), 0.03);
    }
 
-   public void testXPP()
-         throws Exception {
+   public void testXPP() throws Exception {
 
       final Strategy strat = new Strategy();
       strat.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
@@ -146,7 +138,7 @@ public class CorrectionAlgorithmTest
 
       final DescriptiveStatistics ds = new DescriptiveStatistics();
       final PandPDatabase papd = getDatabase();
-      for(int ii = 0; ii < papd.getSize(); ++ii)
+      for (int ii = 0; ii < papd.getSize(); ++ii)
          try {
             final Material mat = papd.createMaterial(ii);
             final XRayTransitionSet xrts = new XRayTransitionSet(papd.transition(ii));
@@ -165,23 +157,20 @@ public class CorrectionAlgorithmTest
             final Composition res = cfk.compute(krs, unkProp);
             final double r = res.weightFraction(xrts.getElement(), false) / mat.weightFraction(xrts.getElement(), false);
             ds.add(r);
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
          }
       // The results quoted in the green book for this test were 0.9997 +- 1.79%
       assertEquals(ds.average(), 0.9997, 0.0001);
       assertEquals(ds.standardDeviation(), 0.01865, 0.0001);
    }
 
-   public void testXPP2()
-         throws Exception {
+   public void testXPP2() throws Exception {
       final DescriptiveStatistics ds = helper(CorrectionAlgorithm.XPP, MassAbsorptionCoefficient.Pouchou1991);
       assertEquals(1.0000, ds.average(), 0.002);
       assertEquals(0.00, ds.standardDeviation(), 0.03);
    }
 
-   public void testXPPExtended()
-         throws Exception {
+   public void testXPPExtended() throws Exception {
       final Strategy strat = new Strategy();
       strat.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
       strat.addAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Pouchou1991);
@@ -191,7 +180,7 @@ public class CorrectionAlgorithmTest
 
       final DescriptiveStatistics ds = new DescriptiveStatistics();
       final PandPDatabase papd = getDatabase();
-      for(int ii = 0; ii < papd.getSize(); ++ii)
+      for (int ii = 0; ii < papd.getSize(); ++ii)
          try {
             final Material mat = papd.createMaterial(ii);
             final XRayTransitionSet xrts = new XRayTransitionSet(papd.transition(ii));
@@ -210,23 +199,19 @@ public class CorrectionAlgorithmTest
             final Composition res = cfk.compute(krs, unkProp);
             final double r = res.weightFraction(xrts.getElement(), false) / mat.weightFraction(xrts.getElement(), false);
             ds.add(r);
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
          }
       assertEquals(ds.average(), 0.99974, 0.0001);
       assertEquals(ds.standardDeviation(), 0.01865, 0.0001);
    }
 
-   public void testXPPExtended2()
-         throws Exception {
+   public void testXPPExtended2() throws Exception {
       final DescriptiveStatistics ds = helper(CorrectionAlgorithm.XPPExtended, MassAbsorptionCoefficient.Pouchou1991);
       assertEquals(1.0000, ds.average(), 0.002);
       assertEquals(0.00, ds.standardDeviation(), 0.03);
    }
 
-   
-   public void testJTA1982Test()
-         throws Exception {
+   public void testJTA1982Test() throws Exception {
 
       final Strategy strat = new Strategy();
       strat.addAlgorithm(IterationAlgorithm.class, IterationAlgorithm.WegsteinIteration);
@@ -237,7 +222,7 @@ public class CorrectionAlgorithmTest
 
       final DescriptiveStatistics ds = new DescriptiveStatistics();
       final PandPDatabase papd = getDatabase();
-      for(int ii = 0; ii < papd.getSize(); ++ii)
+      for (int ii = 0; ii < papd.getSize(); ++ii)
          try {
             final Material mat = papd.createMaterial(ii);
             final XRayTransitionSet xrts = new XRayTransitionSet(papd.transition(ii));
@@ -256,8 +241,7 @@ public class CorrectionAlgorithmTest
             final Composition res = cfk.compute(krs, unkProp);
             final double r = res.weightFraction(xrts.getElement(), false) / mat.weightFraction(xrts.getElement(), false);
             ds.add(r);
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
          }
       // System.out.println(ds.average());
       // System.out.println(ds.standardDeviation());

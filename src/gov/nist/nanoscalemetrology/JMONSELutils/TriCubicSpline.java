@@ -53,15 +53,13 @@ public class TriCubicSpline {
       this.nPoints = x1.length;
       this.mPoints = x2.length;
       this.lPoints = x3.length;
-      if(this.nPoints != y.length)
+      if (this.nPoints != y.length)
          throw new IllegalArgumentException("Arrays x1 and y-row are of different length " + this.nPoints + " " + y.length);
-      if(this.mPoints != y[0].length)
-         throw new IllegalArgumentException("Arrays x2 and y-column are of different length " + this.mPoints + " "
-               + y[0].length);
-      if(this.lPoints != y[0][0].length)
-         throw new IllegalArgumentException("Arrays x3 and y-column are of different length " + this.mPoints + " "
-               + y[0][0].length);
-      if((this.nPoints < 3) || (this.mPoints < 3) || (this.lPoints < 3))
+      if (this.mPoints != y[0].length)
+         throw new IllegalArgumentException("Arrays x2 and y-column are of different length " + this.mPoints + " " + y[0].length);
+      if (this.lPoints != y[0][0].length)
+         throw new IllegalArgumentException("Arrays x3 and y-column are of different length " + this.mPoints + " " + y[0][0].length);
+      if ((this.nPoints < 3) || (this.mPoints < 3) || (this.lPoints < 3))
          throw new IllegalArgumentException("The tabulated 3D array must have a minimum size of 3 X 3 X 3");
 
       this.csm = new CubicSpline(this.nPoints);
@@ -71,15 +69,15 @@ public class TriCubicSpline {
       this.x3 = new double[this.lPoints];
       this.y = new double[this.nPoints][this.mPoints][this.lPoints];
       this.d2ydx2inner = new double[this.nPoints][this.mPoints][this.lPoints];
-      for(int i = 0; i < this.nPoints; i++)
+      for (int i = 0; i < this.nPoints; i++)
          this.x1[i] = x1[i];
-      for(int j = 0; j < this.mPoints; j++)
+      for (int j = 0; j < this.mPoints; j++)
          this.x2[j] = x2[j];
-      for(int j = 0; j < this.lPoints; j++)
+      for (int j = 0; j < this.lPoints; j++)
          this.x3[j] = x3[j];
-      for(int i = 0; i < this.nPoints; i++)
-         for(int j = 0; j < this.mPoints; j++)
-            for(int k = 0; k < this.lPoints; k++)
+      for (int i = 0; i < this.nPoints; i++)
+         for (int j = 0; j < this.mPoints; j++)
+            for (int k = 0; k < this.lPoints; k++)
                this.y[i][j][k] = y[i][j][k];
    }
 
@@ -89,7 +87,7 @@ public class TriCubicSpline {
       this.nPoints = nP;
       this.mPoints = mP;
       this.lPoints = lP;
-      if((this.nPoints < 3) || (this.mPoints < 3) || (this.lPoints < 3))
+      if ((this.nPoints < 3) || (this.mPoints < 3) || (this.lPoints < 3))
          throw new IllegalArgumentException("The data matrix must have a minimum size of 3 X 3 X 3");
 
       this.csm = new CubicSpline(this.nPoints);
@@ -105,7 +103,7 @@ public class TriCubicSpline {
    // and all array values to zero with natural spline default
    // Primarily for use in this.oneDarray for QuadriCubicSpline
    public static TriCubicSpline zero(int nP, int mP, int lP) {
-      if((nP < 3) || (mP < 3) || (lP < 3))
+      if ((nP < 3) || (mP < 3) || (lP < 3))
          throw new IllegalArgumentException("A minimum of three x three x three data points is needed");
       final TriCubicSpline aa = new TriCubicSpline(nP, mP, lP);
       return aa;
@@ -115,10 +113,10 @@ public class TriCubicSpline {
    // of internal array size mP x lP xkP
    // Primarily for use in quadriCubicSpline
    public static TriCubicSpline[] oneDarray(int nP, int mP, int lP, int kP) {
-      if((mP < 3) || (lP < 3) || (kP < 3))
+      if ((mP < 3) || (lP < 3) || (kP < 3))
          throw new IllegalArgumentException("A minimum of three x three x three data points is needed");
       final TriCubicSpline[] a = new TriCubicSpline[nP];
-      for(int i = 0; i < nP; i++)
+      for (int i = 0; i < nP; i++)
          a[i] = TriCubicSpline.zero(mP, lP, kP);
       return a;
    }
@@ -127,31 +125,31 @@ public class TriCubicSpline {
    // Resets the x1, x2, x3, y data arrays
    // Primarily for use in QuadriCubicSpline
    public void resetData(double[] x1, double[] x2, double[] x3, double[][][] y) {
-      if(x1.length != y.length)
+      if (x1.length != y.length)
          throw new IllegalArgumentException("Arrays x1 and y row are of different length");
-      if(x2.length != y[0].length)
+      if (x2.length != y[0].length)
          throw new IllegalArgumentException("Arrays x2 and y column are of different length");
-      if(x3.length != y[0][0].length)
+      if (x3.length != y[0][0].length)
          throw new IllegalArgumentException("Arrays x3 and y column are of different length");
-      if(this.nPoints != x1.length)
+      if (this.nPoints != x1.length)
          throw new IllegalArgumentException("Original array length not matched by new array length");
-      if(this.mPoints != x2.length)
+      if (this.mPoints != x2.length)
          throw new IllegalArgumentException("Original array length not matched by new array length");
-      if(this.lPoints != x3.length)
+      if (this.lPoints != x3.length)
          throw new IllegalArgumentException("Original array length not matched by new array length");
 
-      for(int i = 0; i < this.nPoints; i++)
+      for (int i = 0; i < this.nPoints; i++)
          this.x1[i] = x1[i];
 
-      for(int i = 0; i < this.mPoints; i++)
+      for (int i = 0; i < this.mPoints; i++)
          this.x2[i] = x2[i];
 
-      for(int i = 0; i < this.lPoints; i++)
+      for (int i = 0; i < this.lPoints; i++)
          this.x3[i] = x3[i];
 
-      for(int i = 0; i < this.nPoints; i++)
-         for(int j = 0; j < this.mPoints; j++)
-            for(int k = 0; k < this.lPoints; k++)
+      for (int i = 0; i < this.nPoints; i++)
+         for (int j = 0; j < this.mPoints; j++)
+            for (int k = 0; k < this.lPoints; k++)
                this.y[i][j][k] = y[i][j][k];
    }
 
@@ -160,19 +158,19 @@ public class TriCubicSpline {
    public double interpolate(double xx1, double xx2, double xx3) {
 
       final double[][] yTempml = new double[this.mPoints][this.lPoints];
-      for(int i = 0; i < this.nPoints; i++) {
-         for(int j = 0; j < this.mPoints; j++)
-            for(int k = 0; k < this.lPoints; k++)
+      for (int i = 0; i < this.nPoints; i++) {
+         for (int j = 0; j < this.mPoints; j++)
+            for (int k = 0; k < this.lPoints; k++)
                yTempml[j][k] = y[i][j][k];
          this.bcsn[i].resetData(x2, x3, yTempml);
       }
       final double[] yTempm = new double[nPoints];
 
-      for(int i = 0; i < nPoints; i++) {
-         if(this.derivCalculated)
+      for (int i = 0; i < nPoints; i++) {
+         if (this.derivCalculated)
             this.bcsn[i].setDeriv(this.d2ydx2inner[i]);
          yTempm[i] = this.bcsn[i].interpolate(xx2, xx3);
-         if(!this.derivCalculated)
+         if (!this.derivCalculated)
             this.d2ydx2inner[i] = this.bcsn[i].getDeriv();
       }
       derivCalculated = true;

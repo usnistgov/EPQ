@@ -19,9 +19,7 @@ import java.util.List;
  * @author Nicholas
  * @version 1.0
  */
-abstract public class BackscatterCoefficient
-   extends
-   AlgorithmClass {
+abstract public class BackscatterCoefficient extends AlgorithmClass {
 
    protected BackscatterCoefficient(String name, LitReference ref) {
       super("Backscatter Coefficient", name, ref);
@@ -43,8 +41,10 @@ abstract public class BackscatterCoefficient
     * incident electrons which will backscatter from a sample of pure Element
     * el.
     * 
-    * @param el The element
-    * @param e0 Beam energy (Joules)
+    * @param el
+    *           The element
+    * @param e0
+    *           Beam energy (Joules)
     * @return double on [0.0 to 1.0]
     */
    abstract public double compute(Element el, double e0);
@@ -55,7 +55,7 @@ abstract public class BackscatterCoefficient
 
    public String caveat(Composition comp, double e0) {
       String res = CaveatBase.None;
-      for(final Element el : comp.getElementSet())
+      for (final Element el : comp.getElementSet())
          res = CaveatBase.append(res, caveat(el, e0));
       return res;
    }
@@ -65,13 +65,15 @@ abstract public class BackscatterCoefficient
     * incident electrons which will backscatter from a sample of the specified
     * composition. (See Heinrich81 EBXM eqn 9.3.3)
     * 
-    * @param comp The composition of the material
-    * @param e0 Beam energy (Joules)
+    * @param comp
+    *           The composition of the material
+    * @param e0
+    *           Beam energy (Joules)
     * @return double on [0.0,1.0]
     */
    public double compute(Composition comp, double e0) {
       double eta = 0.0;
-      for(final Element el : comp.getElementSet())
+      for (final Element el : comp.getElementSet())
          eta += comp.weightFraction(el, true) * compute(el, e0);
       assert (eta >= 0.0);
       assert (eta <= 1.0);
@@ -86,9 +88,7 @@ abstract public class BackscatterCoefficient
       // Don't do anything..
    }
 
-   public static class HeinrichBackscatterCoefficient
-      extends
-      BackscatterCoefficient {
+   public static class HeinrichBackscatterCoefficient extends BackscatterCoefficient {
       HeinrichBackscatterCoefficient() {
          super("Heinrich81", LitReference.ElectronBeamXRayMicroanalysis);
       }
@@ -102,9 +102,7 @@ abstract public class BackscatterCoefficient
 
    static public BackscatterCoefficient Heinrich81 = new HeinrichBackscatterCoefficient();
 
-   public static class PouchoAndPichoirBackscatterCoefficient
-      extends
-      BackscatterCoefficient {
+   public static class PouchoAndPichoirBackscatterCoefficient extends BackscatterCoefficient {
 
       PouchoAndPichoirBackscatterCoefficient() {
          super("Pouchou & Pichoir", LitReference.PAPinEPQ);
@@ -121,7 +119,7 @@ abstract public class BackscatterCoefficient
          // blows up when the analytical total is substantially
          // above unity.
          final double total = Math.min(1.1, comp.sumWeightFraction());
-         for(final Element el : comp.getElementSet())
+         for (final Element el : comp.getElementSet())
             zp += (comp.weightFraction(el, false) / total) * Math.sqrt(el.getAtomicNumber());
          return computeZp(zp * zp);
       }
@@ -134,9 +132,7 @@ abstract public class BackscatterCoefficient
 
    static public BackscatterCoefficient PouchouAndPichoir91 = new PouchoAndPichoirBackscatterCoefficient();
 
-   public static class LoveBackscatterCoefficient
-      extends
-      BackscatterCoefficient {
+   public static class LoveBackscatterCoefficient extends BackscatterCoefficient {
       LoveBackscatterCoefficient() {
          super("Love & Scott 1978", LitReference.LoveScott1978);
       }
@@ -158,9 +154,5 @@ abstract public class BackscatterCoefficient
 
    static public BackscatterCoefficient Love1978 = new LoveBackscatterCoefficient();
 
-   static private AlgorithmClass[] mAllImplementations = {
-      Heinrich81,
-      PouchouAndPichoir91,
-      Love1978
-   };
+   static private AlgorithmClass[] mAllImplementations = {Heinrich81, PouchouAndPichoir91, Love1978};
 }

@@ -35,8 +35,7 @@ import gov.nist.microanalysis.Utility.UtilException;
  * @version 1.0
  */
 
-abstract public class IonizationCrossSection
-   extends AlgorithmClass {
+abstract public class IonizationCrossSection extends AlgorithmClass {
 
    /**
     * Converts from m^2 to cm^2
@@ -63,7 +62,8 @@ abstract public class IonizationCrossSection
     * ionization cross section depends upon which shell is ionized. The
     * dependence is a proportional to the number of electrons in the shell.
     * 
-    * @param sh AtomicShell
+    * @param sh
+    *           AtomicShell
     * @return double
     */
    static public double shellDependence(AtomicShell sh) {
@@ -75,7 +75,8 @@ abstract public class IonizationCrossSection
     * ionization cross section depends upon which shell is ionized. The
     * dependence is a proportional to the number of electrons in the shell.
     * 
-    * @param shell [AtomicShell.K, AtomicShell.LI, AtomicShell.LII, ...,
+    * @param shell
+    *           [AtomicShell.K, AtomicShell.LI, AtomicShell.LII, ...,
     *           AtomicShell.Last)
     * @return double
     */
@@ -102,8 +103,10 @@ abstract public class IonizationCrossSection
     * Computes the ionization cross section for an energetic electron on the
     * specified element/shell.
     * 
-    * @param shell AtomicShell - Specifies the element and shell (K, LI, ...)
-    * @param beamE double - The beam energy in Joules
+    * @param shell
+    *           AtomicShell - Specifies the element and shell (K, LI, ...)
+    * @param beamE
+    *           double - The beam energy in Joules
     * @return double - The ionization cross section (in m^2)
     */
    abstract public double computeShell(AtomicShell shell, double beamE);
@@ -119,11 +122,8 @@ abstract public class IonizationCrossSection
     * @return double - Energy in Joules
     * @throws UtilException
     */
-   public double peak(AtomicShell shell)
-         throws UtilException {
-      final Object[] param = new Object[] {
-         shell
-      };
+   public double peak(AtomicShell shell) throws UtilException {
+      final Object[] param = new Object[]{shell};
       final Simplex s = new Simplex(param) {
          @Override
          public double function(double[] x) {
@@ -131,9 +131,7 @@ abstract public class IonizationCrossSection
             return -computeFamily(shell, x[0]);
          }
       };
-      final double[] sp = new double[] {
-         3.0 * shell.getEdgeEnergy()
-      };
+      final double[] sp = new double[]{3.0 * shell.getEdgeEnergy()};
       final double[] res = s.perform(Simplex.randomizedStartingPoints(sp, Math2.multiply(0.1, sp)));
       return res[0];
    }

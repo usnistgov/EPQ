@@ -80,13 +80,11 @@ public class GageSpectrum extends BaseSpectrum {
                highest = data[i];
             filtered[i] = 0.0;
             for (int j = 0; j < mFilter.length; ++j)
-               filtered[i] += mFilter[j] * data[Math2
-                     .bound((i - (mFilter.length / 2)) + j, 0, data.length)];
+               filtered[i] += mFilter[j] * data[Math2.bound((i - (mFilter.length / 2)) + j, 0, data.length)];
          }
          int peakCount = 0;
          int peakPos = Integer.MIN_VALUE;
-         final double thresh = mFilter.length
-               * Math.sqrt(ds.standardDeviation());
+         final double thresh = mFilter.length * Math.sqrt(ds.standardDeviation());
          for (int i = (3 * preSamples) / 4; i < data.length; ++i)
             if (filtered[i] > thresh) {
                ++peakCount;
@@ -113,19 +111,16 @@ public class GageSpectrum extends BaseSpectrum {
    private final int mRejected;
    private ProcessRawPulse mProcessor;
 
-   public GageSpectrum(File file, int chCount, double scale, ActionListener al)
-         throws IOException {
+   public GageSpectrum(File file, int chCount, double scale, ActionListener al) throws IOException {
       mData = new double[chCount];
       mProperties = new SpectrumProperties();
       mProperties.setNumericProperty(SpectrumProperties.EnergyOffset, 0.0);
       mProperties.setNumericProperty(SpectrumProperties.EnergyScale, 0.5);
       mProcessor = new NaivePulseProcessor(scale);
       try (final FileInputStream fis = new FileInputStream(file)) {
-         try (final BufferedReader bis = new BufferedReader(
-               new InputStreamReader(fis, "US-ASCII"))) {
+         try (final BufferedReader bis = new BufferedReader(new InputStreamReader(fis, "US-ASCII"))) {
             String str, data;
-            int preSamples = Integer.MIN_VALUE,
-                  totalSamples = Integer.MIN_VALUE;
+            int preSamples = Integer.MIN_VALUE, totalSamples = Integer.MIN_VALUE;
             final SpectrumProperties sp = getProperties();
             // Read the header as ASCII
             do {
@@ -156,20 +151,16 @@ public class GageSpectrum extends BaseSpectrum {
                      final int x = isr.readShort();
                      if (x == FLAG) { // Marks the end of the pulse
                         if (al != null) {
-                           final int p = (int) ((1000
-                                 * fis.getChannel().position()) / fileLen);
+                           final int p = (int) ((1000 * fis.getChannel().position()) / fileLen);
                            if (p > pos) {
                               pos = p;
-                              al.actionPerformed(new ActionEvent(this, pos,
-                                    Double.toString(0.1 * pos) + "% complete"));
+                              al.actionPerformed(new ActionEvent(this, pos, Double.toString(0.1 * pos) + "% complete"));
                            }
                         }
                         // int ts=
                         isr.readInt(); // Timestamp
                         // Add the event to the spectrum data
-                        final int res = (cx == buffer.length
-                              ? mProcessor.process(buffer, preSamples)
-                              : 0);
+                        final int res = (cx == buffer.length ? mProcessor.process(buffer, preSamples) : 0);
                         if ((res <= 0) || (res >= mData.length))
                            ++rejected;
                         else

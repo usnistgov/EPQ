@@ -24,9 +24,7 @@ import gov.nist.microanalysis.EPQTools.WriteSpectrumAsEMSA1_0;
  * @version 1.0
  */
 
-public class ROISpectrum
-   extends
-   DerivedSpectrum {
+public class ROISpectrum extends DerivedSpectrum {
    private double mModelThreshold = 1.0e3;
 
    private int mLowChannel, mHighChannel;
@@ -48,15 +46,16 @@ public class ROISpectrum
       mData = new double[mHighChannel - mLowChannel];
       final ISpectrumData src = getBaseSpectrum();
       // Attempt to model Bremsstrahlung for lower energy peaks.
-      if(SpectrumUtils.minEnergyForChannel(this, mLowChannel) < mModelThreshold) {
+      if (SpectrumUtils.minEnergyForChannel(this, mLowChannel) < mModelThreshold) {
          final SpectrumProperties props = src.getProperties();
          Composition comp = props.getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
-         if(comp == null)
+         if (comp == null)
             comp = props.getCompositionWithDefault(SpectrumProperties.MicroanalyticalComposition, null);
          final IXRayDetector det = props.getDetector();
          assert src != null;
-         if((comp != null) && (det instanceof EDSDetector)) {
-            // final QuadraticBremsstrahlung qb = new BremsstrahlungAnalytic.Lifshin1974Model(); 
+         if ((comp != null) && (det instanceof EDSDetector)) {
+            // final QuadraticBremsstrahlung qb = new
+            // BremsstrahlungAnalytic.Lifshin1974Model();
             final BremsstrahlungAnalytic qb = new BremsstrahlungAnalytic.Castellano2004aBremsstrahlung();
             try {
                final ISpectrumData back = qb.fitBackground((EDSDetector) det, src, comp);
@@ -69,13 +68,13 @@ public class ROISpectrum
                   minSc = (minBack > 0.0) && (minSrc > 0.0) ? (minSrc / minBack) : Double.MAX_VALUE;
                   maxSc = (maxBack > 0.0) && (maxSrc > 0.0) ? (maxSrc / maxBack) : Double.MAX_VALUE;
                }
-               if((minSc > 0.1) && (minSc < 10.0) && (maxSc > 0.1) && (maxSc < 10.0)) {
-                  for(int i = mLowChannel; i < mHighChannel; ++i) {
+               if ((minSc > 0.1) && (minSc < 10.0) && (maxSc > 0.1) && (maxSc < 10.0)) {
+                  for (int i = mLowChannel; i < mHighChannel; ++i) {
                      final double k = ((double) (i - mLowChannel)) / ((double) (mHighChannel - mLowChannel));
                      mData[i - mLowChannel] = src.getCounts(i) - ((minSc + (k * (maxSc - minSc))) * back.getCounts(i));
                   }
                   modeled = true;
-                  if(DUMP)
+                  if (DUMP)
                      try {
                         System.err.println("Writing: " + toString() + ".msa");
                         final String fn1 = toString() + "-[" + mLowChannel + "," + mHighChannel + "].msa";
@@ -86,34 +85,28 @@ public class ROISpectrum
                         saveSpectrum(delta, fn2);
                         final String fn3 = toString() + "-[" + mLowChannel + "," + mHighChannel + "]-model.msa";
                         saveSpectrum(back, fn3);
-                     }
-                     catch(final FileNotFoundException e) {
+                     } catch (final FileNotFoundException e) {
                         e.printStackTrace();
                      }
-               } else if(DUMP)
-                  System.err.print("Not fitting: " + toString() + " - " + minSc + ", " + maxSc + " - [" + mLowChannel + ","
-                        + mHighChannel + "]");
-            }
-            catch(final EPQException e) {
+               } else if (DUMP)
+                  System.err.print("Not fitting: " + toString() + " - " + minSc + ", " + maxSc + " - [" + mLowChannel + "," + mHighChannel + "]");
+            } catch (final EPQException e) {
                modeled = false;
             }
          }
       }
-      if(!modeled) {
+      if (!modeled) {
          final double lowBkgd = SpectrumUtils.estimateLowBackground(src, mLowChannel)[0];
          final double highBkgd = SpectrumUtils.estimateHighBackground(src, mHighChannel)[0];
-         for(int i = mLowChannel; i < mHighChannel; ++i)
-            mData[i - mLowChannel] = src.getCounts(i)
-                  - (lowBkgd + (((highBkgd - lowBkgd) * (i - mLowChannel)) / (mHighChannel - mLowChannel)));
+         for (int i = mLowChannel; i < mHighChannel; ++i)
+            mData[i - mLowChannel] = src.getCounts(i) - (lowBkgd + (((highBkgd - lowBkgd) * (i - mLowChannel)) / (mHighChannel - mLowChannel)));
       }
    }
 
-   private void saveSpectrum(ISpectrumData spec, final String fn1)
-         throws FileNotFoundException, EPQException {
+   private void saveSpectrum(ISpectrumData spec, final String fn1) throws FileNotFoundException, EPQException {
       try (final FileOutputStream fos1 = new FileOutputStream(new File("c://temp//", fn1))) {
          WriteSpectrumAsEMSA1_0.write(spec, fos1, WriteSpectrumAsEMSA1_0.Mode.COMPATIBLE);
-      }
-      catch(final IOException e) {
+      } catch (final IOException e) {
          e.printStackTrace();
       }
    }
@@ -123,9 +116,12 @@ public class ROISpectrum
     * specified set of channels. The resulting counts are background corrected
     * using a trapesoidal algorithm.
     * 
-    * @param sd ISpectrumData
-    * @param lowChannel int
-    * @param highChannel int
+    * @param sd
+    *           ISpectrumData
+    * @param lowChannel
+    *           int
+    * @param highChannel
+    *           int
     */
    private ROISpectrum(ISpectrumData sd, int lowChannel, int highChannel) {
       super(sd);
@@ -141,15 +137,18 @@ public class ROISpectrum
     * This constructor creates a background corrected reference for the
     * specified transition family.
     * 
-    * @param sd ISpectrumData - The reference spectrum
-    * @param el Element - The element
-    * @param family int - The transition family (one of AtomicShell.KFamily,
+    * @param sd
+    *           ISpectrumData - The reference spectrum
+    * @param el
+    *           Element - The element
+    * @param family
+    *           int - The transition family (one of AtomicShell.KFamily,
     *           AtomicShell.LFamily, AtomicShell.MFamily, NFamily)
-    * @param fwhmAtMnKa double - in eV
+    * @param fwhmAtMnKa
+    *           double - in eV
     * @throws EPQException
     */
-   public ROISpectrum(ISpectrumData sd, Element el, int family, double fwhmAtMnKa)
-         throws EPQException {
+   public ROISpectrum(ISpectrumData sd, Element el, int family, double fwhmAtMnKa) throws EPQException {
       this(sd, 0, 1);
       setROI(el, family, fwhmAtMnKa);
    }
@@ -164,12 +163,14 @@ public class ROISpectrum
    /**
     * setROI - Permits you to change the ROI associated with this spectrum.
     * 
-    * @param lowChannel int
-    * @param highChannel int
+    * @param lowChannel
+    *           int
+    * @param highChannel
+    *           int
     */
    private void setROI(int lowChannel, int highChannel) {
       final ISpectrumData src = getBaseSpectrum();
-      if(lowChannel > highChannel) {
+      if (lowChannel > highChannel) {
          // Swap them
          final int tmp = lowChannel;
          lowChannel = highChannel;
@@ -177,9 +178,9 @@ public class ROISpectrum
       }
       lowChannel = SpectrumUtils.bound(src, lowChannel);
       highChannel = SpectrumUtils.bound(src, highChannel);
-      if(lowChannel == highChannel)
+      if (lowChannel == highChannel)
          highChannel = lowChannel + 1;
-      if((mLowChannel != lowChannel) || (mHighChannel != highChannel)) {
+      if ((mLowChannel != lowChannel) || (mHighChannel != highChannel)) {
          mLowChannel = lowChannel;
          mHighChannel = highChannel;
          mData = null;
@@ -191,14 +192,16 @@ public class ROISpectrum
     * the specified transition family for the specified element. The fwhmAtMnKa
     * is used calculate the width of the line at the line energy.
     * 
-    * @param el Element - The element
-    * @param family int - The transition family (one of AtomicShell.KFamily,
+    * @param el
+    *           Element - The element
+    * @param family
+    *           int - The transition family (one of AtomicShell.KFamily,
     *           AtomicShell.LFamily, AtomicShell.MFamily, NFamily)
-    * @param fwhmAtMnKa double - in eV
+    * @param fwhmAtMnKa
+    *           double - in eV
     * @throws EPQException
     */
-   private void setROI(Element el, int family, double fwhmAtMnKa)
-         throws EPQException {
+   private void setROI(Element el, int family, double fwhmAtMnKa) throws EPQException {
       assert (family >= AtomicShell.KFamily);
       assert (family <= AtomicShell.NFamily);
       assert (fwhmAtMnKa >= 100.0);
@@ -206,13 +209,13 @@ public class ROISpectrum
       // Find the full energy extent of the major lines in this family.
       final int lowELine = XRayTransition.lineWithLowestEnergy(el, family);
       final int highELine = XRayTransition.lineWithHighestEnergy(el, family);
-      if((lowELine == XRayTransition.None) || (highELine == XRayTransition.None))
+      if ((lowELine == XRayTransition.None) || (highELine == XRayTransition.None))
          throw new EPQException("This element has no lines of the specified family");
       double lowE = FromSI.eV(XRayTransition.getEnergy(el, lowELine));
-      if(lowE > SpectrumUtils.minEnergyForChannel(this, getChannelCount()))
+      if (lowE > SpectrumUtils.minEnergyForChannel(this, getChannelCount()))
          throw new EPQException("This element has no lines of the specified family in the measured energy range.");
       double highE = FromSI.eV(XRayTransition.getEnergy(el, highELine));
-      if(highE <= 0.0)
+      if (highE <= 0.0)
          throw new EPQException("This element has no lines of the specified family in the measured energy range.");
       // Add a little extra to account for the linewidth
       lowE -= 1.6 * (SpectrumUtils.linewidth_eV(lowE, fwhmAtMnKa, SpectrumUtils.E_MnKa));
@@ -224,13 +227,14 @@ public class ROISpectrum
    /**
     * The number of counts in the specified channel.
     * 
-    * @param i int
+    * @param i
+    *           int
     * @return double
     */
    @Override
    public double getCounts(int i) {
       // Wait until the channel data is required before calculating it...
-      if(mData == null)
+      if (mData == null)
          computeData();
       return ((i < mLowChannel) || (i >= mHighChannel)) ? 0.0 : mData[i - mLowChannel];
    }
@@ -241,10 +245,10 @@ public class ROISpectrum
     * @return double
     */
    public double getTotalCounts() {
-      if(mData == null)
+      if (mData == null)
          computeData();
       double res = 0.0;
-      for(int i = mData.length - 1; i >= 0; --i)
+      for (int i = mData.length - 1; i >= 0; --i)
          res += mData[i];
       return res;
    }
@@ -261,10 +265,11 @@ public class ROISpectrum
    /**
     * Set the threshold below which the background will be modeled.
     * 
-    * @param modelThreshold in eV
+    * @param modelThreshold
+    *           in eV
     */
    public void setModelThreshold(double modelThreshold) {
-      if(mModelThreshold != modelThreshold) {
+      if (mModelThreshold != modelThreshold) {
          mModelThreshold = modelThreshold;
          mData = null;
       }

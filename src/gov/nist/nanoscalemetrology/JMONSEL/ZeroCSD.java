@@ -20,9 +20,7 @@ import gov.nist.microanalysis.NISTMonte.Electron;
  * @author John Villarrubia
  * @version 1.0
  */
-public class ZeroCSD
-   implements
-   SlowingDownAlg {
+public class ZeroCSD implements SlowingDownAlg {
 
    /**
     * ZeroCSD - Creates a continuous slowing down object for the specified

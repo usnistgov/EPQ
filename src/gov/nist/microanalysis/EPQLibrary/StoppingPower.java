@@ -23,13 +23,13 @@ import java.util.List;
  * @author not attributable
  * @version 1.0
  */
-abstract public class StoppingPower
-   extends AlgorithmClass {
+abstract public class StoppingPower extends AlgorithmClass {
 
    /**
     * Converts from SI (J m^2 / kg) to the more standard (keV cm^2 / g)
     * 
-    * @param x double
+    * @param x
+    *           double
     * @return x converted from SI to keV-g-cm units
     */
    static public double tokeVcmSqrPerGram(double x) {
@@ -40,7 +40,8 @@ abstract public class StoppingPower
    /**
     * Converts from the more standard (keV cm^2 / g) to SI (J m^2 / kg)
     * 
-    * @param x double
+    * @param x
+    *           double
     * @return x converted to SI from keV-g-cm units
     */
    static public double fromkeVcmSqrPerGram(double x) {
@@ -51,7 +52,8 @@ abstract public class StoppingPower
    /**
     * Converts from SI (kg / (J m^2)) to the more standard g/(keV cm^2)
     * 
-    * @param x double
+    * @param x
+    *           double
     * @return x converted from SI to keV-g-cm units
     */
    static public double invToGramPerkeVcmSqr(double x) {
@@ -62,7 +64,8 @@ abstract public class StoppingPower
    /**
     * Converts to SI (kg / (J m^2)) from the more standard g/(keV cm^2)
     * 
-    * @param x double
+    * @param x
+    *           double
     * @return x converted from SI to keV-g-cm units
     */
    static public double invFromGramPerkeVcmSqr(double x) {
@@ -106,9 +109,12 @@ abstract public class StoppingPower
     * Compute the stopping power (S) in the specified material for the specified
     * element and shell given a beam of the specified energy.
     * 
-    * @param comp Composition - The material
-    * @param shell AtomicShell - The element and shell
-    * @param e0 double - The beam energy
+    * @param comp
+    *           Composition - The material
+    * @param shell
+    *           AtomicShell - The element and shell
+    * @param e0
+    *           double - The beam energy
     * @return double - The stopping power (S) in Joule per (kg / meter^3) per
     *         meter
     */
@@ -121,9 +127,12 @@ abstract public class StoppingPower
     * for the specified element and shell given a beam of the specified energy.
     * Often it is easier to calculate this and this is what is really required.
     * 
-    * @param comp Composition - The material
-    * @param shell AtomicShell - The element and shell
-    * @param e0 double - The beam energy
+    * @param comp
+    *           Composition - The material
+    * @param shell
+    *           AtomicShell - The element and shell
+    * @param e0
+    *           double - The beam energy
     * @return double - The inverse stopping power (1/S) in kilogram / (Joule
     *         meter^2)
     */
@@ -133,10 +142,14 @@ abstract public class StoppingPower
     * Computes the relative stopping power between the unknown sample and the
     * standard sample.
     * 
-    * @param unknown The 'unknown' material
-    * @param standard The standard material
-    * @param shell The shell to be analyzed
-    * @param e0 The beam energy
+    * @param unknown
+    *           The 'unknown' material
+    * @param standard
+    *           The standard material
+    * @param shell
+    *           The shell to be analyzed
+    * @param e0
+    *           The beam energy
     * @return The ratio of unknown / standard stopping powers
     */
    public double computeRelative(Composition unknown, Composition standard, AtomicShell shell, double e0) {
@@ -146,8 +159,7 @@ abstract public class StoppingPower
    /**
     * Pouchou and Pichoir 1991
     */
-   public static class Pouchou1991StoppingPower
-      extends StoppingPower {
+   public static class Pouchou1991StoppingPower extends StoppingPower {
       public Pouchou1991StoppingPower() {
          super("Pouchou & Pichoir", LitReference.ElectronProbeQuant);
       }
@@ -164,7 +176,7 @@ abstract public class StoppingPower
          final MeanIonizationPotential mip = (MeanIonizationPotential) getAlgorithm(MeanIonizationPotential.class);
          // Seems to produce reasonable results (comparing TiO2 against TryZAF)
          double bigM = 0.0;
-         for(final Element el : comp.getElementSet())
+         for (final Element el : comp.getElementSet())
             bigM += (comp.weightFraction(el, true) * el.getAtomicNumber()) / el.getAtomicWeight();
          final double d[] = new double[3];
          final double p[] = new double[3];
@@ -183,10 +195,9 @@ abstract public class StoppingPower
          final double u0 = e0 / shell.getEdgeEnergy(); // units cancel
          double tmp = 0.0;
          // From PAP1991, LSR is wrong!
-         for(int k = 0; k < 3; ++k) {
+         for (int k = 0; k < 3; ++k) {
             final double tk = (1.0 + p[k]) - m;
-            tmp += (d[k] * Math.pow(v0 / u0, p[k]) * (((tk * Math.pow(u0, tk) * Math.log(u0)) - Math.pow(u0, tk)) + 1))
-                  / (tk * tk);
+            tmp += (d[k] * Math.pow(v0 / u0, p[k]) * (((tk * Math.pow(u0, tk) * Math.log(u0)) - Math.pow(u0, tk)) + 1)) / (tk * tk);
          }
          return invFromGramPerkeVcmSqr((u0 / (v0 * bigM)) * tmp);
       }
@@ -194,8 +205,7 @@ abstract public class StoppingPower
 
    public static final StoppingPower Pouchou1991 = new Pouchou1991StoppingPower();
 
-   public static class Proza96StoppingPower
-      extends StoppingPower {
+   public static class Proza96StoppingPower extends StoppingPower {
       public Proza96StoppingPower() {
          super("Proza96", LitReference.Proza96);
       }
@@ -211,7 +221,7 @@ abstract public class StoppingPower
          final MeanIonizationPotential mip = (MeanIonizationPotential) getAlgorithm(MeanIonizationPotential.class);
          // Seems to produce reasonable results (comparing TiO2 against TryZAF)
          double bigM = 0.0;
-         for(final Element el : comp.getElementSet())
+         for (final Element el : comp.getElementSet())
             bigM += (comp.weightFraction(el, true) * el.getAtomicNumber()) / el.getAtomicWeight();
          final double d[] = new double[3];
          final double p[] = new double[3];
@@ -230,10 +240,9 @@ abstract public class StoppingPower
          final double u0 = e0 / shell.getEdgeEnergy(); // units cancel
          double tmp = 0.0;
          // From PAP1991, LSR is wrong!
-         for(int k = 0; k < 3; ++k) {
+         for (int k = 0; k < 3; ++k) {
             final double tk = (1.0 + p[k]) - m;
-            tmp += (d[k] * Math.pow(v0 / u0, p[k]) * (((tk * Math.pow(u0, tk) * Math.log(u0)) - Math.pow(u0, tk)) + 1))
-                  / (tk * tk);
+            tmp += (d[k] * Math.pow(v0 / u0, p[k]) * (((tk * Math.pow(u0, tk) * Math.log(u0)) - Math.pow(u0, tk)) + 1)) / (tk * tk);
          }
          return invFromGramPerkeVcmSqr((u0 / (v0 * bigM)) * tmp);
       }
@@ -244,8 +253,7 @@ abstract public class StoppingPower
    /**
     * Thomas1963
     */
-   public static class Thomas1963StoppingPower
-      extends StoppingPower {
+   public static class Thomas1963StoppingPower extends StoppingPower {
       public Thomas1963StoppingPower() {
          super("Thomas 1963", LitReference.QuantitativeElectronProbeMicroanalysis);
       }
@@ -266,10 +274,9 @@ abstract public class StoppingPower
          final MeanIonizationPotential mip = (MeanIonizationPotential) getAlgorithm(MeanIonizationPotential.class);
          double s = 0.0;
          final double ec = shell.getEdgeEnergy(); // All energys in SI
-         for(final Element elm : comp.getElementSet()) {
+         for (final Element elm : comp.getElementSet()) {
             final double j = mip.compute(elm);
-            s += comp.weightFraction(elm, true) * (elm.getAtomicNumber() / elm.getAtomicWeight())
-                  * Math.log(((1.116 / 2.0) * (e0 + ec)) / j);
+            s += comp.weightFraction(elm, true) * (elm.getAtomicNumber() / elm.getAtomicWeight()) * Math.log(((1.116 / 2.0) * (e0 + ec)) / j);
          }
          return StoppingPower.fromkeVcmSqrPerGram(s);
       }
@@ -280,8 +287,7 @@ abstract public class StoppingPower
    /**
     * Reed's modifications to Thomas' expression
     */
-   public static class Reed1975StoppingPower
-      extends StoppingPower {
+   public static class Reed1975StoppingPower extends StoppingPower {
       public Reed1975StoppingPower() {
          super("Reed's modification to Thomas 1963", LitReference.QuantitativeElectronProbeMicroanalysis);
       }
@@ -302,7 +308,7 @@ abstract public class StoppingPower
          final MeanIonizationPotential mip = (MeanIonizationPotential) getAlgorithm(MeanIonizationPotential.class);
          double s = 0.0;
          final double ec = shell.getEdgeEnergy(); // All energys in SI
-         for(final Element elm : comp.getElementSet())
+         for (final Element elm : comp.getElementSet())
             s += comp.weightFraction(elm, true) * (elm.getAtomicNumber() / elm.getAtomicWeight())
                   * Math.log(((1.116 / 3.0) * ((2.0 * e0) + ec)) / mip.compute(elm));
          return StoppingPower.fromkeVcmSqrPerGram(s);
@@ -311,8 +317,7 @@ abstract public class StoppingPower
 
    public static final StoppingPower Reed1975 = new Reed1975StoppingPower();
 
-   public static class LoveScottCITZAFStoppingPower
-      extends StoppingPower {
+   public static class LoveScottCITZAFStoppingPower extends StoppingPower {
       public LoveScottCITZAFStoppingPower() {
          super("Love/Scott (CITZAF)", "Love/Scott as implemented in CITZAF");
       }
@@ -330,7 +335,7 @@ abstract public class StoppingPower
          final double u0A = e0 / ec;
          final double jBar = mip.computeLn(comp);
          double aa = 0.0;
-         for(final Element elm : comp.getElementSet())
+         for (final Element elm : comp.getElementSet())
             aa += (elm.getAtomicNumber() * comp.weightFraction(elm, true)) / elm.getAtomicWeight();
          return (1.0 + (16.05 * Math.sqrt(jBar / ec) * Math.pow((Math.sqrt(u0A) - 1.0) / (u0A - 1.0), 1.07))) / aa;
       }
@@ -338,8 +343,7 @@ abstract public class StoppingPower
 
    public static final StoppingPower LoveScottCITZAF = new LoveScottCITZAFStoppingPower();
 
-   public static class LoveScottStoppingPower
-      extends StoppingPower {
+   public static class LoveScottStoppingPower extends StoppingPower {
       public LoveScottStoppingPower() {
          super("Love/Scott (CITZAF)", "Love/Scott as described in JTA in the green book");
       }
@@ -357,7 +361,7 @@ abstract public class StoppingPower
          final double u0A = e0 / ec;
          final double jBar = mip.computeLn(comp);
          double aa = 0.0;
-         for(final Element elm : comp.getElementSet())
+         for (final Element elm : comp.getElementSet())
             aa += (elm.getAtomicNumber() * comp.weightFraction(elm, true)) / elm.getAtomicWeight();
          return (1.0 + (16.05 * Math.sqrt(jBar / ec) * Math.pow(Math.sqrt(u0A) / (u0A - 1.0), 1.07))) / aa;
       }
@@ -368,8 +372,7 @@ abstract public class StoppingPower
    /**
     * PhilibertTixier1968's simple expression for stopping power
     */
-   static public class PhilibertTixier1968StoppingPower
-      extends StoppingPower {
+   static public class PhilibertTixier1968StoppingPower extends StoppingPower {
       public PhilibertTixier1968StoppingPower() {
          super("Philibert-Tixier 1968", LitReference.QuantitativeElectronProbeMicroanalysis);
       }
@@ -384,7 +387,7 @@ abstract public class StoppingPower
       public double computeInv(Composition comp, AtomicShell shell, double e0) {
          final MeanIonizationPotential mip = (MeanIonizationPotential) getAlgorithm(MeanIonizationPotential.class);
          double m = 0.0;
-         for(final Element elm : comp.getElementSet())
+         for (final Element elm : comp.getElementSet())
             m += comp.weightFraction(elm, true) * (elm.getAtomicNumber() / elm.getAtomicWeight());
          final double jBar = mip.computeLn(comp);
          final double ee = shell.getEdgeEnergy();
@@ -398,12 +401,7 @@ abstract public class StoppingPower
 
    public static final StoppingPower PhilibertTixier1968 = new PhilibertTixier1968StoppingPower();
 
-   private static final AlgorithmClass[] mAllImplementations = {
-      StoppingPower.Thomas1963,
-      StoppingPower.Reed1975,
-      StoppingPower.PhilibertTixier1968,
-      StoppingPower.Pouchou1991,
-      StoppingPower.Proza96
-   };
+   private static final AlgorithmClass[] mAllImplementations = {StoppingPower.Thomas1963, StoppingPower.Reed1975, StoppingPower.PhilibertTixier1968,
+         StoppingPower.Pouchou1991, StoppingPower.Proza96};
 
 }

@@ -192,8 +192,7 @@ public class SpectrumFile {
          }
          if (StandardBundle.isInstance(file)) {
             final List<ISpectrumData> specs = StandardBundle.readSpectra(file);
-            return wrapResult(specs.toArray(new ISpectrumData[specs.size()]),
-                  file);
+            return wrapResult(specs.toArray(new ISpectrumData[specs.size()]), file);
          }
          try (FileInputStream fis = new FileInputStream(file)) {
             if (BrukerPDZ.isInstanceOf(fis)) {
@@ -216,41 +215,34 @@ public class SpectrumFile {
                return wrapResult(res, file);
             }
          }
-         throw new EPQException("The file " + file.getName()
-               + " does not seem to be in one of the known file formats.");
+         throw new EPQException("The file " + file.getName() + " does not seem to be in one of the known file formats.");
       } catch (final Exception e) {
          throw new EPQException(e);
       }
    }
 
-   private static ISpectrumData[] wrapResult(final ISpectrumData[] res,
-         final File file) {
+   private static ISpectrumData[] wrapResult(final ISpectrumData[] res, final File file) {
       if (res != null)
          for (int j = 0; j < res.length; ++j)
             res[j] = wrapResult(res[j], file, j);
       return res;
    }
 
-   private static ISpectrumData wrapResult(final ISpectrumData res,
-         final File file, final int idx) {
+   private static ISpectrumData wrapResult(final ISpectrumData res, final File file, final int idx) {
       if (res != null) {
          String filename = file.getName();
          final int p = filename.lastIndexOf('.');
          if (p != -1)
             filename = filename.substring(0, p);
          final SpectrumProperties props = res.getProperties();
-         props.setTextProperty(SpectrumProperties.SourceFile,
-               file.getAbsolutePath());
-         props.setNumericProperty(SpectrumProperties.SpectrumIndex,
-               Integer.valueOf(idx + 1));
-         props.setTextProperty(SpectrumProperties.SourceFileId,
-               filename + "[" + Integer.toString(idx + 1) + "]");
+         props.setTextProperty(SpectrumProperties.SourceFile, file.getAbsolutePath());
+         props.setNumericProperty(SpectrumProperties.SpectrumIndex, Integer.valueOf(idx + 1));
+         props.setTextProperty(SpectrumProperties.SourceFileId, filename + "[" + Integer.toString(idx + 1) + "]");
       }
       return res;
    }
 
-   static public ISpectrumData open(final File file, final int idx)
-         throws EPQException {
+   static public ISpectrumData open(final File file, final int idx) throws EPQException {
       try {
          try (FileInputStream fis = new FileInputStream(file)) {
             if (DTSAFile.isInstanceOf(fis)) {
@@ -261,8 +253,7 @@ public class SpectrumFile {
          try (FileInputStream fis = new FileInputStream(file)) {
             if (EMSAFile.isInstanceOf(fis)) {
                if (idx != 0)
-                  throw new EPQException(
-                        "EMSA files can only contain one spectrum.");
+                  throw new EPQException("EMSA files can only contain one spectrum.");
                final EMSAFile ef = new EMSAFile();
                try (FileInputStream st = new FileInputStream(file)) {
                   ef.read(st);
@@ -274,8 +265,7 @@ public class SpectrumFile {
          try (FileInputStream fis = new FileInputStream(file)) {
             if (EMISPECFile.isInstanceOf(fis)) {
                if (idx != 0)
-                  throw new EPQException(
-                        "EMISPEC files can only contain one spectrum.");
+                  throw new EPQException("EMISPEC files can only contain one spectrum.");
                final EMISPECFile ef = new EMISPECFile();
                try (FileInputStream st = new FileInputStream(file)) {
                   ef.read(st);
@@ -287,16 +277,14 @@ public class SpectrumFile {
          try (FileInputStream fis = new FileInputStream(file)) {
             if (ASPEXSpectrum.isInstanceOf(fis)) {
                if (idx != 0)
-                  throw new EPQException(
-                        "ASPEX TIFF files can only contain one spectrum.");
+                  throw new EPQException("ASPEX TIFF files can only contain one spectrum.");
                return wrapResult(new ASPEXSpectrum(file), file, idx);
             }
          }
          try (FileInputStream fis = new FileInputStream(file)) {
             if (IXRFSpectrum.isInstanceOf(fis)) {
                if (idx != 0)
-                  throw new EPQException(
-                        "ASPEX TIFF files can only contain one spectrum.");
+                  throw new EPQException("ASPEX TIFF files can only contain one spectrum.");
                try (final FileInputStream st = new FileInputStream(file)) {
                   final IXRFSpectrum is = new IXRFSpectrum(st);
                   is.setFilename(file.getName());
@@ -307,8 +295,7 @@ public class SpectrumFile {
          try (FileInputStream fis = new FileInputStream(file)) {
             if (PMCASpectrum.isInstanceOf(fis)) {
                if (idx != 0)
-                  throw new EPQException(
-                        "PMCA files can only contain one spectrum.");
+                  throw new EPQException("PMCA files can only contain one spectrum.");
                try (final FileInputStream st = new FileInputStream(file)) {
                   final PMCASpectrum is = new PMCASpectrum(st);
                   is.setFilename(file.getName());
@@ -319,8 +306,7 @@ public class SpectrumFile {
          try (FileInputStream fis = new FileInputStream(file)) {
             if (RadiantSPDSpectrum.isInstanceOf(fis)) {
                if (idx != 0)
-                  throw new EPQException(
-                        "Radiant files can only contain one spectrum.");
+                  throw new EPQException("Radiant files can only contain one spectrum.");
                final RadiantSPDSpectrum is;
                try (FileInputStream st = new FileInputStream(file)) {
                   is = new RadiantSPDSpectrum(st);
@@ -332,8 +318,7 @@ public class SpectrumFile {
          try (FileInputStream fis = new FileInputStream(file)) {
             if (EdaxSPCSpectrum.isInstanceOf(fis)) {
                if (idx != 0)
-                  throw new EPQException(
-                        "EDAX files can only contain one spectrum.");
+                  throw new EPQException("EDAX files can only contain one spectrum.");
                try (FileInputStream st = new FileInputStream(file)) {
                   return wrapResult(new EdaxSPCSpectrum(st), file, idx);
                }
@@ -342,8 +327,7 @@ public class SpectrumFile {
          try (FileInputStream fis = new FileInputStream(file)) {
             if (BrukerSPX.isInstanceOf(fis)) {
                if (idx != 0)
-                  throw new EPQException(
-                        "Only single spectrum Bruker files are supported.");
+                  throw new EPQException("Only single spectrum Bruker files are supported.");
                try (final FileInputStream st = new FileInputStream(file)) {
                   return wrapResult(new BrukerSPX(st), file, idx);
                }
@@ -352,8 +336,7 @@ public class SpectrumFile {
          try (FileInputStream fis = new FileInputStream(file)) {
             if (BrukerTXT.isInstanceOf(fis)) {
                if (idx != 0)
-                  throw new EPQException(
-                        "Only single spectrum Bruker text file are supported.");
+                  throw new EPQException("Only single spectrum Bruker text file are supported.");
                try (final FileInputStream st = new FileInputStream(file)) {
                   return wrapResult(new BrukerTXT(st), file, idx);
                }
@@ -363,8 +346,7 @@ public class SpectrumFile {
             final List<ISpectrumData> specs = StandardBundle.readSpectra(file);
             return wrapResult(specs.get(idx), file, idx);
          }
-         throw new EPQException("The file " + file.getName()
-               + " does not seem to be in one of the known file formats.");
+         throw new EPQException("The file " + file.getName() + " does not seem to be in one of the known file formats.");
       } catch (final Exception ex) {
          throw new EPQException(ex);
       }

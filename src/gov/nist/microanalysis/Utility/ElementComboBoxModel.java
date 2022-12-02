@@ -26,13 +26,11 @@ import gov.nist.microanalysis.EPQLibrary.Element;
  * @author Nicholas
  * @version 1.0
  */
-public class ElementComboBoxModel
-   implements ComboBoxModel<Element> {
+public class ElementComboBoxModel implements ComboBoxModel<Element> {
 
    private boolean mUseAbbreviations = false;
 
-   private class AbbrevElement
-      implements Comparable<AbbrevElement> {
+   private class AbbrevElement implements Comparable<AbbrevElement> {
       private final Element mElement;
 
       AbbrevElement(Element elm) {
@@ -61,13 +59,13 @@ public class ElementComboBoxModel
 
    private int getIndexOf(Object obj) {
       Element elm = null;
-      if(obj instanceof Element)
+      if (obj instanceof Element)
          elm = (Element) obj;
-      else if(obj instanceof String)
+      else if (obj instanceof String)
          elm = Element.byName((String) obj);
-      if(elm != null)
-         for(int i = 0; i < getSize(); ++i)
-            if(elm.equals(mContents.get(i).mElement))
+      if (elm != null)
+         for (int i = 0; i < getSize(); ++i)
+            if (elm.equals(mContents.get(i).mElement))
                return i;
       return -1;
    }
@@ -122,7 +120,7 @@ public class ElementComboBoxModel
 
    public void include(Collection<Element> elms) {
       mContents.clear();
-      for(final Element elm : elms)
+      for (final Element elm : elms)
          mContents.add(new AbbrevElement(elm));
    }
 
@@ -144,12 +142,13 @@ public class ElementComboBoxModel
    /**
     * Sets whether the list box should display abbreviations
     * 
-    * @param useAbbreviations boolean
+    * @param useAbbreviations
+    *           boolean
     */
    public void setUseAbbreviations(boolean useAbbreviations) {
-      if(mUseAbbreviations != useAbbreviations) {
+      if (mUseAbbreviations != useAbbreviations) {
          mUseAbbreviations = useAbbreviations;
-         for(final ListDataListener ldl : mListeners)
+         for (final ListDataListener ldl : mListeners)
             ldl.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, mContents.size() - 1));
       }
    }

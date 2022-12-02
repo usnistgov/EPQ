@@ -74,8 +74,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author nicholas
  * @version 1.0
  */
-public class ImportDialog
-   extends JDialog {
+public class ImportDialog extends JDialog {
    private static final long serialVersionUID = 4632393517615160681L;
 
    final private Session mSession;
@@ -104,10 +103,11 @@ public class ImportDialog
 
    private void updateDetector() {
       final Object obj = jComboBox_Instrument.getSelectedItem();
-      if(obj instanceof ElectronProbe) {
+      if (obj instanceof ElectronProbe) {
          final ElectronProbe ep = (ElectronProbe) obj;
-         final DefaultComboBoxModel<DetectorProperties> cbm = new DefaultComboBoxModel<DetectorProperties>(mSession.getDetectors(ep).toArray(new DetectorProperties[0]));
-         if(cbm.getSize() > 0)
+         final DefaultComboBoxModel<DetectorProperties> cbm = new DefaultComboBoxModel<DetectorProperties>(
+               mSession.getDetectors(ep).toArray(new DetectorProperties[0]));
+         if (cbm.getSize() > 0)
             cbm.setSelectedItem(cbm.getElementAt(0));
          jComboBox_Detector.setModel(cbm);
          updateCalibrations();
@@ -116,17 +116,18 @@ public class ImportDialog
 
    private void updateCalibrations() {
       final Object obj = jComboBox_Detector.getSelectedItem();
-      if(obj instanceof DetectorProperties) {
+      if (obj instanceof DetectorProperties) {
          final DetectorProperties dp = (DetectorProperties) obj;
-         final DefaultComboBoxModel<DetectorCalibration> cbm = new DefaultComboBoxModel<DetectorCalibration>(mSession.getCalibrations(dp).toArray(new DetectorCalibration[0]));
-         if(cbm.getSize() > 0)
+         final DefaultComboBoxModel<DetectorCalibration> cbm = new DefaultComboBoxModel<DetectorCalibration>(
+               mSession.getCalibrations(dp).toArray(new DetectorCalibration[0]));
+         if (cbm.getSize() > 0)
             cbm.setSelectedItem(mSession.getMostRecentCalibration(dp));
          jComboBox_Calibration.setModel(cbm);
       }
    }
 
    private void initialize() {
-      if(getContentPane() instanceof JPanel) {
+      if (getContentPane() instanceof JPanel) {
          final JPanel p = (JPanel) getContentPane();
          p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       }
@@ -157,7 +158,7 @@ public class ImportDialog
          public void actionPerformed(ActionEvent e) {
             final PersonEditor pe = new PersonEditor(ImportDialog.this);
             pe.setLocationRelativeTo(ImportDialog.this);
-            if(pe.execute()) {
+            if (pe.execute()) {
                mSession.addPerson(pe.getName(), pe.getDetails());
                final ComboBoxModel<String> cbm = new DefaultComboBoxModel<String>(mSession.getPeople().keySet().toArray(new String[0]));
                cbm.setSelectedItem(pe.getName());
@@ -171,7 +172,7 @@ public class ImportDialog
          public void actionPerformed(ActionEvent e) {
             final ProjectEditor ge = new ProjectEditor(ImportDialog.this, mSession);
             ge.setLocationRelativeTo(ImportDialog.this);
-            if(ge.execute()) {
+            if (ge.execute()) {
                mSession.addProject(ge.getName(), ge.getClient(), ge.getDetails());
                {
                   final ComboBoxModel<String> cbm = new DefaultComboBoxModel<String>(mSession.getProjects().keySet().toArray(new String[0]));
@@ -201,7 +202,7 @@ public class ImportDialog
          public void actionPerformed(ActionEvent e) {
             jSpecDisplay_Preview.clearAllSpectra();
             final DefaultListModel<ISpectrumData> dlm = (DefaultListModel<ISpectrumData>) jList_Spectra.getModel();
-            for(final Object obj : jList_Spectra.getSelectedValuesList())
+            for (final Object obj : jList_Spectra.getSelectedValuesList())
                dlm.removeElement(obj);
          }
       });
@@ -213,20 +214,20 @@ public class ImportDialog
             final String key = "FilePath";
             final String defPath = userPref.get(key, null);
             final SpectrumFileChooser sfc = new SpectrumFileChooser(ImportDialog.this, "Select spectra to import");
-            if(defPath != null)
+            if (defPath != null)
                sfc.getFileChooser().setCurrentDirectory(new File(defPath));
             sfc.setLocationRelativeTo(ImportDialog.this);
             sfc.setModal(true);
             sfc.setVisible(true);
             userPref.put(key, sfc.getFileChooser().getCurrentDirectory().getAbsolutePath());
             final ISpectrumData[] specs = sfc.getSpectra();
-            if(specs.length > 0) {
+            if (specs.length > 0) {
                final DefaultListModel<ISpectrumData> dlm = (DefaultListModel<ISpectrumData>) jList_Spectra.getModel();
-               for(final ISpectrumData spec : specs)
+               for (final ISpectrumData spec : specs)
                   dlm.addElement(spec);
                final int[] indices = new int[specs.length];
                int i = 0;
-               for(final ISpectrumData spec : specs) {
+               for (final ISpectrumData spec : specs) {
                   indices[i] = dlm.indexOf(spec);
                   ++i;
                }
@@ -240,13 +241,13 @@ public class ImportDialog
          @Override
          public void actionPerformed(ActionEvent e) {
             final List<ISpectrumData> sv = jList_Spectra.getSelectedValuesList();
-            if(sv.size() > 0) {
+            if (sv.size() > 0) {
                SpectrumProperties merged = null;
-               for(final Object obj : sv)
+               for (final Object obj : sv)
                   merged = SpectrumProperties.merge(merged, ((ISpectrumData) obj).getProperties());
                Composition comp = merged.getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
                comp = MaterialsCreator.editMaterial(ImportDialog.this, comp, mSession, false);
-               for(final Object obj : sv)
+               for (final Object obj : sv)
                   ((ISpectrumData) obj).getProperties().setCompositionProperty(SpectrumProperties.StandardComposition, comp);
                jTextField_Composition.setText(comp != null ? comp.toString() : "-");
             }
@@ -261,13 +262,13 @@ public class ImportDialog
 
          @Override
          public void mousePressed(MouseEvent e) {
-            if(e.isPopupTrigger())
+            if (e.isPopupTrigger())
                mSpecDisplay_Menu.show(jSpecDisplay_Preview, e.getX(), e.getY());
          }
 
          @Override
          public void mouseReleased(MouseEvent e) {
-            if(e.isPopupTrigger())
+            if (e.isPopupTrigger())
                mSpecDisplay_Menu.show(jSpecDisplay_Preview, e.getX(), e.getY());
          }
       });
@@ -279,9 +280,9 @@ public class ImportDialog
             final ListModel<ISpectrumData> lm = jList_Spectra.getModel();
             jSpecDisplay_Preview.clearAllSpectra();
             final int[] sel = jList_Spectra.getSelectedIndices();
-            if(sel.length > 0) { // Display merged
+            if (sel.length > 0) { // Display merged
                SpectrumProperties merged = null;
-               for(final int i : sel) {
+               for (final int i : sel) {
                   jSpecDisplay_Preview.addSpectrum(lm.getElementAt(i));
                   merged = SpectrumProperties.merge(merged, lm.getElementAt(i).getProperties());
                }
@@ -309,11 +310,11 @@ public class ImportDialog
          @Override
          public void actionPerformed(ActionEvent e) {
             final List<ISpectrumData> sels = jList_Spectra.getSelectedValuesList();
-            if(sels.size() > 0) {
+            if (sels.size() > 0) {
                final SpectrumPropertyPanel.PropertyDialog spp = new SpectrumPropertyPanel.PropertyDialog(ImportDialog.this, mSession);
                SpectrumProperties sp = null;
-               for(final Object obj : sels)
-                  if(obj instanceof ISpectrumData)
+               for (final Object obj : sels)
+                  if (obj instanceof ISpectrumData)
                      sp = SpectrumProperties.merge(sp, ((ISpectrumData) obj).getProperties());
                sp.addAll(ImportDialog.this.getDetector().getProperties());
                spp.addSpectrumProperties(sp);
@@ -321,8 +322,8 @@ public class ImportDialog
                spp.disableDetectorProperties();
                spp.setVisible(true);
                final SpectrumProperties newProps = SpectrumProperties.difference(spp.getSpectrumProperties(), sp);
-               for(final Object obj : sels)
-                  if(obj instanceof ISpectrumData)
+               for (final Object obj : sels)
+                  if (obj instanceof ISpectrumData)
                      ((ISpectrumData) obj).getProperties().addAll(newProps);
             }
             jList_Spectra.repaint();
@@ -338,24 +339,24 @@ public class ImportDialog
       final Set<ElectronProbe> eps = mSession.getElectronProbes().keySet();
       {
          final ComboBoxModel<ElectronProbe> cbm = new DefaultComboBoxModel<ElectronProbe>(eps.toArray(new ElectronProbe[0]));
-         if(cbm.getSize() > 0)
+         if (cbm.getSize() > 0)
             cbm.setSelectedItem(cbm.getElementAt(0));
          jComboBox_Instrument.setModel(cbm);
       }
       {
-         if(jComboBox_Instrument.getSelectedIndex() >= 0)
+         if (jComboBox_Instrument.getSelectedIndex() >= 0)
             updateDetector();
       }
       {
          final ComboBoxModel<String> cbm = new DefaultComboBoxModel<String>(mSession.getProjects().keySet().toArray(new String[0]));
-         if(cbm.getSize() > 0)
+         if (cbm.getSize() > 0)
             cbm.setSelectedItem(cbm.getElementAt(0));
          jComboBox_Project.setModel(cbm);
 
       }
       {
          final ComboBoxModel<String> cbm = new DefaultComboBoxModel<String>(mSession.getPeople().keySet().toArray(new String[0]));
-         if(cbm.getSize() > 0)
+         if (cbm.getSize() > 0)
             cbm.setSelectedItem(cbm.getElementAt(0));
          jComboBox_Operator.setModel(cbm);
 
@@ -363,7 +364,8 @@ public class ImportDialog
       // Lay them out
       final JPanel content = new JPanel();
       content.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
-      content.setLayout(new FormLayout("right:pref, 3dlu, 200dlu, 3dlu, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, 100dlu, 5dlu, pref, 5dlu, fill:100dlu, 5dlu, pref, 5dlu, pref"));
+      content.setLayout(new FormLayout("right:pref, 3dlu, 200dlu, 3dlu, pref",
+            "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, 100dlu, 5dlu, pref, 5dlu, fill:100dlu, 5dlu, pref, 5dlu, pref"));
       final CellConstraints cc = new CellConstraints();
       content.add(new Label("Instrument"), cc.xy(1, 1));
       content.add(jComboBox_Instrument, cc.xy(3, 1));
@@ -422,8 +424,7 @@ public class ImportDialog
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -438,8 +439,7 @@ public class ImportDialog
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -454,8 +454,7 @@ public class ImportDialog
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -471,8 +470,7 @@ public class ImportDialog
       mSession = ses;
       try {
          initialize();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -488,7 +486,7 @@ public class ImportDialog
       final Object detObj = jComboBox_Detector.getSelectedItem();
       final Object calObj = jComboBox_Calibration.getSelectedItem();
       EDSDetector res = null;
-      if((detObj instanceof DetectorProperties) && (calObj instanceof EDSCalibration))
+      if ((detObj instanceof DetectorProperties) && (calObj instanceof EDSCalibration))
          res = EDSDetector.createDetector((DetectorProperties) detObj, (EDSCalibration) calObj);
       return res;
    }
@@ -497,17 +495,17 @@ public class ImportDialog
       final ListModel<ISpectrumData> lm = jList_Spectra.getModel();
       final StringBuffer sb = new StringBuffer();
       final EDSDetector detector = getDetector();
-      if(detector != null) {
+      if (detector != null) {
          final String operator = jComboBox_Operator.getSelectedItem().toString();
          final String project = jComboBox_Project.getSelectedItem().toString();
 
-         if(lm.getSize() > 0) {
+         if (lm.getSize() > 0) {
             final ProgressMonitor pm = new ProgressMonitor(this, "Wait while spectra are added to the database", "Initializing", 0, lm.getSize());
             try {
                mImported = new HTMLList();
                mImported.setHeader("Importing spectra into database</i>");
                int errs = 0;
-               for(int i = 0; i < lm.getSize(); ++i) {
+               for (int i = 0; i < lm.getSize(); ++i) {
                   final ISpectrumData spec = SpectrumUtils.applyEDSDetector(detector, lm.getElementAt(i));
                   final String name = spec.getProperties().getTextWithDefault(SpectrumProperties.SourceFile, spec.toString());
                   pm.setNote("Importing " + name);
@@ -518,12 +516,11 @@ public class ImportDialog
                      props.setObjectProperty(SpectrumProperties.ProjectName, project);
                      mSession.addSpectrum(spec, false);
                      final Composition stdComp = spec.getProperties().getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
-                     if(stdComp == null)
+                     if (stdComp == null)
                         mImported.add(name + " imported.");
                      else
                         mImported.add(name + " imported as " + stdComp.toString() + ".");
-                  }
-                  catch(final Exception e) {
+                  } catch (final Exception e) {
                      ++errs;
                      mImported.addError(name + " was not imported into " + mSession.toString());
                      sb.append("Error importing: <i>");
@@ -532,10 +529,10 @@ public class ImportDialog
                      sb.append(e.getMessage());
                      sb.append("\n");
                   }
-                  if(pm.isCanceled())
+                  if (pm.isCanceled())
                      break;
                }
-               if(errs > 0) {
+               if (errs > 0) {
                   final StringBuffer msg = new StringBuffer();
                   msg.append(lm.getSize() - errs);
                   msg.append(" spectra imported.\n");
@@ -543,13 +540,13 @@ public class ImportDialog
                   msg.append(" errors occurred importing the spectra into the database.");
                   ErrorDialog.createErrorMessage(ImportDialog.this, "Importing spectra into the database", msg.toString(), sb.toString());
                }
-            }
-            finally {
+            } finally {
                pm.close();
             }
          }
       } else
-         JOptionPane.showMessageDialog(ImportDialog.this, "Please select an EDS detector and calibration", "Import spectra into the database", JOptionPane.ERROR_MESSAGE);
+         JOptionPane.showMessageDialog(ImportDialog.this, "Please select an EDS detector and calibration", "Import spectra into the database",
+               JOptionPane.ERROR_MESSAGE);
    }
 
    public String getReport() {
@@ -570,13 +567,11 @@ public class ImportDialog
          // Set up special look-and-feels
          final String laf = UIManager.getSystemLookAndFeelClassName();
          UIManager.setLookAndFeel(laf);
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          try {
             e.printStackTrace();
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-         }
-         catch(final Exception e1) {
+         } catch (final Exception e1) {
             e1.printStackTrace();
          }
       }

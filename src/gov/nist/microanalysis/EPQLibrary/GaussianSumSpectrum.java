@@ -21,8 +21,7 @@ import java.util.Arrays;
  * @author nritchie
  * @version 1.0
  */
-public class GaussianSumSpectrum
-   extends EditableSpectrum {
+public class GaussianSumSpectrum extends EditableSpectrum {
 
    private DetectorLineshapeModel mModel;
 
@@ -42,7 +41,7 @@ public class GaussianSumSpectrum
       final double min = center - mModel.leftWidth(center, 0.0001), max = center + mModel.rightWidth(center, 0.0001);
       final int minCh = SpectrumUtils.bound(this, SpectrumUtils.channelForEnergy(this, min));
       final int maxCh = SpectrumUtils.bound(this, SpectrumUtils.channelForEnergy(this, max));
-      for(int i = minCh; i < maxCh; ++i) {
+      for (int i = minCh; i < maxCh; ++i) {
          final double eV = SpectrumUtils.minEnergyForChannel(this, i);
          setCounts(i, getCounts(i) + (scale * mModel.compute(eV, center)));
       }

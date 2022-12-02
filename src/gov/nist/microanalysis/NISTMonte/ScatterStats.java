@@ -30,8 +30,7 @@ import java.text.NumberFormat;
  * @version 1.0
  */
 
-public class ScatterStats
-   implements ActionListener {
+public class ScatterStats implements ActionListener {
    // Configuration data
    private final AtomicShell mShell;
    private final double mMinE;
@@ -47,7 +46,8 @@ public class ScatterStats
     * MCSS_ScatterStats - Computes the number of steps required for an electron
     * to drop below the energy required to ionize the specified shell.
     * 
-    * @param shell AtomicShell
+    * @param shell
+    *           AtomicShell
     */
    public ScatterStats(AtomicShell shell) {
       mShell = shell;
@@ -64,40 +64,41 @@ public class ScatterStats
    /**
     * actionPerformed - Collect the necessary statistics
     * 
-    * @param e ActionEvent
+    * @param e
+    *           ActionEvent
     */
    @Override
    public void actionPerformed(ActionEvent e) {
       assert (e.getSource() instanceof MonteCarloSS);
       final MonteCarloSS mcss = (MonteCarloSS) e.getSource();
-      switch(e.getID()) {
-         case MonteCarloSS.FirstTrajectoryEvent: {
+      switch (e.getID()) {
+         case MonteCarloSS.FirstTrajectoryEvent : {
             mStepCount = new DescriptiveStatistics();
             mTrajectoryLength = new DescriptiveStatistics();
             break;
          }
-         case MonteCarloSS.TrajectoryStartEvent:
+         case MonteCarloSS.TrajectoryStartEvent :
             // Start a new trajectory
             mAlive = true;
             mPathLength = 0.0;
             break;
-         case MonteCarloSS.TrajectoryEndEvent:
-            if(mAlive) {
+         case MonteCarloSS.TrajectoryEndEvent :
+            if (mAlive) {
                final Electron ee = mcss.getElectron();
                mStepCount.add(ee.getStepCount() - 1);
                mTrajectoryLength.add(mPathLength);
                mAlive = false;
             }
             break;
-         case MonteCarloSS.BackscatterEvent:
+         case MonteCarloSS.BackscatterEvent :
             mAlive = false;
             ++mBackscatterCount;
             break;
-         case MonteCarloSS.ScatterEvent: {
-            if(mAlive) {
+         case MonteCarloSS.ScatterEvent : {
+            if (mAlive) {
                final Electron ee = mcss.getElectron();
                mPathLength += Math2.distance(ee.getPrevPosition(), ee.getPosition());
-               if((ee.getEnergy() < mMinE) || (e.getID() == MonteCarloSS.TrajectoryEndEvent)) {
+               if ((ee.getEnergy() < mMinE) || (e.getID() == MonteCarloSS.TrajectoryEndEvent)) {
                   mStepCount.add(ee.getStepCount() - 1);
                   mTrajectoryLength.add(mPathLength);
                   mAlive = false;
@@ -174,7 +175,8 @@ public class ScatterStats
    /**
     * header - Output a header line for the results statistics.
     * 
-    * @param ps PrintStream
+    * @param ps
+    *           PrintStream
     */
    static public void header(PrintStream ps) {
       header(new PrintWriter(ps));
@@ -188,7 +190,8 @@ public class ScatterStats
    /**
     * dump - Output the resulting statistics to the OutputStream
     * 
-    * @param os OutputStream
+    * @param os
+    *           OutputStream
     */
    public void dump(OutputStream os) {
       dump(new PrintStream(os));
@@ -197,7 +200,8 @@ public class ScatterStats
    /**
     * dump - Output the resulting statistics to the PrintStream
     * 
-    * @param ps PrintStream
+    * @param ps
+    *           PrintStream
     */
    public void dump(PrintStream ps) {
       dump(new PrintWriter(ps));
@@ -206,7 +210,8 @@ public class ScatterStats
    /**
     * dump - Output the resulting statistics to the PrintWriter
     * 
-    * @param pw PrintWriter
+    * @param pw
+    *           PrintWriter
     */
    public void dump(final PrintWriter pw) {
       final NumberFormat nf = NumberFormat.getInstance();

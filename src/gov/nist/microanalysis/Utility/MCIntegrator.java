@@ -54,16 +54,16 @@ abstract public class MCIntegrator {
 
    public double[] compute(int nTests) {
       double volume = mPoint2[0] - mPoint1[0];
-      for(int i = 1; i < mPoint1.length; i++)
+      for (int i = 1; i < mPoint1.length; i++)
          volume *= mPoint2[i] - mPoint1[i];
 
       double[] inner = null;
       final double[] tempPoint = new double[mPoint1.length];
-      for(int i = 0; i < nTests; i++) {
-         for(int index = 0; index < mPoint1.length; index++)
+      for (int i = 0; i < nTests; i++) {
+         for (int index = 0; index < mPoint1.length; index++)
             tempPoint[index] = mPoint1[index] + (mRand.nextDouble() * (mPoint2[index] - mPoint1[index]));
 
-         if(inside(tempPoint)) {
+         if (inside(tempPoint)) {
             final double[] f = function(tempPoint);
             inner = (inner == null ? f : Math2.plusEquals(inner, f));
          }

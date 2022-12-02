@@ -27,17 +27,18 @@ import gov.nist.microanalysis.Utility.Transform3D;
  * @version 1.0
  */
 
-public class Sphere
-   implements MonteCarloSS.Shape, ITransform, TrajectoryVRML.IRender {
+public class Sphere implements MonteCarloSS.Shape, ITransform, TrajectoryVRML.IRender {
    private final double mRadius; // meters
    private double[] mCenter; // = new double[3]; x,y & z in meters
 
    /**
     * Sphere - Constructs a Sphere object with the specified center and radius.
     * 
-    * @param center double[] - The x,y &amp; z coordinates of the center of the
+    * @param center
+    *           double[] - The x,y &amp; z coordinates of the center of the
     *           sphere (meters)
-    * @param radius double - The radius of the sphere in meters.
+    * @param radius
+    *           double - The radius of the sphere in meters.
     */
    public Sphere(double[] center, double radius) {
       mCenter = center.clone();
@@ -75,17 +76,17 @@ public class Sphere
       final double b = 2.0 * Math2.dot(m, d);
       final double c2 = 2.0 * (Math2.dot(m, m) - (mRadius * mRadius));
       final double f = (b * b) + (ma2 * c2);
-      if(f >= 0) {
+      if (f >= 0) {
          double up = (b + Math.sqrt(f)) / ma2;
          double un = (b - Math.sqrt(f)) / ma2;
-         if(up < 0.0)
+         if (up < 0.0)
             up = Double.MAX_VALUE;
-         if(un < 0.0)
+         if (un < 0.0)
             un = Double.MAX_VALUE;
          final double res = Math.min(up, un);
          assert (res == Double.MAX_VALUE)
-               || ((Math2.magnitude(Math2.plus(m, Math2.multiply(res, d))) - mRadius) < Math.max(1.0e-12, Math2.distance(pos0, pos1) * 1.0e-9)) : Double.toString(Math2.magnitude(Math2.plus(m, Math2.multiply(res, d)))
-               - mRadius);
+               || ((Math2.magnitude(Math2.plus(m, Math2.multiply(res, d))) - mRadius) < Math.max(1.0e-12, Math2.distance(pos0, pos1) * 1.0e-9))
+               : Double.toString(Math2.magnitude(Math2.plus(m, Math2.multiply(res, d))) - mRadius);
          return res;
       }
       return Double.MAX_VALUE;
@@ -109,9 +110,12 @@ public class Sphere
     * getPointAt - Returns the coordinates of the boundary point at the
     * specified zenith (phi) and azimuthal (theta) angles.
     * 
-    * @param phi double
-    * @param theta double
-    * @param frac double fraction of the total radius
+    * @param phi
+    *           double
+    * @param theta
+    *           double
+    * @param frac
+    *           double fraction of the total radius
     * @return double[] - A spatial 3 vector
     */
    public double[] getPointAt(double phi, double theta, double frac) {
@@ -137,8 +141,7 @@ public class Sphere
    }
 
    @Override
-   public void render(TrajectoryVRML.RenderContext vra, Writer wr)
-         throws IOException {
+   public void render(TrajectoryVRML.RenderContext vra, Writer wr) throws IOException {
       final NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
       nf.setMaximumFractionDigits(2);
       nf.setGroupingUsed(false);
@@ -147,8 +150,8 @@ public class Sphere
       final String colorStr = nf.format(color.getRed() / 255.0) + " " + nf.format(color.getGreen() / 255.0) + " "
             + nf.format(color.getBlue() / 255.0);
       wr.append("Transform {\n");
-      wr.append(" translation " + nf.format(mCenter[0] / TrajectoryVRML.SCALE) + " "
-            + nf.format(mCenter[1] / TrajectoryVRML.SCALE) + " " + nf.format(mCenter[2] / TrajectoryVRML.SCALE) + "\n");
+      wr.append(" translation " + nf.format(mCenter[0] / TrajectoryVRML.SCALE) + " " + nf.format(mCenter[1] / TrajectoryVRML.SCALE) + " "
+            + nf.format(mCenter[2] / TrajectoryVRML.SCALE) + "\n");
       wr.append(" children [\n");
       wr.append("  Shape {\n");
       wr.append("   geometry Sphere { radius " + nf.format(mRadius / TrajectoryVRML.SCALE) + "}\n");

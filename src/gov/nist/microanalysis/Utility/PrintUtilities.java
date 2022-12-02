@@ -20,8 +20,7 @@ import java.awt.print.PrinterJob;
 
 import javax.swing.RepaintManager;
 
-public class PrintUtilities
-   implements Printable {
+public class PrintUtilities implements Printable {
 
    private static final int DEFAULT_BORDER = 36;
    private final Component mComponentToBePrinted;
@@ -42,11 +41,10 @@ public class PrintUtilities
    public void print() {
       final PrinterJob printJob = PrinterJob.getPrinterJob();
       printJob.setPrintable(this);
-      if(printJob.printDialog())
+      if (printJob.printDialog())
          try {
             printJob.print();
-         }
-         catch(final PrinterException pe) {
+         } catch (final PrinterException pe) {
             System.out.println("Error printing: " + pe);
          }
    }
@@ -73,11 +71,11 @@ public class PrintUtilities
       pf.setPaper(p);
       final double pageHeight = pf.getImageableHeight();
       final double pageWidth = pf.getImageableWidth();
-      if((pageHeight > 72.0) && (pageWidth > 72.0)) {
+      if ((pageHeight > 72.0) && (pageWidth > 72.0)) {
          final double hScale = pageWidth / componentWidth;
          final int totalNumPages = (int) Math.ceil((hScale * componentHeight) / pageHeight);
          // make sure not print empty pages
-         if(pageIndex < totalNumPages) {
+         if (pageIndex < totalNumPages) {
             // shift Graphic to line up with beginning of print-imageable region
             g2.translate(mLeft, mTop - (pageIndex * pageHeight));
             // scale the page so the width fits...

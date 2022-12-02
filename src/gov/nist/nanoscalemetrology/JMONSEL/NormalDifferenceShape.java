@@ -20,8 +20,7 @@ import gov.nist.microanalysis.EPQLibrary.ITransform;
  * @author John Villarrubia
  * @version 1.0
  */
-public class NormalDifferenceShape
-   implements NormalShape, ITransform {
+public class NormalDifferenceShape implements NormalShape, ITransform {
 
    private final NormalShape shapeA;
 
@@ -32,10 +31,12 @@ public class NormalDifferenceShape
    /**
     * Constructs a NormalDifferenceShape, shapeA - shapeB.
     *
-    * @param shapeA - the base NormalShape. All points inside the difference are
+    * @param shapeA
+    *           - the base NormalShape. All points inside the difference are
     *           inside shapeA.
-    * @param shapeB - the NormalShape to subtract from shapeA. All points inside
-    *           the difference are outside of shapeB.
+    * @param shapeB
+    *           - the NormalShape to subtract from shapeA. All points inside the
+    *           difference are outside of shapeB.
     */
    public NormalDifferenceShape(NormalShape shapeA, NormalShape shapeB) {
       this.shapeA = shapeA;
@@ -44,6 +45,7 @@ public class NormalDifferenceShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see gov.nist.nanoscalemetrology.JMONSEL.NormalShape#contains(double[],
     * double[])
     */
@@ -54,6 +56,7 @@ public class NormalDifferenceShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.NormalShape#getFirstNormal(double[],
     * double[])
@@ -72,6 +75,7 @@ public class NormalDifferenceShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape#contains(double[])
     */
@@ -82,6 +86,7 @@ public class NormalDifferenceShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape#getFirstIntersection
     * (double[], double[])
@@ -95,14 +100,15 @@ public class NormalDifferenceShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see gov.nist.microanalysis.EPQLibrary.ITransform#rotate(double[], double,
     * double, double)
     */
    @Override
    public void rotate(double[] pivot, double phi, double theta, double psi) {
-      if(!(shapeA instanceof ITransform))
+      if (!(shapeA instanceof ITransform))
          throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
-      if(!(shapeB instanceof ITransform))
+      if (!(shapeB instanceof ITransform))
          throw new EPQFatalException(shapeB.toString() + " does not support transformation.");
       ((ITransform) shapeA).rotate(pivot, phi, theta, psi);
       ((ITransform) shapeB).rotate(pivot, phi, theta, psi);
@@ -110,13 +116,14 @@ public class NormalDifferenceShape
 
    /*
     * (non-Javadoc)
+    * 
     * @see gov.nist.microanalysis.EPQLibrary.ITransform#translate(double[])
     */
    @Override
    public void translate(double[] distance) {
-      if(!(shapeA instanceof ITransform))
+      if (!(shapeA instanceof ITransform))
          throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
-      if(!(shapeB instanceof ITransform))
+      if (!(shapeB instanceof ITransform))
          throw new EPQFatalException(shapeB.toString() + " does not support transformation.");
       ((ITransform) shapeA).translate(distance);
       ((ITransform) shapeB).translate(distance);

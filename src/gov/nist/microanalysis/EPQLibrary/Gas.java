@@ -23,8 +23,7 @@ import gov.nist.microanalysis.Utility.HalfUpFormat;
  * @author Nicholas
  * @version 1.0
  */
-public class Gas
-   extends Material {
+public class Gas extends Material {
 
    static private final long serialVersionUID = 0x43;
 
@@ -50,7 +49,7 @@ public class Gas
     */
    public double getMassPerSubunit() {
       double res = 0.0;
-      for(final Element elm : getElementSet())
+      for (final Element elm : getElementSet())
          res += atomicPercent(elm) * elm.getMass();
       return res;
    }
@@ -64,15 +63,20 @@ public class Gas
    /**
     * Constructs a single molecular gas such as N2, O2, Ar, CO2 etc.
     * 
-    * @param elms The elemental constituents
-    * @param stoic The molecular stoiciometry
-    * @param pressure in pascal
-    * @param temperature in kelvin
-    * @param name a human-friendly name
+    * @param elms
+    *           The elemental constituents
+    * @param stoic
+    *           The molecular stoiciometry
+    * @param pressure
+    *           in pascal
+    * @param temperature
+    *           in kelvin
+    * @param name
+    *           a human-friendly name
     */
    public Gas(Element[] elms, int[] stoic, double pressure, double temperature, String name) {
       super(0.0);
-      for(int i = 0; i < elms.length; ++i)
+      for (int i = 0; i < elms.length; ++i)
          addElementByStoiciometry(elms[i], stoic[i]);
       mTemperature = temperature;
       mPressure = pressure;
@@ -85,13 +89,16 @@ public class Gas
    /**
     * Constructs a single molecular gas such as N2, O2, Ar, CO2 etc.
     * 
-    * @param comp The molecular stoiciometry
-    * @param pressure in pascal
-    * @param temperature in kelvin
+    * @param comp
+    *           The molecular stoiciometry
+    * @param pressure
+    *           in pascal
+    * @param temperature
+    *           in kelvin
     */
    public Gas(Composition comp, double pressure, double temperature) {
       super(0.0);
-      for(Element elm : comp.getElementSet())
+      for (Element elm : comp.getElementSet())
          addElement(elm, comp.weightFraction(elm, false));
       mTemperature = temperature;
       mPressure = pressure;
@@ -106,10 +113,11 @@ public class Gas
     * setTemperature - Modifies the temperature of the gas and updates the
     * pressure assuming constant volume.
     * 
-    * @param newTemp In kelvin
+    * @param newTemp
+    *           In kelvin
     */
    public void setTemperature(double newTemp) {
-      if(newTemp != mTemperature) {
+      if (newTemp != mTemperature) {
          mPressure *= (newTemp / mTemperature);
          mTemperature = newTemp;
       }
@@ -146,14 +154,12 @@ public class Gas
       return res;
    }
 
-   private void writeObject(java.io.ObjectOutputStream out)
-         throws IOException {
+   private void writeObject(java.io.ObjectOutputStream out) throws IOException {
       out.writeDouble(mPressure);
       out.writeDouble(mTemperature);
    }
 
-   private void readObject(java.io.ObjectInputStream in)
-         throws IOException, ClassNotFoundException {
+   private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
       mPressure = in.readDouble();
       mTemperature = in.readDouble();
    }

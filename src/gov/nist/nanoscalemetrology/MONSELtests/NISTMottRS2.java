@@ -40,19 +40,13 @@ import gov.nist.nanoscalemetrology.JMONSELutils.ULagrangeInterpolation;
  */
 
 @Deprecated
-public class NISTMottRS2
-   extends
-   RandomizedScatter {
+public class NISTMottRS2 extends RandomizedScatter {
 
-   static private final LitReference.WebSite mReference = new LitReference.WebSite("http://www.nist.gov/srd/nist64.htm", "NIST Electron Elastic-Scattering Cross-Section Database version 3.1", LitReference.createDate(2007, Calendar.AUGUST, 24), new LitReference.Author[] {
-      LitReference.CPowell,
-      LitReference.FSalvat,
-      LitReference.AJablonski
-   });
+   static private final LitReference.WebSite mReference = new LitReference.WebSite("http://www.nist.gov/srd/nist64.htm",
+         "NIST Electron Elastic-Scattering Cross-Section Database version 3.1", LitReference.createDate(2007, Calendar.AUGUST, 24),
+         new LitReference.Author[]{LitReference.CPowell, LitReference.FSalvat, LitReference.AJablonski});
 
-   public static class NISTMottRS2Factory
-      extends
-      RandomizedScatterFactory {
+   public static class NISTMottRS2Factory extends RandomizedScatterFactory {
       public NISTMottRS2Factory() {
          super("NIST Mott Inelastic Cross-Section", mReference);
       }
@@ -66,7 +60,7 @@ public class NISTMottRS2
       public RandomizedScatter get(Element elm) {
          final int z = elm.getAtomicNumber();
          RandomizedScatter res = mScatter[z];
-         if(res == null) {
+         if (res == null) {
             mScatter[z] = new NISTMottRS2(elm);
             res = mScatter[z];
          }
@@ -127,14 +121,16 @@ public class NISTMottRS2
     * order for all interpolations.
     * </p>
     *
-    * @param elm Element
+    * @param elm
+    *           Element
     */
    public NISTMottRS2(Element elm) {
       super("NIST Elastic cross-section", mReference);
       assert (elm != null);
       mElement = elm;
       try {
-         final String name = elm.getAtomicNumber() < 10 ? "NistXSec/E0" + Integer.toString(elm.getAtomicNumber()) + ".D64"
+         final String name = elm.getAtomicNumber() < 10
+               ? "NistXSec/E0" + Integer.toString(elm.getAtomicNumber()) + ".D64"
                : "NistXSec/E" + Integer.toString(elm.getAtomicNumber()) + ".D64";
          final InputStream is = gov.nist.microanalysis.EPQLibrary.NISTMottScatteringAngle.class.getResourceAsStream(name);
          final InputStreamReader isr = new InputStreamReader(is, "US-ASCII");
@@ -142,9 +138,9 @@ public class NISTMottRS2
          // To ensure that numbers are parsed correctly regardless of locale
          final NumberFormat nf = NumberFormat.getInstance(Locale.US);
          br.readLine();
-         for(int j = 0; j < SPWEM_LEN; ++j) {
+         for (int j = 0; j < SPWEM_LEN; ++j) {
             mSpwem[j] = nf.parse(br.readLine().trim()).doubleValue();
-            for(int i = 0; i < X1_LEN; ++i)
+            for (int i = 0; i < X1_LEN; ++i)
                mX1[j][i] = nf.parse(br.readLine().trim()).doubleValue();
          }
          /*
@@ -153,8 +149,7 @@ public class NISTMottRS2
           * is a 2-d table of q vs Log(E) and random #. j indexes log(E). i
           * indexes r. q is related to cos(theta) by 1-2*q*q=cos(theta).
           */
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          throw new EPQFatalException("Unable to construct NISTMottRS: " + ex.toString());
       }
    }
@@ -179,7 +174,8 @@ public class NISTMottRS2
     * totalCrossSection - Computes the total cross section for an electron of
     * the specified energy.
     *
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - in square meters
     */
    @Override
@@ -193,12 +189,12 @@ public class NISTMottRS2
        * accurate. The choice made by this class is to make the scattering go to
        * zero at low energy. This is similar to the choice of Kieft & Bosch.
        */
-      if(energy < MIN_NISTMOTT)
+      if (energy < MIN_NISTMOTT)
          return (this.totalCrossSection(MIN_NISTMOTT) * energy) / MIN_NISTMOTT;
-      else if(energy < MAX_NISTMOTT)
+      else if (energy < MAX_NISTMOTT)
          return scale * ULagrangeInterpolation.d1(mSpwem, DL50, PARAM, sigmaINTERPOLATIONORDER, Math.log(energy))[0];
       else {
-         if(mRutherford == null)
+         if (mRutherford == null)
             mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
          return mRutherford.totalCrossSection(energy);
       }
@@ -210,30 +206,23 @@ public class NISTMottRS2
     * electron of specified energy on an atom of the element represented by the
     * instance of this class.
     *
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - an angle in radians
     */
    @Override
    final public double randomScatteringAngle(double energy) {
-      if(energy < MIN_NISTMOTT) {
-         if(mBrowning == null)
+      if (energy < MIN_NISTMOTT) {
+         if (mBrowning == null)
             mBrowning = new BrowningEmpiricalCrossSection(mElement);
          return mBrowning.randomScatteringAngle(energy);
-      } else if(energy < MAX_NISTMOTT) {
-         final double q = ULagrangeInterpolation.d2(mX1, new double[] {
-            DL50,
-            0.
-         }, new double[] {
-            PARAM,
-            0.005
-         }, qINTERPOLATIONORDER, new double[] {
-            Math.log(energy),
-            Math2.rgen.nextDouble()
-         })[0];
+      } else if (energy < MAX_NISTMOTT) {
+         final double q = ULagrangeInterpolation.d2(mX1, new double[]{DL50, 0.}, new double[]{PARAM, 0.005}, qINTERPOLATIONORDER,
+               new double[]{Math.log(energy), Math2.rgen.nextDouble()})[0];
          final double com = 1.0 - (2.0 * q * q);
          return com > -1.0 ? (com < 1.0 ? Math.acos(com) : 0.0) : Math.PI;
       } else {
-         if(mRutherford == null)
+         if (mRutherford == null)
             mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
          return mRutherford.randomScatteringAngle(energy);
       }

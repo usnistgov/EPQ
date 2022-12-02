@@ -32,9 +32,7 @@ import Jama.Matrix;
 /**
  * @author nicholas
  */
-public class MeasuredCalibration
-   extends
-   EDSCalibration {
+public class MeasuredCalibration extends EDSCalibration {
 
    /**
     * Mass thickness of any absorbers between sample and detector active area
@@ -65,11 +63,7 @@ public class MeasuredCalibration
    transient private double[] mEfficiency = null;
 
    private Material createSilicon() {
-      return new Material(new Composition(new Element[] {
-         Element.Si
-      }, new double[] {
-         1.0
-      }, "Silicon"), ToSI.gPerCC(2.329));
+      return new Material(new Composition(new Element[]{Element.Si}, new double[]{1.0}, "Silicon"), ToSI.gPerCC(2.329));
    }
 
    final transient MassAbsorptionCoefficient mMAC = MassAbsorptionCoefficient.Default;
@@ -101,8 +95,7 @@ public class MeasuredCalibration
     * @return boolean
     * @throws EPQException
     */
-   public boolean calibrate(Map<XRayTransition, Double> efficiency)
-         throws EPQException {
+   public boolean calibrate(Map<XRayTransition, Double> efficiency) throws EPQException {
       // Number of data points to fit
       final int dataLen = efficiency.size();
       final double[] energies = new double[dataLen];
@@ -111,11 +104,11 @@ public class MeasuredCalibration
       final Composition[] comps = mMassThickness.keySet().toArray(new Composition[0]);
       final int paramLen = comps.length + 1;
       assert paramLen <= dataLen : "You must have more data items than fit parameters.";
-      if(paramLen > dataLen)
+      if (paramLen > dataLen)
          throw new EPQException("Too few data points.  There must be more data items than fit parameters.");
       {
          int idx = 0;
-         for(final Map.Entry<XRayTransition, Double> xrtMe : efficiency.entrySet()) {
+         for (final Map.Entry<XRayTransition, Double> xrtMe : efficiency.entrySet()) {
             energies[idx] = xrtMe.getKey().getEnergy();
             efficiencies[idx++] = xrtMe.getValue();
          }
@@ -130,10 +123,10 @@ public class MeasuredCalibration
          public Matrix partials(Matrix params) {
             final Matrix res = new Matrix(dataLen, params.getColumnDimension());
             final Matrix vals = compute(params);
-            for(int n = 0; n < dataLen; ++n) {
+            for (int n = 0; n < dataLen; ++n) {
                final double val = vals.get(n, 0);
                int idx;
-               for(idx = 0; idx < comps.length; ++idx)
+               for (idx = 0; idx < comps.length; ++idx)
                   res.set(n, idx, -val * params.get(idx, 0));
                {
                   final double detThick = params.get(idx, 0);
@@ -148,10 +141,10 @@ public class MeasuredCalibration
          public Matrix compute(Matrix params) {
             // Compute window etc. thickness
             final Matrix res = new Matrix(energies.length, 1);
-            for(int n = 0; n < dataLen; ++n) {
+            for (int n = 0; n < dataLen; ++n) {
                final TreeMap<Composition, UncertainValue2> layers = new TreeMap<Composition, UncertainValue2>();
                int i = 0;
-               for(final Composition comp : comps)
+               for (final Composition comp : comps)
                   layers.put(comp, new UncertainValue2(params.get(i++, 0)));
                final UncertainValue2 detThick = new UncertainValue2(params.get(i++, 0));
                assert i == paramLen;
@@ -164,7 +157,7 @@ public class MeasuredCalibration
       final LevenbergMarquardtConstrained.ConstrainedFitFunction cff = new ConstrainedFitFunction(ff, paramLen);
       {
          int i = 0;
-         for(@SuppressWarnings("unused")
+         for (@SuppressWarnings("unused")
          final Composition comp : comps)
             cff.setConstraint(i++, new Constraint.Positive(1.0e-8));
          cff.setConstraint(i++, new Constraint.Bounded(2.5e-3, 2.5e-3));
@@ -174,7 +167,7 @@ public class MeasuredCalibration
       final Matrix sigma = new Matrix(dataLen, 1);
       {
          int idx = 0;
-         for(final Map.Entry<XRayTransition, Double> me : efficiency.entrySet()) {
+         for (final Map.Entry<XRayTransition, Double> me : efficiency.entrySet()) {
             final double eff = me.getValue();
             yData.set(idx, 0, eff);
             sigma.set(idx++, 0, 0.10 * eff);
@@ -182,7 +175,7 @@ public class MeasuredCalibration
          assert idx == dataLen;
       }
       final Matrix p0 = new Matrix(paramLen, 1);
-      for(int i = 0; i < (paramLen - 1); ++i)
+      for (int i = 0; i < (paramLen - 1); ++i)
          p0.set(i, 0, Math.min(Math.max(1.0e-9, mMassThickness.get(comps[i]).doubleValue()), 1.0e-6));
       p0.set(paramLen - 1, 0, Math.min(Math.max(1.0e-9, mDetectorThickness.doubleValue()), 4.9e-3));
       final FitResult fr = lmc.compute(cff, yData, sigma, p0);
@@ -190,7 +183,7 @@ public class MeasuredCalibration
          final UncertainValue2[] bestFit = fr.getBestParametersU();
          int i = 0;
          mMassThickness.clear();
-         for(final Composition comp : comps)
+         for (final Composition comp : comps)
             mMassThickness.put(comp, bestFit[i++]);
          mDetectorThickness = bestFit[i++];
       }
@@ -202,9 +195,7 @@ public class MeasuredCalibration
    }
 
    final private double grid(double energy) {
-      return mGridMaterial != null
-            ? mOpenFraction + ((1.0 - mOpenFraction) * Math.exp(-mMAC.compute(mGridMaterial, energy) * mGridThickness))
-            : 1.0;
+      return mGridMaterial != null ? mOpenFraction + ((1.0 - mOpenFraction) * Math.exp(-mMAC.compute(mGridMaterial, energy) * mGridThickness)) : 1.0;
    }
 
    final private double detector(double detThick, double energy) {
@@ -218,16 +209,20 @@ public class MeasuredCalibration
 
    final private double compute(Map<Composition, UncertainValue2> layers, UncertainValue2 detThick, double energy) {
       double res = 1.0;
-      for(final Map.Entry<Composition, UncertainValue2> me : layers.entrySet())
+      for (final Map.Entry<Composition, UncertainValue2> me : layers.entrySet())
          res *= layer(me.getKey(), me.getValue().doubleValue(), energy);
       return res * detector(detThick.doubleValue(), energy) * grid(energy);
    }
 
    /**
-    * @param scale eV/channel energy scale
-    * @param offset Zero offset in eV
-    * @param quadratic Quadratic term in energy calibration (eV/ch^2)
-    * @param dlm The detector lineshape model
+    * @param scale
+    *           eV/channel energy scale
+    * @param offset
+    *           Zero offset in eV
+    * @param quadratic
+    *           Quadratic term in energy calibration (eV/ch^2)
+    * @param dlm
+    *           The detector lineshape model
     */
    public MeasuredCalibration(double scale, double offset, double quadratic, DetectorLineshapeModel dlm) {
       super("Fit Calibration", scale, offset, quadratic, dlm);
@@ -235,17 +230,18 @@ public class MeasuredCalibration
 
    /*
     * (non-Javadoc)
+    * 
     * @see gov.nist.microanalysis.EPQLibrary.Detector.DetectorCalibration#
     * getEfficiency
     * (gov.nist.microanalysis.EPQLibrary.Detector.DetectorProperties)
     */
    @Override
    public double[] getEfficiency(DetectorProperties dp) {
-      if(mEfficiency == null) {
+      if (mEfficiency == null) {
          final double[] res = new double[dp.getChannelCount()];
          final double eVpCh = this.getChannelWidth();
          final double zeroO = this.getZeroOffset();
-         for(int i = 0; i < res.length; ++i)
+         for (int i = 0; i < res.length; ++i)
             res[i] = compute(mMassThickness, mDetectorThickness, ToSI.eV(zeroO + (i * eVpCh)));
          mEfficiency = res;
       }
@@ -266,16 +262,14 @@ public class MeasuredCalibration
       final double zeroO = this.getZeroOffset();
       final TreeMap<Composition, UncertainValue2> p = new TreeMap<Composition, UncertainValue2>();
       final TreeMap<Composition, UncertainValue2> n = new TreeMap<Composition, UncertainValue2>();
-      for(final Map.Entry<Composition, UncertainValue2> me : mMassThickness.entrySet()) {
+      for (final Map.Entry<Composition, UncertainValue2> me : mMassThickness.entrySet()) {
          final UncertainValue2 val = me.getValue();
          p.put(me.getKey(), new UncertainValue2(val.doubleValue() + val.uncertainty()));
          n.put(me.getKey(), new UncertainValue2(val.doubleValue() - val.uncertainty()));
       }
-      for(int i = 0; i < res.length; ++i) {
-         final UncertainValue2 pThick = new UncertainValue2(mDetectorThickness.doubleValue()
-               + (10.0 * mDetectorThickness.uncertainty()));
-         final UncertainValue2 nThick = new UncertainValue2(mDetectorThickness.doubleValue()
-               - (10.0 * mDetectorThickness.uncertainty()));
+      for (int i = 0; i < res.length; ++i) {
+         final UncertainValue2 pThick = new UncertainValue2(mDetectorThickness.doubleValue() + (10.0 * mDetectorThickness.uncertainty()));
+         final UncertainValue2 nThick = new UncertainValue2(mDetectorThickness.doubleValue() - (10.0 * mDetectorThickness.uncertainty()));
          res[0][i] = compute(p, pThick, ToSI.eV(zeroO + (i * eVpCh)));
          res[1][i] = compute(n, nThick, ToSI.eV(zeroO + (i * eVpCh)));
       }
@@ -299,8 +293,7 @@ public class MeasuredCalibration
    public boolean isVisible(XRayTransition xrt, double eBeam) {
       try {
          return compute(mMassThickness, mDetectorThickness, xrt.getEnergy()) > 0.001;
-      }
-      catch(final EPQException e) {
+      } catch (final EPQException e) {
          e.printStackTrace();
          return false;
       }
@@ -308,23 +301,8 @@ public class MeasuredCalibration
 
    public MeasuredCalibration BAMCRMCalibration(EDSDetector det, ISpectrumData spec10keV, ISpectrumData spec30keV)
          throws EPQException, UtilException {
-      final Composition comp = new Composition(new Element[] {
-         Element.C,
-         Element.O,
-         Element.Al,
-         Element.Ar,
-         Element.Mn,
-         Element.Cu,
-         Element.Zr
-      }, new double[] {
-         0.2010,
-         0.0020,
-         0.0590,
-         0.0110,
-         0.4380,
-         0.1180,
-         0.1710
-      });
+      final Composition comp = new Composition(new Element[]{Element.C, Element.O, Element.Al, Element.Ar, Element.Mn, Element.Cu, Element.Zr},
+            new double[]{0.2010, 0.0020, 0.0590, 0.0110, 0.4380, 0.1180, 0.1710});
       SpectrumFitResult sfr10, sfr30;
       EDSCalibration cal;
       {
@@ -334,25 +312,18 @@ public class MeasuredCalibration
          sfr30 = sf8.compute();
          cal = sfr30.getCalibration();
       }
-      final XRayTransitionSet[] xrts10 = new XRayTransitionSet[] {
-         new XRayTransitionSet(Element.C, XRayTransitionSet.K_FAMILY),
-         new XRayTransitionSet(Element.Mn, XRayTransitionSet.L_FAMILY),
-         new XRayTransitionSet(Element.Cu, XRayTransitionSet.L_FAMILY),
-         new XRayTransitionSet(Element.Al, XRayTransitionSet.K_FAMILY),
-         new XRayTransitionSet(Element.Zr, XRayTransitionSet.L_FAMILY)
-      };
-      final XRayTransitionSet[] xrts30 = new XRayTransitionSet[] {
-         new XRayTransitionSet(Element.Cu, XRayTransitionSet.K_ALPHA),
-         new XRayTransitionSet(Element.Zr, XRayTransitionSet.K_ALPHA),
-         new XRayTransitionSet(Element.Zr, XRayTransitionSet.K_BETA)
-      };
+      final XRayTransitionSet[] xrts10 = new XRayTransitionSet[]{new XRayTransitionSet(Element.C, XRayTransitionSet.K_FAMILY),
+            new XRayTransitionSet(Element.Mn, XRayTransitionSet.L_FAMILY), new XRayTransitionSet(Element.Cu, XRayTransitionSet.L_FAMILY),
+            new XRayTransitionSet(Element.Al, XRayTransitionSet.K_FAMILY), new XRayTransitionSet(Element.Zr, XRayTransitionSet.L_FAMILY)};
+      final XRayTransitionSet[] xrts30 = new XRayTransitionSet[]{new XRayTransitionSet(Element.Cu, XRayTransitionSet.K_ALPHA),
+            new XRayTransitionSet(Element.Zr, XRayTransitionSet.K_ALPHA), new XRayTransitionSet(Element.Zr, XRayTransitionSet.K_BETA)};
       final XRayTransitionSet mnKa = new XRayTransitionSet(Element.Mn, XRayTransitionSet.K_ALPHA);
       final double mn10 = sfr10.getIntegratedIntensity(mnKa).doubleValue();
       final double mn30 = sfr30.getIntegratedIntensity(mnKa).doubleValue();
       final Map<XRayTransition, Double> eff = new TreeMap<XRayTransition, Double>();
-      for(final XRayTransitionSet xrts : xrts10)
+      for (final XRayTransitionSet xrts : xrts10)
          eff.put(xrts.getWeighiestTransition(), sfr10.getIntegratedIntensity(xrts).doubleValue() / mn10);
-      for(final XRayTransitionSet xrts : xrts30)
+      for (final XRayTransitionSet xrts : xrts30)
          eff.put(xrts.getWeighiestTransition(), sfr30.getIntegratedIntensity(xrts).doubleValue() / mn30);
       final MeasuredCalibration res = new MeasuredCalibration(cal.getChannelWidth(), cal.getZeroOffset(), cal.getQuadratic(), cal.getLineshape());
       res.addLayer(MaterialFactory.createCompound("C"), 1.0e-6);

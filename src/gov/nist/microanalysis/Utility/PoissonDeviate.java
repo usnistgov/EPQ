@@ -47,13 +47,14 @@ public class PoissonDeviate {
     * randomDeviate - Calculate a random deviate taken from the Poisson
     * distribution with the specified mean.
     * 
-    * @param mean double
+    * @param mean
+    *           double
     * @return double
     */
    public double randomDeviate(double mean) {
       assert mean > 0.0 : "The mean of a random Poisson deviate must be greater than zero. " + Double.toString(mean);
-      if(mean < 12.0) {
-         if(mean != mPrevMean) {
+      if (mean < 12.0) {
+         if (mean != mPrevMean) {
             mPrevMean = mean;
             mG = Math.exp(-mean);
          }
@@ -62,11 +63,11 @@ public class PoissonDeviate {
          do {
             ++em;
             t *= mRandom.nextDouble();
-         } while(t > mG);
+         } while (t > mG);
          assert (em >= 0);
          return em;
       } else {
-         if(mean != mPrevMean) {
+         if (mean != mPrevMean) {
             mPrevMean = mean;
             mSqr = Math.sqrt(2.0 * mean);
             mLogMean = Math.log(mean);
@@ -77,10 +78,10 @@ public class PoissonDeviate {
             do {
                y = Math.tan(Math.PI * mRandom.nextDouble());
                em = (mSqr * y) + mean;
-            } while(em < 0.0);
+            } while (em < 0.0);
             em = Math.floor(em);
             t = 0.9 * (1.0 + (y * y)) * Math.exp((em * mLogMean) - Math2.gammaln(em + 1.0) - mG);
-         } while(mRandom.nextDouble() > t);
+         } while (mRandom.nextDouble() > t);
          assert (em >= 0.0);
          return em;
       }

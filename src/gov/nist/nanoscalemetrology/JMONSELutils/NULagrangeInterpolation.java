@@ -31,12 +31,16 @@ public class NULagrangeInterpolation {
     * necessarily at equal intervals) without duplicates and the values in fsamp
     * must be the corresponding function values.
     * 
-    * @param fsamp - double[] 1D array of function values at the grid points
-    * @param xsamp - double[] The values of the independent variable at the grid
+    * @param fsamp
+    *           - double[] 1D array of function values at the grid points
+    * @param xsamp
+    *           - double[] The values of the independent variable at the grid
     *           points
-    * @param order - int The order of the interpolation (1 for linear, 3 for
-    *           cubic, etc.).
-    * @param x - double The x value at which the function value is to be
+    * @param order
+    *           - int The order of the interpolation (1 for linear, 3 for cubic,
+    *           etc.).
+    * @param x
+    *           - double The x value at which the function value is to be
     *           estimated.
     * @return double[] - An array of 2 values, the first of which is the
     *         estimate for f[x] and the second is an error estimate.
@@ -46,7 +50,7 @@ public class NULagrangeInterpolation {
        * The interpolation is performed by a call to neville, a separate static
        * method.
        */
-      if((order < 1) || (fsamp.length < (order + 1)))
+      if ((order < 1) || (fsamp.length < (order + 1)))
          throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
 
       /*
@@ -66,11 +70,14 @@ public class NULagrangeInterpolation {
     * interpolation range from the firstIndex to firstIndex+order.
     * xsamp[nearestIndex] is closer to x than any of the other values in xsamp.
     * 
-    * @param x - double The x value at which the function value is to be
+    * @param x
+    *           - double The x value at which the function value is to be
     *           estimated.
-    * @param xsamp - double[] The 1-D array of tabulated x values
-    * @param order - int The order of the interpolation (1 for linear, 3 for
-    *           cubic, etc.).
+    * @param xsamp
+    *           - double[] The 1-D array of tabulated x values
+    * @param order
+    *           - int The order of the interpolation (1 for linear, 3 for cubic,
+    *           etc.).
     * @return int[] - An array containing the index of the first x coordinate
     *         and the index of the nearest x coordinate
     */
@@ -85,30 +92,24 @@ public class NULagrangeInterpolation {
       int nindex; // nearest index
       final boolean ascending = xsamp[maxindex] > xsamp[0];
 
-      while((uplim - lowlim) > 1) {
+      while ((uplim - lowlim) > 1) {
          midpoint = (uplim + lowlim) >> 1;
-         if((x > xsamp[midpoint]) == ascending)
+         if ((x > xsamp[midpoint]) == ascending)
             lowlim = midpoint;
          else
             uplim = midpoint;
       }
 
-      if(lowlim < 0)
-         return new int[] {
-            0,
-            0
-         };
-      else if(uplim > maxindex)
-         return new int[] {
-            maxindex - order,
-            maxindex
-         };
-      if(ascending) {
-         if((x - xsamp[lowlim]) <= (xsamp[uplim] - x))
+      if (lowlim < 0)
+         return new int[]{0, 0};
+      else if (uplim > maxindex)
+         return new int[]{maxindex - order, maxindex};
+      if (ascending) {
+         if ((x - xsamp[lowlim]) <= (xsamp[uplim] - x))
             nindex = lowlim;
          else
             nindex = uplim;
-      } else if((xsamp[lowlim] - x) <= (x - xsamp[uplim]))
+      } else if ((xsamp[lowlim] - x) <= (x - xsamp[uplim]))
          nindex = lowlim;
       else
          nindex = uplim;
@@ -122,26 +123,18 @@ public class NULagrangeInterpolation {
       int firstInd = lowlim; // Initialize
       int lastInd = uplim;
 
-      while(((lastInd - firstInd) < order) && (firstInd > 0) && (lastInd < maxindex))
-         if(((((xsamp[lowlim] - xsamp[firstInd - 1]) + xsamp[uplim]) - xsamp[lastInd + 1]) >= 0) == ascending)
+      while (((lastInd - firstInd) < order) && (firstInd > 0) && (lastInd < maxindex))
+         if (((((xsamp[lowlim] - xsamp[firstInd - 1]) + xsamp[uplim]) - xsamp[lastInd + 1]) >= 0) == ascending)
             lastInd += 1;
          else
             firstInd -= 1;
-      if(lastInd >= maxindex)
-         return new int[] {
-            maxindex - order,
-            nindex
-         }; // Extrapolating off high index end of table
-      else if(firstInd <= 0)
-         return new int[] {
-            0,
-            nindex
-         }; // Extrapolating off the low end
+      if (lastInd >= maxindex)
+         return new int[]{maxindex - order, nindex}; // Extrapolating off high
+                                                     // index end of table
+      else if (firstInd <= 0)
+         return new int[]{0, nindex}; // Extrapolating off the low end
 
-      return new int[] {
-         firstInd,
-         nindex
-      };
+      return new int[]{firstInd, nindex};
 
    }
 
@@ -149,14 +142,18 @@ public class NULagrangeInterpolation {
     * neville -- A private utility that performs the actual 1-d interpolation,
     * using Neville's algorithm.
     * 
-    * @param fsamp - double[] 1D array of function values at the grid points
-    * @param xsamp - double[] The values of the independent variable at the grid
+    * @param fsamp
+    *           - double[] 1D array of function values at the grid points
+    * @param xsamp
+    *           - double[] The values of the independent variable at the grid
     *           points
-    * @param location - int[] Location in the table to use, as returned by
-    *           locate.
-    * @param order - int The order of the interpolation (1 for linear, 3 for
-    *           cubic, etc.).
-    * @param x - double The x value at which the function is to be estimated.
+    * @param location
+    *           - int[] Location in the table to use, as returned by locate.
+    * @param order
+    *           - int The order of the interpolation (1 for linear, 3 for cubic,
+    *           etc.).
+    * @param x
+    *           - double The x value at which the function is to be estimated.
     * @return double[] - An array of 2 values, the first of which is the
     *         estimate for f[x] and the second is an error estimate.
     */
@@ -172,16 +169,15 @@ public class NULagrangeInterpolation {
 
       double y = c[ns--];
       double ho, hp, w, den, dy = 0;
-      for(int m = 1; m <= order; m++) {
-         for(int i = 0; i <= (order - m); i++) {
+      for (int m = 1; m <= order; m++) {
+         for (int i = 0; i <= (order - m); i++) {
             ho = xsamp[i + offset] - x;
             hp = xsamp[i + m + offset] - x;
             w = c[i + 1] - d[i];
             den = ho - hp;
-            if(den == 0.)
+            if (den == 0.)
                throw new IllegalArgumentException("neville: Identical x values (x = " + Double.toString(xsamp[i + offset])
-                     + " in interpolation table at indices " + Integer.toString(i + offset) + " and "
-                     + Integer.toString(i + offset + m) + ".");
+                     + " in interpolation table at indices " + Integer.toString(i + offset) + " and " + Integer.toString(i + offset + m) + ".");
             den = w / den;
             d[i] = hp * den;
             c[i] = ho * den;
@@ -190,10 +186,7 @@ public class NULagrangeInterpolation {
          y += dy;
       }
 
-      return new double[] {
-         y,
-         dy
-      };
+      return new double[]{y, dy};
    }
 
    /**
@@ -204,11 +197,14 @@ public class NULagrangeInterpolation {
     * f.length and j is another index ranging from 0 to f[0].length. The grid is
     * specified by providing appropriate x0[] and xinc[] arrays.
     * 
-    * @param f - double[][] 2-D array of function values at the grid points
-    * @param xsamp - double[][] 2 x ? (ragged) array of x values at the grid
-    *           points
-    * @param order - int The order of the interpolation.
-    * @param x - double[] Array of two values, [x1,x2], providing the
+    * @param f
+    *           - double[][] 2-D array of function values at the grid points
+    * @param xsamp
+    *           - double[][] 2 x ? (ragged) array of x values at the grid points
+    * @param order
+    *           - int The order of the interpolation.
+    * @param x
+    *           - double[] Array of two values, [x1,x2], providing the
     *           coordinates of the point at which the function value is to be
     *           estimated.
     * @return double[] - An array of 2 values, the first of which is the
@@ -222,16 +218,16 @@ public class NULagrangeInterpolation {
        * interpolation routine to determine function values at nodes in the Nth
        * dimension, which can then be interpolated via 1-d interpolation.
        */
-      if(x.length < 2)
+      if (x.length < 2)
          throw new IllegalArgumentException("Input array is too short.)");
-      if(f.length < (order + 1))
+      if (f.length < (order + 1))
          throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
 
       final int index0 = locate(x[0], xsamp[0], order)[0];
 
       /* Generate and populate an array of function values at x2 */
       final double[] y = new double[order + 1];
-      for(int i = 0; i <= order; i++)
+      for (int i = 0; i <= order; i++)
          y[i] = d1(f[index0 + i], xsamp[1], order, x[1])[0];
       /* Make corresponding x array */
       final double[] xtemp = new double[order + 1];
@@ -250,11 +246,14 @@ public class NULagrangeInterpolation {
     * respective dimensions. The grid is specified by providing appropriate x0[]
     * and xinc[] arrays.
     * 
-    * @param f - double[][][] 3-D array of function values at the grid points
-    * @param xsamp - double[][] 3 x ? (ragged) array of x values at the grid
-    *           points
-    * @param order - int The order of the interpolation.
-    * @param x - double[] Array of 3 values, [x1,x2,x3], providing the
+    * @param f
+    *           - double[][][] 3-D array of function values at the grid points
+    * @param xsamp
+    *           - double[][] 3 x ? (ragged) array of x values at the grid points
+    * @param order
+    *           - int The order of the interpolation.
+    * @param x
+    *           - double[] Array of 3 values, [x1,x2,x3], providing the
     *           coordinates of the point at which the function value is to be
     *           estimated.
     * @return double[] - An array of 2 values, the first of which is the
@@ -268,24 +267,18 @@ public class NULagrangeInterpolation {
        * interpolation routine to determine function values at nodes in the Nth
        * dimension, which can then be interpolated via 1-d interpolation.
        */
-      if(x.length < 3)
+      if (x.length < 3)
          throw new IllegalArgumentException("Input array is too short.)");
-      if(f.length < (order + 1))
+      if (f.length < (order + 1))
          throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
 
       final int index0 = locate(x[0], xsamp[0], order)[0];
 
       /* Generate and populate an array of function values at x2,x3 */
       final double[] y = new double[order + 1];
-      final double reducedx[] = {
-         x[1],
-         x[2]
-      };
-      final double[][] reducedxsamp = {
-         xsamp[1],
-         xsamp[2]
-      };
-      for(int i = 0; i <= order; i++)
+      final double reducedx[] = {x[1], x[2]};
+      final double[][] reducedxsamp = {xsamp[1], xsamp[2]};
+      for (int i = 0; i <= order; i++)
          y[i] = d2(f[index0 + i], reducedxsamp, order, reducedx)[0];
       /* Make corresponding x array */
       final double[] xtemp = new double[order + 1];
@@ -304,11 +297,14 @@ public class NULagrangeInterpolation {
     * 1 less than the lengths of their respective dimensions. The grid is
     * specified by providing appropriate x0[] and xinc[] arrays.
     * 
-    * @param f - double[][][][] 4-D array of function values at the grid points
-    * @param xsamp - double[][] 4 x ? (ragged) array of x values at the grid
-    *           points
-    * @param order - int The order of the interpolation.
-    * @param x - double[] Array of 4 values, [x1,x2,x3,x4], providing the
+    * @param f
+    *           - double[][][][] 4-D array of function values at the grid points
+    * @param xsamp
+    *           - double[][] 4 x ? (ragged) array of x values at the grid points
+    * @param order
+    *           - int The order of the interpolation.
+    * @param x
+    *           - double[] Array of 4 values, [x1,x2,x3,x4], providing the
     *           coordinates of the point at which the function value is to be
     *           estimated.
     * @return double[] - An array of 2 values, the first of which is the
@@ -335,9 +331,9 @@ public class NULagrangeInterpolation {
        * generally robust error check as currently written is probably worth it.
        */
 
-      if(x.length < 4)
+      if (x.length < 4)
          throw new IllegalArgumentException("Input array is too short.)");
-      if(f.length < (order + 1))
+      if (f.length < (order + 1))
          throw new IllegalArgumentException("0 < order <= table.length-1 is required.");
 
       /*
@@ -349,17 +345,9 @@ public class NULagrangeInterpolation {
 
       /* Generate and populate an array of function values at x2,x3,x4 */
       final double[] y = new double[order + 1];
-      final double reducedx[] = {
-         x[1],
-         x[2],
-         x[3]
-      };
-      final double[][] reducedxsamp = {
-         xsamp[1],
-         xsamp[2],
-         xsamp[3]
-      };
-      for(int i = 0; i <= order; i++)
+      final double reducedx[] = {x[1], x[2], x[3]};
+      final double[][] reducedxsamp = {xsamp[1], xsamp[2], xsamp[3]};
+      for (int i = 0; i <= order; i++)
          y[i] = d3(f[index0 + i], reducedxsamp, order, reducedx)[0];
       /* Make corresponding x array */
       final double[] xtemp = new double[order + 1];

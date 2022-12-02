@@ -44,9 +44,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author John Villarrubia
  * @version 1.0
  */
-public class BrowningMottElasticSM
-   extends ScatterMechanism
-   implements Cloneable {
+public class BrowningMottElasticSM extends ScatterMechanism implements Cloneable {
 
    private BrowningEmpiricalCrossSection[] browningElement = null;
 
@@ -80,7 +78,7 @@ public class BrowningMottElasticSM
        * later use.
        */
       totalScaledCrossSection = 0.;
-      for(int i = 0; i < nce; i++) {
+      for (int i = 0; i < nce; i++) {
          totalScaledCrossSection += browningElement[i].totalCrossSection(eK) * scalefactor[i] * rateMultiplier;
          cumulativeScaledCrossSection[i] = totalScaledCrossSection;
       }
@@ -90,6 +88,7 @@ public class BrowningMottElasticSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#scatterRate(gov.nist
     * .microanalysis.EPQLibrary.Material, double)
@@ -103,6 +102,7 @@ public class BrowningMottElasticSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#randomScatteringAngle
     * (gov.nist.microanalysis.EPQLibrary.Material, double)
@@ -110,14 +110,14 @@ public class BrowningMottElasticSM
    @Override
    public Electron scatter(Electron pe) {
       final double eK = pe.getPreviousEnergy();
-      if(eK != cached_eK)
+      if (eK != cached_eK)
          setCache(eK);
       // Decide which element we scatter from
       final double r = Math2.rgen.nextDouble() * totalScaledCrossSection;
       int index = 0; // Index is first index
 
       // Increment index and mechanism until cumulative scatter rate exceeds r
-      while(cumulativeScaledCrossSection[index] < r)
+      while (cumulativeScaledCrossSection[index] < r)
          index++;
 
       final double alpha = browningElement[index].randomScatteringAngle(eK);
@@ -128,6 +128,7 @@ public class BrowningMottElasticSM
 
    /*
     * (non-Javadoc)
+    * 
     * @seegov.nist.nanoscalemetrology.JMONSEL.ScatterMechanism#init(gov.nist.
     * microanalysis.EPQLibrary.Material)
     */
@@ -135,7 +136,7 @@ public class BrowningMottElasticSM
    public void setMaterial(Material mat) {
       nce = mat.getElementCount();
       densityNa = mat.getDensity() * PhysicalConstants.AvagadroNumber;
-      if(nce > 0) {
+      if (nce > 0) {
          // Element[] elements = (Element[]) mat.getElementSet().toArray();
          final Set<Element> elements = mat.getElementSet();
          browningElement = new BrowningEmpiricalCrossSection[nce];
@@ -143,7 +144,7 @@ public class BrowningMottElasticSM
          cumulativeScaledCrossSection = new double[nce];
 
          int i = 0;
-         for(final Element elm : elements) {
+         for (final Element elm : elements) {
             browningElement[i] = new BrowningEmpiricalCrossSection(elm);
             // The factor of 1000 in the next line is to convert atomic
             // weight in g/mole to kg/mole.
@@ -153,33 +154,31 @@ public class BrowningMottElasticSM
       }
    }
 
-/*   /**
-    * Gets the current value assigned to rateMultiplier
+   /*
+    * /** Gets the current value assigned to rateMultiplier
     *
     * @return Returns the rateMultiplier.
     */
-/*   public double getRateMultiplier() {
-      return rateMultiplier;
-   } */
+   /*
+    * public double getRateMultiplier() { return rateMultiplier; }
+    */
 
-/*   /**
-    * Sets the value assigned to rateMultiplier. I expect to remove this method.
-    * I inserted it on 8/3/2012 to do some tests on the effect of scattering
-    * cross-section changes without any change in angular distribution.
+   /*
+    * /** Sets the value assigned to rateMultiplier. I expect to remove this
+    * method. I inserted it on 8/3/2012 to do some tests on the effect of
+    * scattering cross-section changes without any change in angular
+    * distribution.
     *
     * @param rateMultiplier The value to which to set rateMultiplier.
     */
-/*   public void setRateMultiplier(double rateMultiplier) {
-      if(rateMultiplier > 0.)
-         this.rateMultiplier = rateMultiplier;
-      else
-         throw new EPQFatalException("rateMultiplier must be positive.");
-   }
-   */
+   /*
+    * public void setRateMultiplier(double rateMultiplier) { if(rateMultiplier >
+    * 0.) this.rateMultiplier = rateMultiplier; else throw new
+    * EPQFatalException("rateMultiplier must be positive."); }
+    */
 
    @Override
-   public BrowningMottElasticSM clone()
-         throws CloneNotSupportedException {
+   public BrowningMottElasticSM clone() throws CloneNotSupportedException {
       return (BrowningMottElasticSM) super.clone();
    }
 

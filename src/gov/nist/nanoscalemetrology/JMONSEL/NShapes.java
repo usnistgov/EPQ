@@ -48,11 +48,7 @@ public class NShapes {
    // Add a plane offset by dist*normal from pt
    private static void addOffsetPlane(NormalMultiPlaneShape shape, double[] normal, double[] pt, double dist) {
       normal = normalize(normal);
-      shape.addPlane(normal, new double[] {
-         pt[0] + (normal[0] * dist),
-         pt[1] + (normal[1] * dist),
-         pt[2] + (normal[2] * dist)
-      });
+      shape.addPlane(normal, new double[]{pt[0] + (normal[0] * dist), pt[1] + (normal[1] * dist), pt[2] + (normal[2] * dist)});
    }
 
    /**
@@ -60,9 +56,12 @@ public class NShapes {
     * film. Normal defines the orientation of the plane associated with pt1. A
     * second plane is constructed a distance thickness from the first plane.
     *
-    * @param normal double[]
-    * @param pt1 double[]
-    * @param thickness double
+    * @param normal
+    *           double[]
+    * @param pt1
+    *           double[]
+    * @param thickness
+    *           double
     * @return MultiPlaneShape
     */
    public static NormalMultiPlaneShape createNormalFilm(double[] normal, double[] pt1, double thickness) {
@@ -83,15 +82,22 @@ public class NShapes {
     * right side (one or two planes + possible corner rounding), a similar left
     * side, and an enclosure (top, bottom, and end caps on the line).
     *
-    * @param topz double -- z coordinate of "top" face
-    * @param width double -- bottom width of the line.
-    * @param length double -- length of the line
-    * @param thetal double -- angle of the left sidewall in radians, expressed
-    *           as a deviation from the vertical. Negative angles refer to
-    *           undercut lines.
-    * @param thetar double -- angle of right sidewall in radians
-    * @param radl double -- radius of top left corner
-    * @param radr double -- radius of top right corner *
+    * @param topz
+    *           double -- z coordinate of "top" face
+    * @param width
+    *           double -- bottom width of the line.
+    * @param length
+    *           double -- length of the line
+    * @param thetal
+    *           double -- angle of the left sidewall in radians, expressed as a
+    *           deviation from the vertical. Negative angles refer to undercut
+    *           lines.
+    * @param thetar
+    *           double -- angle of right sidewall in radians
+    * @param radl
+    *           double -- radius of top left corner
+    * @param radr
+    *           double -- radius of top right corner *
     * @return MultiPlaneShape
     */
    public static NormalShape createLine(double topz, // z of the top face
@@ -103,9 +109,9 @@ public class NShapes {
          double radr // radius of top left corner
    ) {
       // Parameter checks
-      if(radr < 0.)
+      if (radr < 0.)
          radr = 0.;
-      if(radl < 0.)
+      if (radl < 0.)
          radl = 0.;
 
       /*
@@ -131,46 +137,16 @@ public class NShapes {
       final NormalMultiPlaneShape enclosure = new NormalMultiPlaneShape();
       // Add top plane
       double signz = Math.signum(topz);
-      if(signz == 0.)
+      if (signz == 0.)
          signz = 1.; // For rare case of 0-height specification
-      enclosure.addPlane(new double[] {
-         0.,
-         0.,
-         signz
-      }, new double[] {
-         0.,
-         0.,
-         topz
-      });
+      enclosure.addPlane(new double[]{0., 0., signz}, new double[]{0., 0., topz});
       // Add bottom plane
-      enclosure.addPlane(new double[] {
-         0.,
-         0.,
-         -signz
-      }, new double[] {
-         0.,
-         0.,
-         0.
-      });
+      enclosure.addPlane(new double[]{0., 0., -signz}, new double[]{0., 0., 0.});
       // Add end caps
-      enclosure.addPlane(new double[] { // Right end
-         0.,
-         1.,
-         0.
-      }, new double[] {
-         0.,
-         length / 2.,
-         0.
-      });
-      enclosure.addPlane(new double[] { // Left end
-         0.,
-         -1.,
-         0.
-      }, new double[] {
-         0.,
-         -length / 2.,
-         0.
-      });
+      enclosure.addPlane(new double[]{ // Right end
+            0., 1., 0.}, new double[]{0., length / 2., 0.});
+      enclosure.addPlane(new double[]{ // Left end
+            0., -1., 0.}, new double[]{0., -length / 2., 0.});
 
       /* Now do the right side */
 
@@ -180,41 +156,19 @@ public class NShapes {
       // Add right sidewall
       final double costhetar = Math.cos(thetar);
       final double sinthetar = Math.sin(thetar);
-      rightNMPS.addPlane(new double[] {
-         costhetar,
-         0.,
-         signz * sinthetar
-      }, new double[] {
-         width / 2,
-         0.,
-         0.
-      });
+      rightNMPS.addPlane(new double[]{costhetar, 0., signz * sinthetar}, new double[]{width / 2, 0., 0.});
       // If radr>0 add a clipping plane and the cylinder
       final double root2 = Math.sqrt(2.);
       final double absz = signz * topz;
-      if(radr > 0) {
+      if (radr > 0) {
          final double rad = Math.sqrt(1 - sinthetar);
-         rightNMPS.addPlane(new double[] {
-            rad / root2,
-            0.,
-            (signz * costhetar) / root2 / rad
-         }, new double[] {
-            ((width / 2.) - (radr / costhetar)) + (((radr - absz) * sinthetar) / costhetar),
-            0.,
-            topz
-         });
+         rightNMPS.addPlane(new double[]{rad / root2, 0., (signz * costhetar) / root2 / rad},
+               new double[]{((width / 2.) - (radr / costhetar)) + (((radr - absz) * sinthetar) / costhetar), 0., topz});
          // Construct cylinder for right corner
          final double xc = ((width / 2.) - (radr / Math.cos(thetar))) + ((radr - absz) * Math.tan(thetar));
          final double zc = topz - (signz * radr);
-         final NormalCylindricalShape rcylinder = new NormalCylindricalShape(new double[] {
-            xc,
-            -length / 2.,
-            zc
-         }, new double[] {
-            xc,
-            length / 2.,
-            zc
-         }, radr);
+         final NormalCylindricalShape rcylinder = new NormalCylindricalShape(new double[]{xc, -length / 2., zc}, new double[]{xc, length / 2., zc},
+               radr);
          rightSide = new NormalUnionShape(rightNMPS, rcylinder);
       } else
          rightSide = rightNMPS;
@@ -226,39 +180,17 @@ public class NShapes {
       // Add left sidewall
       final double costhetal = Math.cos(thetal);
       final double sinthetal = Math.sin(thetal);
-      leftNMPS.addPlane(new double[] {
-         -costhetal,
-         0.,
-         signz * sinthetal
-      }, new double[] {
-         -width / 2,
-         0.,
-         0.
-      });
+      leftNMPS.addPlane(new double[]{-costhetal, 0., signz * sinthetal}, new double[]{-width / 2, 0., 0.});
       // If radl>0 add a clipping plane and the cylinder
-      if(radl > 0.) {
+      if (radl > 0.) {
          final double rad = Math.sqrt(1 - sinthetal);
-         leftNMPS.addPlane(new double[] {
-            -rad / root2,
-            0.,
-            (signz * costhetal) / root2 / rad
-         }, new double[] {
-            ((-width / 2.) + (radl / costhetal)) - (((radl - absz) * sinthetal) / costhetal),
-            0.,
-            topz
-         });
+         leftNMPS.addPlane(new double[]{-rad / root2, 0., (signz * costhetal) / root2 / rad},
+               new double[]{((-width / 2.) + (radl / costhetal)) - (((radl - absz) * sinthetal) / costhetal), 0., topz});
          final double xc = ((width / 2.) - (radl / Math.cos(thetal))) + ((radl - absz) * Math.tan(thetal));
          final double zc = topz - (signz * radl);
          // Construct cylinder for left corner
-         final NormalCylindricalShape lcylinder = new NormalCylindricalShape(new double[] {
-            -xc,
-            -length / 2.,
-            zc
-         }, new double[] {
-            -xc,
-            length / 2.,
-            zc
-         }, radl);
+         final NormalCylindricalShape lcylinder = new NormalCylindricalShape(new double[]{-xc, -length / 2., zc}, new double[]{-xc, length / 2., zc},
+               radl);
          leftSide = new NormalUnionShape(leftNMPS, lcylinder);
       } else
          leftSide = leftNMPS;

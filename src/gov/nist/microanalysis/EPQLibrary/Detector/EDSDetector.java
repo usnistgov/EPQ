@@ -44,9 +44,7 @@ import Jama.SingularValueDecomposition;
  * @author Nicholas
  * @version 1.0
  */
-public class EDSDetector
-   implements
-   IXRayDetector {
+public class EDSDetector implements IXRayDetector {
 
    static private Map<String, EDSDetector> mCache = new HashMap<String, EDSDetector>();
 
@@ -65,7 +63,7 @@ public class EDSDetector
    transient private double[] mAccumulator;
 
    public EditableSpectrum getSpectrum() {
-      if(mSpectrum == null) {
+      if (mSpectrum == null) {
          final double scale = mCalibration.getChannelWidth();
          final double offset = mCalibration.getZeroOffset();
          mSpectrum = new EditableSpectrum(getDetectorProperties().getChannelCount(), scale, offset);
@@ -78,7 +76,7 @@ public class EDSDetector
    }
 
    protected double[] getAccumulator() {
-      if(mAccumulator == null)
+      if (mAccumulator == null)
          mAccumulator = new double[getDetectorProperties().getChannelCount()];
       return mAccumulator;
    }
@@ -111,14 +109,14 @@ public class EDSDetector
       final double[] fs = Math2.multiply(eVperBin * mCalibration.getFudgeFactor(), Math2.multiply(acc, eff));
       final double[] spec = es.getCounts();
       Arrays.fill(spec, 0.0);
-      for(int i = 0; i < fs.length; ++i)
-         if(fs[i] > 0.0) {
+      for (int i = 0; i < fs.length; ++i)
+         if (fs[i] > 0.0) {
             final double e = SpectrumUtils.minEnergyForChannel(es, i);
             final int highBin = Math2.bound(SpectrumUtils.channelForEnergy(es, e + dlm.rightWidth(e, MIN_I)), 0, spec.length);
             final int lowBin = Math2.bound(SpectrumUtils.channelForEnergy(es, e - dlm.leftWidth(e, MIN_I)), 0, spec.length);
             double ee = SpectrumUtils.minEnergyForChannel(es, lowBin);
             double prev = dlm.compute(ee, e);
-            for(int ch = lowBin; ch < highBin; ++ch, ee += eVperBin) {
+            for (int ch = lowBin; ch < highBin; ++ch, ee += eVperBin) {
                final double curr = dlm.compute(ee + eVperBin, e);
                spec[ch + 1] += 0.5 * fs[i] * (prev + curr);
                prev = curr;
@@ -154,30 +152,26 @@ public class EDSDetector
    static public EDSDetector createDetector(final DetectorProperties dp, final EDSCalibration calib) {
       try {
          final String key = getCacheKey(dp, calib);
-         if(!mCache.containsKey(key))
+         if (!mCache.containsKey(key))
             mCache.put(key, new EDSDetector(dp, calib));
          return mCache.get(key);
-      }
-      catch(final EPQException e) {
+      } catch (final EPQException e) {
          return new EDSDetector(dp, calib);
       }
    }
 
-   private static String getCacheKey(final DetectorProperties dp, final EDSCalibration calib)
-         throws EPQException {
+   private static String getCacheKey(final DetectorProperties dp, final EDSCalibration calib) throws EPQException {
       final SpectrumProperties calibProps = calib.getProperties();
       final SpectrumProperties detProps = dp.getProperties();
-      if(!calibProps.isDefined(SpectrumProperties.CalibrationGUID))
+      if (!calibProps.isDefined(SpectrumProperties.CalibrationGUID))
          calibProps.setTextProperty(SpectrumProperties.CalibrationGUID, EPQXStream.generateGUID(calib));
-      if(!detProps.isDefined(SpectrumProperties.DetectorGUID))
+      if (!detProps.isDefined(SpectrumProperties.DetectorGUID))
          detProps.setTextProperty(SpectrumProperties.DetectorGUID, EPQXStream.generateGUID(dp));
-      final String key = calibProps.getTextProperty(SpectrumProperties.CalibrationGUID)
-            + detProps.getTextProperty(SpectrumProperties.DetectorGUID);
+      final String key = calibProps.getTextProperty(SpectrumProperties.CalibrationGUID) + detProps.getTextProperty(SpectrumProperties.DetectorGUID);
       return key;
    }
 
-   static public EDSDetector updateDetector(final DetectorProperties dp, final EDSCalibration calib)
-         throws EPQException {
+   static public EDSDetector updateDetector(final DetectorProperties dp, final EDSCalibration calib) throws EPQException {
       final String key = getCacheKey(dp, calib);
       mCache.put(key, new EDSDetector(dp, calib));
       return mCache.get(key);
@@ -219,10 +213,11 @@ public class EDSDetector
     * and the resulting spectrum will be recalculated based on the new window's
     * properties.
     *
-    * @param window XRayWindow
+    * @param window
+    *           XRayWindow
     */
    public void setWindow(final IXRayWindowProperties window) {
-      if(getDetectorProperties().getWindow() != window) {
+      if (getDetectorProperties().getWindow() != window) {
          getDetectorProperties().setWindow(window);
          mDirty = true;
       }
@@ -245,7 +240,7 @@ public class EDSDetector
    public void addEvent(final double energy, final double intensity) {
       final int ch = SpectrumUtils.channelForEnergy(getSpectrum(), FromSI.eV(energy));
       final double[] acc = getAccumulator();
-      if((ch >= 0) && (ch < acc.length)) {
+      if ((ch >= 0) && (ch < acc.length)) {
          acc[ch] += intensity;
          mDirty = true;
       }
@@ -290,9 +285,9 @@ public class EDSDetector
    @Override
    public void actionPerformed(final ActionEvent e) {
       final Object src = e.getSource();
-      if(src instanceof BaseXRayGeneration3) {
+      if (src instanceof BaseXRayGeneration3) {
          final BaseXRayGeneration3 bxg = (BaseXRayGeneration3) src;
-         for(int i = bxg.getEventCount() - 1; i >= 0; --i) {
+         for (int i = bxg.getEventCount() - 1; i >= 0; --i) {
             final XRay xr = bxg.getXRay(i);
             addEvent(xr.getEnergy(), xr.getIntensity());
          }
@@ -310,7 +305,7 @@ public class EDSDetector
     * @return ISpectrumData
     */
    public ISpectrumData getSpectrum(final double scale) {
-      if(mDirty) {
+      if (mDirty) {
          convolve();
          mDirty = false;
       }
@@ -323,14 +318,15 @@ public class EDSDetector
     * specified detector.
     *
     * @param elm
-    * @param maxEnergy in Joules
+    * @param maxEnergy
+    *           in Joules
     */
    public XRayTransitionSet getVisibleTransitions(final Element elm, final double maxEnergy) {
       final Set<XRayTransition> xrts = new TreeSet<XRayTransition>();
-      for(int tr = XRayTransition.KA1; tr < XRayTransition.Last; ++tr)
-         if(XRayTransition.exists(elm, tr) && (XRayTransition.getEdgeEnergy(elm, tr) < maxEnergy)) {
+      for (int tr = XRayTransition.KA1; tr < XRayTransition.Last; ++tr)
+         if (XRayTransition.exists(elm, tr) && (XRayTransition.getEdgeEnergy(elm, tr) < maxEnergy)) {
             final XRayTransition xrt = new XRayTransition(elm, tr);
-            if(isVisible(xrt, maxEnergy))
+            if (isVisible(xrt, maxEnergy))
                xrts.add(xrt);
          }
       return new XRayTransitionSet(xrts);
@@ -340,20 +336,21 @@ public class EDSDetector
     * Checks the specified spectrum and matches the energy scale and offset for
     * this detector to the specified tolerance.
     *
-    * @param spec A ISpectrumData
-    * @param tol - Tolerance (nominally 0.001)
+    * @param spec
+    *           A ISpectrumData
+    * @param tol
+    *           - Tolerance (nominally 0.001)
     * @throws EPQException
     */
-   public void checkSpectrumScale(final ISpectrumData spec, final double tol)
-         throws EPQException {
+   public void checkSpectrumScale(final ISpectrumData spec, final double tol) throws EPQException {
       {
          final double scale = getProperties().getNumericProperty(SpectrumProperties.EnergyScale);
-         if(Math.abs(spec.getChannelWidth() - scale) > (scale * tol))
+         if (Math.abs(spec.getChannelWidth() - scale) > (scale * tol))
             throw new EPQException("The channel widths for " + spec.toString() + " and " + toString() + " don't match.");
       }
       {
          final double off = getProperties().getNumericWithDefault(SpectrumProperties.EnergyOffset, 0.0);
-         if(Math.abs(spec.getZeroOffset() - off) > (spec.getChannelCount() * spec.getChannelWidth() * tol))
+         if (Math.abs(spec.getZeroOffset() - off) > (spec.getChannelCount() * spec.getChannelWidth() * tol))
             throw new EPQException("The zero offsets for " + spec.toString() + " and " + toString() + " don't match.");
       }
    }
@@ -379,12 +376,12 @@ public class EDSDetector
     */
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE) {
+      if (mHash == Integer.MAX_VALUE) {
          final int PRIME = 31;
          int result = super.hashCode();
          result = (PRIME * result) + ((mCalibration == null) ? 0 : mCalibration.hashCode());
          result = (PRIME * result) + ((mDetProperties == null) ? 0 : mDetProperties.hashCode());
-         if(result == Integer.MAX_VALUE)
+         if (result == Integer.MAX_VALUE)
             result = Integer.MIN_VALUE;
          mHash = result;
       }
@@ -396,22 +393,22 @@ public class EDSDetector
     */
    @Override
    public boolean equals(final Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(!super.equals(obj))
+      if (!super.equals(obj))
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final EDSDetector other = (EDSDetector) obj;
-      if(mCalibration == null) {
-         if(other.mCalibration != null)
+      if (mCalibration == null) {
+         if (other.mCalibration != null)
             return false;
-      } else if(!mCalibration.equals(other.mCalibration))
+      } else if (!mCalibration.equals(other.mCalibration))
          return false;
-      if(mDetProperties == null) {
-         if(other.mDetProperties != null)
+      if (mDetProperties == null) {
+         if (other.mDetProperties != null)
             return false;
-      } else if(!mDetProperties.equals(other.mDetProperties))
+      } else if (!mDetProperties.equals(other.mDetProperties))
          return false;
       return true;
    }
@@ -423,7 +420,8 @@ public class EDSDetector
    /**
     * Set the position of the detector...
     *
-    * @param pos The position in meters
+    * @param pos
+    *           The position in meters
     */
    public void setPosition(final double[] pos) {
       getDetectorProperties().setPosition(pos);
@@ -499,7 +497,8 @@ public class EDSDetector
     * channel index may be outside of the bounds of valid channel indices for
     * this spectrum.
     *
-    * @param e double - the energy in eV
+    * @param e
+    *           double - the energy in eV
     * @return int - the channel index
     */
    public int channelForEnergy(final double e) {
@@ -513,16 +512,15 @@ public class EDSDetector
    /**
     * Create an EDSDetector with 100% efficiency at all x-ray energies
     *
-    * @param nChannels Number of channels
-    * @param chWidth Width in eV of each channel
+    * @param nChannels
+    *           Number of channels
+    * @param chWidth
+    *           Width in eV of each channel
     * @return EDSDetector
     * @throws EPQException
     */
-   public static EDSDetector createPerfectDetector(final int nChannels, final double chWidth, final double[] pos)
-         throws EPQException {
-      class DeltaLineshapeModel
-         extends
-         DetectorLineshapeModel {
+   public static EDSDetector createPerfectDetector(final int nChannels, final double chWidth, final double[] pos) throws EPQException {
+      class DeltaLineshapeModel extends DetectorLineshapeModel {
          private final double mChannelWidth;
 
          private DeltaLineshapeModel(final double chWidth) {
@@ -536,6 +534,7 @@ public class EDSDetector
 
          /*
           * (non-Javadoc)
+          * 
           * @see java.lang.Object#hashCode()
           */
          @Override
@@ -550,16 +549,17 @@ public class EDSDetector
 
          /*
           * (non-Javadoc)
+          * 
           * @see java.lang.Object#equals(java.lang.Object)
           */
          @Override
          public boolean equals(final Object obj) {
-            if(this == obj)
+            if (this == obj)
                return true;
-            if(getClass() != obj.getClass())
+            if (getClass() != obj.getClass())
                return false;
             final DeltaLineshapeModel other = (DeltaLineshapeModel) obj;
-            if(Double.doubleToLongBits(mChannelWidth) != Double.doubleToLongBits(other.mChannelWidth))
+            if (Double.doubleToLongBits(mChannelWidth) != Double.doubleToLongBits(other.mChannelWidth))
                return false;
             return true;
          }
@@ -580,9 +580,7 @@ public class EDSDetector
          }
       }
 
-      class IdealCalibration
-         extends
-         EDSCalibration {
+      class IdealCalibration extends EDSCalibration {
 
          final private double mChannelWidth;
 
@@ -596,8 +594,8 @@ public class EDSDetector
           */
          @Override
          public double[] getEfficiency(final DetectorProperties dp) {
-        	 assert false :  "Should not be used!!!";
-             final double[] res = new double[dp.getChannelCount()];
+            assert false : "Should not be used!!!";
+            final double[] res = new double[dp.getChannelCount()];
             Arrays.fill(res, 1.0);
             return res;
          }
@@ -621,23 +619,17 @@ public class EDSDetector
          }
       }
 
-      class IdealDetectorProperties
-         extends
-         DetectorProperties {
-         
-         IdealDetectorProperties(final int nChannels, final double[] pos) {
-             super(new ElectronProbe("Perfect"), "Ideal Detector", nChannels, pos);
-          }
+      class IdealDetectorProperties extends DetectorProperties {
 
+         IdealDetectorProperties(final int nChannels, final double[] pos) {
+            super(new ElectronProbe("Perfect"), "Ideal Detector", nChannels, pos);
+         }
 
       }
 
-      class IdealDetector
-         extends
-         EDSDetector {
+      class IdealDetector extends EDSDetector {
 
-         IdealDetector(final int nChannels, final double chWidth, final double[] pos)
-               throws EPQException {
+         IdealDetector(final int nChannels, final double chWidth, final double[] pos) throws EPQException {
             super(new IdealDetectorProperties(nChannels, pos), new IdealCalibration(chWidth));
          }
 
@@ -645,11 +637,12 @@ public class EDSDetector
          protected void convolve() {
             final EditableSpectrum es = getSpectrum();
             SpectrumProperties sp = es.getProperties();
-            double sc=1.0;
-            if(sp.isDefined(SpectrumProperties.DetectorArea)) {
-              	final double area = 1.0e-6 * sp.getNumericWithDefault(SpectrumProperties.DetectorArea, 1.0);  // in m^2
-             	sc = area / (4.0 * Math.PI);
-          	}
+            double sc = 1.0;
+            if (sp.isDefined(SpectrumProperties.DetectorArea)) {
+               final double area = 1.0e-6 * sp.getNumericWithDefault(SpectrumProperties.DetectorArea, 1.0); // in
+                                                                                                            // m^2
+               sc = area / (4.0 * Math.PI);
+            }
             System.arraycopy(Math2.multiply(sc, getAccumulator()), 0, es.getCounts(), 0, es.getChannelCount());
             mDirty = false;
          }
@@ -703,9 +696,12 @@ public class EDSDetector
     * Create a new EDSDetector object to represent a basic SDD detector.
     *
     * @param chCount
-    * @param chWidth eV
-    * @param zeroOffset eV
-    * @param fwhm eV at Mn Ka
+    * @param chWidth
+    *           eV
+    * @param zeroOffset
+    *           eV
+    * @param fwhm
+    *           eV at Mn Ka
     * @return EDSDetector
     */
    public static EDSDetector createSDDDetector(final int chCount, final double chWidth, final double zeroOffset, final double fwhm) {
@@ -721,8 +717,7 @@ public class EDSDetector
       return tmp instanceof EDSDetector ? (EDSDetector) tmp : null;
    }
 
-   public void writeXML(final File file)
-         throws IOException {
+   public void writeXML(final File file) throws IOException {
       try (final FileOutputStream fos = new FileOutputStream(file)) {
          final EPQXStream xs = EPQXStream.getInstance();
          xs.toXML(this, fos);
@@ -730,18 +725,18 @@ public class EDSDetector
    }
 
    public Matrix inverseDetectorFunction() {
-      if(mPseudoInverse == null) {
+      if (mPseudoInverse == null) {
          final int chCx = getChannelCount();
          final Matrix detFunc = new Matrix(chCx, chCx);
          final DetectorLineshapeModel dlm = getDetectorLineshapeModel();
          // final double[] eff =
          // getCalibration().getEfficiency(getDetectorProperties());
-         for(int ch = 0; ch < chCx; ++ch) {
+         for (int ch = 0; ch < chCx; ++ch) {
             final double center = avgEnergyForChannel(ch);
-            if(center > 0.0) {
+            if (center > 0.0) {
                final int min = Math.max(0, channelForEnergy(center - dlm.leftWidth(center, 0.0001)));
                final int max = Math.min(chCx - 1, channelForEnergy(center + dlm.rightWidth(center, 0.0001)));
-               for(int outCh = min; outCh < max; ++outCh) {
+               for (int outCh = min; outCh < max; ++outCh) {
                   final double eV = avgEnergyForChannel(outCh);
                   detFunc.set(ch, outCh, dlm.compute(eV, center));
                }
@@ -751,12 +746,12 @@ public class EDSDetector
          final SingularValueDecomposition svdDF = detFunc.svd();
          final double[] s = svdDF.getSingularValues();
          double maxS = 0.0;
-         for(final double element : s)
-            if(element > maxS)
+         for (final double element : s)
+            if (element > maxS)
                maxS = element;
          final double EPS = 1.0e-12;
          final Matrix ss = (new Matrix(svdDF.getS().getArrayCopy())).transpose();
-         for(int i = 0; i < ss.getRowDimension(); ++i)
+         for (int i = 0; i < ss.getRowDimension(); ++i)
             ss.set(i, i, s[i] > EPS * maxS ? 1.0 / s[i] : 0.0);
          final Matrix u = svdDF.getU(), v = svdDF.getV();
          mPseudoInverse = v.times(ss).times(u.transpose());
@@ -772,8 +767,8 @@ public class EDSDetector
       final Matrix res = pInv.times(specData);
       final double[] chData = es.getCounts();
       Arrays.fill(chData, 0.0);
-      for(int i = 0; i < Math.min(res.getRowDimension(), data.length); ++i)
-         if(!Double.isNaN(res.get(i, 0)))
+      for (int i = 0; i < Math.min(res.getRowDimension(), data.length); ++i)
+         if (!Double.isNaN(res.get(i, 0)))
             chData[i] = res.get(i, 0);
       return SpectrumUtils.copy(es);
    }

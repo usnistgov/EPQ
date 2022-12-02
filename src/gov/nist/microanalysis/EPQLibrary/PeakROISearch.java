@@ -26,8 +26,7 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @author Nicholas
  * @version 1.0
  */
-abstract public class PeakROISearch
-   extends AlgorithmClass {
+abstract public class PeakROISearch extends AlgorithmClass {
 
    protected PeakROISearch(String name, LitReference ref) {
       super("Peak Search", name, ref);
@@ -62,18 +61,18 @@ abstract public class PeakROISearch
       final ISpectrumData smoothed = SpectrumSmoothing.SavitzkyGolay6.compute(spec);
       final double[] stdDev = compute(smoothed);
       int[] roi = null;
-      for(int i = stdDev.length - 1; i >= 0; --i)
-         if(stdDev[i] > thresh) {
-            if(roi == null) {
+      for (int i = stdDev.length - 1; i >= 0; --i)
+         if (stdDev[i] > thresh) {
+            if (roi == null) {
                roi = new int[2];
                roi[1] = i;
             }
-         } else if(roi != null) {
+         } else if (roi != null) {
             roi[0] = i + 1;
             res.add(roi);
             roi = null;
          }
-      if(roi != null) {
+      if (roi != null) {
          roi[0] = 0;
          res.add(roi);
       }
@@ -91,32 +90,27 @@ abstract public class PeakROISearch
    public Set<Element> possibleElements(ISpectrumData spec, double thresh) {
       final TreeSet<Element> res = new TreeSet<Element>();
       final Set<int[]> rois = peakROIs(spec, thresh);
-      final int[] shells = new int[] {
-         AtomicShell.K,
-         AtomicShell.LIII,
-         AtomicShell.MV
-      };
-      for(int z = Element.elmH; z < 93; ++z) {
+      final int[] shells = new int[]{AtomicShell.K, AtomicShell.LIII, AtomicShell.MV};
+      for (int z = Element.elmH; z < 93; ++z) {
          final Element elm = Element.byAtomicNumber(z);
          boolean nextElm = false;
-         for(final int sh : shells) {
-            if(AtomicShell.exists(elm, sh))
+         for (final int sh : shells) {
+            if (AtomicShell.exists(elm, sh))
                try {
                   final XRayTransition xrt = XRayTransition.getStrongestLine(new AtomicShell(elm, sh));
-                  if(xrt != null) {
+                  if (xrt != null) {
                      final int ch = SpectrumUtils.channelForEnergy(spec, FromSI.eV(xrt.getEnergy()));
-                     for(final int[] roi : rois)
-                        if((ch >= roi[0]) && (ch <= roi[1])) {
+                     for (final int[] roi : rois)
+                        if ((ch >= roi[0]) && (ch <= roi[1])) {
                            res.add(elm);
                            nextElm = true;
                            break;
                         }
                   }
-               }
-               catch(final EPQException e) {
+               } catch (final EPQException e) {
                   // Just ignore it...
                }
-            if(nextElm)
+            if (nextElm)
                break;
          }
       }
@@ -136,33 +130,28 @@ abstract public class PeakROISearch
    public Set<Element> likelyElements(ISpectrumData spec, double e0, double thresh) {
       final TreeSet<Element> res = new TreeSet<Element>();
       final Set<int[]> rois = peakROIs(spec, thresh);
-      final int[] shells = new int[] {
-         AtomicShell.K,
-         AtomicShell.LIII,
-         AtomicShell.MV
-      };
-      for(int z = Element.elmBe; z < 93; ++z)
+      final int[] shells = new int[]{AtomicShell.K, AtomicShell.LIII, AtomicShell.MV};
+      for (int z = Element.elmBe; z < 93; ++z)
          try {
             final Element elm = Element.byAtomicNumber(z);
             XRayTransition bestXrt = null;
-            for(final int sh : shells) {
-               if(AtomicShell.exists(elm, sh) && (AtomicShell.getEdgeEnergy(elm, sh) < (0.5 * e0)))
+            for (final int sh : shells) {
+               if (AtomicShell.exists(elm, sh) && (AtomicShell.getEdgeEnergy(elm, sh) < (0.5 * e0)))
                   bestXrt = XRayTransition.getStrongestLine(new AtomicShell(elm, sh));
-               if(bestXrt != null)
+               if (bestXrt != null)
                   break;
             }
-            if((bestXrt == null) && AtomicShell.exists(elm, AtomicShell.K))
+            if ((bestXrt == null) && AtomicShell.exists(elm, AtomicShell.K))
                bestXrt = XRayTransition.getStrongestLine(new AtomicShell(elm, AtomicShell.K));
-            if(bestXrt != null) {
+            if (bestXrt != null) {
                final int ch = SpectrumUtils.channelForEnergy(spec, FromSI.eV(bestXrt.getEnergy()));
-               for(final int[] roi : rois)
-                  if((ch >= roi[0]) && (ch <= roi[1])) {
+               for (final int[] roi : rois)
+                  if ((ch >= roi[0]) && (ch <= roi[1])) {
                      res.add(elm);
                      break;
                   }
             }
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             // Just ignore it...
          }
       return res;
@@ -183,11 +172,11 @@ abstract public class PeakROISearch
       final Set<int[]> peakRois = peakROIs(spec, thresh);
       final double[] ch = SpectrumUtils.toDoubleArray(spec);
       Arrays.fill(ch, 0.0);
-      for(final int[] roi : peakRois) {
+      for (final int[] roi : peakRois) {
          double max = 0.0;
-         for(int i = roi[0]; i <= roi[1]; ++i)
+         for (int i = roi[0]; i <= roi[1]; ++i)
             max = Math.max(max, spec.getCounts(i));
-         for(int i = roi[0]; i <= roi[1]; ++i)
+         for (int i = roi[0]; i <= roi[1]; ++i)
             ch[i] = max;
       }
       return new DerivedSpectrum.BasicDerivedSpectrum(spec, ch, "Peaks[" + spec.toString() + "]");
@@ -225,8 +214,7 @@ abstract public class PeakROISearch
     * @author nritchie
     * @version 1.0
     */
-   static class Stripping
-      extends PeakROISearch {
+   static class Stripping extends PeakROISearch {
 
       protected Stripping() {
          super("Peak Stripping-based", "None");
@@ -244,11 +232,11 @@ abstract public class PeakROISearch
          final ISpectrumData back = ps.computeBackground(spec);
          final int WIDTH = (int) Math.round(100.0 / spec.getChannelWidth());
          double bkg = 0.0, fore = 0.0;
-         for(int i = spec.getChannelCount() - 1; i >= (spec.getChannelCount() - WIDTH); --i) {
+         for (int i = spec.getChannelCount() - 1; i >= (spec.getChannelCount() - WIDTH); --i) {
             bkg += back.getCounts(i);
             fore += spec.getCounts(i);
          }
-         for(int i = spec.getChannelCount() - WIDTH - 1; i >= 0; --i) {
+         for (int i = spec.getChannelCount() - WIDTH - 1; i >= 0; --i) {
             res[i + (WIDTH / 2)] = (fore - bkg) / Math.sqrt(bkg > (WIDTH * 4.0) ? bkg : 4.0 * WIDTH);
             bkg += back.getCounts(i) - back.getCounts(i + WIDTH);
             fore += spec.getCounts(i) - spec.getCounts(i + WIDTH);
@@ -257,8 +245,7 @@ abstract public class PeakROISearch
       }
    };
 
-   static public class GaussianFilter
-      extends PeakROISearch {
+   static public class GaussianFilter extends PeakROISearch {
 
       protected GaussianFilter() {
          super("Gaussian Filter", "None");
@@ -268,9 +255,9 @@ abstract public class PeakROISearch
          assert (kernel.length % 2) == 1;
          final UncertainValue2[] res = new UncertainValue2[v.length];
          final int mid = kernel.length / 2;
-         for(int i = 0; i < res.length; ++i) {
+         for (int i = 0; i < res.length; ++i) {
             double r = 0.0, dr = 0.0;
-            for(int j = 0; j < kernel.length; ++j) {
+            for (int j = 0; j < kernel.length; ++j) {
                final int idx = Math2.bound((i + j) - mid, 0, v.length);
                r += kernel[j] * v[idx];
                dr += Math2.sqr(Math.abs(kernel[j]) * Math.sqrt(Math.max(0.0, v[idx])));
@@ -288,15 +275,16 @@ abstract public class PeakROISearch
          final double[] filter = new double[(2 * Math.max(3, (int) Math.round((3.0 * w) / spec.getChannelWidth()))) + 1];
          final int mid = filter.length / 2;
          final double den = SpectrumUtils.gaussian(0.0, w);
-         for(int i = 0; i <= (filter.length / 2); ++i) {
+         for (int i = 0; i <= (filter.length / 2); ++i) {
             filter[i] = SpectrumUtils.gaussian(spec.getChannelWidth() * (i - mid), w) / den;
             filter[filter.length - 1 - i] = filter[i];
          }
          final UncertainValue2[] back = convolve(SpectrumUtils.toDoubleArray(ps.computeBackground(spec)), filter);
          final UncertainValue2[] fore = convolve(SpectrumUtils.toDoubleArray(spec), filter);
          final double[] diff = new double[fore.length];
-         for(int i = 0; i < fore.length; ++i)
-            diff[i] = back[i].uncertainty() > 0.0 ? UncertainValue2.divide(UncertainValue2.subtract(fore[i], back[i]), Math.max(1.0 / den, back[i].uncertainty())).doubleValue()
+         for (int i = 0; i < fore.length; ++i)
+            diff[i] = back[i].uncertainty() > 0.0
+                  ? UncertainValue2.divide(UncertainValue2.subtract(fore[i], back[i]), Math.max(1.0 / den, back[i].uncertainty())).doubleValue()
                   : 0.0;
          return diff;
       }
@@ -309,10 +297,7 @@ abstract public class PeakROISearch
 
    public final static PeakROISearch PeakStrippingSearch = new Stripping();
    public final static PeakROISearch GaussianSearch = new GaussianFilter();
-   static private final AlgorithmClass mAllImplementations[] = new AlgorithmClass[] {
-      PeakStrippingSearch,
-      GaussianSearch
-   };
+   static private final AlgorithmClass mAllImplementations[] = new AlgorithmClass[]{PeakStrippingSearch, GaussianSearch};
 
    @Override
    public List<AlgorithmClass> getAllImplementations() {

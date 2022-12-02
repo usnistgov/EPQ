@@ -17,8 +17,7 @@ import java.awt.event.ActionEvent;
  * @author nritchie
  * @version 1.0
  */
-public class ProgressEvent
-   extends ActionEvent {
+public class ProgressEvent extends ActionEvent {
 
    private static final long serialVersionUID = 7157720139752608198L;
    private final int mProgress;
@@ -28,7 +27,8 @@ public class ProgressEvent
     * 
     * @param src
     * @param id
-    * @param progress in percent
+    * @param progress
+    *           in percent
     */
    public ProgressEvent(Object src, int id, int progress) {
       super(src, id, Integer.toString(Math2.bound(progress, 0, 101)) + "%");

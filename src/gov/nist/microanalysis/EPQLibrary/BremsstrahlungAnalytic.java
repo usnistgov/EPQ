@@ -38,16 +38,13 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
    protected double mTakeOffAngle;
 
    static private LitReference.JournalArticle small1987 = new LitReference.JournalArticle(
-         "Modeling of the bremsstrahlung radiation produced in pure-element targets by 10-40 keV electrons",
-         LitReference.JApplPhys, "61 (2)", "p459-469", 1987,
-         new Author[]{LitReference.JSmall,
-               new LitReference.Author("Stefan", "Leigh", LitReference.NIST),
-               LitReference.DNewbury, LitReference.RMyklebust});
+         "Modeling of the bremsstrahlung radiation produced in pure-element targets by 10-40 keV electrons", LitReference.JApplPhys, "61 (2)",
+         "p459-469", 1987, new Author[]{LitReference.JSmall, new LitReference.Author("Stefan", "Leigh", LitReference.NIST), LitReference.DNewbury,
+               LitReference.RMyklebust});
 
    static private LitReference.JournalArticle reed1975 = new LitReference.JournalArticle(
          "The Shape of the Continuous X-ray Spectrum and Background Corrections for Energy-Dispersive Electron Microprobe Analysis",
-         LitReference.XRaySpec, "4", "p14-17", 1975,
-         new Author[]{LitReference.SReed});
+         LitReference.XRaySpec, "4", "p14-17", 1975, new Author[]{LitReference.SReed});
 
    static private LitReference.CrudeReference lifshin1974 = new LitReference.CrudeReference(
          "E. Lifshin, Proc. Ninth Annual Conference on the Microbeam Analysis Society, Ottowa, Canada, paper 53 (1974)");
@@ -67,8 +64,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
     */
    public void initialize(Composition comp, double e0, double toa) {
       mComposition = comp;
-      mMac = (MassAbsorptionCoefficient) getAlgorithm(
-            MassAbsorptionCoefficient.class);
+      mMac = (MassAbsorptionCoefficient) getAlgorithm(MassAbsorptionCoefficient.class);
       mE0keV = FromSI.keV(e0);
       mTakeOffAngle = toa;
    }
@@ -128,24 +124,18 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
       public double compute(double eNu) {
          final double eNukeV = FromSI.keV(eNu);
          if ((eNukeV > 0.0) && (eNukeV < mE0keV)) {
-            final double mac = MassAbsorptionCoefficient
-                  .toCmSqrPerGram(mMac.compute(mComposition, eNu));
-            final double f_p = Math2.sqr(Math.sin(mTakeOffAngle) / (1.0
-                  + (1.2e-6 * (Math.pow(mE0keV, 1.65) - Math.pow(eNukeV, 1.65))
-                        * mac)));
+            final double mac = MassAbsorptionCoefficient.toCmSqrPerGram(mMac.compute(mComposition, eNu));
+            final double f_p = Math2.sqr(Math.sin(mTakeOffAngle) / (1.0 + (1.2e-6 * (Math.pow(mE0keV, 1.65) - Math.pow(eNukeV, 1.65)) * mac)));
             final double w = 1.15 - (0.150 * f_p);
             final double rc;
             {
                final double x = eNukeV / mE0keV;
-               final double aa = 1.0e-4
-                     * (1.0 - Math.exp((x * ((0.361 * x) + 0.288)) - 0.619));
-               final double bb = 1.0e-2
-                     * (1.0 - Math.exp((x * ((0.153 * x) + 2.04)) - 2.17));
+               final double aa = 1.0e-4 * (1.0 - Math.exp((x * ((0.361 * x) + 0.288)) - 0.619));
+               final double bb = 1.0e-2 * (1.0 - Math.exp((x * ((0.153 * x) + 2.04)) - 2.17));
                final double cc = x < 0.7 ? 1.003 + (0.0407 * x) : 1.017;
                rc = (mMeanZ * ((aa * mMeanZ) - bb)) + cc;
             }
-            final double gen = Math.exp(
-                  (mM * Math.log(mMeanZ * ((mE0keV / eNukeV) - 1.0))) + mB);
+            final double gen = Math.exp((mM * Math.log(mMeanZ * ((mE0keV / eNukeV) - 1.0))) + mB);
             return mUnjustifiedFudgeFactor * gen * f_p * rc * w;
          } else
             return 0.0;
@@ -175,25 +165,18 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
       public double compute(double eNu) {
          final double eNukeV = FromSI.keV(eNu);
          if ((eNukeV > 0.0) && (eNukeV < mE0keV)) {
-            final double mac = MassAbsorptionCoefficient
-                  .toCmSqrPerGram(mMac.compute(mComposition, eNu));
-            final double f_p = Math2.sqr(Math.sin(mTakeOffAngle) / (1.0
-                  + (1.2e-6 * (Math.pow(mE0keV, 1.65) - Math.pow(eNukeV, 1.65))
-                        * mac)));
+            final double mac = MassAbsorptionCoefficient.toCmSqrPerGram(mMac.compute(mComposition, eNu));
+            final double f_p = Math2.sqr(Math.sin(mTakeOffAngle) / (1.0 + (1.2e-6 * (Math.pow(mE0keV, 1.65) - Math.pow(eNukeV, 1.65)) * mac)));
             double gen = 0.0;
             final double x = eNukeV / mE0keV;
-            final double aa = 1.0e-4
-                  * (1.0 - Math.exp((x * ((0.361 * x) + 0.288)) - 0.619));
-            final double bb = 1.0e-2
-                  * (1.0 - Math.exp((x * ((0.153 * x) + 2.04)) - 2.17));
+            final double aa = 1.0e-4 * (1.0 - Math.exp((x * ((0.361 * x) + 0.288)) - 0.619));
+            final double bb = 1.0e-2 * (1.0 - Math.exp((x * ((0.153 * x) + 2.04)) - 2.17));
             final double cc = x < 0.7 ? 1.003 + (0.0407 * x) : 1.017;
             for (final Element elm : mComposition.getElementSet()) {
                final double z = elm.getAtomicNumber();
                final double rc = (z * ((aa * z) - bb)) + cc;
                final double w = 1.15 - (0.150 * f_p);
-               gen += Math
-                     .exp((mM * Math.log(z * ((mE0keV / eNukeV) - 1.0))) + mB)
-                     * rc * w * mComposition.weightFraction(elm, true);
+               gen += Math.exp((mM * Math.log(z * ((mE0keV / eNukeV) - 1.0))) + mB) * rc * w * mComposition.weightFraction(elm, true);
             }
 
             return gen * f_p;
@@ -201,12 +184,8 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
             return 0.0;
       }
    }
-   
 
-   public static class Castellano2004aBremsstrahlung
-         extends
-            BremsstrahlungAnalytic {
-      
+   public static class Castellano2004aBremsstrahlung extends BremsstrahlungAnalytic {
 
       public Castellano2004aBremsstrahlung() {
          super("Castellano 2004", castellano2004a);
@@ -221,10 +200,8 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
             for (Element elm : mComposition.getElementSet()) {
                final double z = elm.getAtomicNumber();
                final double af = mComposition.atomicPercent(elm);
-               res += af * (Math.sqrt(z) * (e0k - ek) / ek) * (-73.90
-                     - 1.2446 * ek + 36.502 * Math.log(z)
-                     + (148.5 * Math.pow(e0k, 0.1239) / z)
-                           * (1.0 + (-0.006624 + 0.0002906 * e0k) * z / ek));
+               res += af * (Math.sqrt(z) * (e0k - ek) / ek) * (-73.90 - 1.2446 * ek + 36.502 * Math.log(z)
+                     + (148.5 * Math.pow(e0k, 0.1239) / z) * (1.0 + (-0.006624 + 0.0002906 * e0k) * z / ek));
             }
             res *= riv.compute(eNu);
          }
@@ -270,10 +247,8 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
        * @return double
        * @throws EPQException
        */
-      protected double computeChi(double e, Composition comp,
-            double takeOffAngle) throws EPQException {
-         final MassAbsorptionCoefficient mac = (MassAbsorptionCoefficient) getAlgorithm(
-               MassAbsorptionCoefficient.class);
+      protected double computeChi(double e, Composition comp, double takeOffAngle) throws EPQException {
+         final MassAbsorptionCoefficient mac = (MassAbsorptionCoefficient) getAlgorithm(MassAbsorptionCoefficient.class);
          return mac.compute(comp, e) / Math.sin(takeOffAngle);
       }
 
@@ -287,12 +262,9 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
        */
       private double philibert(double e) throws EPQException {
          final double eNukeV = FromSI.keV(e);
-         final double chi = MassAbsorptionCoefficient
-               .toCmSqrPerGram(computeChi(e, mComposition, mTakeOffAngle));
-         final double sigma = 2.54e5
-               / (Math.pow(mE0keV, 1.5) - Math.pow(eNukeV, 1.5));
-         return ((1 + mH) * (sigma * sigma))
-               / ((sigma + chi) * ((sigma * (1.0 + mH)) + (mH * chi)));
+         final double chi = MassAbsorptionCoefficient.toCmSqrPerGram(computeChi(e, mComposition, mTakeOffAngle));
+         final double sigma = 2.54e5 / (Math.pow(mE0keV, 1.5) - Math.pow(eNukeV, 1.5));
+         return ((1 + mH) * (sigma * sigma)) / ((sigma + chi) * ((sigma * (1.0 + mH)) + (mH * chi)));
       }
 
       /**
@@ -304,8 +276,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
          super.initialize(comp, e0, toa);
          mH = 0;
          for (final Element el : mComposition.getElementSet()) {
-            final double hEl = (4.5 * el.getAtomicWeight())
-                  / Math2.sqr(el.getAtomicNumber());
+            final double hEl = (4.5 * el.getAtomicWeight()) / Math2.sqr(el.getAtomicNumber());
             mH += mComposition.weightFraction(el, true) * hEl;
          }
       }
@@ -318,8 +289,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
          final double eNukeV = FromSI.keV(eNu);
          if ((eNukeV > 0.0) && (eNukeV < mE0keV))
             try {
-               return ((mE0keV - eNukeV) / Math.pow(eNukeV, 1.21))
-                     * philibert(eNu);
+               return ((mE0keV - eNukeV) / Math.pow(eNukeV, 1.21)) * philibert(eNu);
             } catch (final EPQException e) {
                return 0.0;
             }
@@ -363,10 +333,8 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
          final double nukeV = FromSI.keV(eNu);
          if ((nukeV > 0.0) && (nukeV < mE0keV)) {
             final double ee = Math.pow(mE0keV, 1.65) - Math.pow(nukeV, 1.65);
-            final double chiC = MassAbsorptionCoefficient.toCmSqrPerGram(
-                  mMac.compute(mComposition, eNu)) / Math.sin(mTakeOffAngle);
-            final double fE = 1.0
-                  / (1.0 + (A1 * ee * chiC) + (A2 * Math2.sqr(ee * chiC)));
+            final double chiC = MassAbsorptionCoefficient.toCmSqrPerGram(mMac.compute(mComposition, eNu)) / Math.sin(mTakeOffAngle);
+            final double fE = 1.0 / (1.0 + (A1 * ee * chiC) + (A2 * Math2.sqr(ee * chiC)));
             final double x = (mE0keV - nukeV) / nukeV;
             return fE * mMeanZ * x * (mA + (mB * x));
          } else
@@ -413,21 +381,15 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
          final double nukeV = FromSI.keV(eNu);
          if ((nukeV > 0.0) && (nukeV < mE0keV)) {
             final double ee = Math.pow(mE0keV, 1.65) - Math.pow(nukeV, 1.65);
-            final double chiC = MassAbsorptionCoefficient.toCmSqrPerGram(
-                  mMac.compute(mComposition, eNu)) / Math.sin(mTakeOffAngle);
-            final double fE = 1.0
-                  / (1.0 + (A1 * ee * chiC) + (A2 * Math2.sqr(ee * chiC)));
-            return (fE * mMeanZ * ((mA * (mE0keV - nukeV))
-                  + (mB * Math2.sqr(mE0keV - nukeV)))) / nukeV;
+            final double chiC = MassAbsorptionCoefficient.toCmSqrPerGram(mMac.compute(mComposition, eNu)) / Math.sin(mTakeOffAngle);
+            final double fE = 1.0 / (1.0 + (A1 * ee * chiC) + (A2 * Math2.sqr(ee * chiC)));
+            return (fE * mMeanZ * ((mA * (mE0keV - nukeV)) + (mB * Math2.sqr(mE0keV - nukeV)))) / nukeV;
          } else
             return 0.0;
       }
    }
 
-
-   abstract protected static class QuadraticBremsstrahlung
-         extends
-            BremsstrahlungAnalytic {
+   abstract protected static class QuadraticBremsstrahlung extends BremsstrahlungAnalytic {
 
       protected static final double A1 = 2.4e-6;
       protected static final double A2 = 1.44e-12;
@@ -486,9 +448,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
           * material is A*Z_A + B*Z_B for A+B atoms so the average Z per atom is
           * (A*Z_A + B*Z_B)/(A+B). That is to say I think Donovan is correct.
           */
-         mMeanZ = mWeightAverage
-               ? comp.weightAvgAtomicNumber()
-               : comp.meanAtomicNumber();
+         mMeanZ = mWeightAverage ? comp.weightAvgAtomicNumber() : comp.meanAtomicNumber();
       }
 
       /**
@@ -497,8 +457,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
        *      java.util.Collection)
        */
       @Override
-      public ISpectrumData fitBackground(final EDSDetector det,
-            ISpectrumData spec, Collection<?> rois) throws EPQException {
+      public ISpectrumData fitBackground(final EDSDetector det, ISpectrumData spec, Collection<?> rois) throws EPQException {
          spec = SpectrumUtils.applyZeroPeakDiscriminator(spec);
          // Count the number of data points
          int roisLen = 0;
@@ -540,8 +499,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
             private final ISpectrumData mSpecA = getSpec(1.0, 0.0);
             private final ISpectrumData mSpecB = getSpec(0.0, 1.0);
 
-            private ISpectrumData getSpec(double a, double b)
-                  throws EPQException {
+            private ISpectrumData getSpec(double a, double b) throws EPQException {
                mA = a;
                mB = b;
                det.reset();
@@ -569,9 +527,9 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
          toDetector(det, 1.0);
          final ISpectrumData out = det.getSpectrum(1.0);
          SpectrumUtils.rename(out,
-               "Background[" + spec.toString() + "," + this.getName() + ",A="
-                     + Double.toString(mA) + ",B=" + Double.toString(mB) + "]");
-         // System.out.println(spec.toString() + "\t" + Double.toString(mA) + "\t" + Double.toString(mB));
+               "Background[" + spec.toString() + "," + this.getName() + ",A=" + Double.toString(mA) + ",B=" + Double.toString(mB) + "]");
+         // System.out.println(spec.toString() + "\t" + Double.toString(mA) +
+         // "\t" + Double.toString(mB));
          return out;
       }
    }
@@ -589,8 +547,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
       final EditableSpectrum es = det.getSpectrum();
       final double f = es.getChannelWidth() / 10.0;
       for (int ch = es.getChannelCount() - 1; ch >= 0; --ch) {
-         final double energy = ToSI
-               .eV(SpectrumUtils.avgEnergyForChannel(es, ch));
+         final double energy = ToSI.eV(SpectrumUtils.avgEnergyForChannel(es, ch));
          det.addEvent(energy, Math.max(0.0, compute(energy)) * flux * f);
       }
    }
@@ -609,20 +566,15 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
     * @return An ISpectrumData containing the best fit background spectrum
     * @throws EPQException
     */
-   public ISpectrumData fitBackground(EDSDetector det, ISpectrumData spec,
-         Collection<?> rois) throws EPQException {
+   public ISpectrumData fitBackground(EDSDetector det, ISpectrumData spec, Collection<?> rois) throws EPQException {
       spec = SpectrumUtils.applyZeroPeakDiscriminator(spec);
       det.reset();
       toDetector(det, 1.0);
       final ISpectrumData brem = det.getSpectrum(1.0);
       double sS = 0.0, sB = 0.0;
       for (final Object roi : rois) {
-         final int minCh = roi instanceof int[]
-               ? ((int[]) roi)[0]
-               : ((Interval) roi).min();
-         final int maxCh = roi instanceof int[]
-               ? ((int[]) roi)[1]
-               : ((Interval) roi).max();
+         final int minCh = roi instanceof int[] ? ((int[]) roi)[0] : ((Interval) roi).min();
+         final int maxCh = roi instanceof int[] ? ((int[]) roi)[1] : ((Interval) roi).max();
          for (int ch = minCh; ch < maxCh; ++ch) {
             final double s = spec.getCounts(ch);
             final double b = brem.getCounts(ch);
@@ -633,8 +585,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
          }
       }
       final ISpectrumData out = SpectrumUtils.scale(sS / sB, brem);
-      SpectrumUtils.rename(out, "Background[" + spec.toString() + ","
-            + this.getName() + ", scale=" + Double.toString(sS / sB) + "]");
+      SpectrumUtils.rename(out, "Background[" + spec.toString() + "," + this.getName() + ", scale=" + Double.toString(sS / sB) + "]");
       return out;
    }
 
@@ -678,16 +629,13 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
     * @return ISpectrumData
     * @throws EPQException
     */
-   public ISpectrumData fitBackground(EDSDetector det, ISpectrumData spec,
-         Composition comp, XRayTransitionSet xrts) throws EPQException {
+   public ISpectrumData fitBackground(EDSDetector det, ISpectrumData spec, Composition comp, XRayTransitionSet xrts) throws EPQException {
       final DetectorLineshapeModel dlm = det.getDetectorLineshapeModel();
       final double xtra = ToSI.eV(dlm.getFWHMatMnKa());
-      final RegionOfInterestSet rois = new RegionOfInterestSet(dlm, 0.001,
-            1.5 * xtra, xtra);
+      final RegionOfInterestSet rois = new RegionOfInterestSet(dlm, 0.001, 1.5 * xtra, xtra);
       rois.add(xrts);
       final ISpectrumData result = fitBackground(det, spec, comp, rois);
-      SpectrumUtils.rename(result, "Background[" + spec.toString() + ","
-            + this.getName() + "," + xrts.toString() + "]");
+      SpectrumUtils.rename(result, "Background[" + spec.toString() + "," + this.getName() + "," + xrts.toString() + "]");
       return result;
    }
 
@@ -710,32 +658,26 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
     *         background
     * @throws EPQException
     */
-   public ISpectrumData fitBackground(EDSDetector det, ISpectrumData spec,
-         Composition comp, RegionOfInterestSet rois) throws EPQException {
-      initialize(comp, ToSI.eV(SpectrumUtils.getBeamEnergy(spec)),
-            SpectrumUtils.getTakeOffAngle(spec.getProperties()));
+   public ISpectrumData fitBackground(EDSDetector det, ISpectrumData spec, Composition comp, RegionOfInterestSet rois) throws EPQException {
+      initialize(comp, ToSI.eV(SpectrumUtils.getBeamEnergy(spec)), SpectrumUtils.getTakeOffAngle(spec.getProperties()));
       final Collection<int[]> res = new ArrayList<int[]>();
       final DetectorLineshapeModel dlm = det.getDetectorLineshapeModel();
       final double xtra = ToSI.eV(dlm.getFWHMatMnKa());
       final double e0 = ToSI.eV(SpectrumUtils.getBeamEnergy(spec));
-      final double eMin = ToSI.eV(SpectrumUtils.minEnergyForChannel(spec,
-            SpectrumUtils.smallestNonZeroChannel(spec)));
-      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, 0.001,
-            1.5 * xtra, xtra);
+      final double eMin = ToSI.eV(SpectrumUtils.minEnergyForChannel(spec, SpectrumUtils.smallestNonZeroChannel(spec)));
+      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, 0.001, 1.5 * xtra, xtra);
       for (final Element elm : comp.getElementSet())
          roi.add(new XRayTransitionSet(elm, eMin, e0));
       final ArrayList<int[]> tmp = new ArrayList<int[]>();
       {
          int min = SpectrumUtils.channelForEnergy(spec, FromSI.eV(eMin));
          for (final RegionOfInterestSet.RegionOfInterest r : roi) {
-            final int max = SpectrumUtils.channelForEnergy(spec,
-                  FromSI.eV(r.lowEnergy()));
+            final int max = SpectrumUtils.channelForEnergy(spec, FromSI.eV(r.lowEnergy()));
             if (max > min) {
                final int[] ii = new int[]{min, max};
                tmp.add(ii);
             }
-            min = SpectrumUtils.channelForEnergy(spec,
-                  FromSI.eV(r.highEnergy()));
+            min = SpectrumUtils.channelForEnergy(spec, FromSI.eV(r.highEnergy()));
          }
          final int max = SpectrumUtils.channelForEnergy(spec, FromSI.eV(e0));
          final int[] ii = new int[]{min, max};
@@ -748,18 +690,14 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
             lowE = Math.min(roi1.lowEnergy(), lowE);
             highE = Math.max(roi1.highEnergy(), highE);
          }
-         final int lowCh = SpectrumUtils.channelForEnergy(spec,
-               FromSI.eV(lowE));
-         final int highCh = SpectrumUtils.channelForEnergy(spec,
-               FromSI.eV(highE));
+         final int lowCh = SpectrumUtils.channelForEnergy(spec, FromSI.eV(lowE));
+         final int highCh = SpectrumUtils.channelForEnergy(spec, FromSI.eV(highE));
          int[] bestLow = null, bestHigh = null;
          int deltaLow = Integer.MAX_VALUE, deltaHigh = Integer.MAX_VALUE;
          for (final int[] ii : tmp) {
             {
                final int[] test = getOptimalRange(ii, lowCh, width);
-               if ((test[0] < lowCh) && ((lowCh - test[1]) < deltaLow)
-                     && ((bestLow == null) || ((test[1]
-                           - test[0]) >= (bestLow[1] - bestLow[0])))) {
+               if ((test[0] < lowCh) && ((lowCh - test[1]) < deltaLow) && ((bestLow == null) || ((test[1] - test[0]) >= (bestLow[1] - bestLow[0])))) {
                   bestLow = test;
                   deltaLow = lowCh - test[1];
                }
@@ -767,8 +705,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
             {
                final int[] test = getOptimalRange(ii, highCh, width);
                if ((test[1] > highCh) && ((test[0] - highCh) < deltaHigh)
-                     && ((bestHigh == null) || ((test[1]
-                           - test[0]) >= (bestHigh[1] - bestHigh[0])))) {
+                     && ((bestHigh == null) || ((test[1] - test[0]) >= (bestHigh[1] - bestHigh[0])))) {
                   bestHigh = test;
                   deltaHigh = test[0] - highCh;
                }
@@ -783,8 +720,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
          // Add an extra set of channels aroung E0/3.0 to provide balance to
          // the quadratic equation.
          int[] best = null;
-         final int extraCh = SpectrumUtils.channelForEnergy(spec,
-               FromSI.eV(e0 / 3.0));
+         final int extraCh = SpectrumUtils.channelForEnergy(spec, FromSI.eV(e0 / 3.0));
          int delta = Integer.MAX_VALUE;
          for (final int[] ii : tmp) {
             final int[] test = getOptimalRange(ii, extraCh, 10);
@@ -800,11 +736,8 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
          if (add)
             res.add(best);
       }
-      final ISpectrumData result = res.size() > 1
-            ? fitBackground(det, spec, res)
-            : fitBackground(det, spec, comp);
-      SpectrumUtils.rename(result, "Background[" + spec.toString() + ","
-            + this.getName() + "," + rois.toString() + "]");
+      final ISpectrumData result = res.size() > 1 ? fitBackground(det, spec, res) : fitBackground(det, spec, comp);
+      SpectrumUtils.rename(result, "Background[" + spec.toString() + "," + this.getName() + "," + rois.toString() + "]");
       return result;
    }
 
@@ -821,19 +754,14 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
     * @return An ISpectrumData object containing the best fit background
     * @throws EPQException
     */
-   public ISpectrumData fitBackground(EDSDetector det, ISpectrumData spec,
-         Composition comp) throws EPQException {
+   public ISpectrumData fitBackground(EDSDetector det, ISpectrumData spec, Composition comp) throws EPQException {
       spec = SpectrumUtils.applyZeroPeakDiscriminator(spec);
-      initialize(comp, ToSI.eV(SpectrumUtils.getBeamEnergy(spec)),
-            SpectrumUtils.getTakeOffAngle(spec.getProperties()));
+      initialize(comp, ToSI.eV(SpectrumUtils.getBeamEnergy(spec)), SpectrumUtils.getTakeOffAngle(spec.getProperties()));
       final Collection<int[]> res = new ArrayList<int[]>();
       final DetectorLineshapeModel dlm = det.getDetectorLineshapeModel();
       final double e0 = ToSI.keV(mE0keV);
-      final double eMin = ToSI
-            .eV(Math.min(100.0, SpectrumUtils.minEnergyForChannel(spec,
-                  SpectrumUtils.smallestNonZeroChannel(spec))));
-      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, 0.001, 0.0,
-            0.0);
+      final double eMin = ToSI.eV(Math.min(100.0, SpectrumUtils.minEnergyForChannel(spec, SpectrumUtils.smallestNonZeroChannel(spec))));
+      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, 0.001, 0.0, 0.0);
       for (final Element elm : comp.getElementSet())
          roi.add(new XRayTransitionSet(elm, eMin, e0));
 
@@ -841,14 +769,12 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
       {
          int min = SpectrumUtils.channelForEnergy(spec, FromSI.eV(eMin));
          for (final RegionOfInterestSet.RegionOfInterest r : roi) {
-            final int max = SpectrumUtils.channelForEnergy(spec,
-                  FromSI.eV(r.lowEnergy()));
+            final int max = SpectrumUtils.channelForEnergy(spec, FromSI.eV(r.lowEnergy()));
             if (max > min) {
                final int[] ii = new int[]{min, max};
                tmp.add(ii);
             }
-            min = SpectrumUtils.channelForEnergy(spec,
-                  FromSI.eV(r.highEnergy()));
+            min = SpectrumUtils.channelForEnergy(spec, FromSI.eV(r.highEnergy()));
          }
          final int max = SpectrumUtils.channelForEnergy(spec, FromSI.eV(e0));
          final int[] ii = new int[]{min, max};
@@ -865,8 +791,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
             break;
          final int j = i < 4 ? 2 * i : (2 * i) + 1;
          final int min = SpectrumUtils.channelForEnergy(spec, j * 2000.0);
-         final int max = SpectrumUtils.bound(spec,
-               SpectrumUtils.channelForEnergy(spec, (j + 1) * 2000.0));
+         final int max = SpectrumUtils.bound(spec, SpectrumUtils.channelForEnergy(spec, (j + 1) * 2000.0));
          if (ToSI.eV(SpectrumUtils.maxEnergyForChannel(spec, min)) > e0)
             break;
          if (min >= spec.getChannelCount())
@@ -893,8 +818,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
       {
          int[] ii = null;
          boolean redo = false;
-         for (int i = SpectrumUtils.channelForEnergy(spec,
-               2.0e3); i >= first; --i) {
+         for (int i = SpectrumUtils.channelForEnergy(spec, 2.0e3); i >= first; --i) {
             final double tol = -4.0 * Math.sqrt(spec.getCounts(i));
             if (ii == null) {
                if ((spec.getCounts(i) - tmpSpec.getCounts(i)) <= tol)
@@ -931,36 +855,27 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
     * @return An ISpectrumData object containing the best fit background
     * @throws EPQException
     */
-   public ISpectrumData fitBackground2(EDSDetector det, ISpectrumData spec,
-         Composition comp) throws EPQException {
+   public ISpectrumData fitBackground2(EDSDetector det, ISpectrumData spec, Composition comp) throws EPQException {
       spec = SpectrumUtils.applyZeroPeakDiscriminator(spec);
-      initialize(comp, ToSI.eV(SpectrumUtils.getBeamEnergy(spec)),
-            SpectrumUtils.getTakeOffAngle(spec.getProperties()));
+      initialize(comp, ToSI.eV(SpectrumUtils.getBeamEnergy(spec)), SpectrumUtils.getTakeOffAngle(spec.getProperties()));
       final DetectorLineshapeModel dlm = det.getDetectorLineshapeModel();
       final double e0 = ToSI.keV(mE0keV);
-      final double eMin = ToSI
-            .eV(Math.min(100.0, SpectrumUtils.minEnergyForChannel(spec,
-                  SpectrumUtils.smallestNonZeroChannel(spec))));
-      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, 0.001, 0.0,
-            0.0);
+      final double eMin = ToSI.eV(Math.min(100.0, SpectrumUtils.minEnergyForChannel(spec, SpectrumUtils.smallestNonZeroChannel(spec))));
+      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, 0.001, 0.0, 0.0);
       for (final Element elm : comp.getElementSet())
          roi.add(new XRayTransitionSet(elm, eMin, e0));
 
       SortedSet<Interval> intervals = new TreeSet<Interval>();
       {
-         int min0 = Math.max(SpectrumUtils.firstNonZeroChannel(spec),
-               SpectrumUtils.channelForEnergy(spec, FromSI.eV(eMin)));
+         int min0 = Math.max(SpectrumUtils.firstNonZeroChannel(spec), SpectrumUtils.channelForEnergy(spec, FromSI.eV(eMin)));
          for (final RegionOfInterestSet.RegionOfInterest r : roi) {
-            final int max0 = SpectrumUtils.channelForEnergy(spec,
-                  FromSI.eV(r.lowEnergy()));
+            final int max0 = SpectrumUtils.channelForEnergy(spec, FromSI.eV(r.lowEnergy()));
             if (max0 > min0)
                intervals = Interval.add(intervals, new Interval(min0, max0));
-            min0 = SpectrumUtils.channelForEnergy(spec,
-                  FromSI.eV(r.highEnergy()));
+            min0 = SpectrumUtils.channelForEnergy(spec, FromSI.eV(r.highEnergy()));
          }
          min0 = SpectrumUtils.bound(spec, min0);
-         final int max0 = SpectrumUtils.bound(spec,
-               SpectrumUtils.channelForEnergy(spec, FromSI.eV(e0)));
+         final int max0 = SpectrumUtils.bound(spec, SpectrumUtils.channelForEnergy(spec, FromSI.eV(e0)));
          if (max0 > min0)
             intervals = Interval.add(intervals, new Interval(min0, max0));
       }
@@ -981,8 +896,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
 
    @Override
    protected void initializeDefaultStrategy() {
-      addDefaultAlgorithm(MassAbsorptionCoefficient.class,
-            MassAbsorptionCoefficient.Default);
+      addDefaultAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Default);
    }
 
    public static final Small1987 Small87 = new Small1987();
@@ -992,8 +906,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
    public static final Castellano2004aBremsstrahlung Castellano2004 = new Castellano2004aBremsstrahlung();
    public static final NoBremsstrahlung None = new NoBremsstrahlung();
 
-   private static final AlgorithmClass AllImplementations[] = {Small87,
-         Lifshin74, DTSA, Reed75, None};
+   private static final AlgorithmClass AllImplementations[] = {Small87, Lifshin74, DTSA, Reed75, None};
 
    /**
     * Constructs an abstract BremsstrahlungAnalytic object.

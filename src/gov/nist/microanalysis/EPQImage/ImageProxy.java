@@ -56,13 +56,13 @@ public class ImageProxy {
       final int h = ib.getHeight();
       mBuffer = new int[h][w];
       final ColorModel colorModel = ib.getColorModel();
-      if((colorModel instanceof ComponentColorModel) && (colorModel.getNumComponents() == 1)) {
+      if ((colorModel instanceof ComponentColorModel) && (colorModel.getNumComponents() == 1)) {
          Raster r = ib.getData();
-         for(int y = 0; y < h; ++y)
+         for (int y = 0; y < h; ++y)
             r.getPixels(0, y, w, 1, mBuffer[y]);
       } else {
-         for(int y = 0; y < h; ++y)
-            for(int x = 0; x < w; ++x)
+         for (int y = 0; y < h; ++y)
+            for (int x = 0; x < w; ++x)
                set(x, y, toGray(ib.getRGB(x, y)));
       }
    }
@@ -97,8 +97,8 @@ public class ImageProxy {
 
    public void remap(ColorRemap cm) {
       final int w = getWidth(), h = getHeight();
-      for(int x = 0; x < w; ++x)
-         for(int y = 0; y < h; ++y)
+      for (int x = 0; x < w; ++x)
+         for (int y = 0; y < h; ++y)
             set(x, y, cm.value(get(x, y)));
    }
 
@@ -124,9 +124,7 @@ public class ImageProxy {
       final int y = Math.max(0, rect.y);
       final int xm = Math.min(getWidth(), rect.x + rect.width);
       final int ym = Math.min(getHeight(), rect.y + rect.height);
-      return (x != rect.x) || (y != rect.y) || (xm - x != rect.width) || (ym - y != rect.height)
-            ? new Rectangle(x, y, xm - x, ym - y)
-            : rect;
+      return (x != rect.x) || (y != rect.y) || (xm - x != rect.width) || (ym - y != rect.height) ? new Rectangle(x, y, xm - x, ym - y) : rect;
 
    }
 
@@ -145,9 +143,9 @@ public class ImageProxy {
       assert rect.y + rect.height < getHeight();
       rect = validate(rect);
       final ImageProxy res = new ImageProxy(rect.width, rect.height);
-      for(int x = rect.x; x < rect.x + rect.width; ++x)
-         for(int y = rect.y; y < rect.y + rect.height; ++y)
-            if(get(x, y) == val)
+      for (int x = rect.x; x < rect.x + rect.width; ++x)
+         for (int y = rect.y; y < rect.y + rect.height; ++y)
+            if (get(x, y) == val)
                res.set(x - rect.x, y - rect.y, outVal);
       return res;
    }
@@ -166,16 +164,16 @@ public class ImageProxy {
       assert rect.y + rect.height < getHeight();
       rect = validate(rect);
       final ImageProxy res = new ImageProxy(rect.width, rect.height);
-      for(int x = rect.x; x < rect.x + rect.width; ++x)
-         for(int y = rect.y; y < rect.y + rect.height; ++y)
+      for (int x = rect.x; x < rect.x + rect.width; ++x)
+         for (int y = rect.y; y < rect.y + rect.height; ++y)
             res.set(x - rect.x, y - rect.y, get(x, y));
       return res;
    }
 
    public ImageProxy invertMask() {
       ImageProxy res = new ImageProxy(getWidth(), getHeight());
-      for(int x = 0; x < getWidth(); ++x)
-         for(int y = 0; y < getHeight(); ++y)
+      for (int x = 0; x < getWidth(); ++x)
+         for (int y = 0; y < getHeight(); ++y)
             res.set(x, y, get(x, y) != 0 ? 0 : 1);
       return res;
 
@@ -185,9 +183,9 @@ public class ImageProxy {
       assert rect.width == mask.getWidth();
       assert rect.height == mask.getHeight();
       ImageProxy res = new ImageProxy(mask.getWidth(), mask.getHeight());
-      for(int x = 0; x < rect.width; ++x)
-         for(int y = 0; y < rect.height; ++y)
-            if(mask.get(x, y) != 0)
+      for (int x = 0; x < rect.width; ++x)
+         for (int y = 0; y < rect.height; ++y)
+            if (mask.get(x, y) != 0)
                res.set(x, y, get(x + rect.x, y + rect.y));
       return res;
    }
@@ -196,9 +194,9 @@ public class ImageProxy {
       assert rect.width == mask.getWidth();
       assert rect.height == mask.getHeight();
       DescriptiveStatistics res = new DescriptiveStatistics();
-      for(int x = 0; x < rect.width; ++x)
-         for(int y = 0; y < rect.height; ++y)
-            if(mask.get(x, y) != 0)
+      for (int x = 0; x < rect.width; ++x)
+         for (int y = 0; y < rect.height; ++y)
+            if (mask.get(x, y) != 0)
                res.add(get(x + rect.x, y + rect.y));
       return res;
    }
@@ -223,8 +221,8 @@ public class ImageProxy {
       final int width = getWidth();
       final int height = getHeight();
       BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-      for(int x = 0; x < width; ++x)
-         for(int y = 0; y < height; ++y)
+      for (int x = 0; x < width; ++x)
+         for (int y = 0; y < height; ++y)
             bi.setRGB(x, y, toRGB(get(x, y) % 0x100));
       return bi;
    }
@@ -239,9 +237,9 @@ public class ImageProxy {
       final int width = getWidth();
       final int height = getHeight();
       int cx = 0;
-      for(int x = 0; x < width; ++x)
-         for(int y = 0; y < height; ++y)
-            if(thresh.meets(mBuffer[y][x]))
+      for (int x = 0; x < width; ++x)
+         for (int y = 0; y < height; ++y)
+            if (thresh.meets(mBuffer[y][x]))
                ++cx;
       return cx;
    }
@@ -250,19 +248,19 @@ public class ImageProxy {
       final int width = getWidth();
       final int height = getHeight();
       int cx = 0;
-      for(int x = 0; x < width; ++x)
-         for(int y = 0; y < height; ++y) {
-            if(thresh.meets(mBuffer[y][x])) {
+      for (int x = 0; x < width; ++x)
+         for (int y = 0; y < height; ++y) {
+            if (thresh.meets(mBuffer[y][x])) {
                int neighbors = 0;
-               if((x > 0) && (thresh.meets(mBuffer[y][x - 1])))
+               if ((x > 0) && (thresh.meets(mBuffer[y][x - 1])))
                   ++neighbors;
-               if((x < width - 1) && (thresh.meets(mBuffer[y][x + 1])))
+               if ((x < width - 1) && (thresh.meets(mBuffer[y][x + 1])))
                   ++neighbors;
-               if((y > 0) && (thresh.meets(mBuffer[y - 1][x])))
+               if ((y > 0) && (thresh.meets(mBuffer[y - 1][x])))
                   ++neighbors;
-               if((y < height - 1) && (thresh.meets(mBuffer[y + 1][x])))
+               if ((y < height - 1) && (thresh.meets(mBuffer[y + 1][x])))
                   ++neighbors;
-               if(neighbors != 4)
+               if (neighbors != 4)
                   cx++;
             }
          }
@@ -277,9 +275,9 @@ public class ImageProxy {
    public double getMeanIntensity() {
       double sum = 0.0;
       int cx = 0;
-      for(int x = getWidth() - 1; x >= 0; --x)
-         for(int y = getHeight() - 1; y >= 0; --y) {
-            if(mBuffer[y][x] > 0) {
+      for (int x = getWidth() - 1; x >= 0; --x)
+         for (int y = getHeight() - 1; y >= 0; --y) {
+            if (mBuffer[y][x] > 0) {
                sum += mBuffer[y][x];
                ++cx;
             }
@@ -295,9 +293,9 @@ public class ImageProxy {
     */
    public DescriptiveStatistics getImageStatistics() {
       DescriptiveStatistics res = new DescriptiveStatistics();
-      for(int x = getWidth() - 1; x >= 0; --x)
-         for(int y = getHeight() - 1; y >= 0; --y)
-            if(mBuffer[y][x] > 0)
+      for (int x = getWidth() - 1; x >= 0; --x)
+         for (int y = getHeight() - 1; y >= 0; --y)
+            if (mBuffer[y][x] > 0)
                res.add(mBuffer[y][x]);
       return res;
    }
@@ -308,9 +306,9 @@ public class ImageProxy {
 
    public Point getCenterOfMass(Threshold thresh) {
       long nx = 0, ny = 0, den = 0;
-      for(int x = getWidth() - 1; x >= 0; --x)
-         for(int y = getHeight() - 1; y >= 0; --y)
-            if(thresh.meets(mBuffer[y][x])) {
+      for (int x = getWidth() - 1; x >= 0; --x)
+         for (int y = getHeight() - 1; y >= 0; --y)
+            if (thresh.meets(mBuffer[y][x])) {
                nx += x;
                ny += y;
                den += 1;

@@ -40,9 +40,7 @@ import gov.nist.microanalysis.NISTMonte.MeshedRegion;
  * @author John Villarrubia
  * @version 1.0
  */
-public class PETScFEArunner
-   implements
-   IFEArunner {
+public class PETScFEArunner implements IFEArunner {
 
    private final String feaFolder;
 
@@ -96,95 +94,94 @@ public class PETScFEArunner
 
       try {
          specWriter.writeFEAfiles();
-      }
-      catch(final IOException err) {
+      } catch (final IOException err) {
          throw new EPQFatalException(err.getMessage());
       }
 
       // Delete previous resolution if any
       final File resFile = new File(feaFolder, "sample.res");
-      if(resFile.exists())
+      if (resFile.exists())
          resFile.delete();
 
       /* Assemble the command line */
       final StringBuilder commandLine = new StringBuilder("getdp sample "); // Initialize
       // Append options
-      switch(ksp_type) {
-         case 1:
+      switch (ksp_type) {
+         case 1 :
             commandLine.append("-ksp_type richardson");
             break;
-         case 2:
+         case 2 :
             commandLine.append("-ksp_type chebychev");
             break;
-         case 3:
+         case 3 :
             commandLine.append("-ksp_type cg");
             break;
-         case 4:
+         case 4 :
             commandLine.append("-ksp_type gmres");
             break;
-         case 5:
+         case 5 :
             commandLine.append("-ksp_type tcqmr");
             break;
-         case 6:
+         case 6 :
             commandLine.append("-ksp_type bcgs");
             break;
-         case 7:
+         case 7 :
             commandLine.append("-ksp_type cgs");
             break;
-         case 8:
+         case 8 :
             commandLine.append("-ksp_type tfqmr");
             break;
-         case 9:
+         case 9 :
             commandLine.append("-ksp_type cr");
             break;
-         case 10:
+         case 10 :
             commandLine.append("-ksp_type lsqr");
             break;
-         case 11:
+         case 11 :
             commandLine.append("-ksp_type bicg");
             break;
-         default:
+         default :
             throw new EPQFatalException("Illegal ksp_type");
       }
 
-      switch(pc_type) {
-         case 1:
+      switch (pc_type) {
+         case 1 :
             commandLine.append(" -pc_type jacobi");
             break;
-         case 2:
+         case 2 :
             commandLine.append(" -pc_type bjacobi");
             break;
-         case 3:
+         case 3 :
             commandLine.append(" -pc_type sor");
             break;
-         case 4:
+         case 4 :
             commandLine.append(" -pc_type eisenstat");
             break;
-         case 5:
+         case 5 :
             commandLine.append(" -pc_type icc");
             break;
-         case 6:
+         case 6 :
             commandLine.append(" -pc_type ilu");
             break;
-         case 7:
+         case 7 :
             commandLine.append(" -pc_type asm");
             break;
-         case 8:
+         case 8 :
             commandLine.append(" -pc_type ksp");
             break;
-         case 9:
+         case 9 :
             commandLine.append(" -pc_type composite");
             break;
-         case 10:
+         case 10 :
             commandLine.append(" -pc_type lu");
             break;
-         case 11:
+         case 11 :
             commandLine.append(" -pc_type cholesky");
             break;
-         case 12:
+         case 12 :
             commandLine.append(" -pc_type none");
             break;
-         default:
+         default :
             throw new EPQFatalException("Illegal pc_type");
       }
 
@@ -194,24 +191,24 @@ public class PETScFEArunner
        * For options with a PETSc default, if the assigned value = default we
        * can skip specifying it on the command line.
        */
-      if(isKsp_right_pc())
+      if (isKsp_right_pc())
          commandLine.append(" -ksp_right_pc");
-      if(isKsp_monitor())
+      if (isKsp_monitor())
          commandLine.append(" -ksp_monitor");
-      if(isLog_summary())
+      if (isLog_summary())
          commandLine.append(" -log_summary");
-      if(ksp_rtol != ksp_rtol_default)
+      if (ksp_rtol != ksp_rtol_default)
          commandLine.append(" -ksp_rtol " + ksp_rtol);
-      if(ksp_atol != ksp_atol_default)
+      if (ksp_atol != ksp_atol_default)
          commandLine.append(" -ksp_atol " + ksp_atol);
-      if(ksp_divtol != ksp_divtol_default)
+      if (ksp_divtol != ksp_divtol_default)
          commandLine.append(" -ksp_divtol " + ksp_divtol);
 
-      if(ksp_gmres_restart != ksp_gmres_restart_default)
+      if (ksp_gmres_restart != ksp_gmres_restart_default)
          commandLine.append(" -ksp_gmres_restart " + ksp_gmres_restart);
-      if(ksp_richardson_scale != ksp_richardson_scale_default)
+      if (ksp_richardson_scale != ksp_richardson_scale_default)
          commandLine.append(" -ksp_richardson_scale " + ksp_richardson_scale);
-      if(ksp_max_it != ksp_max_it_default)
+      if (ksp_max_it != ksp_max_it_default)
          commandLine.append(" -ksp_max_it " + ksp_max_it);
 
       // Append end of command line
@@ -223,8 +220,7 @@ public class PETScFEArunner
 
       try {
          specWriter.runGetDP(commandLine.toString());
-      }
-      catch(final InterruptedException e) {
+      } catch (final InterruptedException e) {
          throw new EPQFatalException(e.getMessage());
       }
    }
@@ -257,10 +253,11 @@ public class PETScFEArunner
     * - default : 3
     * </p>
     *
-    * @param ksp_type The value to which to set ksp_type.
+    * @param ksp_type
+    *           The value to which to set ksp_type.
     */
    public void setKsp_type(int ksp_type) {
-      if(this.ksp_type != ksp_type)
+      if (this.ksp_type != ksp_type)
          this.ksp_type = ksp_type;
    }
 
@@ -293,10 +290,11 @@ public class PETScFEArunner
     * - default : 6
     * </p>
     *
-    * @param pc_type The value to which to set pc_type.
+    * @param pc_type
+    *           The value to which to set pc_type.
     */
    public void setPc_type(int pc_type) {
-      if(this.pc_type != pc_type)
+      if (this.pc_type != pc_type)
          this.pc_type = pc_type;
    }
 
@@ -315,12 +313,13 @@ public class PETScFEArunner
     * Higher fill provides better preconditioning but also more memory and more
     * time to compute. Default is 1.
     *
-    * @param pc_factor_levels The value to which to set pc_factor_levels.
+    * @param pc_factor_levels
+    *           The value to which to set pc_factor_levels.
     */
    public void setPc_factor_levels(int pc_factor_levels) {
-      if(this.pc_factor_levels != pc_factor_levels)
+      if (this.pc_factor_levels != pc_factor_levels)
          this.pc_factor_levels = pc_factor_levels;
-      if(pc_factor_levels < 0)
+      if (pc_factor_levels < 0)
          pc_factor_levels = 0;
    }
 
@@ -338,10 +337,11 @@ public class PETScFEArunner
     * norms after each iteration are printed to the out.txt file in the
     * temporary feaFolder. If false, they are not printed.
     *
-    * @param ksp_monitor The value to which to set ksp_monitor.
+    * @param ksp_monitor
+    *           The value to which to set ksp_monitor.
     */
    public void setKsp_monitor(boolean ksp_monitor) {
-      if(this.ksp_monitor != ksp_monitor)
+      if (this.ksp_monitor != ksp_monitor)
          this.ksp_monitor = ksp_monitor;
    }
 
@@ -357,10 +357,11 @@ public class PETScFEArunner
    /**
     * Sets the value assigned to ksp_rtol. Default is 1.e-5.
     *
-    * @param ksp_rtol The value to which to set ksp_rtol.
+    * @param ksp_rtol
+    *           The value to which to set ksp_rtol.
     */
    public void setKsp_rtol(double ksp_rtol) {
-      if(this.ksp_rtol != ksp_rtol)
+      if (this.ksp_rtol != ksp_rtol)
          this.ksp_rtol = ksp_rtol;
    }
 
@@ -377,10 +378,11 @@ public class PETScFEArunner
     * Sets the value assigned to log_summary. When true, a performance summary
     * is included in the out.txt file in feaFolder. Default is false.
     *
-    * @param log_summary The value to which to set log_summary.
+    * @param log_summary
+    *           The value to which to set log_summary.
     */
    public void setLog_summary(boolean log_summary) {
-      if(this.log_summary != log_summary)
+      if (this.log_summary != log_summary)
          this.log_summary = log_summary;
    }
 
@@ -398,10 +400,11 @@ public class PETScFEArunner
     * iterations at which GMRES, FGMRES and LGMRES restart. Default is 30.
     * Ignored with non GMRES solvers.
     *
-    * @param ksp_gmres_restart The value to which to set ksp_gmres_restart.
+    * @param ksp_gmres_restart
+    *           The value to which to set ksp_gmres_restart.
     */
    public void setKsp_gmres_restart(int ksp_gmres_restart) {
-      if(this.ksp_gmres_restart != ksp_gmres_restart)
+      if (this.ksp_gmres_restart != ksp_gmres_restart)
          this.ksp_gmres_restart = ksp_gmres_restart;
    }
 
@@ -418,11 +421,11 @@ public class PETScFEArunner
     * Sets the value assigned to ksp_richardson_scale. Default = 1. Ignored for
     * non-Richardson KSP types.
     *
-    * @param ksp_richardson_scale The value to which to set
-    *           ksp_richardson_scale.
+    * @param ksp_richardson_scale
+    *           The value to which to set ksp_richardson_scale.
     */
    public void setKsp_richardson_scale(double ksp_richardson_scale) {
-      if(this.ksp_richardson_scale != ksp_richardson_scale)
+      if (this.ksp_richardson_scale != ksp_richardson_scale)
          this.ksp_richardson_scale = ksp_richardson_scale;
    }
 
@@ -439,10 +442,11 @@ public class PETScFEArunner
     * Sets the value assigned to ksp_right_pc. If true, a right preconditioner
     * is used. If false (default), preconditioning is from the left.
     *
-    * @param ksp_right_pc The value to which to set ksp_right_pc.
+    * @param ksp_right_pc
+    *           The value to which to set ksp_right_pc.
     */
    public void setKsp_right_pc(boolean ksp_right_pc) {
-      if(this.ksp_right_pc != ksp_right_pc)
+      if (this.ksp_right_pc != ksp_right_pc)
          this.ksp_right_pc = ksp_right_pc;
    }
 
@@ -458,10 +462,11 @@ public class PETScFEArunner
    /**
     * Sets the value assigned to ksp_atol. Default is 1.e-50.
     *
-    * @param ksp_atol The value to which to set ksp_atol.
+    * @param ksp_atol
+    *           The value to which to set ksp_atol.
     */
    public void setKsp_atol(double ksp_atol) {
-      if(this.ksp_atol != ksp_atol)
+      if (this.ksp_atol != ksp_atol)
          this.ksp_atol = ksp_atol;
    }
 
@@ -477,10 +482,11 @@ public class PETScFEArunner
    /**
     * Sets the value assigned to ksp_divtol. Default is 1.e5.
     *
-    * @param ksp_divtol The value to which to set ksp_divtol.
+    * @param ksp_divtol
+    *           The value to which to set ksp_divtol.
     */
    public void setKsp_divtol(double ksp_divtol) {
-      if(this.ksp_divtol != ksp_divtol)
+      if (this.ksp_divtol != ksp_divtol)
          this.ksp_divtol = ksp_divtol;
    }
 
@@ -497,10 +503,11 @@ public class PETScFEArunner
     * Sets the value assigned to ksp_max_it. This is the maximum number of
     * iterations of the ksp solver. Default is 4000.
     *
-    * @param ksp_max_it The value to which to set ksp_max_it.
+    * @param ksp_max_it
+    *           The value to which to set ksp_max_it.
     */
    public void setKsp_max_it(int ksp_max_it) {
-      if(this.ksp_max_it != ksp_max_it)
+      if (this.ksp_max_it != ksp_max_it)
          this.ksp_max_it = ksp_max_it;
    }
 

@@ -85,7 +85,8 @@ final public class ToSI {
    /**
     * MeV - Converts an energy in MeV into Joules.
     * 
-    * @param e double - The energy in MeV
+    * @param e
+    *           double - The energy in MeV
     * @return double
     */
    public static double MeV(double e) {
@@ -95,7 +96,8 @@ final public class ToSI {
    /**
     * keV - Converts an energy in keV into Joules.
     * 
-    * @param e double - The energy in keV
+    * @param e
+    *           double - The energy in keV
     * @return double
     */
    public static double keV(double e) {
@@ -105,7 +107,8 @@ final public class ToSI {
    /**
     * eV - Converts an energy in eV into Joules.
     * 
-    * @param e double - The energy in eV
+    * @param e
+    *           double - The energy in eV
     * @return double - The energy in Joules
     */
    public static double eV(double e) {
@@ -115,7 +118,8 @@ final public class ToSI {
    /**
     * AMU - Converts a mass in AMU into kilograms.
     * 
-    * @param amu double - The mass in AMU
+    * @param amu
+    *           double - The mass in AMU
     * @return double - The mass in kg
     */
    public static double AMU(double amu) {
@@ -125,7 +129,8 @@ final public class ToSI {
    /**
     * dyne - Converts a force in Dynes into Newtons.
     * 
-    * @param f double - The force in Dynes
+    * @param f
+    *           double - The force in Dynes
     * @return double - The force in Newtons.
     */
    public static double dyne(double f) {
@@ -135,7 +140,8 @@ final public class ToSI {
    /**
     * gPerCC - Converts grams per cubic centimeter into kg per cubic meter.
     * 
-    * @param d double
+    * @param d
+    *           double
     * @return double
     */
    public static double gPerCC(double d) {
@@ -146,7 +152,8 @@ final public class ToSI {
     * inverse_gPerCC - Converts from inverse(grams per cubic centimeter) into
     * inverse(kg per cubic meter).
     * 
-    * @param d double
+    * @param d
+    *           double
     * @return double
     */
    public static double inverse_gPerCC(double d) {
@@ -156,7 +163,8 @@ final public class ToSI {
    /**
     * percm - Converts from 1/cm to 1/meter.
     * 
-    * @param d double
+    * @param d
+    *           double
     * @return double
     */
    public static double percm(double d) {
@@ -166,7 +174,8 @@ final public class ToSI {
    /**
     * angstrom - Converts from angstroms to meters.
     * 
-    * @param a double
+    * @param a
+    *           double
     * @return double
     */
    public static double angstrom(double a) {
@@ -180,7 +189,8 @@ final public class ToSI {
    /**
     * sqrAngstrom - Converts from square angstroms to square meters.
     * 
-    * @param a2 double
+    * @param a2
+    *           double
     * @return double
     */
    public static double sqrAngstrom(double a2) {
@@ -190,7 +200,8 @@ final public class ToSI {
    /**
     * barn - Converts from barns to square meters
     * 
-    * @param a2 double
+    * @param a2
+    *           double
     * @return double
     */
    public static double barn(double a2) {
@@ -200,7 +211,8 @@ final public class ToSI {
    /**
     * cmSqrPerg - Converts mass absorption coefficients to SI.
     * 
-    * @param x double
+    * @param x
+    *           double
     * @return double
     */
    public static double cmSqrPerg(double x) {

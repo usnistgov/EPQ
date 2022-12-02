@@ -43,9 +43,12 @@ public class ShapeTiming {
     * argument lie within a rectangular box within +/- distances[] of the
     * supplied center[].
     *
-    * @param center - double[3] giving the center coordinates of the test box
-    * @param distances - double[3] giving the size of the test box
-    * @param repeats - number of times to call the contains
+    * @param center
+    *           - double[3] giving the center coordinates of the test box
+    * @param distances
+    *           - double[3] giving the size of the test box
+    * @param repeats
+    *           - number of times to call the contains
     * @return - average time per call in microseconds
     */
    public double testContains(double[] center, double[] distances, long repeats) {
@@ -60,22 +63,16 @@ public class ShapeTiming {
       t0 = System.currentTimeMillis();
       double[] pos0;
 
-      for(long i = 0; i < repeats; i++) {
-         pos0 = Math2.plus(center, new double[] {
-            ((Math.random() * 2.) - 1.) * distances[0],
-            ((Math.random() * 2.) - 1.) * distances[1],
-            ((Math.random() * 2.) - 1.) * distances[2]
-         });
+      for (long i = 0; i < repeats; i++) {
+         pos0 = Math2.plus(center, new double[]{((Math.random() * 2.) - 1.) * distances[0], ((Math.random() * 2.) - 1.) * distances[1],
+               ((Math.random() * 2.) - 1.) * distances[2]});
          result = myShape.contains(pos0);
       }
 
       tint = System.currentTimeMillis();
-      for(long i = 0; i < repeats; i++)
-         pos0 = Math2.plus(center, new double[] {
-            ((Math.random() * 2.) - 1.) * distances[0],
-            ((Math.random() * 2.) - 1.) * distances[1],
-            ((Math.random() * 2.) - 1.) * distances[2]
-         });
+      for (long i = 0; i < repeats; i++)
+         pos0 = Math2.plus(center, new double[]{((Math.random() * 2.) - 1.) * distances[0], ((Math.random() * 2.) - 1.) * distances[1],
+               ((Math.random() * 2.) - 1.) * distances[2]});
 
       tf = System.currentTimeMillis();
       deltat = (1000. * ((2. * tint) - tf - t0)) / repeats;
@@ -89,9 +86,12 @@ public class ShapeTiming {
     * coordinates of the argument lie within a rectangular box within +/-
     * distances[] of the supplied center[].
     *
-    * @param center - double[3] giving the center coordinates of the test box
-    * @param distances - double[3] giving the size of the test box
-    * @param repeats - number of times to call the contains
+    * @param center
+    *           - double[3] giving the center coordinates of the test box
+    * @param distances
+    *           - double[3] giving the size of the test box
+    * @param repeats
+    *           - number of times to call the contains
     * @return - average time per call in microseconds
     */
    public double testGetFirstIntersection(double[] center, double[] distances, long repeats) {
@@ -107,32 +107,20 @@ public class ShapeTiming {
       double[] pos0;
       double[] pos1;
 
-      for(long i = 0; i < repeats; i++) {
-         pos0 = Math2.plus(center, new double[] {
-            ((Math.random() * 2.) - 1.) * distances[0],
-            ((Math.random() * 2.) - 1.) * distances[1],
-            ((Math.random() * 2.) - 1.) * distances[2]
-         });
-         pos1 = Math2.plus(center, new double[] {
-            ((Math.random() * 2.) - 1.) * distances[0],
-            ((Math.random() * 2.) - 1.) * distances[1],
-            ((Math.random() * 2.) - 1.) * distances[2]
-         });
+      for (long i = 0; i < repeats; i++) {
+         pos0 = Math2.plus(center, new double[]{((Math.random() * 2.) - 1.) * distances[0], ((Math.random() * 2.) - 1.) * distances[1],
+               ((Math.random() * 2.) - 1.) * distances[2]});
+         pos1 = Math2.plus(center, new double[]{((Math.random() * 2.) - 1.) * distances[0], ((Math.random() * 2.) - 1.) * distances[1],
+               ((Math.random() * 2.) - 1.) * distances[2]});
          result = myShape.getFirstIntersection(pos0, pos1);
       }
 
       tint = System.currentTimeMillis();
-      for(long i = 0; i < repeats; i++) {
-         pos0 = Math2.plus(center, new double[] {
-            ((Math.random() * 2.) - 1.) * distances[0],
-            ((Math.random() * 2.) - 1.) * distances[1],
-            ((Math.random() * 2.) - 1.) * distances[2]
-         });
-         pos1 = Math2.plus(center, new double[] {
-            ((Math.random() * 2.) - 1.) * distances[0],
-            ((Math.random() * 2.) - 1.) * distances[1],
-            ((Math.random() * 2.) - 1.) * distances[2]
-         });
+      for (long i = 0; i < repeats; i++) {
+         pos0 = Math2.plus(center, new double[]{((Math.random() * 2.) - 1.) * distances[0], ((Math.random() * 2.) - 1.) * distances[1],
+               ((Math.random() * 2.) - 1.) * distances[2]});
+         pos1 = Math2.plus(center, new double[]{((Math.random() * 2.) - 1.) * distances[0], ((Math.random() * 2.) - 1.) * distances[1],
+               ((Math.random() * 2.) - 1.) * distances[2]});
       }
 
       tf = System.currentTimeMillis();

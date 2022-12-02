@@ -31,20 +31,20 @@ public class WriteSpectrumAsBinary {
     * write - Write the argument ISpectrumData object to the specified
     * OutputStream.
     * 
-    * @param spec ISpectrumData
-    * @param os OutputStream
+    * @param spec
+    *           ISpectrumData
+    * @param os
+    *           OutputStream
     * @throws EPQException
     */
-   public static void write(ISpectrumData spec, OutputStream os)
-         throws EPQException {
+   public static void write(ISpectrumData spec, OutputStream os) throws EPQException {
       final DataOutputStream dos = new DataOutputStream(os);
       try {
          final int nCh = spec.getChannelCount();
-         for(int i = 0; i < nCh; ++i)
+         for (int i = 0; i < nCh; ++i)
             dos.writeInt((int) Math.round(spec.getCounts(i)));
          dos.flush();
-      }
-      catch(final IOException ex) {
+      } catch (final IOException ex) {
          System.err.println("Error in WriteSpectrumAsBinary: " + ex.toString());
       }
    }
@@ -53,7 +53,8 @@ public class WriteSpectrumAsBinary {
     * size - Returns the number of bytes that would be output to the
     * OutputStream by WriteSpectrumAsBinary.write.
     * 
-    * @param spec ISpectrumData
+    * @param spec
+    *           ISpectrumData
     * @return int
     */
    public static int size(ISpectrumData spec) {
@@ -64,7 +65,8 @@ public class WriteSpectrumAsBinary {
     * length - Returns the number of atomic data items that will be written to
     * the stream. The size of each atomic data item is returned by itemSize().
     * 
-    * @param spec ISpectrumData
+    * @param spec
+    *           ISpectrumData
     * @return int
     */
    public static int length(ISpectrumData spec) {

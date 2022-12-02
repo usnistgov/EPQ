@@ -26,15 +26,14 @@ import javax.swing.Timer;
  * A dialog for monitoring lengthy processes.
  * </p>
  * <p>
- * Not copyright: In the public domain * 
+ * Not copyright: In the public domain *
  * </p>
  *
  * @author not attributable
  * @version 1.0
  */
 
-public class TimingDialog
-   extends JDialog {
+public class TimingDialog extends JDialog {
    private static final long serialVersionUID = 0x1;
    JPanel backPanel = new JPanel();
    BorderLayout borderLayout1 = new BorderLayout();
@@ -65,14 +64,13 @@ public class TimingDialog
                int secs = (int) (delta % 60);
                elapseLabel.setText("Elapse time: " + Integer.toString(hrs) + (mins > 9 ? ":" : ":0") + Integer.toString(mins)
                      + (secs > 9 ? ":" : ":0") + Integer.toString(secs));
-               if((mThread != null) && (!mThread.isAlive())) {
+               if ((mThread != null) && (!mThread.isAlive())) {
                   TimingDialog.this.setVisible(false);
                   mThread = null;
                }
             }
          });
-      }
-      catch(Exception ex) {
+      } catch (Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -82,15 +80,14 @@ public class TimingDialog
    }
 
    public void setOperation(Runnable op) {
-      if(mThread == null) {
+      if (mThread == null) {
          mThread = new Thread(op);
          mThread.start();
          mTimer.start();
       }
    }
 
-   private void jbInit()
-         throws Exception {
+   private void jbInit() throws Exception {
       border1 = BorderFactory.createMatteBorder(4, 4, 4, 4, SystemColor.control);
       backPanel.setLayout(borderLayout1);
       longTimeLabel.setText("This operation may take a long time to complete...");
@@ -127,14 +124,14 @@ public class TimingDialog
    }
 
    protected void processWindowEvent(WindowEvent e) {
-      if(e.getID() == WindowEvent.WINDOW_CLOSING) {
+      if (e.getID() == WindowEvent.WINDOW_CLOSING) {
          cancel_actionPerformed(null);
       }
    }
 
    @SuppressWarnings("deprecation")
-void cancel_actionPerformed(ActionEvent e) {
-      if(mThread == null) {
+   void cancel_actionPerformed(ActionEvent e) {
+      if (mThread == null) {
          setVisible(false);
       } else {
          cancel.setText("Canceling...");

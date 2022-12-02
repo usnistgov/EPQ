@@ -25,8 +25,7 @@ import java.awt.event.ActionListener;
 /**
  * Defines a very basic interface which x-ray detectors should implement.
  */
-public interface IXRayDetector
-   extends ActionListener {
+public interface IXRayDetector extends ActionListener {
 
    /**
     * Clear the internal ISpectrumData object to prepare for collecting a new
@@ -39,8 +38,10 @@ public interface IXRayDetector
     * x-ray) to the internal ISpectrumData object. The intensity is scaled to
     * account for distance from the point of generation to the detector.
     * 
-    * @param energy Joules
-    * @param intensity Count of x-rays (fractional ok!)
+    * @param energy
+    *           Joules
+    * @param intensity
+    *           Count of x-rays (fractional ok!)
     */
    void addEvent(double energy, double intensity);
 

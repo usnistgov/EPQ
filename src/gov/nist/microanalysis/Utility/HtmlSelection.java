@@ -27,8 +27,7 @@ import java.util.ArrayList;
  * @author nritchie
  * @version 1.0
  */
-public class HtmlSelection
-   implements Transferable {
+public class HtmlSelection implements Transferable {
 
    private static ArrayList<DataFlavor> mHTMLFlavors = new ArrayList<DataFlavor>();
 
@@ -37,8 +36,7 @@ public class HtmlSelection
          mHTMLFlavors.add(new DataFlavor("text/html;class=java.lang.String"));
          mHTMLFlavors.add(new DataFlavor("text/html;class=java.io.Reader"));
          mHTMLFlavors.add(new DataFlavor("text/html;charset=unicode;class=java.io.InputStream"));
-      }
-      catch(final ClassNotFoundException ex) {
+      } catch (final ClassNotFoundException ex) {
          ex.printStackTrace();
       }
 
@@ -62,14 +60,13 @@ public class HtmlSelection
    }
 
    @Override
-   public Object getTransferData(final DataFlavor flavor)
-         throws UnsupportedFlavorException {
+   public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException {
 
-      if(String.class.equals(flavor.getRepresentationClass()))
+      if (String.class.equals(flavor.getRepresentationClass()))
          return mHTML;
-      else if(Reader.class.equals(flavor.getRepresentationClass()))
+      else if (Reader.class.equals(flavor.getRepresentationClass()))
          return new StringReader(mHTML);
-      else if(InputStream.class.equals(flavor.getRepresentationClass())) {
+      else if (InputStream.class.equals(flavor.getRepresentationClass())) {
          final ByteBuffer bb = Charset.defaultCharset().encode(mHTML);
          return new ByteArrayInputStream(bb.array());
       }

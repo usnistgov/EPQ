@@ -21,8 +21,7 @@ import gov.nist.microanalysis.EPQLibrary.EPQException;
  * @author Nicholas
  * @version 1.0
  */
-abstract public class LinearLeastSquaresMS
-   extends LinearLeastSquares {
+abstract public class LinearLeastSquaresMS extends LinearLeastSquares {
 
    private int mNParams = Integer.MIN_VALUE;
    private boolean[] mZero = null;
@@ -40,9 +39,12 @@ abstract public class LinearLeastSquaresMS
    /**
     * Constructs a LinearLeastSquareMS with the specified data set.
     * 
-    * @param x double[]
-    * @param y double[]
-    * @param sig double[]
+    * @param x
+    *           double[]
+    * @param y
+    *           double[]
+    * @param sig
+    *           double[]
     */
    public LinearLeastSquaresMS(double[] x, double[] y, double[] sig) {
       super(x, y, sig);
@@ -52,8 +54,10 @@ abstract public class LinearLeastSquaresMS
     * Constructs a LinearLeastSquareMS with the specified data and an assumed
     * error model specified by the <code>computeError</code> function.
     * 
-    * @param x double[]
-    * @param y double[]
+    * @param x
+    *           double[]
+    * @param y
+    *           double[]
     */
    public LinearLeastSquaresMS(double[] x, double[] y) {
       super(x, y);
@@ -63,7 +67,8 @@ abstract public class LinearLeastSquaresMS
     * This function implements a method for retaining the largest singular
     * values while setting the remainder to zero.
     * 
-    * @param wi The initial weights
+    * @param wi
+    *           The initial weights
     * @return double[] The new weights
     */
    @Override
@@ -71,14 +76,14 @@ abstract public class LinearLeastSquaresMS
       final double[] w = wi.clone();
       // Find the largest weight
       double wMax = -Double.MAX_VALUE;
-      for(final double element : w)
-         if(element > wMax)
+      for (final double element : w)
+         if (element > wMax)
             wMax = element;
       assert wMax >= 0.0;
       // mZero is used to force some fit parameters to zero
-      if(mZero != null)
-         for(int j = 0; j < w.length; ++j)
-            if(mZero[j])
+      if (mZero != null)
+         for (int j = 0; j < w.length; ++j)
+            if (mZero[j])
                w[j] = 0.0;
       final double[] dup = w.clone();
       Arrays.sort(dup);
@@ -86,8 +91,8 @@ abstract public class LinearLeastSquaresMS
       // Regardless set very small weighted items to zero
       final double thresh = wMax * TOLERANCE;
       // Set the smallest nDrop singular values to zero....
-      for(int j = 0; j < w.length; ++j)
-         if((Arrays.binarySearch(dup, w[j]) < nDrop) || (w[j] < thresh))
+      for (int j = 0; j < w.length; ++j)
+         if ((Arrays.binarySearch(dup, w[j]) < nDrop) || (w[j] < thresh))
             w[j] = 0.0;
       return w;
    }
@@ -100,11 +105,10 @@ abstract public class LinearLeastSquaresMS
     * @see gov.nist.microanalysis.Utility.LinearLeastSquares#perform()
     */
    @Override
-   protected void perform()
-         throws EPQException {
-      if(mNParams == Integer.MIN_VALUE) {
+   protected void perform() throws EPQException {
+      if (mNParams == Integer.MIN_VALUE) {
          mNParams = fitFunctionCount();
-         if(mOptimize) {
+         if (mOptimize) {
             // Compute the assumed prior for the fitting parameters. This
             // implementation
             // is not likely to be optimal but serves as a starting point.
@@ -113,18 +117,18 @@ abstract public class LinearLeastSquaresMS
             fitFunction(mXCoordinate[0], maxFF);
             {
                final double[] ff = new double[mNParams];
-               for(int ch = 1; ch < mXCoordinate.length; ++ch) {
+               for (int ch = 1; ch < mXCoordinate.length; ++ch) {
                   fitFunction(mXCoordinate[ch], ff);
-                  for(int i = 0; i < mNParams; ++i)
-                     if(ff[i] > maxFF[i]) {
+                  for (int i = 0; i < mNParams; ++i)
+                     if (ff[i] > maxFF[i]) {
                         maxCh[i] = ch;
                         maxFF[i] = ff[i];
                      }
                }
             }
             mAMax = mData[maxCh[0]] / maxFF[0];
-            for(int i = 1; i < mNParams; ++i)
-               if((mData[maxCh[i]] / maxFF[i]) > mAMax)
+            for (int i = 1; i < mNParams; ++i)
+               if ((mData[maxCh[i]] / maxFF[i]) > mAMax)
                   mAMax = mData[maxCh[i]] / maxFF[i];
          }
          mZero = null;
@@ -134,23 +138,23 @@ abstract public class LinearLeastSquaresMS
             // Fit parameters that are less than zero are non-physical so
             // they should be zeroed.
             mZero = new boolean[mFitCoefficients.length];
-            for(int j = 0; j < mFitCoefficients.length; ++j) {
+            for (int j = 0; j < mFitCoefficients.length; ++j) {
                mZero[j] = (mFitCoefficients[j].doubleValue() < 0.0);
-               if(mZero[j])
+               if (mZero[j])
                   ++zeroCx;
             }
          }
-         if(mOptimize) {
+         if (mOptimize) {
             // Recompute fit paramters...
             mMetric = new double[fitFunctionCount() - zeroCx];
             int minMetric = 0;
             mMetric[minMetric] = Double.MAX_VALUE;
-            for(int i = 1; i < mMetric.length; ++i) {
+            for (int i = 1; i < mMetric.length; ++i) {
                mNParams = i;
                reevaluate();
                super.perform();
                final double m = computeMetric();
-               if(m < mMetric[minMetric])
+               if (m < mMetric[minMetric])
                   minMetric = i;
                mMetric[i] = m;
             }
@@ -175,8 +179,7 @@ abstract public class LinearLeastSquaresMS
     * @return double
     * @throws EPQException
     */
-   protected double computeMetric()
-         throws EPQException {
+   protected double computeMetric() throws EPQException {
       final double d = covariance().det();
       return (Math.pow((4.0 * Math.PI) / mAMax, mNParams) * Math.exp(-0.5 * chiSquared())) / Math.sqrt(d);
    }
@@ -196,11 +199,12 @@ abstract public class LinearLeastSquaresMS
     * of fit parameters is performed. Setting this parameter will force the
     * recomputation of all fit parameters.
     * 
-    * @param optimize true to perform a Bayesian model selection optimization;
-    *           false otherwise
+    * @param optimize
+    *           true to perform a Bayesian model selection optimization; false
+    *           otherwise
     */
    public void setOptimize(boolean optimize) {
-      if(mOptimize != optimize) {
+      if (mOptimize != optimize) {
          mOptimize = optimize;
          reevaluateAll();
       }

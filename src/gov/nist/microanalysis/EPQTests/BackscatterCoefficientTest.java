@@ -21,8 +21,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class BackscatterCoefficientTest
-   extends TestCase {
+public class BackscatterCoefficientTest extends TestCase {
 
    /**
     * Constructs a BackscatterCoefficientTest

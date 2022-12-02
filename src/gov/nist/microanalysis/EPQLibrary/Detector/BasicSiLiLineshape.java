@@ -7,8 +7,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumUtils;
  * resolution model for a Si(Li) detector.
  */
 
-public class BasicSiLiLineshape
-   extends DetectorLineshapeModel {
+public class BasicSiLiLineshape extends DetectorLineshapeModel {
 
    private final double mFWHMatMnKa;
 
@@ -18,7 +17,8 @@ public class BasicSiLiLineshape
     * Constructs a simple Gaussina model of a Si(Li) style detector which is
     * characterized by the full-width half-maximum at Mn Kα
     * 
-    * @param fwhmAtMnKa in eV
+    * @param fwhmAtMnKa
+    *           in eV
     */
    public BasicSiLiLineshape(double fwhmAtMnKa) {
       super();
@@ -63,14 +63,14 @@ public class BasicSiLiLineshape
 
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final BasicSiLiLineshape other = (BasicSiLiLineshape) obj;
-      if(Double.doubleToLongBits(mFWHMatMnKa) != Double.doubleToLongBits(other.mFWHMatMnKa))
+      if (Double.doubleToLongBits(mFWHMatMnKa) != Double.doubleToLongBits(other.mFWHMatMnKa))
          return false;
       return true;
    }

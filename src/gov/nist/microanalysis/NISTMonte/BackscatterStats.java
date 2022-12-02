@@ -35,8 +35,7 @@ import gov.nist.microanalysis.Utility.Histogram;
  * @author John Villarrubia
  * @version 1.0
  */
-final public class BackscatterStats
-   implements ActionListener {
+final public class BackscatterStats implements ActionListener {
    private int mEnergyBinCount;
    private final transient MonteCarloSS mMonte;
    private double mBeamEnergy; // in eV
@@ -191,12 +190,12 @@ final public class BackscatterStats
    public void actionPerformed(final ActionEvent ae) {
       assert (ae.getSource() instanceof MonteCarloSS);
       assert (ae.getSource() == mMonte);
-      switch(ae.getID()) {
-         case MonteCarloSS.FirstTrajectoryEvent: {
+      switch (ae.getID()) {
+         case MonteCarloSS.FirstTrajectoryEvent : {
             mEventCount = 0;
             break;
          }
-         case MonteCarloSS.BackscatterEvent: {
+         case MonteCarloSS.BackscatterEvent : {
             final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
             final Electron el = mcss.getElectron();
             final double[] pos = el.getPosition();
@@ -204,30 +203,30 @@ final public class BackscatterStats
             assert (elevation >= 0.0);
             assert (elevation <= Math.PI);
             double azimuth = Math.atan2(pos[1], pos[0]);
-            if(azimuth < 0.0)
+            if (azimuth < 0.0)
                azimuth = (2.0 * Math.PI) + azimuth;
             assert (azimuth >= 0.0);
             assert (azimuth <= (2.0 * Math.PI));
-            synchronized(this) {
+            synchronized (this) {
                mElevationBins.add(elevation);
                mAzimuthalBins.add(azimuth);
                final double kEeV = FromSI.eV(el.getEnergy());
-               if(elevation < (Math.PI / 2.0))
+               if (elevation < (Math.PI / 2.0))
                   mFwdEnergyBins.add(kEeV);
                else
                   mBackEnergyBins.add(kEeV);
-               if(mLogDetected)
+               if (mLogDetected)
                   mLog.add(new Datum(el.getIdent(), el.getStepCount(), kEeV, pos, el.getTheta(), el.getPhi()));
             }
             break;
          }
-         case MonteCarloSS.TrajectoryEndEvent:
-            synchronized(this) {
+         case MonteCarloSS.TrajectoryEndEvent :
+            synchronized (this) {
                mEventCount++;
             }
             break;
-         case MonteCarloSS.BeamEnergyChanged:
-            synchronized(this) {
+         case MonteCarloSS.BeamEnergyChanged :
+            synchronized (this) {
                initialize();
             }
             break;
@@ -288,7 +287,7 @@ final public class BackscatterStats
       pw.println("Bin\tBack\tForward");
       assert mBackEnergyBins.binCount() == mFwdEnergyBins.binCount();
       final Iterator<Integer> bs = mBackEnergyBins.getResultMap("{0,number,#.##}").values().iterator();
-      for(final Map.Entry<Histogram.BinName, Integer> me : mFwdEnergyBins.getResultMap("{0,number,#.##}").entrySet()) {
+      for (final Map.Entry<Histogram.BinName, Integer> me : mFwdEnergyBins.getResultMap("{0,number,#.##}").entrySet()) {
          pw.print(me.getKey().toString());
          pw.print("\t");
          pw.print(bs.next().toString());
@@ -298,7 +297,7 @@ final public class BackscatterStats
 
       pw.println("Azimuthal angle histogram");
       pw.println("Bin\tAngle");
-      for(final Map.Entry<Histogram.BinName, Integer> me : mAzimuthalBins.getResultMap("{0,number,#.##}").entrySet()) {
+      for (final Map.Entry<Histogram.BinName, Integer> me : mAzimuthalBins.getResultMap("{0,number,#.##}").entrySet()) {
          pw.print(me.getKey().toString());
          pw.print("\t");
          pw.println(me.getValue().toString());
@@ -306,18 +305,18 @@ final public class BackscatterStats
 
       pw.println("Elevation angle histogram");
       pw.println("Bin\tAngle");
-      for(final Map.Entry<Histogram.BinName, Integer> me : mElevationBins.getResultMap("{0,number,#.##}").entrySet()) {
+      for (final Map.Entry<Histogram.BinName, Integer> me : mElevationBins.getResultMap("{0,number,#.##}").entrySet()) {
          pw.print(me.getKey().toString());
          pw.print("\t");
          pw.println(me.getValue().toString());
       }
 
       /* If logging is turned on, output data for each detected electron */
-      if(mLogDetected) {
+      if (mLogDetected) {
          pw.println("Detected electron log (electron ID, energy, position, and direction of motion at detection)");
          pw.println("Number of logged electrons: " + Integer.toString(mLog.size()));
          pw.println(Datum.getHeader());
-         for(final Datum logEntry : mLog)
+         for (final Datum logEntry : mLog)
             pw.println(logEntry.toString());
       }
       pw.close();
@@ -344,10 +343,11 @@ final public class BackscatterStats
    /**
     * Sets the number of bins in the energy histograms
     * 
-    * @param energyBinCount The value to which to set energyBinCount.
+    * @param energyBinCount
+    *           The value to which to set energyBinCount.
     */
    public void setEnergyBinCount(final int energyBinCount) {
-      if(mEnergyBinCount != energyBinCount) {
+      if (mEnergyBinCount != energyBinCount) {
          mEnergyBinCount = energyBinCount;
          initialize();
       }
@@ -388,7 +388,8 @@ final public class BackscatterStats
     * electron are stored and will be included in the output file generated by
     * dump.
     * 
-    * @param logDetected The value to which to set logDetected.
+    * @param logDetected
+    *           The value to which to set logDetected.
     */
    public void setLogDetected(final boolean logDetected) {
       mLogDetected = logDetected;

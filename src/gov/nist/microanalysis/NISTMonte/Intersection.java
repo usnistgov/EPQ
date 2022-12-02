@@ -26,8 +26,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author nritchie
  * @version 1.0
  */
-public class Intersection
-   implements Shape, ITransform {
+public class Intersection implements Shape, ITransform {
 
    private final List<Shape> mShapes;
 
@@ -66,8 +65,8 @@ public class Intersection
     */
    @Override
    public boolean contains(double[] pos) {
-      for(final Shape sh : mShapes)
-         if(!sh.contains(pos))
+      for (final Shape sh : mShapes)
+         if (!sh.contains(pos))
             return false;
       return true;
    }
@@ -82,15 +81,15 @@ public class Intersection
    @Override
    public double getFirstIntersection(double[] pos0, double[] pos1) {
       double[] ares = new double[mShapes.size()];
-      for(int i = 0; i < ares.length; ++i)
+      for (int i = 0; i < ares.length; ++i)
          ares[i] = mShapes.get(i).getFirstIntersection(pos0, pos1);
       double res = Double.MAX_VALUE;
-      if(contains(pos0))
+      if (contains(pos0))
          res = Math2.min(ares);
       else {
          final double EPS = 1.0e-12;
-         for(double tmp : ares)
-            if((tmp < res) && contains(Math2.plus(pos0, Math2.multiply(tmp + EPS, Math2.minus(pos1, pos0)))))
+         for (double tmp : ares)
+            if ((tmp < res) && contains(Math2.plus(pos0, Math2.multiply(tmp + EPS, Math2.minus(pos1, pos0)))))
                res = tmp;
       }
       assert res >= 0.0;
@@ -100,16 +99,16 @@ public class Intersection
    // See ITransform for JavaDoc
    @Override
    public void rotate(double[] pivot, double phi, double theta, double psi) {
-      for(final Shape t : getShapes())
-         if(t instanceof ITransform)
+      for (final Shape t : getShapes())
+         if (t instanceof ITransform)
             ((ITransform) t).rotate(pivot, phi, theta, psi);
    }
 
    // See ITransform for JavaDoc
    @Override
    public void translate(double[] distance) {
-      for(final Shape t : getShapes())
-         if(t instanceof ITransform)
+      for (final Shape t : getShapes())
+         if (t instanceof ITransform)
             ((ITransform) t).translate(distance);
    }
 
@@ -122,8 +121,8 @@ public class Intersection
       StringBuffer sb = new StringBuffer();
       sb.append("Intersection[");
       boolean first = true;
-      for(final Shape sh : mShapes) {
-         if(!first)
+      for (final Shape sh : mShapes) {
+         if (!first)
             sb.append(",");
          sb.append(sh.toString());
          first = false;

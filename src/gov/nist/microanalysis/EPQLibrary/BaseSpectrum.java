@@ -23,9 +23,7 @@ import gov.nist.microanalysis.EPQTools.EPQXStream;
  * @version 1.0
  */
 
-abstract public class BaseSpectrum
-   implements
-   ISpectrumData {
+abstract public class BaseSpectrum implements ISpectrumData {
    protected static final int NULL_HASH = 0;
    transient protected int mHashCode = NULL_HASH;
    transient private int mSpectrumIndex;
@@ -45,17 +43,17 @@ abstract public class BaseSpectrum
    public String toString() {
       final SpectrumProperties sp = getProperties();
       String res = sp.getTextWithDefault(SpectrumProperties.SpectrumDisplayName, null);
-      if(res == null) {
+      if (res == null) {
          res = sp.getTextWithDefault(SpectrumProperties.SpecimenDesc, null);
-         if(res == null)
+         if (res == null)
             res = sp.getTextWithDefault(SpectrumProperties.SpectrumComment, null);
-         if(res == null)
+         if (res == null)
             res = sp.getTextWithDefault(SpectrumProperties.SpecimenName, null);
-         if(res == null)
+         if (res == null)
             res = sp.getTextWithDefault(SpectrumProperties.SourceFileId, null);
-         if(res == null)
+         if (res == null)
             res = sp.getTextWithDefault(SpectrumProperties.SourceFile, null);
-         if(res != null)
+         if (res != null)
             sp.setTextProperty(SpectrumProperties.SpectrumDisplayName, res);
          else
             res = "Spectrum " + Integer.toHexString(hashCode());
@@ -73,9 +71,9 @@ abstract public class BaseSpectrum
        * the best alternative is a punt (just use the Object reference converted
        * to an int.)
        */
-      if(mHashCode == NULL_HASH) {
+      if (mHashCode == NULL_HASH) {
          mHashCode = Arrays.hashCode(SpectrumUtils.toDoubleArray(this)) ^ getProperties().hashCode();
-         if(mHashCode == NULL_HASH)
+         if (mHashCode == NULL_HASH)
             mHashCode = 137;
       }
       return mHashCode;
@@ -91,9 +89,9 @@ abstract public class BaseSpectrum
    public int compareTo(ISpectrumData obj) {
       assert obj instanceof BaseSpectrum;
       final BaseSpectrum bs = (BaseSpectrum) obj;
-      if(mSpectrumIndex < bs.mSpectrumIndex)
+      if (mSpectrumIndex < bs.mSpectrumIndex)
          return -1;
-      else if(mSpectrumIndex > bs.mSpectrumIndex)
+      else if (mSpectrumIndex > bs.mSpectrumIndex)
          return +1;
       else
          return 0;
@@ -106,22 +104,23 @@ abstract public class BaseSpectrum
     * different classes derived from BaseSpectrum and yet satisfy the criteria
     * for equality. (Equal != Identical)
     * 
-    * @param obj Object
+    * @param obj
+    *           Object
     * @return boolean
     */
    @Override
    public boolean equals(Object obj) {
-      if(obj instanceof BaseSpectrum) {
+      if (obj instanceof BaseSpectrum) {
          final BaseSpectrum bs = (BaseSpectrum) obj;
-         if(hashCode() == bs.hashCode()) {
-            if(getChannelWidth() != bs.getChannelWidth())
+         if (hashCode() == bs.hashCode()) {
+            if (getChannelWidth() != bs.getChannelWidth())
                return false;
-            if(getZeroOffset() != bs.getZeroOffset())
+            if (getZeroOffset() != bs.getZeroOffset())
                return false;
-            if(bs.getChannelCount() == getChannelCount()) {
+            if (bs.getChannelCount() == getChannelCount()) {
                final int cx = getChannelCount();
-               for(int i = 0; i < cx; ++i)
-                  if(getCounts(i) != bs.getCounts(i))
+               for (int i = 0; i < cx; ++i)
+                  if (getCounts(i) != bs.getCounts(i))
                      return false;
                return getProperties().equals(bs.getProperties());
             }
@@ -184,7 +183,7 @@ abstract public class BaseSpectrum
 
       @Override
       public SpectrumProperties getProperties() {
-         if(mProperties == null) {
+         if (mProperties == null) {
             mProperties = new SpectrumProperties();
             mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, "Null spectrum");
             setEnergyScale(0.0, 10.0);

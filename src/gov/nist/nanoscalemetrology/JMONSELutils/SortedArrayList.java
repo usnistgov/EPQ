@@ -25,9 +25,7 @@ import java.util.Collections;
  * @version 1.0
  */
 
-public class SortedArrayList<E extends Comparable<? super E>>
-   extends
-   AbstractList<E> {
+public class SortedArrayList<E extends Comparable<? super E>> extends AbstractList<E> {
 
    private boolean duplicates = true;
    private ArrayList<E> alist;
@@ -35,9 +33,10 @@ public class SortedArrayList<E extends Comparable<? super E>>
    /**
     * Constructs an empty ArrayList with the specified initial capacity.
     * 
-    * @param initialCapacity the initial capacity of the list.
-    * @exception IllegalArgumentException if the specified initial capacity is
-    *               negative
+    * @param initialCapacity
+    *           the initial capacity of the list.
+    * @exception IllegalArgumentException
+    *               if the specified initial capacity is negative
     */
    public SortedArrayList(int initialCapacity) {
       alist = new ArrayList<E>(initialCapacity);
@@ -52,12 +51,14 @@ public class SortedArrayList<E extends Comparable<? super E>>
 
    /**
     * Constructs an ArrayList containing the elements of the specified
-    * collection, as per the element's natural ordering. The
-    * SortedArrayList instance has an initial capacity of 110% the size
-    * of the specified collection.
+    * collection, as per the element's natural ordering. The SortedArrayList
+    * instance has an initial capacity of 110% the size of the specified
+    * collection.
     * 
-    * @param c the collection whose elements are to be placed into this list.
-    * @throws NullPointerException if the specified collection is null.
+    * @param c
+    *           the collection whose elements are to be placed into this list.
+    * @throws NullPointerException
+    *            if the specified collection is null.
     */
    public SortedArrayList(Collection<? extends E> c) {
       // Allow 10% room for growth
@@ -69,22 +70,24 @@ public class SortedArrayList<E extends Comparable<? super E>>
     * Adds the specified element to this list as per the element's natural
     * ordering.
     * 
-    * @param e element to be inserted into this list.
+    * @param e
+    *           element to be inserted into this list.
     * @return true (as per the general contract of Collection.add).
-    * @throws ClassCastException if the specified element is not comparable to
-    *            existing elements.
+    * @throws ClassCastException
+    *            if the specified element is not comparable to existing
+    *            elements.
     */
    @Override
    public boolean add(E e) {
-      if(e == null)
+      if (e == null)
          return false;
 
       // Find the index where this element belongs according to the natural
       // ordering of the objects.
       final int index = Collections.binarySearch(this, e);
 
-      if(index >= 0) {
-         if(duplicates) {
+      if (index >= 0) {
+         if (duplicates) {
             alist.add(index, e);
             return true;
          }
@@ -101,16 +104,18 @@ public class SortedArrayList<E extends Comparable<? super E>>
     * progress. (This implies that the behavior of this call is undefined if the
     * specified Collection is this ArrayList, and this ArrayList is nonempty.)
     * 
-    * @param c the elements to be inserted into this ArrayList.
+    * @param c
+    *           the elements to be inserted into this ArrayList.
     * @return true if this ArrayList changed as a result of the call.
-    * @throws NullPointerException if the specified collection is null.
+    * @throws NullPointerException
+    *            if the specified collection is null.
     */
    @Override
    public boolean addAll(Collection<? extends E> c) {
       boolean changed = false;
       boolean added;
 
-      for(final E e : c) {
+      for (final E e : c) {
          added = this.add(e);
          changed = changed || added;
       }
@@ -120,22 +125,22 @@ public class SortedArrayList<E extends Comparable<? super E>>
    /**
     * Set duplicates allowed.
     * 
-    * @param duplicates true if duplicates are to be allowed,
-    *           false otherwise. If there are existing elements in the
-    *           set when duplicates are disallowed, any duplicates are removed.
+    * @param duplicates
+    *           true if duplicates are to be allowed, false otherwise. If there
+    *           are existing elements in the set when duplicates are disallowed,
+    *           any duplicates are removed.
     */
    public void allowDuplicates(boolean duplicates) {
       this.duplicates = duplicates;
-      for(int i = this.size() - 1; i > 0; i--)
-         if(this.get(i).compareTo(this.get(i - 1)) == 0)
+      for (int i = this.size() - 1; i > 0; i--)
+         if (this.get(i).compareTo(this.get(i - 1)) == 0)
             this.remove(i);
    }
 
    /**
     * Query duplicates allowed.
     * 
-    * @return true if duplicates are to be allowed, false
-    *         otherwise.
+    * @return true if duplicates are to be allowed, false otherwise.
     */
    public boolean duplicatesAllowed() {
       return this.duplicates;

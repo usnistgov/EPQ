@@ -34,9 +34,7 @@ import javax.swing.JPanel;
  * @version 1.0
  */
 
-public class JythonFrame_AboutBox
-   extends JDialog
-   implements ActionListener {
+public class JythonFrame_AboutBox extends JDialog implements ActionListener {
 
    private static final long serialVersionUID = 0x1;
    JPanel panel1 = new JPanel();
@@ -58,9 +56,9 @@ public class JythonFrame_AboutBox
    String product = "<HTML><h3>Jython GUI</h3>";
    String version = "1.0.2";
    String copyright = "<HTML><b>Public domain</b>: This software was developed at the National Institute of Standards<br/>"
-   					  + " and Technology by employees of the Federal Government in the course of their official duties.<br/>"
-   					  + "Pursuant to title 17 Section 105 of the United States Code this software is not subject to<br/>"
-   					  + "copyright protection and is in the public domain.";
+         + " and Technology by employees of the Federal Government in the course of their official duties.<br/>"
+         + "Pursuant to title 17 Section 105 of the United States Code this software is not subject to<br/>"
+         + "copyright protection and is in the public domain.";
    String comments = "<HTML><i>A simple GUI for running Jython scripts</i>";
 
    public JythonFrame_AboutBox(Frame parent) {
@@ -68,8 +66,7 @@ public class JythonFrame_AboutBox
       enableEvents(AWTEvent.WINDOW_EVENT_MASK);
       try {
          jbInit();
-      }
-      catch(Exception e) {
+      } catch (Exception e) {
          e.printStackTrace();
       }
    }
@@ -79,8 +76,7 @@ public class JythonFrame_AboutBox
    }
 
    // Component initialization
-   private void jbInit()
-         throws Exception {
+   private void jbInit() throws Exception {
       image1 = new ImageIcon(gov.nist.microanalysis.JythonGUI.JythonFrame.class.getResource("about.png"));
       imageLabel.setIcon(image1);
       this.setTitle("About");
@@ -115,7 +111,7 @@ public class JythonFrame_AboutBox
 
    // Overridden so we can exit when window is closed
    protected void processWindowEvent(WindowEvent e) {
-      if(e.getID() == WindowEvent.WINDOW_CLOSING) {
+      if (e.getID() == WindowEvent.WINDOW_CLOSING) {
          cancel();
       }
       super.processWindowEvent(e);
@@ -128,7 +124,7 @@ public class JythonFrame_AboutBox
 
    // Close the dialog on a button event
    public void actionPerformed(ActionEvent e) {
-      if(e.getSource() == button1) {
+      if (e.getSource() == button1) {
          cancel();
       }
    }

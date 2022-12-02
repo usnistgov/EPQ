@@ -7,8 +7,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumUtils;
  * resolution model for a Si(Li) detector.
  */
 
-public class FanoSiLiLineshape
-   extends DetectorLineshapeModel {
+public class FanoSiLiLineshape extends DetectorLineshapeModel {
 
    /**
     * mFanoFactor and mNoise define the detector resolution as a function of
@@ -31,7 +30,8 @@ public class FanoSiLiLineshape
     * Constructs a simple Gaussina model of a Si(Li) style detector which is
     * characterized by the full-width half-maximum at Mn Kα
     * 
-    * @param fwhmAtMnKa in eV
+    * @param fwhmAtMnKa
+    *           in eV
     */
    public FanoSiLiLineshape(double fwhmAtMnKa) {
       super();
@@ -102,14 +102,14 @@ public class FanoSiLiLineshape
 
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final FanoSiLiLineshape other = (FanoSiLiLineshape) obj;
-      if(Double.doubleToLongBits(mFanoFactor) != Double.doubleToLongBits(other.mFanoFactor))
+      if (Double.doubleToLongBits(mFanoFactor) != Double.doubleToLongBits(other.mFanoFactor))
          return false;
-      if(Double.doubleToLongBits(mNoise) != Double.doubleToLongBits(other.mNoise))
+      if (Double.doubleToLongBits(mNoise) != Double.doubleToLongBits(other.mNoise))
          return false;
       return true;
    }

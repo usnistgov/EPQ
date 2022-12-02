@@ -17,8 +17,7 @@ import javax.swing.JComponent;
 /**
  * @author nicholas
  */
-public class JStripSpectrumDisplay
-   extends JComponent {
+public class JStripSpectrumDisplay extends JComponent {
 
    private static final long serialVersionUID = -5820085805013539098L;
 
@@ -38,12 +37,13 @@ public class JStripSpectrumDisplay
    }
 
    /**
-    * @param maxSpectra the maxSpectra to set
+    * @param maxSpectra
+    *           the maxSpectra to set
     */
    public void setMaxSpectra(int maxSpectra) {
-      if(mMaxSpectra != maxSpectra) {
+      if (mMaxSpectra != maxSpectra) {
          mMaxSpectra = maxSpectra;
-         while(mSpectra.size() > mMaxSpectra) {
+         while (mSpectra.size() > mMaxSpectra) {
             mSpectra.remove(0);
             mStrips.remove(0);
          }
@@ -59,10 +59,11 @@ public class JStripSpectrumDisplay
    }
 
    /**
-    * @param stripHeight the stripHeight to set
+    * @param stripHeight
+    *           the stripHeight to set
     */
    public void setStripHeight(int stripHeight) {
-      if(mStripHeight != stripHeight) {
+      if (mStripHeight != stripHeight) {
          mStripHeight = stripHeight;
          updateBounds();
       }
@@ -76,12 +77,13 @@ public class JStripSpectrumDisplay
    }
 
    /**
-    * @param border the border to set
+    * @param border
+    *           the border to set
     */
    public void setBorderThickness(int border) {
-      if(border < 0)
+      if (border < 0)
          border = 0;
-      if(mBorder != border) {
+      if (mBorder != border) {
          mBorder = border;
          updateBounds();
       }
@@ -95,10 +97,11 @@ public class JStripSpectrumDisplay
    }
 
    /**
-    * @param minEnergy the minEnergy to set
+    * @param minEnergy
+    *           the minEnergy to set
     */
    public void setMinEnergy(double minEnergy) {
-      if(mMinEnergy != minEnergy) {
+      if (mMinEnergy != minEnergy) {
          mMinEnergy = minEnergy;
          updateStrips();
       }
@@ -112,10 +115,11 @@ public class JStripSpectrumDisplay
    }
 
    /**
-    * @param maxEnergy the maxEnergy to set
+    * @param maxEnergy
+    *           the maxEnergy to set
     */
    public void setMaxEnergy(double maxEnergy) {
-      if(mMaxEnergy != maxEnergy) {
+      if (mMaxEnergy != maxEnergy) {
          mMaxEnergy = maxEnergy;
          updateStrips();
       }
@@ -135,8 +139,8 @@ public class JStripSpectrumDisplay
       gr.fillRect(0, 0, getWidth(), getHeight());
       int h = mBorder;
       final Rectangle clip = gr.getClipBounds();
-      for(int i = mSpectra.size() - 1; i >= 0; --i) {
-         if((((h + mStripHeight) >= clip.y) && (h <= (clip.y + clip.height))))
+      for (int i = mSpectra.size() - 1; i >= 0; --i) {
+         if ((((h + mStripHeight) >= clip.y) && (h <= (clip.y + clip.height))))
             gr.drawImage(mStrips.get(i), 0, h, getWidth(), mStripHeight, null);
          h += mStripHeight + mBorder;
       }
@@ -145,7 +149,7 @@ public class JStripSpectrumDisplay
    @Override
    public String getToolTipText(MouseEvent me) {
       final int i = (me.getY() / (mStripHeight + mBorder));
-      if(i < mSpectra.size()) {
+      if (i < mSpectra.size()) {
          final ISpectrumData spec = mSpectra.get(i);
          return spec.toString();
       } else
@@ -171,14 +175,14 @@ public class JStripSpectrumDisplay
     */
    @Override
    public void setBounds(int x, int y, int width, int height) {
-      if(getBounds().width != width)
+      if (getBounds().width != width)
          updateStrips();
       super.setBounds(x, y, width, height);
       setPreferredSize(new Dimension(width, height));
    }
 
    public void setRange(double eMin, double eMax) {
-      if((eMin != mMinEnergy) || (eMax != mMaxEnergy)) {
+      if ((eMin != mMinEnergy) || (eMax != mMaxEnergy)) {
          mMinEnergy = eMin;
          mMaxEnergy = eMax;
          updateStrips();
@@ -188,7 +192,7 @@ public class JStripSpectrumDisplay
 
    private void updateStrips() {
       mStrips.clear();
-      for(final ISpectrumData spec : mSpectra) {
+      for (final ISpectrumData spec : mSpectra) {
          final BufferedImage bi = SpectrumUtils.toStrip(spec, mMinEnergy, mMaxEnergy, getWidth(), 1);
          mStrips.add(bi);
       }
@@ -202,9 +206,9 @@ public class JStripSpectrumDisplay
    }
 
    public void addSpectrum(ISpectrumData spec) {
-      if(mSpectra.contains(spec))
+      if (mSpectra.contains(spec))
          mSpectra.remove(spec);
-      while(mSpectra.size() >= mMaxSpectra) {
+      while (mSpectra.size() >= mMaxSpectra) {
          mSpectra.remove(0);
          mStrips.remove(0);
       }
@@ -216,13 +220,13 @@ public class JStripSpectrumDisplay
    }
 
    public void addSpectra(Collection<ISpectrumData> specs) {
-      for(final ISpectrumData spec : specs)
+      for (final ISpectrumData spec : specs)
          addSpectrum(spec);
    }
 
    public void removeSpectrum(ISpectrumData spec) {
       final int pos = mSpectra.indexOf(spec);
-      if(pos != -1) {
+      if (pos != -1) {
          mStrips.remove(pos);
          mSpectra.remove(pos);
          updateBounds();

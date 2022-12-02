@@ -26,8 +26,7 @@ import junit.framework.TestCase;
  * @author nritchie
  * @version 1.0
  */
-public class StoppingPowerTest
-   extends TestCase {
+public class StoppingPowerTest extends TestCase {
 
    /**
     * Constructs a StoppingPowerTest
@@ -36,8 +35,7 @@ public class StoppingPowerTest
       super(test);
    }
 
-   public void testDuncumbReed1968()
-         throws Exception {
+   public void testDuncumbReed1968() throws Exception {
       AlgorithmUser.clearGlobalOverride();
       final StoppingPower sp = StoppingPower.Thomas1963; // uses Duncumb &
       // DeCasa MIP
@@ -56,8 +54,7 @@ public class StoppingPowerTest
       AlgorithmUser.clearGlobalOverride();
    }
 
-   public void testPhilibertTixier1968()
-         throws Exception {
+   public void testPhilibertTixier1968() throws Exception {
       final StoppingPower sp = StoppingPower.PhilibertTixier1968; // Uses
       // Wilson1941
       final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);
@@ -75,8 +72,7 @@ public class StoppingPowerTest
       AlgorithmUser.clearGlobalOverride();
    }
 
-   public void testPouchou91()
-         throws Exception {
+   public void testPouchou91() throws Exception {
       final StoppingPower sp = StoppingPower.Pouchou1991; // Uses Zeller MIP
       {
          final Composition mat = MaterialFactory.createMaterial(MaterialFactory.K3189);

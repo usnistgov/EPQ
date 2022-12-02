@@ -24,20 +24,12 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @author Nicholas
  * @version 1.0
  */
-public class XPP1991
-   extends
-   CorrectionAlgorithm.PhiRhoZAlgorithm
-   implements
-   CorrectionAlgorithm.IAbsorptionSensitivity {
+public class XPP1991 extends CorrectionAlgorithm.PhiRhoZAlgorithm implements CorrectionAlgorithm.IAbsorptionSensitivity {
 
    public static final String UNCERTAINTY_COMP = "C";
    public static final String UNCERTAINTY_ETA = "\u03B7";
    public static final String UNCERTAINTY_MAC = "[\u03BC/\u03C1]";
-   public static final String[] ALL_COMPONENTS = new String[] {
-      UNCERTAINTY_MAC,
-      UNCERTAINTY_ETA,
-      UNCERTAINTY_COMP
-   };
+   public static final String[] ALL_COMPONENTS = new String[]{UNCERTAINTY_MAC, UNCERTAINTY_ETA, UNCERTAINTY_COMP};
 
    static protected final double SQRT_TWO = Math.sqrt(2.0);
    static protected final double TINY = 1.0e-6;
@@ -80,11 +72,10 @@ public class XPP1991
    }
 
    @Override
-   public boolean initialize(Composition comp, AtomicShell shell, SpectrumProperties props)
-         throws EPQException {
+   public boolean initialize(Composition comp, AtomicShell shell, SpectrumProperties props) throws EPQException {
       comp = comp.normalize();
       final boolean res = super.initialize(comp, shell, props);
-      if(res) {
+      if (res) {
          final SurfaceIonization si = (SurfaceIonization) getAlgorithm(SurfaceIonization.class);
          final BackscatterFactor bf = (BackscatterFactor) getAlgorithm(BackscatterFactor.class);
          final StoppingPower sp = (StoppingPower) getAlgorithm(StoppingPower.class);
@@ -92,8 +83,7 @@ public class XPP1991
          // Compute the total area under the phi(rho z) curve. Same as PAP when
          // corrected.
          // mF = (R/S)*(1/Qj(E0))
-         mF = (bf.compute(mComposition, mShell, mBeamEnergy)
-               * StoppingPower.invToGramPerkeVcmSqr(sp.computeInv(mComposition, mShell, mBeamEnergy)))
+         mF = (bf.compute(mComposition, mShell, mBeamEnergy) * StoppingPower.invToGramPerkeVcmSqr(sp.computeInv(mComposition, mShell, mBeamEnergy)))
                / icx.computeFamily(mShell, mBeamEnergy);
          assert mF > 0.0 : "The integral must be larger than zero.";
          mPhi0 = si.compute(mComposition, mShell, mBeamEnergy);
@@ -110,7 +100,7 @@ public class XPP1991
             // log( 1.0 + y1));
             rBar = mF / (1.0 + ((x * Math.log(1.0 + (y * (1.0 - Math.pow(u0, -0.42))))) / Math.log(1.0 + y)));
             // Impose the special condition
-            if((mF / rBar) < mPhi0)
+            if ((mF / rBar) < mPhi0)
                rBar = mF / mPhi0;
          }
          // Calculate the initial slope (p)
@@ -124,9 +114,9 @@ public class XPP1991
             double gh4 = g * Math2.sqr(h * h);
             // b = sqrt(2.0) * ( 1.0 + sqrt(1.0 - Rbar * phi0 / F) ) / Rbar;
             mLittleB = (SQRT_TWO * (1.0 + Math.sqrt(1.0 - ((rBar * mPhi0) / mF)))) / rBar;
-            if(true) {
+            if (true) {
                final double limit = 0.9 * mLittleB * rBar * rBar * (mLittleB - ((2.0 * mPhi0) / mF));
-               if(gh4 > limit)
+               if (gh4 > limit)
                   gh4 = limit;
             }
             // pp = g1 * h4 * FonR / Rbar;
@@ -134,10 +124,9 @@ public class XPP1991
          }
          // a = (pp + b * (phi0 * 2.0 - b * F)) / (b * F * (2 - b * Rbar) -
          // phi0);
-         mLittleA = (p + (mLittleB * ((2.0 * mPhi0) - (mLittleB * mF))))
-               / ((mLittleB * mF * (2.0 - (mLittleB * rBar))) - mPhi0);
+         mLittleA = (p + (mLittleB * ((2.0 * mPhi0) - (mLittleB * mF)))) / ((mLittleB * mF * (2.0 - (mLittleB * rBar))) - mPhi0);
          mEps = (mLittleA - mLittleB) / mLittleB;
-         if(Math.abs(mEps) < TINY) {
+         if (Math.abs(mEps) < TINY) {
             mEps = TINY;
             mLittleA = mLittleB * (1.0 + mEps);
          }
@@ -154,13 +143,11 @@ public class XPP1991
     * @see gov.nist.microanalysis.EPQLibrary.CorrectionAlgorithm#computeZACorrection(gov.nist.microanalysis.EPQLibrary.XRayTransition)
     */
    @Override
-   public double computeZACorrection(XRayTransition xrt)
-         throws EPQException {
+   public double computeZACorrection(XRayTransition xrt) throws EPQException {
       final double chi = MassAbsorptionCoefficient.toCmSqrPerGram(chi(xrt));
       assert chi >= 0.0 : "chi = " + Double.toString(chi);
       assert chi >= 0.0;
-      return toSI(((mPhi0 + (mBigB / (mLittleB + chi))) - ((mBigA * mLittleB * mEps) / ((mLittleB * (1.0 + mEps)) + chi)))
-            / (mLittleB + chi));
+      return toSI(((mPhi0 + (mBigB / (mLittleB + chi))) - ((mBigA * mLittleB * mEps) / ((mLittleB * (1.0 + mEps)) + chi))) / (mLittleB + chi));
    }
 
    /**
@@ -181,7 +168,7 @@ public class XPP1991
     */
    @Override
    public double computeCurve(double rhoZ) {
-      if(rhoZ >= 0.0) {
+      if (rhoZ >= 0.0) {
          // rhoZ in kg/m^2 -> rhoZ in g/cm^2
          rhoZ *= 0.1;
          return (mBigA * Math.exp(-mLittleA * rhoZ)) + ((((mBigB * rhoZ) + mPhi0) - mBigA) * Math.exp(-mLittleB * rhoZ));
@@ -192,7 +179,8 @@ public class XPP1991
    /**
     * Converts from mg/cm<sup>2</sup> to kg/m<sup>2</sup>
     *
-    * @param rhoZ in mg/cm<sup>2</sup>
+    * @param rhoZ
+    *           in mg/cm<sup>2</sup>
     * @return rhoZ in kg/m<sup>2</sup>
     */
    public double rhoZ_kgPerSqrMeter(double rhoZ) {
@@ -205,7 +193,8 @@ public class XPP1991
    /**
     * Converts from kg/m<sup>2</sup> to g/cm<sup>2</sup>
     *
-    * @param rhoZ in kg/m<sup>2</sup>
+    * @param rhoZ
+    *           in kg/m<sup>2</sup>
     * @return rhoZ in g/cm<sup>2</sup>
     */
    public double rhoZ_gPerSqrCentimeter(double rhoZ) {
@@ -226,12 +215,10 @@ public class XPP1991
     * @return double
     * @throws EPQException
     */
-   private double termX(final XRayTransition xrt)
-         throws EPQException {
+   private double termX(final XRayTransition xrt) throws EPQException {
       final double chi = MassAbsorptionCoefficient.toCmSqrPerGram(chi(xrt));
       final double lbx = mLittleB + chi;
-      return ((mBigA * ((1.0 / (lbx * lbx)) - (1.0 / Math2.sqr(mLittleA + chi))))
-            - (((2.0 * mBigB) + (mPhi0 * lbx)) / Math.pow(lbx, 3.0)));
+      return ((mBigA * ((1.0 / (lbx * lbx)) - (1.0 / Math2.sqr(mLittleA + chi)))) - (((2.0 * mBigB) + (mPhi0 * lbx)) / Math.pow(lbx, 3.0)));
    }
 
    private double dR(double u0) {
@@ -243,7 +230,7 @@ public class XPP1991
          // uncertainty blows up when the analytical total is substantially
          // above unity.
          final double total = Math.min(1.1, comp.sumWeightFraction());
-         for(final Element elm : comp.getElementSet())
+         for (final Element elm : comp.getElementSet())
             zb += Math.sqrt(elm.getAtomicNumber()) * (comp.weightFraction(elm, false) / total);
          zb = Math2.sqr(zb);
       }
@@ -280,8 +267,7 @@ public class XPP1991
     * @return u(&eta;) as a double
     * @throws EPQException
     */
-   public static double uEta(XPP1991 stdXpp, XPP1991 unkXpp, XRayTransition xrt)
-         throws EPQException {
+   public static double uEta(XPP1991 stdXpp, XPP1991 unkXpp, XRayTransition xrt) throws EPQException {
       final StoppingPower sp = (StoppingPower) stdXpp.getAlgorithm(StoppingPower.class);
       final double u0 = stdXpp.mBeamEnergy / xrt.getEnergy();
       double stdZA, unkZA, dIstd, dIunk;
@@ -316,8 +302,7 @@ public class XPP1991
     * @return u([&mu;/&rho;]) as a double
     * @throws EPQException
     */
-   public static double uMAC(XPP1991 stdXpp, XPP1991 unkXpp, XRayTransition xrt)
-         throws EPQException {
+   public static double uMAC(XPP1991 stdXpp, XPP1991 unkXpp, XRayTransition xrt) throws EPQException {
       final double csc = cosec(unkXpp.mTakeOffAngle);
       final double unkTermX = unkXpp.termX(xrt);
       final double unkZA = fromSI(unkXpp.computeZACorrection(xrt));
@@ -329,7 +314,7 @@ public class XPP1991
       allElms.addAll(unkXpp.mComposition.getElementSet());
       double sumSqr = 0.0;
       // Implements line 3 in Eqn 7
-      for(final Element elm : allElms) {
+      for (final Element elm : allElms) {
          // This is Eqn 8 for the standard
          final double dIstd = stdTermX * stdXpp.mComposition.weightFraction(elm, false) * csc;
          // This is Eqn 8 for the unknown
@@ -353,16 +338,19 @@ public class XPP1991
     * measured using the specified standard 'std', x-ray transition 'xrt' and
     * SpectrumProperties 'props'.
     * 
-    * @param std Composition of the standard
-    * @param unk Composition of the unknown
-    * @param xrt The x-ray transition
-    * @param props The properties describing the conditions under which the
+    * @param std
+    *           Composition of the standard
+    * @param unk
+    *           Composition of the unknown
+    * @param xrt
+    *           The x-ray transition
+    * @param props
+    *           The properties describing the conditions under which the
     *           spectrum was collected.
     * @return {@link UncertainValue2}
     * @throws EPQException
     */
-   public static UncertainValue2 massFraction(Composition std, Composition unk, XRayTransition xrt, SpectrumProperties props)
-         throws EPQException {
+   public static UncertainValue2 massFraction(Composition std, Composition unk, XRayTransition xrt, SpectrumProperties props) throws EPQException {
       final XPP1991 unkXpp = new XPP1991();
       unkXpp.initialize(unk, xrt.getDestination(), props);
       final XPP1991 stdXpp = new XPP1991();
@@ -375,8 +363,7 @@ public class XPP1991
    }
 
    @Override
-   public UncertainValue2 kratio(Composition std, Composition unk, XRayTransition xrt, SpectrumProperties props)
-         throws EPQException {
+   public UncertainValue2 kratio(Composition std, Composition unk, XRayTransition xrt, SpectrumProperties props) throws EPQException {
       final XPP1991 unkXpp = new XPP1991();
       unkXpp.initialize(unk.normalize(), xrt.getDestination(), props);
       final XPP1991 stdXpp = new XPP1991();
@@ -387,18 +374,16 @@ public class XPP1991
       cUnk.assignComponent(UNCERTAINTY_COMP, uC(std, unk, xrt.getElement()));
       // assert cUnk.equals(massFraction(std, unk, xrt, props), 1.0e-6);
       assert UncertainValue2.subtract(cUnk, massFraction(std, unk, xrt, props)).abs().doubleValue() < 1.0e-6;
-      final double corr = unkXpp.computeZAFCorrection(xrt)
-            / (stdXpp.computeZAFCorrection(xrt) * std.weightFraction(xrt.getElement(), false));
+      final double corr = unkXpp.computeZAFCorrection(xrt) / (stdXpp.computeZAFCorrection(xrt) * std.weightFraction(xrt.getElement(), false));
       return UncertainValue2.multiply(corr, cUnk);
    }
 
-   public UncertainValue2 kratio(Composition std, Composition unk, XRayTransitionSet xrts, SpectrumProperties props)
-         throws EPQException {
+   public UncertainValue2 kratio(Composition std, Composition unk, XRayTransitionSet xrts, SpectrumProperties props) throws EPQException {
       UncertainValue2 res = UncertainValue2.ZERO;
       final XPP1991 stdXpp = new XPP1991();
       final XPP1991 unkXpp = new XPP1991();
       double wSum = 0.0;
-      for(final XRayTransition xrt : xrts) {
+      for (final XRayTransition xrt : xrts) {
          unkXpp.initialize(unk.normalize(), xrt.getDestination(), props);
          stdXpp.initialize(std.normalize(), xrt.getDestination(), props);
          final UncertainValue2 mf = new UncertainValue2(unk.weightFraction(xrt.getElement(), false));
@@ -406,8 +391,7 @@ public class XPP1991
          mf.assignComponent(UNCERTAINTY_ETA, uEta(stdXpp, unkXpp, xrt));
          mf.assignComponent(UNCERTAINTY_COMP, uC(std, unk, xrt.getElement()));
          assert UncertainValue2.subtract(mf, massFraction(std, unk, xrt, props)).abs().doubleValue() < 1.0e-6;
-         final double corr = unkXpp.computeZAFCorrection(xrt)
-               / (stdXpp.computeZAFCorrection(xrt) * std.weightFraction(xrt.getElement(), false));
+         final double corr = unkXpp.computeZAFCorrection(xrt) / (stdXpp.computeZAFCorrection(xrt) * std.weightFraction(xrt.getElement(), false));
          final double w = xrt.getWeight(XRayTransition.NormalizeFamily);
          wSum += w;
          res = UncertainValue2.add(res, UncertainValue2.multiply(w * corr, mf));

@@ -71,9 +71,7 @@ public class QuantificationOutline {
     * @author nritchie
     * @version 1.0
     */
-   public class ReferenceMaterial
-      implements
-      Comparable<ReferenceMaterial> {
+   public class ReferenceMaterial implements Comparable<ReferenceMaterial> {
       /**
        * A reference material is optimally defined by a composition
        */
@@ -114,14 +112,13 @@ public class QuantificationOutline {
        *         uncertainty.
        * @throws EPQException
        */
-      protected UncertainValue2 getMeasuredIntensity(final RegionOfInterest roi)
-            throws EPQException {
+      protected UncertainValue2 getMeasuredIntensity(final RegionOfInterest roi) throws EPQException {
          assert roi.getElementSet().size() == 1;
          Composition comp = mComposition;
-         if(comp == null)
+         if (comp == null)
             comp = new Composition(roi.getElementSet().first());
          assert comp.containsElement(roi.getElementSet().first());
-         if(!mMeasuredIntensity.containsKey(roi)) {
+         if (!mMeasuredIntensity.containsKey(roi)) {
             final double sum = computeTotalIntensity(comp, roi);
             mMeasuredIntensity.put(roi, new UncertainValue2(sum, "k", Math.sqrt(sum)));
          }
@@ -143,7 +140,7 @@ public class QuantificationOutline {
 
       @Override
       public String toString() {
-         if(mComposition != null)
+         if (mComposition != null)
             return mComposition.toString();
          else
             return "Material containing " + QuantificationOutline.toString(mElements);
@@ -167,24 +164,24 @@ public class QuantificationOutline {
        */
       @Override
       public boolean equals(final Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof ReferenceMaterial))
+         if (!(obj instanceof ReferenceMaterial))
             return false;
          final ReferenceMaterial other = (ReferenceMaterial) obj;
-         if(!getOuterType().equals(other.getOuterType()))
+         if (!getOuterType().equals(other.getOuterType()))
             return false;
-         if(mComposition == null) {
-            if(other.mComposition != null)
+         if (mComposition == null) {
+            if (other.mComposition != null)
                return false;
-         } else if(!mComposition.equals(other.mComposition))
+         } else if (!mComposition.equals(other.mComposition))
             return false;
-         if(mElements == null) {
-            if(other.mElements != null)
+         if (mElements == null) {
+            if (other.mElements != null)
                return false;
-         } else if(!mElements.equals(other.mElements))
+         } else if (!mElements.equals(other.mElements))
             return false;
          return true;
       }
@@ -196,28 +193,28 @@ public class QuantificationOutline {
       public int compareTo(final ReferenceMaterial arg0) {
          int res = 0;
          // By composition first
-         if(mComposition != null)
+         if (mComposition != null)
             res = arg0.mComposition != null ? mComposition.compareTo(arg0.mComposition) : 1;
-         else if(arg0.mComposition != null)
+         else if (arg0.mComposition != null)
             res = -1;
          // Then by element set
-         if(res == 0)
-            if(mElements != null) {
-               if(arg0.mElements != null) {
+         if (res == 0)
+            if (mElements != null) {
+               if (arg0.mElements != null) {
                   final Set<Element> all = new TreeSet<Element>();
                   all.addAll(mElements);
                   all.addAll(arg0.mElements);
-                  for(final Element elm : all)
-                     if(!mElements.contains(elm)) {
+                  for (final Element elm : all)
+                     if (!mElements.contains(elm)) {
                         res = -1;
                         break;
-                     } else if(!arg0.mElements.contains(elm)) {
+                     } else if (!arg0.mElements.contains(elm)) {
                         res = 1;
                         break;
                      }
                } else
                   res = 1;
-            } else if(arg0.mElements != null)
+            } else if (arg0.mElements != null)
                res = -1;
          return res;
       }
@@ -245,9 +242,7 @@ public class QuantificationOutline {
     * @author nritchie
     * @version 1.0
     */
-   private class ElementPacket
-      implements
-      Comparable<ElementPacket> {
+   private class ElementPacket implements Comparable<ElementPacket> {
 
       private final Element mElement;
       private final RegionOfInterestSet mElementROIS;
@@ -280,14 +275,14 @@ public class QuantificationOutline {
        */
       @Override
       public boolean equals(final Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof ElementPacket))
+         if (!(obj instanceof ElementPacket))
             return false;
          final ElementPacket other = (ElementPacket) obj;
-         if(!getOuterType().equals(other.getOuterType()))
+         if (!getOuterType().equals(other.getOuterType()))
             return false;
          return mElement.equals(other.mElement);
       }
@@ -303,9 +298,7 @@ public class QuantificationOutline {
 
    }
 
-   private class StripPacket
-      extends
-      ElementPacket {
+   private class StripPacket extends ElementPacket {
 
       private StripPacket(final Element elm) {
          super(elm);
@@ -335,9 +328,7 @@ public class QuantificationOutline {
     * @author Nicholas
     * @version 1.0
     */
-   public class UERPacket
-      extends
-      ElementPacket {
+   public class UERPacket extends ElementPacket {
       private final UnmeasuredElementRule mUnmeasuredElementRule;
 
       protected UERPacket(final UnmeasuredElementRule uer) {
@@ -356,10 +347,9 @@ public class QuantificationOutline {
 
       @Override
       public boolean equals(final Object obj) {
-         if(obj instanceof UERPacket) {
+         if (obj instanceof UERPacket) {
             final UERPacket o2 = (UERPacket) obj;
-            return super.equals(obj) && mUnmeasuredElementRule.equals(o2.mUnmeasuredElementRule)
-                  && getElementROIS().equals(o2.getElementROIS());
+            return super.equals(obj) && mUnmeasuredElementRule.equals(o2.mUnmeasuredElementRule) && getElementROIS().equals(o2.getElementROIS());
          } else
             return false;
       }
@@ -368,9 +358,9 @@ public class QuantificationOutline {
    static private String toString(final Collection<Element> elms) {
       final StringBuffer sb = new StringBuffer();
       boolean first = true;
-      for(final Iterator<Element> i = elms.iterator(); i.hasNext();) {
+      for (final Iterator<Element> i = elms.iterator(); i.hasNext();) {
          final Element elm = i.next();
-         if(!first)
+         if (!first)
             sb.append(i.hasNext() ? ", " : " & ");
          sb.append(elm.toAbbrev());
          first = false;
@@ -395,9 +385,7 @@ public class QuantificationOutline {
     * @author nritchie
     * @version 1.0
     */
-   public class StandardPacket
-      extends
-      ElementPacket {
+   public class StandardPacket extends ElementPacket {
       /**
        * The composition of the standard
        */
@@ -443,41 +431,43 @@ public class QuantificationOutline {
        * energy.
        *
        * @param elm
-       * @param comp Contains elm
-       * @param Set&lt;Element&gt; Elements to strip
+       * @param comp
+       *           Contains elm
+       * @param Set&lt;Element&gt;
+       *           Elements to strip
        */
       private StandardPacket(final Element elm, final Composition comp, final Set<Element> stripElms) {
          super(elm);
          assert comp.containsElement(elm);
          mComposition = comp;
          mStripElements = new TreeSet<StripPacket>();
-         for(final Element stripElm : stripElms)
+         for (final Element stripElm : stripElms)
             mStripElements.add(new StripPacket(stripElm));
          final Set<Element> allElms = new TreeSet<Element>(stripElms);
          allElms.addAll(comp.getElementSet());
          mAllROIs = LinearSpectrumFit.createAllElementROIS(allElms, mDetector, getBeamEnergy());
          final Map<Element, RegionOfInterestSet> elmROIS = new TreeMap<Element, RegionOfInterestSet>();
-         for(final Element celm : allElms)
-            if(!celm.equals(getElement()))
+         for (final Element celm : allElms)
+            if (!celm.equals(getElement()))
                elmROIS.put(celm, LinearSpectrumFit.createElementROIS(celm, mDetector, getBeamEnergy()));
-         for(final RegionOfInterest elmROI : getElementROIS()) {
+         for (final RegionOfInterest elmROI : getElementROIS()) {
             final Set<RegionOfInterest> reqRefs = new TreeSet<RegionOfInterest>();
-            for(final Element celm : allElms) {
+            for (final Element celm : allElms) {
                final RegionOfInterestSet celmROIs = elmROIS.get(celm);
-               if(celmROIs == null)
+               if (celmROIs == null)
                   continue;
                // Build a list of required references for this elm ROI
-               for(final RegionOfInterest allROI : mAllROIs)
+               for (final RegionOfInterest allROI : mAllROIs)
                   // Check each all-element ROI to see if it intersects this
                   // compElement ROI
-                  if(elmROI.intersects(allROI))
-                     for(final RegionOfInterest celmROI : celmROIs)
-                        if(celmROI.intersects(allROI)) {
+                  if (elmROI.intersects(allROI))
+                     for (final RegionOfInterest celmROI : celmROIs)
+                        if (celmROI.intersects(allROI)) {
                            reqRefs.add(celmROI);
                            reqRefs.add(elmROI);
                         }
             }
-            if(reqRefs.size() > 0)
+            if (reqRefs.size() > 0)
                mRequiredRefs.put(elmROI, reqRefs);
          }
       }
@@ -491,8 +481,7 @@ public class QuantificationOutline {
       private double estimateDose(final RegionOfInterest roi) {
          try {
             return NOMINAL_DOSE / Math2.sqr(mDesiredPrecision * signalToNoiseNominal(roi));
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             return -1.0;
          }
       }
@@ -505,11 +494,10 @@ public class QuantificationOutline {
        * @return double x-ray counts at a dose of 60 nA.s
        * @throws EPQException
        */
-      private Map<XRayTransition, Double> getMeasuredIntensity(final RegionOfInterest roi)
-            throws EPQException {
+      private Map<XRayTransition, Double> getMeasuredIntensity(final RegionOfInterest roi) throws EPQException {
          assert roi.getElementSet().size() == 1;
          assert mComposition.containsAll(roi.getElementSet());
-         if(!mMeasuredIntensity.containsKey(roi))
+         if (!mMeasuredIntensity.containsKey(roi))
             mMeasuredIntensity.put(roi, computeIntensity(mComposition, roi));
          assert roi.getAllTransitions().isValid() : roi + ", " + roi.getAllTransitions();
          return mMeasuredIntensity.get(roi);
@@ -517,7 +505,7 @@ public class QuantificationOutline {
 
       public Set<Element> getStripElements() {
          final Set<Element> res = new HashSet<Element>();
-         for(final StripPacket sp : mStripElements)
+         for (final StripPacket sp : mStripElements)
             res.add(sp.getElement());
          return res;
       }
@@ -530,10 +518,9 @@ public class QuantificationOutline {
        * @return double
        * @throws EPQException
        */
-      private double getTotalIntensity(final RegionOfInterest roi)
-            throws EPQException {
+      private double getTotalIntensity(final RegionOfInterest roi) throws EPQException {
          double sum = 0.0;
-         for(final double i : getMeasuredIntensity(roi).values())
+         for (final double i : getMeasuredIntensity(roi).values())
             sum += i;
          return sum;
       }
@@ -544,14 +531,15 @@ public class QuantificationOutline {
        * the unknown. This calculates uncertainties due to MAC, back scatter
        * coefficient, standard dose and unknown dose.
        *
-       * @param unknown The approximate composition to be measured
-       * @param roi A single element region of interest to be measured
+       * @param unknown
+       *           The approximate composition to be measured
+       * @param roi
+       *           A single element region of interest to be measured
        * @return The mass fraction of the element associated with ROI with
        *         associated uncertainties
        * @throws EPQException
        */
-      public UncertainValue2 massFraction(final Composition unknown, final RegionOfInterest roi)
-            throws EPQException {
+      public UncertainValue2 massFraction(final Composition unknown, final RegionOfInterest roi) throws EPQException {
          assert roi.getElementSet().size() == 1;
          final Element elm = roi.getElementSet().first();
          final SpectrumProperties sp = new SpectrumProperties();
@@ -563,9 +551,9 @@ public class QuantificationOutline {
          final double cUnk = unknown.weightFraction(elm, false);
          final ArrayList<UncertainValue2> mfs = new ArrayList<UncertainValue2>();
          double iStdTot = 0.0, iUnkTot = 0.0;
-         for(final Map.Entry<XRayTransition, Double> me : mxd.entrySet()) {
+         for (final Map.Entry<XRayTransition, Double> me : mxd.entrySet()) {
             final double iXrt = me.getValue();
-            if(iXrt > 0.0) {
+            if (iXrt > 0.0) {
                final XRayTransition xrt = me.getKey();
                unkXpp.initialize(unknown, xrt.getDestination(), sp);
                stdXpp.initialize(mComposition, xrt.getDestination(), sp);
@@ -597,16 +585,15 @@ public class QuantificationOutline {
          sp.setDetector(mDetector);
          final XPP1991 xpp = new XPP1991();
          final Map<XRayTransition, Double> mxd = getMeasuredIntensity(roi);
-         for(final Map.Entry<XRayTransition, Double> me : mxd.entrySet()) {
+         for (final Map.Entry<XRayTransition, Double> me : mxd.entrySet()) {
             final XRayTransition xrt = me.getKey();
             final UncertainValue2 kr = xpp.kratio(mComposition, unknown, xrt, sp);
             final double mi = me.getValue();
             final String es = xrt.getElement().toAbbrev();
             final UncertainValue2 stdI = UncertainValue2.createGaussian((mi * stdDose) / NOMINAL_DOSE, "I[std," + es + "]");
-            final UncertainValue2 unkI = UncertainValue2.createGaussian((mi * kr.doubleValue() * unkDose)
-                  / NOMINAL_DOSE, "I[unk," + es + "]");
+            final UncertainValue2 unkI = UncertainValue2.createGaussian((mi * kr.doubleValue() * unkDose) / NOMINAL_DOSE, "I[unk," + es + "]");
             final UncertainValue2 kr2 = UncertainValue2.divide(unkI, stdI);
-            for(final String comp : kr2.getComponentNames())
+            for (final String comp : kr2.getComponentNames())
                kr.assignComponent(comp, kr2.getComponent(comp));
             res = UncertainValue2.add(res, kr);
          }
@@ -620,8 +607,7 @@ public class QuantificationOutline {
        * @return The signal-to-noise ratio
        * @throws EPQException
        */
-      public double signalToNoiseNominal(final RegionOfInterest roi)
-            throws EPQException {
+      public double signalToNoiseNominal(final RegionOfInterest roi) throws EPQException {
          return mComposition.containsElement(roi.getElementSet().first()) ? Math.sqrt(getTotalIntensity(roi)) : 0.0;
       }
 
@@ -642,7 +628,7 @@ public class QuantificationOutline {
       }
 
       public boolean isSuitableAsReference(final RegionOfInterest roi) {
-         if(roi.getElementSet().first().equals(getElement()))
+         if (roi.getElementSet().first().equals(getElement()))
             return mRequiredRefs.get(roi) == null;
          else
             return mAllROIs.contains(roi);
@@ -650,7 +636,7 @@ public class QuantificationOutline {
 
       protected void setPreferredROI(final RegionOfInterest roi) {
          assert (roi == null) || getElementROIS().contains(roi);
-         if((roi == null) || getElementROIS().contains(roi))
+         if ((roi == null) || getElementROIS().contains(roi))
             mPreferredROI = roi;
       }
 
@@ -687,7 +673,8 @@ public class QuantificationOutline {
     * spectrum collected at the specified beam energy on the specified detector.
     *
     * @param det
-    * @param defBeamEnergy in Joules
+    * @param defBeamEnergy
+    *           in Joules
     */
    public QuantificationOutline(final EDSDetector det, final double defBeamEnergy) {
       mDetector = det;
@@ -766,18 +753,19 @@ public class QuantificationOutline {
     * Evaluates whether a spectrum of the specified Composition would be a good
     * reference for the specified roi.
     *
-    * @param roi A RegionOfInterest for which we want to spec as a reference
-    * @param elms A set of elements
+    * @param roi
+    *           A RegionOfInterest for which we want to spec as a reference
+    * @param elms
+    *           A set of elements
     * @return A string detailing reasons why these elements are not suitable or
     *         null if the elements are..
     */
-   final String evaluateReference(final RegionOfInterest roi, final Set<Element> elms)
-         throws EPQException {
+   final String evaluateReference(final RegionOfInterest roi, final Set<Element> elms) throws EPQException {
       final StringBuffer sb = new StringBuffer();
-      for(final Element otherElm : elms)
-         if(!roi.getElementSet().contains(otherElm))
-            for(final RegionOfInterest otherRoi : LinearSpectrumFit.createElementROIS(otherElm, mDetector, mBeamEnergy))
-               if(otherRoi.intersects(roi))
+      for (final Element otherElm : elms)
+         if (!roi.getElementSet().contains(otherElm))
+            for (final RegionOfInterest otherRoi : LinearSpectrumFit.createElementROIS(otherElm, mDetector, mBeamEnergy))
+               if (otherRoi.intersects(roi))
                   sb.append(roi.toString() + " intersects with " + otherRoi + "\n");
       return sb.length() > 0 ? sb.toString() : null;
    }
@@ -803,7 +791,7 @@ public class QuantificationOutline {
    public Set<RegionOfInterest> suitableAsReference(final Collection<Element> elms) {
       final RegionOfInterestSet allRois = LinearSpectrumFit.createAllElementROIS(elms, mDetector, mBeamEnergy);
       final Set<RegionOfInterest> res = new TreeSet<RegionOfInterest>();
-      for(final RegionOfInterest roi : allRois)
+      for (final RegionOfInterest roi : allRois)
          res.add(roi);
       return res;
    }
@@ -818,11 +806,10 @@ public class QuantificationOutline {
     */
    public Set<RegionOfInterest> addReference(final Composition comp) {
       final Set<RegionOfInterest> res = suitableAsReference(comp);
-      for(final RegionOfInterest roi : res)
+      for (final RegionOfInterest roi : res)
          try {
             addReference(roi, comp);
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             // Should never happen...
             e.printStackTrace();
          }
@@ -833,16 +820,16 @@ public class QuantificationOutline {
     * Assign a reference for the specified ROI.
     *
     * @param roi
-    * @param elms A collection of Element objects.
+    * @param elms
+    *           A collection of Element objects.
     * @throws EPQException
     */
-   public void addReference(final RegionOfInterest roi, final Collection<Element> elms)
-         throws EPQException {
+   public void addReference(final RegionOfInterest roi, final Collection<Element> elms) throws EPQException {
       final ReferenceMaterial rm = new ReferenceMaterial(elms);
       final RegionOfInterestSet rois = LinearSpectrumFit.createAllElementROIS(elms, mDetector, mBeamEnergy);
-      if(!rois.containsThisROI(roi))
-         throw new EPQException("The set of elements (" + elms.toString() + ") is not suitable as a reference for this ROI ("
-               + roi.toString() + ").");
+      if (!rois.containsThisROI(roi))
+         throw new EPQException(
+               "The set of elements (" + elms.toString() + ") is not suitable as a reference for this ROI (" + roi.toString() + ").");
       mUserReferences.put(roi, rm);
    }
 
@@ -850,14 +837,14 @@ public class QuantificationOutline {
     * Assign a reference for the specified ROI.
     *
     * @param roi
-    * @param comp A Composition suitable as a reference.
+    * @param comp
+    *           A Composition suitable as a reference.
     * @throws EPQException
     */
-   public void addReference(final RegionOfInterest roi, final Composition comp)
-         throws EPQException {
+   public void addReference(final RegionOfInterest roi, final Composition comp) throws EPQException {
       final ReferenceMaterial rm = new ReferenceMaterial(comp);
       final RegionOfInterestSet rois = LinearSpectrumFit.createAllElementROIS(comp, mDetector, mBeamEnergy);
-      if(!rois.containsThisROI(roi))
+      if (!rois.containsThisROI(roi))
          throw new EPQException(comp.toString() + " is not suitable as a reference for this ROI (" + roi.toString() + ").");
       mUserReferences.put(roi, rm);
    }
@@ -913,11 +900,11 @@ public class QuantificationOutline {
    public Set<RegionOfInterest> getAllRequiredReferences(final boolean includeStd) {
       final Set<RegionOfInterest> res = new TreeSet<RegionOfInterest>();
       // Add references required by the standards
-      for(final StandardPacket sp : mStandards.values()) {
-         for(final RegionOfInterest roi : sp.mRequiredRefs.keySet())
+      for (final StandardPacket sp : mStandards.values()) {
+         for (final RegionOfInterest roi : sp.mRequiredRefs.keySet())
             res.addAll(sp.mRequiredRefs.get(roi));
-         if(includeStd)
-            for(final RegionOfInterest roi : sp.getElementROIS())
+         if (includeStd)
+            for (final RegionOfInterest roi : sp.getElementROIS())
                res.add(roi);
       }
       // Add references as required by the UnmeasuredElementRules and stripped
@@ -925,18 +912,18 @@ public class QuantificationOutline {
       final Set<Element> otherElms = new TreeSet<Element>();
       otherElms.addAll(mUnmeasuredElementRule.keySet());
       otherElms.addAll(mStrip.keySet());
-      if(mConductiveCoating != null)
+      if (mConductiveCoating != null)
          otherElms.addAll(mConductiveCoating.getMaterial().getElementSet());
       final Set<Element> allElms = new TreeSet<Element>(getMeasuredElements());
       allElms.addAll(otherElms);
       final Map<Element, RegionOfInterestSet> melmRois = new TreeMap<>();
-      for(final Element elm : allElms)
+      for (final Element elm : allElms)
          melmRois.put(elm, LinearSpectrumFit.createElementROIS(elm, mDetector, mBeamEnergy));
-      for(final Element otherElm : otherElms)
-         for(final RegionOfInterest otherRoi : melmRois.get(otherElm))
-            for(final RegionOfInterestSet elmRois : melmRois.values())
-               for(final RegionOfInterest elmRoi : elmRois)
-                  if((!elmRoi.equals(otherRoi)) && elmRoi.intersects(otherRoi)) {
+      for (final Element otherElm : otherElms)
+         for (final RegionOfInterest otherRoi : melmRois.get(otherElm))
+            for (final RegionOfInterestSet elmRois : melmRois.values())
+               for (final RegionOfInterest elmRoi : elmRois)
+                  if ((!elmRoi.equals(otherRoi)) && elmRoi.intersects(otherRoi)) {
                      res.add(elmRoi);
                      res.add(otherRoi);
                   }
@@ -952,22 +939,22 @@ public class QuantificationOutline {
     */
    public Map<RegionOfInterest, ReferenceMaterial> getAssignedReferences() {
       final Map<RegionOfInterest, ReferenceMaterial> res = new TreeMap<RegionOfInterest, ReferenceMaterial>();
-      for(final StandardPacket sp : mStandards.values())
-         for(final RegionOfInterest roi : sp.getElementROIS()) {
+      for (final StandardPacket sp : mStandards.values())
+         for (final RegionOfInterest roi : sp.getElementROIS()) {
             final ReferenceMaterial rm = getReference(roi);
-            if(rm != null)
+            if (rm != null)
                res.put(roi, rm);
          }
-      for(final StripPacket sp : mStrip.values())
-         for(final RegionOfInterest roi : sp.getElementROIS()) {
+      for (final StripPacket sp : mStrip.values())
+         for (final RegionOfInterest roi : sp.getElementROIS()) {
             final ReferenceMaterial rm = getReference(roi);
-            if(rm != null)
+            if (rm != null)
                res.put(roi, rm);
          }
-      for(final UERPacket uer : mUnmeasuredElementRule.values())
-         for(final RegionOfInterest roi : uer.getElementROIS()) {
+      for (final UERPacket uer : mUnmeasuredElementRule.values())
+         for (final RegionOfInterest roi : uer.getElementROIS()) {
             final ReferenceMaterial rm = getReference(roi);
-            if(rm != null)
+            if (rm != null)
                res.put(roi, rm);
          }
       return res;
@@ -985,25 +972,24 @@ public class QuantificationOutline {
    public ReferenceMaterial getReference(final RegionOfInterest roi) {
       assert roi.getElementSet().size() == 1 : roi.toString();
       ReferenceMaterial rm = mUserReferences.get(roi);
-      if(rm == null) {
+      if (rm == null) {
          final Element elm = roi.getElementSet().first();
          final StandardPacket std = mStandards.get(elm);
-         if((std != null) && std.isSuitableAsReference(roi))
+         if ((std != null) && std.isSuitableAsReference(roi))
             return new ReferenceMaterial(std.mComposition);
          double bestSN = 100.0;
-         for(final Map.Entry<Element, StandardPacket> me : mStandards.entrySet()) {
+         for (final Map.Entry<Element, StandardPacket> me : mStandards.entrySet()) {
             final StandardPacket sp = me.getValue();
-            if(sp.mComposition.containsElement(elm))
+            if (sp.mComposition.containsElement(elm))
                try {
-                  if(sp.isSuitableAsReference(roi)) {
+                  if (sp.isSuitableAsReference(roi)) {
                      final double sn = sp.signalToNoiseNominal(roi);
-                     if(sn > bestSN) {
+                     if (sn > bestSN) {
                         rm = new ReferenceMaterial(sp.mComposition);
                         bestSN = sn;
                      }
                   }
-               }
-               catch(final EPQException e) {
+               } catch (final EPQException e) {
                   // Shouldn't happen but we'll ignore it if it does...
                   e.printStackTrace();
                }
@@ -1020,8 +1006,8 @@ public class QuantificationOutline {
    public Set<RegionOfInterest> getSatisfiedReferences() {
       final Set<RegionOfInterest> req = getAllRequiredReferences(true);
       final Set<RegionOfInterest> res = new TreeSet<RegionOfInterest>();
-      for(final RegionOfInterest roi : req)
-         if(getReference(roi) != null)
+      for (final RegionOfInterest roi : req)
+         if (getReference(roi) != null)
             res.add(roi);
       return res;
    }
@@ -1066,37 +1052,38 @@ public class QuantificationOutline {
     * provided. The reference may be the standard in cases in which the standard
     * can act as a clean reference.
     *
-    * @param partial Determines whether all ROIs need to be satisfied or whether
-    *           just one per element is required.
+    * @param partial
+    *           Determines whether all ROIs need to be satisfied or whether just
+    *           one per element is required.
     * @return Set&lt;Element&gt;
     */
    public Set<Element> getSatisfiedElements(final boolean partial) {
       final Set<Element> res = new TreeSet<Element>();
       // Check standards
-      for(final Map.Entry<Element, StandardPacket> me : mStandards.entrySet()) {
+      for (final Map.Entry<Element, StandardPacket> me : mStandards.entrySet()) {
          boolean fullySatisfied = true;
-         for(final RegionOfInterest roi : me.getValue().getElementROIS()) {
+         for (final RegionOfInterest roi : me.getValue().getElementROIS()) {
             boolean satisfied = true;
             final Set<RegionOfInterest> req = new TreeSet<RegionOfInterest>(me.getValue().getRequiredReferences(roi));
-            for(final RegionOfInterest reqRoi : req)
-               if(!mUserReferences.containsKey(reqRoi)) {
+            for (final RegionOfInterest reqRoi : req)
+               if (!mUserReferences.containsKey(reqRoi)) {
                   satisfied = false;
                   break;
                }
-            if(partial && satisfied)
+            if (partial && satisfied)
                res.add(me.getKey());
             fullySatisfied &= satisfied;
          }
-         if(fullySatisfied)
+         if (fullySatisfied)
             res.add(me.getKey());
       }
       // Get the references required to strip the elements in mStrip
-      for(final StripPacket sp : mStrip.values()) {
+      for (final StripPacket sp : mStrip.values()) {
          boolean satisfied = true;
-         for(final RegionOfInterest roi : sp.getElementROIS())
-            if(!mUserReferences.containsKey(roi))
+         for (final RegionOfInterest roi : sp.getElementROIS())
+            if (!mUserReferences.containsKey(roi))
                satisfied = false;
-         if(!satisfied)
+         if (!satisfied)
             res.add(sp.getElement());
       }
       return res;
@@ -1107,8 +1094,9 @@ public class QuantificationOutline {
     * provided. The reference may be the standard in cases in which the standard
     * can act as a clean reference.
     *
-    * @param partial Determines whether all ROIs need to be satisfied or whether
-    *           just one per element is required.
+    * @param partial
+    *           Determines whether all ROIs need to be satisfied or whether just
+    *           one per element is required.
     * @return Set&lt;Element&gt;
     */
    public Set<Element> getUnsatisfiedElements(final boolean partial) {
@@ -1144,7 +1132,8 @@ public class QuantificationOutline {
    /**
     * Get a RegionOfInterestSet for the specified Element.
     *
-    * @param elm An Element (need not have a current standard specified)
+    * @param elm
+    *           An Element (need not have a current standard specified)
     * @return RegionOfInterestSet
     */
    public RegionOfInterestSet getStandardROIS(final Element elm) {
@@ -1155,14 +1144,15 @@ public class QuantificationOutline {
    /**
     * Computes the intensity generated on the standard for the specified ROI.
     *
-    * @param elm The element for which to find the standard.
-    * @param roi Need not be 'elm's ROI but should intersect with one of 'elm's
+    * @param elm
+    *           The element for which to find the standard.
+    * @param roi
+    *           Need not be 'elm's ROI but should intersect with one of 'elm's
     *           ROIs
     * @return double x-ray counts
     * @throws EPQException
     */
-   public double getStandardIntensity(final Element elm, final RegionOfInterest roi)
-         throws EPQException {
+   public double getStandardIntensity(final Element elm, final RegionOfInterest roi) throws EPQException {
       final StandardPacket sp = mStandards.get(elm);
       return sp != null ? sp.getTotalIntensity(roi) : 0.0;
    }
@@ -1230,37 +1220,37 @@ public class QuantificationOutline {
     */
    public boolean isFullyDefined(final Set<Element> unkElms) {
       final Set<Element> measured = getMeasuredElements();
-      for(final Element elm : measured)
+      for (final Element elm : measured)
          unkElms.remove(elm);
-      for(final UnmeasuredElementRule uem : getUnmeasuredElementRules())
+      for (final UnmeasuredElementRule uem : getUnmeasuredElementRules())
          unkElms.remove(uem.getElement());
       return unkElms.size() == 0;
    }
 
-   public void validate(final Collection<Element> unkElmc)
-         throws EPQException {
+   public void validate(final Collection<Element> unkElmc) throws EPQException {
       final Set<Element> unkElms = new TreeSet<Element>(unkElmc);
       final Set<Element> measured = getMeasuredElements();
-      for(final Element elm : measured)
+      for (final Element elm : measured)
          unkElms.remove(elm);
-      for(final UnmeasuredElementRule uem : getUnmeasuredElementRules())
+      for (final UnmeasuredElementRule uem : getUnmeasuredElementRules())
          unkElms.remove(uem.getElement());
-      if(unkElms.size() != 0)
-         throw new EPQException("This quantification plan is missing the elements (" + unkElms.toString()
-               + ") necessary to quantify the elements " + unkElmc.toString() + ". ");
+      if (unkElms.size() != 0)
+         throw new EPQException("This quantification plan is missing the elements (" + unkElms.toString() + ") necessary to quantify the elements "
+               + unkElmc.toString() + ". ");
    }
 
    /**
     * Specifies which RegionOfInteest is to be used to perform the
     * quantification.
     *
-    * @param roi RegionOfInterest from getStandardROIS(elm)
+    * @param roi
+    *           RegionOfInterest from getStandardROIS(elm)
     */
    public void setPreferredROI(final RegionOfInterest roi) {
       assert roi.getElementSet().size() == 1;
       final StandardPacket sp = mStandards.get(roi.getElementSet().first());
       assert sp != null;
-      if(sp != null)
+      if (sp != null)
          sp.setPreferredROI(roi);
    }
 
@@ -1271,14 +1261,15 @@ public class QuantificationOutline {
     */
    public void clearPreferredROI(final Element elm) {
       final StandardPacket sp = mStandards.get(elm);
-      if(sp != null)
+      if (sp != null)
          sp.clearPreferredROI();
    }
 
    /**
     * Returns the user specified preferredROI for the
     *
-    * @param elm Element
+    * @param elm
+    *           Element
     * @return The preferred ROI if one has been specified; null otherwise
     */
    public RegionOfInterest getPreferredROI(final Element elm) {
@@ -1289,9 +1280,9 @@ public class QuantificationOutline {
    public RegionOfInterest getMeasurementROI(final Element elm) {
       final StandardPacket sp = mStandards.get(elm);
       RegionOfInterest res = sp.getPreferredROI();
-      if(res == null) {
+      if (res == null) {
          final RegionOfInterestSet rois = sp.getElementROIS();
-         if(rois.size() == 1)
+         if (rois.size() == 1)
             res = rois.iterator().next();
       }
       return res;
@@ -1301,7 +1292,7 @@ public class QuantificationOutline {
     * Remove all preferred ROI settings.
     */
    public void clearPreferredROIs() {
-      for(final StandardPacket sp : mStandards.values())
+      for (final StandardPacket sp : mStandards.values())
          sp.setPreferredROI(null);
    }
 
@@ -1323,11 +1314,11 @@ public class QuantificationOutline {
          pw.print("<tr><td>Default Beam Energy</td><td>");
          pw.print(TextUtilities.normalizeHTML(nf1.format(FromSI.keV(mBeamEnergy))));
          pw.println(" keV</td></tr>");
-         if(mStrip.size() > 0) {
+         if (mStrip.size() > 0) {
             pw.print("<tr><td>Stripped elements</td><td>");
             boolean first = true;
-            for(final Element elm : mStrip.keySet()) {
-               if(!first)
+            for (final Element elm : mStrip.keySet()) {
+               if (!first)
                   pw.print(", ");
                pw.print(elm.toAbbrev());
                first = false;
@@ -1340,7 +1331,7 @@ public class QuantificationOutline {
          pw.println("<h3>Standards</h3>");
          pw.println("<table>");
          pw.print("<tr><th>Element</th><th>Material</th><th>Req. References</th><th>Preferred ROI</th><th>Parameters</th></tr>");
-         for(final Map.Entry<Element, StandardPacket> me : mStandards.entrySet()) {
+         for (final Map.Entry<Element, StandardPacket> me : mStandards.entrySet()) {
             final StandardPacket sp = me.getValue();
             final Composition comp = sp.mComposition;
             pw.print("<tr><td>");
@@ -1350,14 +1341,14 @@ public class QuantificationOutline {
             pw.print(comp.toString());
             pw.println("</td><td>");
             boolean firstRoi = true;
-            for(final RegionOfInterest roi : sp.getElementROIS()) {
+            for (final RegionOfInterest roi : sp.getElementROIS()) {
                final Set<RegionOfInterest> rr = sp.getRequiredReferences(roi);
-               if(!firstRoi)
+               if (!firstRoi)
                   pw.print("<br/>");
                pw.print(TextUtilities.normalizeHTML(roi.toString()));
                pw.print(":");
-               if(rr.size() > 0)
-                  for(final RegionOfInterest req : rr) {
+               if (rr.size() > 0)
+                  for (final RegionOfInterest req : rr) {
                      pw.print("<br/>&nbsp;&nbsp;&nbsp;<i>");
                      pw.print(TextUtilities.normalizeHTML(req.toString()));
                      pw.print("</i>");
@@ -1367,9 +1358,9 @@ public class QuantificationOutline {
                firstRoi = false;
             }
             pw.print("</td><td>");
-            if(sp.getPreferredROI() != null)
+            if (sp.getPreferredROI() != null)
                pw.print(TextUtilities.normalizeHTML(sp.getPreferredROI().toString()));
-            else if(sp.getElementROIS().size() == 1)
+            else if (sp.getElementROIS().size() == 1)
                pw.print("N/A");
             else
                pw.print("--None specified--");
@@ -1386,12 +1377,12 @@ public class QuantificationOutline {
          pw.println("<h3>References</h3>");
          pw.println("<table>");
          pw.print("<tr><th>Element/Lines</th><th>Material</th></tr>");
-         for(final RegionOfInterest reqRef : getAllRequiredReferences(true)) {
+         for (final RegionOfInterest reqRef : getAllRequiredReferences(true)) {
             pw.print("<tr><td>");
             pw.print(TextUtilities.normalizeHTML(reqRef.toString()));
             pw.print("</td><td>");
             final ReferenceMaterial rm = getReference(reqRef);
-            if(rm != null)
+            if (rm != null)
                pw.print(TextUtilities.normalizeHTML(rm.toString()));
             else
                pw.print("--Missing--");
@@ -1399,9 +1390,9 @@ public class QuantificationOutline {
          }
          pw.print("</table>");
       }
-      if(mUnmeasuredElementRule.size() > 0) {
+      if (mUnmeasuredElementRule.size() > 0) {
          pw.append("<h3>Other elements</h3>\n");
-         for(final UERPacket uer : mUnmeasuredElementRule.values()) {
+         for (final UERPacket uer : mUnmeasuredElementRule.values()) {
             pw.append("<li>");
             pw.append(uer.mUnmeasuredElementRule.toHTML());
             pw.append("</li>");
@@ -1421,9 +1412,9 @@ public class QuantificationOutline {
    public Map<RegionOfInterest, Set<RegionOfInterest>> getRequiredReferences(final Element elm, final Composition std, final Set<Element> stripElms) {
       final StandardPacket sp = new StandardPacket(elm, std, stripElms);
       final Map<RegionOfInterest, Set<RegionOfInterest>> res = new TreeMap<RegionOfInterest, Set<RegionOfInterest>>();
-      for(final RegionOfInterest elmRoi : sp.getElementROIS()) {
+      for (final RegionOfInterest elmRoi : sp.getElementROIS()) {
          final Set<RegionOfInterest> refs = sp.getRequiredReferences(elmRoi);
-         if(refs.size() > 0)
+         if (refs.size() > 0)
             res.put(elmRoi, refs);
       }
       return res;
@@ -1438,11 +1429,10 @@ public class QuantificationOutline {
     * @return Map&lt;RegionOfInterest, UncertainValue2&gt;
     * @throws EPQException
     */
-   public Map<RegionOfInterest, UncertainValue2> kRatios(final Composition unk, final double stdDose, final double unkDose)
-         throws EPQException {
+   public Map<RegionOfInterest, UncertainValue2> kRatios(final Composition unk, final double stdDose, final double unkDose) throws EPQException {
       final Map<RegionOfInterest, UncertainValue2> res = new TreeMap<RegionOfInterest, UncertainValue2>();
-      for(final StandardPacket stdPk : mStandards.values())
-         for(final RegionOfInterest roi : stdPk.getElementROIS())
+      for (final StandardPacket stdPk : mStandards.values())
+         for (final RegionOfInterest roi : stdPk.getElementROIS())
             res.put(roi, stdPk.kRatio(unk, roi, stdDose, unkDose));
       return res;
    }
@@ -1453,15 +1443,15 @@ public class QuantificationOutline {
     * unk. This function assumes a dose of NOMINAL_DOSE for both the standard
     * and the unknown.
     *
-    * @param unk The unknown material
+    * @param unk
+    *           The unknown material
     * @return Map&lt;RegionOfInterest, UncertainValue2&gt;
     * @throws EPQException
     */
-   public Map<RegionOfInterest, UncertainValue2> massFractions(final Composition unk)
-         throws EPQException {
+   public Map<RegionOfInterest, UncertainValue2> massFractions(final Composition unk) throws EPQException {
       final Map<RegionOfInterest, UncertainValue2> res = new TreeMap<RegionOfInterest, UncertainValue2>();
-      for(final StandardPacket stdPk : mStandards.values())
-         for(final RegionOfInterest roi : stdPk.getElementROIS())
+      for (final StandardPacket stdPk : mStandards.values())
+         for (final RegionOfInterest roi : stdPk.getElementROIS())
             res.put(roi, stdPk.massFraction(unk, roi));
       return res;
    }
@@ -1472,16 +1462,17 @@ public class QuantificationOutline {
     * (which also defines the element being measured). This function assumes a
     * dose of NOMINAL_DOSE for both the standard and the unknown.
     *
-    * @param unk The unknown material
-    * @param roi The ROI to use to perform the measurement
+    * @param unk
+    *           The unknown material
+    * @param roi
+    *           The ROI to use to perform the measurement
     * @return UncertainValue2
     * @throws EPQException
     */
-   public UncertainValue2 massFraction(final Composition unk, final RegionOfInterest roi)
-         throws EPQException {
+   public UncertainValue2 massFraction(final Composition unk, final RegionOfInterest roi) throws EPQException {
       assert roi.getElementSet().size() == 1;
-      for(final StandardPacket stdPk : mStandards.values())
-         if(stdPk.getElementROIS().contains(roi))
+      for (final StandardPacket stdPk : mStandards.values())
+         if (stdPk.getElementROIS().contains(roi))
             return stdPk.massFraction(unk, roi);
       assert false;
       return null;
@@ -1496,11 +1487,10 @@ public class QuantificationOutline {
     */
    public void applySuggestedReferences(final Map<Element, List<Composition>> suggestions) {
       final Map<RegionOfInterest, Composition> tmp = suggestReferences(getUnsatisfiedReferences(), suggestions);
-      for(final Map.Entry<RegionOfInterest, Composition> me : tmp.entrySet())
+      for (final Map.Entry<RegionOfInterest, Composition> me : tmp.entrySet())
          try {
             addReference(me.getKey(), me.getValue());
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             // Ignore it...
             e.printStackTrace();
          }
@@ -1513,22 +1503,24 @@ public class QuantificationOutline {
     * an element's ROIs. For each ROI in rois, the function searches for the
     * first material that is usable as a reference for the ROI.
     *
-    * @param rois A set of RegionOfInterest objects for which suitable materials
+    * @param rois
+    *           A set of RegionOfInterest objects for which suitable materials
     *           need to be identified as references
-    * @param defRefs A Map&lt;Element,List&lt;Composition&gt;&gt; of elements
-    *           and the suggested materials to use as references for them.
+    * @param defRefs
+    *           A Map&lt;Element,List&lt;Composition&gt;&gt; of elements and the
+    *           suggested materials to use as references for them.
     * @return Map&lt;RegionOfInterest, Composition&gt; A map of RegionOfInterest
     *         objects and the materials which are suitable as references for
     *         them.
     */
    public Map<RegionOfInterest, Composition> suggestReferences(final Set<RegionOfInterest> rois, final Map<Element, List<Composition>> defRefs) {
       final Map<RegionOfInterest, Composition> res = new TreeMap<RegionOfInterest, Composition>();
-      for(final RegionOfInterest roi : rois) {
+      for (final RegionOfInterest roi : rois) {
          final Element elm = roi.getElementSet().first();
          final List<Composition> sugg = defRefs.get(elm);
-         if(sugg != null)
-            for(final Composition comp : sugg)
-               if(suitableAsReference(comp).contains(roi)) {
+         if (sugg != null)
+            for (final Composition comp : sugg)
+               if (suitableAsReference(comp).contains(roi)) {
                   res.put(roi, comp);
                   break;
                }
@@ -1555,14 +1547,14 @@ public class QuantificationOutline {
 
    public List<UnmeasuredElementRule> getUnmeasuredElementRules() {
       final List<UnmeasuredElementRule> res = new ArrayList<UnmeasuredElementRule>();
-      for(final UERPacket up : mUnmeasuredElementRule.values())
+      for (final UERPacket up : mUnmeasuredElementRule.values())
          res.add(up.mUnmeasuredElementRule);
       return res;
    }
 
    public UnmeasuredElementRule getUnmeasuredElementRule(final Element elm) {
-      for(final UERPacket up : mUnmeasuredElementRule.values())
-         if(up.mUnmeasuredElementRule.getElement().equals(elm))
+      for (final UERPacket up : mUnmeasuredElementRule.values())
+         if (up.mUnmeasuredElementRule.getElement().equals(elm))
             return up.mUnmeasuredElementRule;
       return null;
    }
@@ -1575,8 +1567,7 @@ public class QuantificationOutline {
     * @return The measured x-ray intensity in counts for the specified ROI.
     * @throws EPQException
     */
-   protected Map<XRayTransition, Double> computeIntensity(final Composition comp, final RegionOfInterest roi)
-         throws EPQException {
+   protected Map<XRayTransition, Double> computeIntensity(final Composition comp, final RegionOfInterest roi) throws EPQException {
       assert roi.getElementSet().size() == 1;
       assert comp.containsAll(roi.getElementSet());
       final Set<AtomicShell> shells = new TreeSet<AtomicShell>();
@@ -1585,7 +1576,7 @@ public class QuantificationOutline {
       sp.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
       sp.setNumericProperty(SpectrumProperties.LiveTime, NOMINAL_DOSE);
       sp.setDetector(mDetector);
-      for(final XRayTransition xrt : roi.getAllTransitions())
+      for (final XRayTransition xrt : roi.getAllTransitions())
          shells.add(xrt.getDestination());
       final SpectrumSimulator ss = new SpectrumSimulator.BasicSpectrumSimulator();
       final Map<XRayTransition, Double> res = new TreeMap<XRayTransition, Double>();
@@ -1593,17 +1584,16 @@ public class QuantificationOutline {
       // tmp contains all transitions to shells, trim out those we requested via
       // roi
       final XRayTransitionSet xrts = roi.getXRayTransitionSet(roi.getElementSet().first());
-      for(final Map.Entry<XRayTransition, Double> me : tmp.entrySet())
-         if(xrts.contains(me.getKey()))
+      for (final Map.Entry<XRayTransition, Double> me : tmp.entrySet())
+         if (xrts.contains(me.getKey()))
             res.put(me.getKey(), me.getValue());
       return res;
    }
 
-   public double computeTotalIntensity(final Composition comp, final RegionOfInterest roi)
-         throws EPQException {
+   public double computeTotalIntensity(final Composition comp, final RegionOfInterest roi) throws EPQException {
       double res = 0.0;
-      if(comp.containsAll(roi.getElementSet()))
-         for(final Double i : computeIntensity(comp, roi).values())
+      if (comp.containsAll(roi.getElementSet()))
+         for (final Double i : computeIntensity(comp, roi).values())
             res += i;
       return res;
    }
@@ -1619,24 +1609,23 @@ public class QuantificationOutline {
     * @throws EPQException
     */
 
-   final public double[] zaf(final Composition comp, final XRayTransitionSet xrts, final SpectrumProperties sp)
-         throws EPQException {
+   final public double[] zaf(final Composition comp, final XRayTransitionSet xrts, final SpectrumProperties sp) throws EPQException {
       CorrectionAlgorithm ca = (CorrectionAlgorithm) CorrectionAlgorithm.NullCorrection.getAlgorithm(CorrectionAlgorithm.class);
-      if(ca == null)
+      if (ca == null)
          ca = AlgorithmUser.getDefaultCorrectionAlgorithm();
       assert ca != null;
       final Composition standard = mStandards.get(xrts.getElement()).getComposition();
       double[] res = new double[4];
-      if(standard != null) {
+      if (standard != null) {
          sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(mBeamEnergy));
          sp.setDetector(mDetector);
          double sum = 0.0;
-         for(final XRayTransition xrt : xrts) {
+         for (final XRayTransition xrt : xrts) {
             final double w = xrt.getWeight(XRayTransition.NormalizeFamily);
             sum += w;
             final double[] tmp = ca.relativeZAF(comp, xrt, sp, standard);
             assert tmp.length == res.length;
-            for(int i = 0; i < res.length; ++i)
+            for (int i = 0; i < res.length; ++i)
                res[i] += w * tmp[i];
          }
          res = Math2.divide(res, sum);
@@ -1659,13 +1648,12 @@ public class QuantificationOutline {
     * @return UncertainValue2
     * @throws EPQException
     */
-   final private UncertainValue2 uZaf(final Composition comp, final XRayTransition xrt, final SpectrumProperties sp)
-         throws EPQException {
+   final private UncertainValue2 uZaf(final Composition comp, final XRayTransition xrt, final SpectrumProperties sp) throws EPQException {
       final CorrectionAlgorithm ca = (CorrectionAlgorithm) CorrectionAlgorithm.NullCorrection.getAlgorithm(CorrectionAlgorithm.class);
       assert ca != null;
       final Composition standard = mStandards.get(xrt.getElement()).getComposition();
       final UncertainValue2 res = new UncertainValue2(ca.relativeZAF(comp, xrt, sp, standard)[3]);
-      if(ca instanceof XPP1991) {
+      if (ca instanceof XPP1991) {
          final XPP1991 stdXpp = new XPP1991(), unkXpp = new XPP1991();
          stdXpp.initialize(standard, xrt.getDestination(), sp);
          unkXpp.initialize(comp, xrt.getDestination(), sp);
@@ -1686,14 +1674,13 @@ public class QuantificationOutline {
     * @throws EPQException
     */
 
-   final public UncertainValue2 uZaf(final Composition comp, final XRayTransitionSet xrts)
-         throws EPQException {
+   final public UncertainValue2 uZaf(final Composition comp, final XRayTransitionSet xrts) throws EPQException {
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(mBeamEnergy));
       sp.setDetector(mDetector);
       UncertainValue2 res = UncertainValue2.ZERO;
       double sum = 0.0;
-      for(final XRayTransition xrt : xrts) {
+      for (final XRayTransition xrt : xrts) {
          final double w = xrt.getWeight(XRayTransition.NormalizeFamily);
          sum += w;
          res = UncertainValue2.add(res, UncertainValue2.multiply(w, uZaf(comp, xrt, sp)));
@@ -1724,7 +1711,7 @@ public class QuantificationOutline {
     */
    protected void copyTo(final QuantificationOutline res) {
       res.mStandards.clear();
-      for(final Map.Entry<Element, StandardPacket> me : mStandards.entrySet()) {
+      for (final Map.Entry<Element, StandardPacket> me : mStandards.entrySet()) {
          final Element elm = me.getKey();
          final StandardPacket sp = me.getValue();
          res.addStandard(elm, sp.mComposition, sp.getStripElements(), sp.mDesiredPrecision);
@@ -1734,21 +1721,21 @@ public class QuantificationOutline {
          resSp.mDesiredPrecision = sp.mDesiredPrecision;
          assert resSp.getElement().equals(sp.getElement());
          assert resSp.getElementROIS().equals(sp.getElementROIS());
-         for(final Map.Entry<RegionOfInterest, Map<XRayTransition, Double>> me2 : sp.mMeasuredIntensity.entrySet())
+         for (final Map.Entry<RegionOfInterest, Map<XRayTransition, Double>> me2 : sp.mMeasuredIntensity.entrySet())
             resSp.mMeasuredIntensity.put(me2.getKey(), me2.getValue());
          resSp.setPreferredROI(sp.getPreferredROI());
          assert resSp.mRequiredRefs.equals(sp.mRequiredRefs);
       }
       res.mStrip.clear();
-      for(final StripPacket sp : mStrip.values())
+      for (final StripPacket sp : mStrip.values())
          res.mStrip.put(sp.getElement(), new StripPacket(sp.getElement()));
       res.mUnmeasuredElementRule.clear();
-      for(final Map.Entry<Element, UERPacket> me : mUnmeasuredElementRule.entrySet()) {
+      for (final Map.Entry<Element, UERPacket> me : mUnmeasuredElementRule.entrySet()) {
          final UERPacket resU = res.new UERPacket(me.getValue().mUnmeasuredElementRule);
          res.mUnmeasuredElementRule.put(me.getKey(), resU);
       }
       res.mUserReferences.clear();
-      for(final Map.Entry<RegionOfInterest, ReferenceMaterial> me : mUserReferences.entrySet()) {
+      for (final Map.Entry<RegionOfInterest, ReferenceMaterial> me : mUserReferences.entrySet()) {
          final ReferenceMaterial resRm = new ReferenceMaterial(me.getValue());
          res.mUserReferences.put(me.getKey(), resRm);
       }
@@ -1760,11 +1747,12 @@ public class QuantificationOutline {
     * Specify the desired precision for the measurement of the element 'elm'
     *
     * @param elm
-    * @param prec The fractional precision
+    * @param prec
+    *           The fractional precision
     */
    public void setDesiredPrecision(final Element elm, final double prec) {
       final StandardPacket sp = mStandards.get(elm);
-      if(sp != null)
+      if (sp != null)
          sp.mDesiredPrecision = prec;
    }
 
@@ -1835,32 +1823,32 @@ public class QuantificationOutline {
     */
    @Override
    public boolean equals(final Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(!(obj instanceof QuantificationOutline))
+      if (!(obj instanceof QuantificationOutline))
          return false;
       final QuantificationOutline other = (QuantificationOutline) obj;
-      if(Double.doubleToLongBits(mBeamEnergy) != Double.doubleToLongBits(other.mBeamEnergy))
+      if (Double.doubleToLongBits(mBeamEnergy) != Double.doubleToLongBits(other.mBeamEnergy))
          return false;
-      if(!mDetector.equals(other.mDetector))
+      if (!mDetector.equals(other.mDetector))
          return false;
-      if(!mStandards.equals(other.mStandards))
+      if (!mStandards.equals(other.mStandards))
          return false;
-      if(!mStrip.equals(other.mStrip))
+      if (!mStrip.equals(other.mStrip))
          return false;
-      if(!mUnmeasuredElementRule.equals(other.mUnmeasuredElementRule))
+      if (!mUnmeasuredElementRule.equals(other.mUnmeasuredElementRule))
          return false;
-      if(!mUserReferences.equals(other.mUserReferences))
+      if (!mUserReferences.equals(other.mUserReferences))
          return false;
       return true;
    }
 
    public boolean isStandard(final ReferenceMaterial rm) {
-      if(rm.compositionIsAvailable())
-         for(final StandardPacket sp : mStandards.values())
-            if(sp.mComposition.equals(rm.mComposition))
+      if (rm.compositionIsAvailable())
+         for (final StandardPacket sp : mStandards.values())
+            if (sp.mComposition.equals(rm.mComposition))
                return true;
       return false;
    }

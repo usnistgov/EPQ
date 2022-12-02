@@ -39,8 +39,7 @@ public class RunCitzafDialog {
    public static void main(String[] args) {
       try {
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace(System.err);
       }
 
@@ -56,13 +55,14 @@ public class RunCitzafDialog {
 
             userPref.putInt("CITZAF Results Page X", Results.getWidth());
             userPref.putInt("CITZAF Results Page Y", Results.getHeight());
-            if(!Results.hasSaved()) {
-               final int choice = JOptionPane.showConfirmDialog(Results, "Would you like to save your output file before exiting?", "Save before exit?", JOptionPane.YES_NO_OPTION);
-               switch(choice) {
-                  case JOptionPane.YES_OPTION:
+            if (!Results.hasSaved()) {
+               final int choice = JOptionPane.showConfirmDialog(Results, "Would you like to save your output file before exiting?",
+                     "Save before exit?", JOptionPane.YES_NO_OPTION);
+               switch (choice) {
+                  case JOptionPane.YES_OPTION :
                      Results.OpenSaveFileDialog();
                      break;
-                  case JOptionPane.NO_OPTION:
+                  case JOptionPane.NO_OPTION :
                      System.exit(0);
                      break;
                }
@@ -83,8 +83,8 @@ public class RunCitzafDialog {
          @Override
          public void actionPerformed(java.awt.event.ActionEvent e) {
             final CITZAF citzaf = Dialog.getCITZAF();
-            if(citzaf.isCITZAFSupported()) {
-               if(((citzaf.getUsingKRatios()) && (citzaf.getKRatios().size() > 0))
+            if (citzaf.isCITZAFSupported()) {
+               if (((citzaf.getUsingKRatios()) && (citzaf.getKRatios().size() > 0))
                      || ((!citzaf.getUsingKRatios()) && (citzaf.getComposition().getElementCount() > 0))) {
                   Dialog.setVisible(false);
                   waitFrame = new JDialog(Dialog, "Please be patient, CITZAF loading...", false);
@@ -98,7 +98,7 @@ public class RunCitzafDialog {
                   waitFrame.update(waitFrame.getGraphics());
 
                   String location = CITZAF.FileLocation;
-                  if(location.matches("")) {
+                  if (location.matches("")) {
                      location = System.getProperty("user.dir");
                      CITZAF.FileLocation = location + "\\";
                      // Results.addText(location + "\n");
@@ -113,16 +113,18 @@ public class RunCitzafDialog {
                   citzaf.dumpToFileAndRunCITZAF();
                   try {
                      Results.addText(citzaf.getFullResults());
-                  }
-                  catch(final IOException ex) {
+                  } catch (final IOException ex) {
                      Results.addText("There was a problem reading the file");
                   }
                   waitFrame.setVisible(false);
                } else
-                  JOptionPane.showMessageDialog(Dialog, "There is no SAMPLE to analyze.  Please choose either a K-Ratio by clicking the \"New Sample\" button\n"
-                        + "or by clicking the \"Calculate K-Ratios\" tab and clicking the \"New Material\" Button.", "NO SAMPLE PRESENT", JOptionPane.ERROR_MESSAGE);
+                  JOptionPane.showMessageDialog(Dialog,
+                        "There is no SAMPLE to analyze.  Please choose either a K-Ratio by clicking the \"New Sample\" button\n"
+                              + "or by clicking the \"Calculate K-Ratios\" tab and clicking the \"New Material\" Button.",
+                        "NO SAMPLE PRESENT", JOptionPane.ERROR_MESSAGE);
             } else
-               JOptionPane.showMessageDialog(Dialog, "CITZAF is only supported on the Windows operating system", "CITZAF not supported", JOptionPane.ERROR_MESSAGE);
+               JOptionPane.showMessageDialog(Dialog, "CITZAF is only supported on the Windows operating system", "CITZAF not supported",
+                     JOptionPane.ERROR_MESSAGE);
          }
       });
       Dialog.setVisible(true);

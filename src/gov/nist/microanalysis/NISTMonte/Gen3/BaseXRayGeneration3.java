@@ -21,9 +21,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * 
  * @author nicholas
  */
-abstract public class BaseXRayGeneration3
-   extends AlgorithmClass
-   implements ActionListener {
+abstract public class BaseXRayGeneration3 extends AlgorithmClass implements ActionListener {
 
    private transient boolean mInEvent = false;
 
@@ -101,8 +99,7 @@ abstract public class BaseXRayGeneration3
       }
    };
 
-   public class ComptonXRay
-      extends XRay {
+   public class ComptonXRay extends XRay {
 
       private final double[] mPriDirection;
 
@@ -117,8 +114,7 @@ abstract public class BaseXRayGeneration3
 
    }
 
-   public class CharacteristicXRay
-      extends XRay {
+   public class CharacteristicXRay extends XRay {
       private final XRayTransition mTransition;
 
       public CharacteristicXRay(double[] pos, double energy, double intensity, double generated, XRayTransition xrt) {
@@ -136,8 +132,7 @@ abstract public class BaseXRayGeneration3
       }
    }
 
-   public class BremsstrahlungXRay
-      extends XRay {
+   public class BremsstrahlungXRay extends XRay {
       private final Element mElement;
       private final double[] mDirection;
       private final double mElectronEnergy;
@@ -172,7 +167,7 @@ abstract public class BaseXRayGeneration3
    }
 
    public XRay addXRay(XRay xr, double[] pos, double intensity, double generated) {
-      if(xr instanceof CharacteristicXRay) {
+      if (xr instanceof CharacteristicXRay) {
          CharacteristicXRay res = new CharacteristicXRay(pos, intensity, generated, (CharacteristicXRay) xr);
          mEvents.add(res);
          return res;
@@ -190,10 +185,14 @@ abstract public class BaseXRayGeneration3
    }
 
    /**
-    * @param pos Generation position
-    * @param dir Direction of incident photon
-    * @param inten Nominal intensity of incident photon
-    * @param source Source of original x-ray
+    * @param pos
+    *           Generation position
+    * @param dir
+    *           Direction of incident photon
+    * @param inten
+    *           Nominal intensity of incident photon
+    * @param source
+    *           Source of original x-ray
     * @return ComptonXRay
     */
    public ComptonXRay addComptonXRay(double[] pos, double[] dir, double inten, XRay source) {
@@ -213,17 +212,17 @@ abstract public class BaseXRayGeneration3
    }
 
    public XRay getXRay(double energy) {
-      for(XRay xr : mEvents) {
-         if(xr.mEnergy == energy)
+      for (XRay xr : mEvents) {
+         if (xr.mEnergy == energy)
             return xr;
       }
       return null;
    }
 
    public CharacteristicXRay getXRay(XRayTransition xrt) {
-      for(XRay xr : mEvents) {
-         if(xr instanceof CharacteristicXRay)
-            if(xrt.equals(((CharacteristicXRay) xr).mTransition))
+      for (XRay xr : mEvents) {
+         if (xr instanceof CharacteristicXRay)
+            if (xrt.equals(((CharacteristicXRay) xr).mTransition))
                return (CharacteristicXRay) xr;
       }
       return null;
@@ -244,7 +243,7 @@ abstract public class BaseXRayGeneration3
    public ArrayList<ActionListener> mListener;
 
    public void addXRayListener(ActionListener xrl) {
-      if(mListener == null)
+      if (mListener == null)
          mListener = new ArrayList<ActionListener>();
       mListener.add(xrl);
    }
@@ -258,23 +257,24 @@ abstract public class BaseXRayGeneration3
    }
 
    protected void fireXRayListeners(int id) {
-      if(mListener != null) {
+      if (mListener != null) {
          assert !mInEvent : getName();
          mInEvent = true;
          try {
             final ActionEvent ae = new ActionEvent(this, id, this.getClass().getName());
-            for(int i = mListener.size() - 1; i >= 0; --i)
+            for (int i = mListener.size() - 1; i >= 0; --i)
                mListener.get(i).actionPerformed(ae);
-         }
-         finally {
+         } finally {
             mInEvent = false;
          }
       }
    }
 
    /**
-    * @param name The type of radiation
-    * @param ref The implementation name / reference..
+    * @param name
+    *           The type of radiation
+    * @param ref
+    *           The implementation name / reference..
     */
    public BaseXRayGeneration3(String name, String ref) {
       super("X-Ray Generation", name, ref);
@@ -290,12 +290,8 @@ abstract public class BaseXRayGeneration3
       mMonte = monte;
    }
 
-   static final AlgorithmClass[] mImplementations = new AlgorithmClass[] {
-      new CharacteristicXRayGeneration3(),
-      new BremsstrahlungXRayGeneration3(),
-      new FluorescenceXRayGeneration3(),
-      new XRayTransport3()
-   };
+   static final AlgorithmClass[] mImplementations = new AlgorithmClass[]{new CharacteristicXRayGeneration3(), new BremsstrahlungXRayGeneration3(),
+         new FluorescenceXRayGeneration3(), new XRayTransport3()};
 
    /*
     * @see

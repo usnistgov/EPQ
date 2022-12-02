@@ -23,9 +23,7 @@ import gov.nist.microanalysis.Utility.HalfUpFormat;
  * @author nritchie
  * @version 1.0
  */
-public class ParticleSignatureTableModel
-   extends
-   AbstractTableModel {
+public class ParticleSignatureTableModel extends AbstractTableModel {
 
    private static final long serialVersionUID = -919647372884872889L;
 
@@ -33,10 +31,7 @@ public class ParticleSignatureTableModel
 
    final private NumberFormat mFormat = new HalfUpFormat("0.0000");
 
-   final private String[] mColumnNames = new String[] {
-      "Element",
-      "Particle signature"
-   };
+   final private String[] mColumnNames = new String[]{"Element", "Particle signature"};
 
    public ParticleSignatureTableModel(ParticleSignature comp) {
       super();
@@ -61,10 +56,10 @@ public class ParticleSignatureTableModel
    @Override
    public Object getValueAt(int rowIndex, int columnIndex) {
       final Element elm = mSignature.getNthElement(rowIndex);
-      switch(columnIndex) {
-         case 0:
+      switch (columnIndex) {
+         case 0 :
             return elm.toString();
-         default:
+         default :
             return mFormat.format(mSignature.get(elm));
       }
    }
@@ -73,7 +68,7 @@ public class ParticleSignatureTableModel
    public String toString() {
       final StringBuffer sb = new StringBuffer();
       sb.append("Element\tSignature\n");
-      for(int sr = 0; sr < getRowCount(); ++sr) {
+      for (int sr = 0; sr < getRowCount(); ++sr) {
          sb.append(getValueAt(sr, 0).toString());
          sb.append("\t");
          sb.append(getValueAt(sr, 1).toString());
@@ -86,7 +81,7 @@ public class ParticleSignatureTableModel
       final StringBuffer sb = new StringBuffer();
       sb.append("<table>\n");
       sb.append("\t<tr><th>Element</th><th>Signature</th></tr>\n");
-      for(int sr = 0; sr < getRowCount(); ++sr) {
+      for (int sr = 0; sr < getRowCount(); ++sr) {
          sb.append("\t<tr><td>");
          sb.append(getValueAt(sr, 0).toString());
          sb.append("</th><th>");
@@ -96,8 +91,8 @@ public class ParticleSignatureTableModel
       sb.append("</table>\n");
       return sb.toString();
    }
-   
+
    public ParticleSignature getSignature() {
-	   return mSignature;
+      return mSignature;
    }
 }

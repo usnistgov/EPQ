@@ -21,15 +21,15 @@ public class FunctionTiming {
 
       final double inc = 0.2;
 
-      for(long i = 0; i < repeats; i++)
-         for(int j = 0; j < 10; j++) {
+      for (long i = 0; i < repeats; i++)
+         for (int j = 0; j < 10; j++) {
             final double testval = -0.99 + (j * inc);
             result1 = Math.asin(testval);
          }
 
       tint = System.currentTimeMillis();
-      for(long i = 0; i < repeats; i++)
-         for(int j = 0; j < 10; j++) {
+      for (long i = 0; i < repeats; i++)
+         for (int j = 0; j < 10; j++) {
             final double testval = -0.99 + (j * inc);
             result1 = testval;
          }

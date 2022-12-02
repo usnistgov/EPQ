@@ -29,8 +29,7 @@ import javax.swing.JScrollPane;
  * @version 1.0
  */
 
-public class CITZAFAbout
-   extends JDialog {
+public class CITZAFAbout extends JDialog {
    static final long serialVersionUID = 0x1;
    JPanel jPanel_Main = new JPanel();
    JPanel jPanel_Button = new JPanel();
@@ -43,8 +42,7 @@ public class CITZAFAbout
       try {
          initialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -53,8 +51,7 @@ public class CITZAFAbout
       this(null, "About CITZAF...", false);
    }
 
-   private void initialize()
-         throws Exception {
+   private void initialize() throws Exception {
 
       jButton_OK.setText("OK");
       jButton_OK.setAlignmentX((float) 0.5);

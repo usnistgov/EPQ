@@ -22,8 +22,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author Nicholas Ritchie
  * @version 1.0
  */
-public final class Armstrong1982Correction
-   extends Armstrong1982Base {
+public final class Armstrong1982Correction extends Armstrong1982Base {
 
    /**
     * Constructs a BrownJTA1982
@@ -33,18 +32,12 @@ public final class Armstrong1982Correction
    }
 
    private double errorFunction(double erfx) {
-      final double[] erf = new double[] {
-         0.254829592,
-         -0.284496736,
-         1.421413741,
-         -1.453152027,
-         1.061405429
-      };
+      final double[] erf = new double[]{0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429};
       final double ERFP = 0.3275911;
       double erfs = 1.0;
       final double erft = 1 / (1 + (ERFP * erfx));
       double res = 0.0;
-      for(int i = 0; i < 5; ++i) {
+      for (int i = 0; i < 5; ++i) {
          erfs *= erft;
          res += erf[i] * erfs;
       }
@@ -55,8 +48,7 @@ public final class Armstrong1982Correction
     * @see gov.nist.microanalysis.EPQLibrary.CorrectionAlgorithm#computeZACorrection(gov.nist.microanalysis.EPQLibrary.XRayTransition)
     */
    @Override
-   public double computeZACorrection(XRayTransition xrt)
-         throws EPQException {
+   public double computeZACorrection(XRayTransition xrt) throws EPQException {
       assert (mComposition != null);
       assert Math.abs(mTakeOffAngle - mExitAngle) < Math.toRadians(1.0) : "The take-off and exit angles should agree to within 1\u00B0";
       final double chi = MassAbsorptionCoefficient.toCmSqrPerGram(chi(xrt));
@@ -66,9 +58,8 @@ public final class Armstrong1982Correction
       final double xx = (0.5 * chi) / mAlpha;
       final double yy = (0.5 * (mBeta + chi)) / mAlpha;
       final double zz = (0.5 * mBeta) / mAlpha;
-      if(GREEN_BOOK) {
-         emitted = (Math.sqrt(Math.PI) * mGamma0 * 0.5 * ((Math.exp(xx * xx) * Math2.erfc(xx)) - (Math.exp(yy * yy) * mQ * Math2.erfc(yy))))
-               / mAlpha;
+      if (GREEN_BOOK) {
+         emitted = (Math.sqrt(Math.PI) * mGamma0 * 0.5 * ((Math.exp(xx * xx) * Math2.erfc(xx)) - (Math.exp(yy * yy) * mQ * Math2.erfc(yy)))) / mAlpha;
          generated = (-Math.sqrt(Math.PI) * mGamma0 * 0.5 * (-1.0 + (Math.exp(zz * zz) * mQ * Math2.erfc(zz)))) / mAlpha;
       } else {
          emitted = (Math.sqrt(Math.PI) * ((mGamma0 * errorFunction(xx)) - (mQ * errorFunction(yy)))) / mAlpha;

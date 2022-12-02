@@ -45,22 +45,21 @@ import gov.nist.microanalysis.EPQLibrary.MajorMinorTrace;
  * @author nritchie
  * @version 1.0
  */
-public class MajorMinorTraceEditor
-   extends JDialog {
+public class MajorMinorTraceEditor extends JDialog {
 
    private static final long serialVersionUID = -6816201721574238301L;
 
    private void setElements(MajorMinorTrace mmt, Collection<Element> elms) {
-      for(final Element elm : getElements(mmt))
+      for (final Element elm : getElements(mmt))
          mElements.remove(elm);
-      for(final Element elm : elms)
+      for (final Element elm : elms)
          mElements.put(elm, mmt);
    }
 
    private TreeSet<Element> getElements(MajorMinorTrace mmt) {
       final TreeSet<Element> res = new TreeSet<Element>();
-      for(final Element elm : mElements.keySet())
-         if(mElements.get(elm).equals(mmt))
+      for (final Element elm : mElements.keySet())
+         if (mElements.get(elm).equals(mmt))
             res.add(elm);
       return res;
    }
@@ -81,8 +80,7 @@ public class MajorMinorTraceEditor
       jTable_Composition.setModel(new CompositionTableModel(mComposition, false, true));
    }
 
-   private class MMTAction
-      extends AbstractAction {
+   private class MMTAction extends AbstractAction {
 
       private static final long serialVersionUID = 3418801723291801988L;
       private final MajorMinorTrace mLevel;
@@ -98,8 +96,7 @@ public class MajorMinorTraceEditor
       }
    };
 
-   private class OkCancelAction
-      extends AbstractAction {
+   private class OkCancelAction extends AbstractAction {
 
       private static final long serialVersionUID = -941032539735360115L;
 
@@ -117,8 +114,7 @@ public class MajorMinorTraceEditor
       }
    }
 
-   private class ClearAction
-      extends AbstractAction {
+   private class ClearAction extends AbstractAction {
 
       private static final long serialVersionUID = -941032539735360115L;
 
@@ -133,8 +129,7 @@ public class MajorMinorTraceEditor
       }
    }
 
-   private class DeleteAction
-      extends AbstractAction {
+   private class DeleteAction extends AbstractAction {
 
       private static final long serialVersionUID = -941032539735360115L;
 
@@ -145,9 +140,9 @@ public class MajorMinorTraceEditor
       @Override
       public void actionPerformed(ActionEvent arg0) {
          final int[] rows = jTable_Composition.getSelectedRows();
-         for(final int row : rows) {
+         for (final int row : rows) {
             final Object obj = jTable_Composition.getValueAt(row, 0);
-            if(obj instanceof Element)
+            if (obj instanceof Element)
                mElements.remove(obj);
          }
          update();
@@ -172,7 +167,8 @@ public class MajorMinorTraceEditor
    private final JButton jButton_Cancel = new JButton(new OkCancelAction(false));
 
    private void init() {
-      final FormLayout fl = new FormLayout("10dlu, pref, 5dlu, 200dlu, 5dlu, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 140dlu, 5dlu, pref, 5dlu, pref, 5dlu, pref");
+      final FormLayout fl = new FormLayout("10dlu, pref, 5dlu, 200dlu, 5dlu, pref",
+            "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 140dlu, 5dlu, pref, 5dlu, pref, 5dlu, pref");
       final PanelBuilder pb = new PanelBuilder(fl, new JPanel());
       pb.addSeparator("Name", CC.xyw(1, 1, 6));
       pb.addLabel("Name", CC.xyw(2, 3, 1));

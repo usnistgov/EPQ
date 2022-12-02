@@ -48,18 +48,23 @@ public interface ITransform {
     * </tr>
     * </table>
     * 
-    * @param pivot double[] - a three-vector specifying the point around which
-    *           the rotation is performed
-    * @param phi double
-    * @param theta double
-    * @param psi double
+    * @param pivot
+    *           double[] - a three-vector specifying the point around which the
+    *           rotation is performed
+    * @param phi
+    *           double
+    * @param theta
+    *           double
+    * @param psi
+    *           double
     */
    void rotate(double[] pivot, double phi, double theta, double psi);
 
    /**
     * translate - Translate this object by the distance specified.
     * 
-    * @param distance double[] - A three-vector specifying how much to translate
+    * @param distance
+    *           double[] - A three-vector specifying how much to translate
     */
    void translate(double[] distance);
 }

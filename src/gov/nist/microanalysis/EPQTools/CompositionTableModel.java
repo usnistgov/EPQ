@@ -29,8 +29,7 @@ import javax.swing.table.DefaultTableModel;
  * @author nritchie
  * @version 1.0
  */
-public class CompositionTableModel
-   extends DefaultTableModel {
+public class CompositionTableModel extends DefaultTableModel {
 
    private static final long serialVersionUID = -919647372884872889L;
 
@@ -40,25 +39,16 @@ public class CompositionTableModel
 
    final private NumberFormat mFormat = new HalfUpFormat("0.0000");
 
-   final private static String[] mColumnNames3 = new String[] {
-      "Element",
-      "Mass Fraction",
-      "Atomic Fraction"
-   };
+   final private static String[] mColumnNames3 = new String[]{"Element", "Mass Fraction", "Atomic Fraction"};
 
-   final private static String[] mColumnNames4 = new String[] {
-      "Element",
-      "Mass Fraction",
-      "Normalized",
-      "Atom Fraction"
-   };
+   final private static String[] mColumnNames4 = new String[]{"Element", "Mass Fraction", "Normalized", "Atom Fraction"};
 
    private static String[] buildColumns(boolean withNorm, boolean withMajorMinorTrace) {
       final String[] base = withNorm ? mColumnNames4 : mColumnNames3;
       String[] res = base;
-      if(withMajorMinorTrace) {
+      if (withMajorMinorTrace) {
          res = new String[base.length + 1];
-         for(int i = 0; i < base.length; ++i)
+         for (int i = 0; i < base.length; ++i)
             res[i] = base[i];
          res[base.length] = "M/M/T";
       }
@@ -83,20 +73,20 @@ public class CompositionTableModel
 
    @Override
    public Object getValueAt(int rowIndex, int columnIndex) {
-      if(mComposition != null) {
+      if (mComposition != null) {
          final Element elm = (new ArrayList<Element>(mComposition.getElementSet())).get(rowIndex);
-         switch(columnIndex) {
-            case 0:
+         switch (columnIndex) {
+            case 0 :
                return elm;
-            case 1:
+            case 1 :
                return mComposition.weightFractionU(elm, false).format(mFormat);
-            case 2:
-               return mWithNormalized ? mComposition.weightFractionU(elm, true).format(mFormat)
-                     : mComposition.atomicPercentU(elm).format(mFormat);
-            case 3:
-               return mWithNormalized ? mComposition.atomicPercentU(elm).format(mFormat)
+            case 2 :
+               return mWithNormalized ? mComposition.weightFractionU(elm, true).format(mFormat) : mComposition.atomicPercentU(elm).format(mFormat);
+            case 3 :
+               return mWithNormalized
+                     ? mComposition.atomicPercentU(elm).format(mFormat)
                      : MajorMinorTrace.create(mComposition.weightFraction(elm, false));
-            default:
+            default :
                return MajorMinorTrace.create(mComposition.weightFraction(elm, false));
          }
       } else
@@ -106,15 +96,15 @@ public class CompositionTableModel
    @Override
    public String toString() {
       final StringBuffer sb = new StringBuffer();
-      if(mWithNormalized)
+      if (mWithNormalized)
          sb.append("Element\tMass Fraction\tNorm(Mass Fraction)\tAtomic Fraction");
       else
          sb.append("Element\tMass Fraction\tAtomic Fraction");
-      if(mWithMajorMinorTrace)
+      if (mWithMajorMinorTrace)
          sb.append("\tM/M/T");
       sb.append("\n");
-      for(int sr = 0; sr < getRowCount(); ++sr)
-         for(int col = 0; col < getColumnCount(); ++col) {
+      for (int sr = 0; sr < getRowCount(); ++sr)
+         for (int col = 0; col < getColumnCount(); ++col) {
             sb.append(getValueAt(sr, col).toString());
             sb.append((col + 1) < getColumnCount() ? "\t" : "\n");
          }
@@ -125,12 +115,12 @@ public class CompositionTableModel
       final StringBuffer sb = new StringBuffer();
       sb.append("<table>\n");
       sb.append("\t<tr><th>Element</th><th>Mass Fraction</th><th>Atomic Fraction</th>");
-      if(mWithMajorMinorTrace)
+      if (mWithMajorMinorTrace)
          sb.append("<th>M/M/T</th>");
       sb.append("</tr>\n");
-      for(int sr = 0; sr < getRowCount(); ++sr) {
+      for (int sr = 0; sr < getRowCount(); ++sr) {
          sb.append("\t<tr>");
-         for(int col = 0; col < getColumnCount(); ++col) {
+         for (int col = 0; col < getColumnCount(); ++col) {
             sb.append("<td>");
             sb.append(getValueAt(sr, col).toString());
             sb.append("</td>");
@@ -140,8 +130,8 @@ public class CompositionTableModel
       sb.append("</table>\n");
       return sb.toString();
    }
-   
+
    public Composition getComposition() {
-	   return mComposition;
+      return mComposition;
    }
 }

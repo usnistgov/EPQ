@@ -35,8 +35,7 @@ import java.util.Map;
  * advantage of that, it might make the delete and reinsert stuff I do below
  * unnecessary.
  */
-public class CacheLinkedHashMap<K, V>
-   extends LinkedHashMap<K, V> {
+public class CacheLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
 
    private static final long serialVersionUID = 8414106666098859681L;
    private final int cacheSize;
@@ -44,7 +43,8 @@ public class CacheLinkedHashMap<K, V>
    /**
     * Constructs a CacheLinkedHashMap with given maximum size.
     * 
-    * @param cacheSize - maximum number of items to be held in this cache.
+    * @param cacheSize
+    *           - maximum number of items to be held in this cache.
     */
    public CacheLinkedHashMap(int cacheSize) {
       super(); // Makes an empty LinkedHashMap.
@@ -71,7 +71,7 @@ public class CacheLinkedHashMap<K, V>
    }
 
    public void putPromoteAll(Map<? extends K, ? extends V> m) {
-      for(final K k : m.keySet())
+      for (final K k : m.keySet())
          remove(k); // Remove all matching entries to preserve order
       putAll(m);
    }

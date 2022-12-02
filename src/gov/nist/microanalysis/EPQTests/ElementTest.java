@@ -19,8 +19,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class ElementTest
-   extends TestCase {
+public class ElementTest extends TestCase {
    /**
     * ElementTest
     */

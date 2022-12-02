@@ -30,8 +30,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author nicholas
  * @version 1.0
  */
-public class ElectronProbe
-   implements Comparable<ElectronProbe> {
+public class ElectronProbe implements Comparable<ElectronProbe> {
    // Properties that are shared by all detectors attached to the instrument
    private final SpectrumProperties mProbeProperties;
    private double mMinBeamEnergy = ToSI.keV(5.0);

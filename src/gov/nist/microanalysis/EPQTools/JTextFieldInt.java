@@ -8,8 +8,7 @@ import java.awt.event.FocusEvent;
 
 import javax.swing.JTextField;
 
-public class JTextFieldInt
-   extends JTextField {
+public class JTextFieldInt extends JTextField {
    private static final long serialVersionUID = 1162086827873413519L;
    private String mText;
    private boolean mModified;
@@ -29,23 +28,22 @@ public class JTextFieldInt
       addFocusListener(new FocusAdapter() {
          @Override
          public void focusLost(FocusEvent e) {
-            if(!e.isTemporary())
+            if (!e.isTemporary())
                try {
                   int val = Integer.parseInt(getText().trim());
-                  if((val < mMin) || (val > mMax)) {
+                  if ((val < mMin) || (val > mMax)) {
                      val = mValue;
                      JTextFieldInt.super.setText(Integer.toString(mValue));
                      setBackground(Color.yellow);
                      Toolkit.getDefaultToolkit().beep();
                   } else
                      setBackground(SystemColor.text);
-                  if(val != mValue) {
+                  if (val != mValue) {
                      mValue = val;
                      mModified = true;
                      mText = getText();
                   }
-               }
-               catch(final NumberFormatException ex) {
+               } catch (final NumberFormatException ex) {
                   JTextFieldInt.super.setText(mText);
                   setBackground(Color.pink);
                   Toolkit.getDefaultToolkit().beep();

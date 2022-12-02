@@ -64,8 +64,7 @@ import gov.nist.microanalysis.EPQTools.SpecDisplay.AXIS_MODE;
 /**
  * A JFileChooser-like dialog for previewing and opening EDS spectra files.
  */
-public class SpectrumFileChooser
-   extends JDialog {
+public class SpectrumFileChooser extends JDialog {
 
    static private final long serialVersionUID = 0xdddd653892L;
    private JFileChooser mFileChooser;
@@ -80,19 +79,18 @@ public class SpectrumFileChooser
    private Collection<KLMLine> getDefaultKLMs(Element elm) {
       final TreeSet<KLMLine> res = new TreeSet<KLMLine>();
       int last = XRayTransition.MZ2 + 1;
-      if(elm.getAtomicNumber() < Element.elmB)
+      if (elm.getAtomicNumber() < Element.elmB)
          last = XRayTransition.KA1;
-      else if(elm.getAtomicNumber() < Element.elmCa)
+      else if (elm.getAtomicNumber() < Element.elmCa)
          last = XRayTransition.L3N2;
-      else if(elm.getAtomicNumber() < Element.elmBa)
+      else if (elm.getAtomicNumber() < Element.elmBa)
          last = XRayTransition.M1N2;
-      for(int tr = XRayTransition.KA1; tr < last; ++tr) {
+      for (int tr = XRayTransition.KA1; tr < last; ++tr) {
          final XRayTransition xrt = new XRayTransition(elm, tr);
          try {
-            if((xrt.getWeight(XRayTransition.NormalizeKLM) >= 0.01) && (xrt.getEnergy() > 0.0))
+            if ((xrt.getWeight(XRayTransition.NormalizeKLM) >= 0.01) && (xrt.getEnergy() > 0.0))
                res.add(new KLMLine.Transition(xrt));
-         }
-         catch(final EPQException e) {
+         } catch (final EPQException e) {
             // Just ignore it...
          }
       }
@@ -101,7 +99,8 @@ public class SpectrumFileChooser
 
    private void initialize() {
       {
-         final JPanel contents = new JPanel(new FormLayout("6dlu, max(pref;450dlu), 6dlu", "6dlu, pref, 3dlu, pref, 0dlu, fill:150dlu, 6dlu, pref, 6dlu"));
+         final JPanel contents = new JPanel(
+               new FormLayout("6dlu, max(pref;450dlu), 6dlu", "6dlu, pref, 3dlu, pref, 0dlu, fill:150dlu, 6dlu, pref, 6dlu"));
          mFileChooser = new JFileChooser() {
             private static final long serialVersionUID = -8441838196501709700L;
 
@@ -125,7 +124,7 @@ public class SpectrumFileChooser
             public void actionPerformed(ActionEvent ae) {
                mSpecDisplay.clearAllSpectra();
                final ISpectrumData spec = (ISpectrumData) mSelectSpectrum.getSelectedItem();
-               if(spec != null)
+               if (spec != null)
                   mSpecDisplay.addSpectrum(spec);
                mSpecDisplay.zoomToAll();
             }
@@ -145,13 +144,13 @@ public class SpectrumFileChooser
 
             @Override
             public void mousePressed(MouseEvent e) {
-               if(e.isPopupTrigger())
+               if (e.isPopupTrigger())
                   mSpecDisplay_Menu.show(mSpecDisplay, e.getX(), e.getY());
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-               if(e.isPopupTrigger())
+               if (e.isPopupTrigger())
                   mSpecDisplay_Menu.show(mSpecDisplay, e.getX(), e.getY());
             }
          });
@@ -166,8 +165,9 @@ public class SpectrumFileChooser
                @Override
                public void actionPerformed(ActionEvent ae) {
                   mResult = JFileChooser.APPROVE_OPTION;
-                  if(mErrors != null)
-                     ErrorDialog.createErrorMessage(SpectrumFileChooser.this, "Errors", "One or more errors occured while opening the selected files.", mErrors);
+                  if (mErrors != null)
+                     ErrorDialog.createErrorMessage(SpectrumFileChooser.this, "Errors",
+                           "One or more errors occured while opening the selected files.", mErrors);
                   mFileChooser.approveSelection();
                   setVisible(false);
                }
@@ -195,87 +195,46 @@ public class SpectrumFileChooser
 
          mFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
          mFileChooser.setMultiSelectionEnabled(true);
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-            "ser",
-            "msa",
-            "emsa",
-            "dat",
-            "sp0",
-            "mca",
-            "spd",
-            "spx",
-            "pdz"
-         }, "Spectrum file"));
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-            "ser",
-            "msa"
-         }, "EMISPEC file"));
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-            "emsa",
-            "msa",
-            "ems"
-         }, "MSA standard file"));
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-            "psmsa",
-            "lsmsa"
-         }, "Noran MSA files"));
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-            "dat"
-         }, "DTSA file"));
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-            "tif"
-         }, "TIFF-style spectrum file"));
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-            "spc"
-         }, "EDAX SPC spectrum file"));
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-            "zstd"
-         }, "DTSA-II standard bundle"));
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[] {
-            "ser",
-            "msa",
-            "emsa",
-            "dat",
-            "tif",
-            "sp0",
-            "mca",
-            "spd",
-            "spc",
-            "psmsa",
-            "lsmsa",
-            "spx",
-            "zstd",
-            "pdz"
-         }, "Common spectrum file"));
+         mFileChooser.addChoosableFileFilter(
+               new SimpleFileFilter(new String[]{"ser", "msa", "emsa", "dat", "sp0", "mca", "spd", "spx", "pdz"}, "Spectrum file"));
+         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"ser", "msa"}, "EMISPEC file"));
+         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"emsa", "msa", "ems"}, "MSA standard file"));
+         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"psmsa", "lsmsa"}, "Noran MSA files"));
+         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"dat"}, "DTSA file"));
+         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"tif"}, "TIFF-style spectrum file"));
+         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"spc"}, "EDAX SPC spectrum file"));
+         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"zstd"}, "DTSA-II standard bundle"));
+         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(
+               new String[]{"ser", "msa", "emsa", "dat", "tif", "sp0", "mca", "spd", "spc", "psmsa", "lsmsa", "spx", "zstd", "pdz"},
+               "Common spectrum file"));
          mFileChooser.setAcceptAllFileFilterUsed(true);
          mFileChooser.setControlButtonsAreShown(false);
          mFileChooser.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent changeEvent) {
                final String changeName = changeEvent.getPropertyName();
-               if(mFileChooser.isMultiSelectionEnabled()) {
-                  if(changeName.equals(JFileChooser.SELECTED_FILES_CHANGED_PROPERTY)) {
+               if (mFileChooser.isMultiSelectionEnabled()) {
+                  if (changeName.equals(JFileChooser.SELECTED_FILES_CHANGED_PROPERTY)) {
                      final File[] files = mFileChooser.getSelectedFiles();
-                     if(mSelected == null)
+                     if (mSelected == null)
                         mSelected = new TreeMap<File, ISpectrumData[]>();
-                     if((files != null) && (files.length > 0)) {
+                     if ((files != null) && (files.length > 0)) {
                         File newFile = null;
                         ISpectrumData[] newSpecs = null;
                         // Figure out which file was just added.
                         final Map<File, ISpectrumData[]> selections = new TreeMap<File, ISpectrumData[]>();
                         StringBuffer errors = null;
-                        for(final File file : files) {
+                        for (final File file : files) {
                            final ISpectrumData[] specs = mSelected.get(file);
-                           if(specs == null)
+                           if (specs == null)
                               try {
                                  newSpecs = SpectrumFile.open(file);
-                                 if(newSpecs != null) {
+                                 if (newSpecs != null) {
                                     newFile = file;
                                     selections.put(newFile, newSpecs);
                                  }
-                              }
-                              catch(final EPQException ex) {
-                                 if(errors == null)
+                              } catch (final EPQException ex) {
+                                 if (errors == null)
                                     errors = new StringBuffer();
                                  else
                                     errors.append("\n");
@@ -290,35 +249,34 @@ public class SpectrumFileChooser
                         mSelected = selections;
                         mSpecDisplay.clearAllSpectra();
                         mSpecDisplay.clearKLMs();
-                        if(!mSelected.isEmpty()) {
+                        if (!mSelected.isEmpty()) {
                            final StringBuffer sb = new StringBuffer();
-                           for(final ISpectrumData[] specs : mSelected.values())
-                              for(final ISpectrumData spec : specs)
+                           for (final ISpectrumData[] specs : mSelected.values())
+                              for (final ISpectrumData spec : specs)
                                  displaySpectrum(sb, spec);
                            mSpecDisplay.setTextAnnotation(sb.toString());
                         }
                         mSpecDisplay.zoomToAll();
                      }
                   }
-               } else if(changeName.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
+               } else if (changeName.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)) {
                   mSpecDisplay.clearAllSpectra();
                   mSpecDisplay.clearKLMs();
                   mSelected = new TreeMap<File, ISpectrumData[]>();
                   final File file = mFileChooser.getSelectedFile();
                   try {
                      final ISpectrumData[] sd = SpectrumFile.open(file);
-                     if((sd != null) && (sd.length > 0)) {
+                     if ((sd != null) && (sd.length > 0)) {
                         mSelected.put(file, sd);
                         mSelectSpectrum.removeAllItems();
-                        for(final ISpectrumData element : sd)
+                        for (final ISpectrumData element : sd)
                            mSelectSpectrum.addItem(element);
                         mSelectSpectrum.setSelectedIndex(0);
                         final StringBuffer sb = new StringBuffer();
                         displaySpectrum(sb, (ISpectrumData) mSelectSpectrum.getSelectedItem());
                         mSpecDisplay.setTextAnnotation(sb.toString());
                      }
-                  }
-                  catch(final EPQException ex) {
+                  } catch (final EPQException ex) {
                      // Ignore it..
                   }
                   mSpecDisplay.zoomToAll();
@@ -328,10 +286,10 @@ public class SpectrumFileChooser
             private void displaySpectrum(StringBuffer sb, final ISpectrumData spec) {
                mSpecDisplay.addSpectrum(spec);
                final Composition comp = SpectrumUtils.getComposition(spec);
-               if(comp != null) {
+               if (comp != null) {
                   sb.append(spec + "\t" + comp + "\n");
-                  for(final Element elm : comp.getElementSet())
-                     if(comp.weightFraction(elm, true) > 0.01)
+                  for (final Element elm : comp.getElementSet())
+                     if (comp.weightFraction(elm, true) > 0.01)
                         mSpecDisplay.addKLMs(getDefaultKLMs(elm));
                }
             }
@@ -366,8 +324,7 @@ public class SpectrumFileChooser
          final Object prevAction = mFileChooser.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).get(enterKey);
          mFileChooser.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enterKey, ENTER_ACTION_KEY);
          getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enterKey, ENTER_ACTION_KEY);
-         class EnterAction
-            extends AbstractAction {
+         class EnterAction extends AbstractAction {
 
             private final Object mOldAction;
 
@@ -385,10 +342,10 @@ public class SpectrumFileChooser
                 * it will still be listed as a selected file.
                 */
                final File[] selectedFiles = mFileChooser.getSelectedFiles();
-               if(selectedFiles.length > 0) {
+               if (selectedFiles.length > 0) {
                   mResult = JFileChooser.APPROVE_OPTION;
                   SpectrumFileChooser.this.setVisible(false);
-               } else if(mOldAction != null)
+               } else if (mOldAction != null)
                   mFileChooser.getActionMap().get(mOldAction).actionPerformed(e);
             }
          }
@@ -399,9 +356,9 @@ public class SpectrumFileChooser
             public void actionPerformed(ActionEvent arg0) {
                // This seems to be what it takes to capture a double-click on a
                // spectrum file to close the dialog.
-               if(arg0.getActionCommand() == "ApproveSelection") {
+               if (arg0.getActionCommand() == "ApproveSelection") {
                   final File[] selectedFiles = mFileChooser.getSelectedFiles();
-                  if(selectedFiles.length > 0) {
+                  if (selectedFiles.length > 0) {
                      mResult = JFileChooser.APPROVE_OPTION;
                      SpectrumFileChooser.this.setVisible(false);
                   }
@@ -419,14 +376,12 @@ public class SpectrumFileChooser
     * @param title
     * @throws HeadlessException
     */
-   public SpectrumFileChooser(Frame owner, String title)
-         throws HeadlessException {
+   public SpectrumFileChooser(Frame owner, String title) throws HeadlessException {
       super(owner, title);
       try {
          initialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -438,14 +393,12 @@ public class SpectrumFileChooser
     * @param title
     * @throws HeadlessException
     */
-   public SpectrumFileChooser(Dialog owner, String title)
-         throws HeadlessException {
+   public SpectrumFileChooser(Dialog owner, String title) throws HeadlessException {
       super(owner, title);
       try {
          initialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -469,12 +422,12 @@ public class SpectrumFileChooser
 
    public ISpectrumData[] getSpectra() {
       final ArrayList<ISpectrumData> res = new ArrayList<ISpectrumData>();
-      if(mFileChooser.isMultiSelectionEnabled()) {
-         if(mSelected != null)
-            for(final ISpectrumData[] specs : mSelected.values())
-               for(final ISpectrumData spec : specs)
+      if (mFileChooser.isMultiSelectionEnabled()) {
+         if (mSelected != null)
+            for (final ISpectrumData[] specs : mSelected.values())
+               for (final ISpectrumData spec : specs)
                   res.add(spec);
-      } else if(mSelectSpectrum.getSelectedItem() != null)
+      } else if (mSelectSpectrum.getSelectedItem() != null)
          res.add((ISpectrumData) mSelectSpectrum.getSelectedItem());
       // Sort by acquisition time or when unavailable display name
       Collections.sort(res, new Comparator<ISpectrumData>() {
@@ -482,7 +435,7 @@ public class SpectrumFileChooser
          public int compare(ISpectrumData o1, ISpectrumData o2) {
             final Date d1 = o1.getProperties().getTimestampWithDefault(SpectrumProperties.AcquisitionTime, null);
             final Date d2 = o2.getProperties().getTimestampWithDefault(SpectrumProperties.AcquisitionTime, null);
-            if((d1 != null) && (d2 != null))
+            if ((d1 != null) && (d2 != null))
                return d1.compareTo(d2);
             else
                return o1.toString().compareTo(o2.toString());

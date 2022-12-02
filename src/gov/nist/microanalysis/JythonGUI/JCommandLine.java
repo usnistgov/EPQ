@@ -26,9 +26,9 @@ import javax.swing.JTextPane;
 
 /**
  * <p>
- * A GUI based command line editor designed to provide a user
- * mechanism to edit commands to and results from a scripting language.
- * (Designed with Jython in mind.)
+ * A GUI based command line editor designed to provide a user mechanism to edit
+ * commands to and results from a scripting language. (Designed with Jython in
+ * mind.)
  * </p>
  * <p>
  * Not copyright: In the public domain
@@ -37,8 +37,7 @@ import javax.swing.JTextPane;
  * @author Nicholas W. M. Ritchie
  * @version 1.0
  */
-public class JCommandLine
-   extends JTextPane {
+public class JCommandLine extends JTextPane {
    private static final long serialVersionUID = 0x1;
    private int mCmdOffset = -1;
    private PerformCommand mCmdProcessor;
@@ -85,8 +84,7 @@ public class JCommandLine
     * @author Nicholas W. M. Ritchie
     * @version 1.0
     */
-   public class StyleWriter
-      extends Writer {
+   public class StyleWriter extends Writer {
       private String mStyle;
       private StringBuffer mBuffer = new StringBuffer();
       private boolean mClosed = false;
@@ -102,14 +100,13 @@ public class JCommandLine
       }
 
       // Writer.flush();
-      public void flush()
-            throws IOException {
-         if(mBuffer.length() > 0) {
+      public void flush() throws IOException {
+         if (mBuffer.length() > 0) {
             try {
                String cmd = null;
                Document doc = getDocument();
                // Store the command line away
-               if(mCmdOffset != Integer.MAX_VALUE) {
+               if (mCmdOffset != Integer.MAX_VALUE) {
                   cmd = doc.getText(mCmdOffset, doc.getLength() - mCmdOffset);
                }
                doc.insertString(doc.getLength(), mBuffer.toString(), JCommandLine.this.getStyle(mStyle));
@@ -117,24 +114,22 @@ public class JCommandLine
                mLastChar = mBuffer.charAt(len - 1);
                mBuffer.delete(0, len);
                // restore it after displaying the text
-               if(cmd != null) {
+               if (cmd != null) {
                   createCmdLine(cmd);
                } else {
                   JCommandLine.this.setCaretPosition(doc.getLength());
                }
-            }
-            catch(BadLocationException ex) {
+            } catch (BadLocationException ex) {
                throw new IOException(ex.toString());
             }
          }
       }
 
       // Writer.write();
-      public void write(char[] cbuf, int off, int len)
-            throws IOException {
-         if(!mClosed) {
+      public void write(char[] cbuf, int off, int len) throws IOException {
+         if (!mClosed) {
             mBuffer.append(cbuf, off, len);
-            if(mBuffer.length() > 1024) {
+            if (mBuffer.length() > 1024) {
                flush();
             }
          }
@@ -162,8 +157,7 @@ public class JCommandLine
     * interface.
     * </p>
     */
-   private class DummyExecutive
-      implements PerformCommand {
+   private class DummyExecutive implements PerformCommand {
       private StyleWriter mResultWriter;
 
       DummyExecutive() {
@@ -175,8 +169,7 @@ public class JCommandLine
          try {
             mResultWriter.write(cmd);
             mResultWriter.flush();
-         }
-         catch(IOException ex) {
+         } catch (IOException ex) {
          }
       }
 
@@ -186,12 +179,11 @@ public class JCommandLine
             String str = null;
             do {
                str = br.readLine();
-               if(str != null) {
+               if (str != null) {
                   mResultWriter.write(str);
                }
-            } while(str != null);
-         }
-         catch(IOException ex) {
+            } while (str != null);
+         } catch (IOException ex) {
          }
       }
    }
@@ -200,20 +192,18 @@ public class JCommandLine
       Document doc = getDocument();
       try {
          doc.insertString(doc.getLength(), str, getStyle(INNER_ERROR));
-      }
-      catch(BadLocationException ex) {
+      } catch (BadLocationException ex) {
       }
    }
 
    public void writeError(String str) {
       try {
-         if(mLastChar != 10) {
+         if (mLastChar != 10) {
             mErrorWriter.write("\n");
          }
          mErrorWriter.write(str);
          mErrorWriter.flush();
-      }
-      catch(IOException ex) {
+      } catch (IOException ex) {
       }
    }
 
@@ -223,15 +213,14 @@ public class JCommandLine
          doc.remove(mCmdOffset, doc.getLength() - mCmdOffset);
          doc.insertString(mCmdOffset, str, getStyle(COMMAND));
          doc.insertString(mCmdOffset, "\n", getStyle(COMMAND));
-      }
-      catch(BadLocationException ex) {
+      } catch (BadLocationException ex) {
       }
    }
 
    private Frame getFrame() {
-      if(mFrame == null) {
-         for(Container c = getParent(); c != null; c = c.getParent())
-            if(c instanceof Frame) {
+      if (mFrame == null) {
+         for (Container c = getParent(); c != null; c = c.getParent())
+            if (c instanceof Frame) {
                mFrame = (Frame) c;
                break;
             }
@@ -240,8 +229,7 @@ public class JCommandLine
    }
 
    public void execute(InputStream is) {
-      class CmdProcessStream
-         implements Runnable {
+      class CmdProcessStream implements Runnable {
          InputStream mStream;
 
          CmdProcessStream(InputStream is) {
@@ -252,20 +240,19 @@ public class JCommandLine
             try {
                mCmdProcessor.executeScript(mStream);
                mStream.close();
-            }
-            catch(IOException ex) {
+            } catch (IOException ex) {
             }
          }
       }
 
       mCmdOffset = Integer.MAX_VALUE;
-      if(mCmdProcessor != null) {
+      if (mCmdProcessor != null) {
          Frame frame = getFrame();
          mTimingDialog = new TimingDialog(frame, "Executing a script", true);
          mTimingDialog.setOperation(new CmdProcessStream(is));
          mTimingDialog.setLocationRelativeTo(frame);
-         mTimingDialog.setLocation(frame.getX() + (frame.getWidth() - mTimingDialog.getWidth()) / 2, frame.getY()
-               + (frame.getHeight() - mTimingDialog.getHeight()) / 2);
+         mTimingDialog.setLocation(frame.getX() + (frame.getWidth() - mTimingDialog.getWidth()) / 2,
+               frame.getY() + (frame.getHeight() - mTimingDialog.getHeight()) / 2);
          mTimingDialog.setVisible(true);
          // model wait...
          mTimingDialog = null;
@@ -282,8 +269,7 @@ public class JCommandLine
          mCmdOffset = doc.getLength() + 1;
          doc.insertString(mCmdOffset - 1, " " + cmd, getStyle(COMMAND));
          this.setCaretPosition(mCmdOffset);
-      }
-      catch(BadLocationException ex) {
+      } catch (BadLocationException ex) {
       }
    }
 
@@ -297,8 +283,7 @@ public class JCommandLine
     *
     * @throws HeadlessException
     */
-   public JCommandLine()
-         throws HeadlessException {
+   public JCommandLine() throws HeadlessException {
       super();
       Style cmd = addStyle(COMMAND, getStyle("default"));
       StyleConstants.setForeground(cmd, Color.blue);
@@ -315,31 +300,31 @@ public class JCommandLine
          public void keyPressed(KeyEvent e) {
             int ss = Math.min(getSelectionEnd(), getSelectionStart());
             int se = Math.max(getSelectionEnd(), getSelectionStart());
-            switch(e.getKeyCode()) {
-               case KeyEvent.VK_BACK_SPACE: {
-                  if(se < mCmdOffset + 1) {
+            switch (e.getKeyCode()) {
+               case KeyEvent.VK_BACK_SPACE : {
+                  if (se < mCmdOffset + 1) {
                      e.consume();
                      return;
                   }
-                  if(ss < mCmdOffset) {
+                  if (ss < mCmdOffset) {
                      setSelectionStart(mCmdOffset);
                      setSelectionEnd(se);
                   }
                   break;
                }
-               case KeyEvent.VK_DELETE: {
-                  if(se < mCmdOffset) {
+               case KeyEvent.VK_DELETE : {
+                  if (se < mCmdOffset) {
                      e.consume();
                      return;
                   }
-                  if(ss < mCmdOffset) {
+                  if (ss < mCmdOffset) {
                      setSelectionStart(mCmdOffset);
                      setSelectionEnd(se);
                   }
                   break;
                }
                // Kill the enter key
-               case KeyEvent.VK_ENTER:
+               case KeyEvent.VK_ENTER :
                   e.consume();
                   break;
             }
@@ -347,47 +332,44 @@ public class JCommandLine
 
          // Handle the ESC, Ctrl-Up and Ctrl-Down keys
          public void keyReleased(KeyEvent e) {
-            switch(e.getKeyCode()) {
-               case KeyEvent.VK_ESCAPE: {
+            switch (e.getKeyCode()) {
+               case KeyEvent.VK_ESCAPE : {
                   Document doc = getDocument();
                   try {
                      doc.remove(mCmdOffset, doc.getLength() - mCmdOffset);
                      setCaretPosition(mCmdOffset);
                      e.consume();
-                  }
-                  catch(BadLocationException ex) {
+                  } catch (BadLocationException ex) {
                   }
                   break;
                }
-               case KeyEvent.VK_UP: {
-                  if(e.isControlDown()) {
+               case KeyEvent.VK_UP : {
+                  if (e.isControlDown()) {
                      e.consume();
-                     if(mCmdIndex > 0) {
+                     if (mCmdIndex > 0) {
                         Document doc = getDocument();
                         try {
                            doc.remove(mCmdOffset, doc.getLength() - mCmdOffset);
                            --mCmdIndex;
                            doc.insertString(mCmdOffset, (String) mCmdBuffer.get(mCmdIndex), getStyle(COMMAND));
                            setCaretPosition(doc.getLength());
-                        }
-                        catch(BadLocationException ex1) {
+                        } catch (BadLocationException ex1) {
                         }
                      }
                   }
                   break;
                }
-               case KeyEvent.VK_DOWN: {
-                  if(e.isControlDown()) {
+               case KeyEvent.VK_DOWN : {
+                  if (e.isControlDown()) {
                      e.consume();
-                     if(mCmdIndex + 1 < mCmdBuffer.size()) {
+                     if (mCmdIndex + 1 < mCmdBuffer.size()) {
                         Document doc = getDocument();
                         try {
                            doc.remove(mCmdOffset, doc.getLength() - mCmdOffset);
                            ++mCmdIndex;
                            doc.insertString(mCmdOffset, (String) mCmdBuffer.get(mCmdIndex), getStyle(COMMAND));
                            setCaretPosition(doc.getLength());
-                        }
-                        catch(BadLocationException ex1) {
+                        } catch (BadLocationException ex1) {
                         }
                      }
                   }
@@ -402,22 +384,22 @@ public class JCommandLine
             int ss = Math.min(getSelectionEnd(), getSelectionStart());
             int se = Math.max(getSelectionEnd(), getSelectionStart());
             // Works inside the debugger but not outside...
-            if((se == mCmdOffset) && (e.getKeyChar() == KeyEvent.VK_BACK_SPACE)) {
+            if ((se == mCmdOffset) && (e.getKeyChar() == KeyEvent.VK_BACK_SPACE)) {
                e.consume();
                return;
             }
-            if(ss < mCmdOffset) {
-               if(se < mCmdOffset) {
+            if (ss < mCmdOffset) {
+               if (se < mCmdOffset) {
                   e.consume();
                   return;
                }
                setSelectionStart(mCmdOffset);
                setSelectionEnd(se);
             }
-            switch(e.getKeyChar()) {
-               case '\n': {
+            switch (e.getKeyChar()) {
+               case '\n' : {
                   try {
-                     if(mCmdProcessor != null) {
+                     if (mCmdProcessor != null) {
                         Document doc = getDocument();
                         int len = doc.getLength();
                         String cmd = doc.getText(mCmdOffset, len - mCmdOffset);
@@ -425,21 +407,19 @@ public class JCommandLine
                         mCmdBuffer.add(cmd);
                         mCmdIndex = mCmdBuffer.size();
                         mCmdOffset = Integer.MAX_VALUE; // To inhibit writing
-                                                         // more text...
+                                                        // more text...
                         mLastChar = 10;
                         mCurrentCmd = cmd;
                         try {
                            mCmdProcessor.Do(mCurrentCmd);
                            mCurrentCmd = null;
-                        }
-                        catch(Exception ex) {
+                        } catch (Exception ex) {
                            writeException(e.toString());
                         }
                         createCmdLine("");
                         e.consume();
                      }
-                  }
-                  catch(BadLocationException ex) {
+                  } catch (BadLocationException ex) {
                      writeException("Command line error: " + ex.toString());
                   }
                   break;
@@ -460,15 +440,15 @@ public class JCommandLine
       Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
       int st = getSelectionStart();
       int ed = getSelectionEnd();
-      if(st > ed) {
+      if (st > ed) {
          int t = st;
          st = ed;
          ed = t;
       }
-      if(ed < mCmdOffset) {
+      if (ed < mCmdOffset) {
          return;
       }
-      if(st < mCmdOffset) {
+      if (st < mCmdOffset) {
          st = mCmdOffset;
       }
       setSelectionStart(st);
@@ -479,25 +459,25 @@ public class JCommandLine
    /**
     * addBanner - Add a banner string to the top of the JCommandLine panel.
     *
-    * @param banner String
+    * @param banner
+    *           String
     */
    public void addBanner(String banner) {
-      if(banner.charAt(banner.length() - 1) != '\n') {
+      if (banner.charAt(banner.length() - 1) != '\n') {
          banner += "\n";
       }
       Document doc = getDocument();
       String bStyle = "BANNER";
       Style st = getStyle(bStyle);
-      if(st == null) {
+      if (st == null) {
          st = this.addStyle(bStyle, getStyle("default"));
          StyleConstants.setBold(st, true);
       }
       try {
          doc.insertString(0, banner, st);
+      } catch (BadLocationException ex) {
       }
-      catch(BadLocationException ex) {
-      }
-      if(mCmdOffset != Integer.MAX_VALUE) {
+      if (mCmdOffset != Integer.MAX_VALUE) {
          mCmdOffset += banner.length();
          setCaretPosition(mCmdOffset);
       }
@@ -507,7 +487,8 @@ public class JCommandLine
     * createStyleWriter - Create an instance of the StyleWriter class for
     * streaming text to this control.
     *
-    * @param styleName String
+    * @param styleName
+    *           String
     * @return StyleWriter
     */
    public StyleWriter createStyleWriter(String styleName) {
@@ -519,7 +500,8 @@ public class JCommandLine
     * setCommandExecutive - Set the object the will take resposibility for
     * processing the command line strings.
     *
-    * @param pc PerformCommand
+    * @param pc
+    *           PerformCommand
     */
    public void setCommandExecutive(PerformCommand pc) {
       mCmdProcessor = pc;

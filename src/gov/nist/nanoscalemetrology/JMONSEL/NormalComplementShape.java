@@ -36,8 +36,7 @@ import gov.nist.microanalysis.NISTMonte.MonteCarloSS.Shape;
  * @author John Villarrubia
  * @version 1.0
  */
-public class NormalComplementShape
-   implements Shape, ITransform, NormalShape {
+public class NormalComplementShape implements Shape, ITransform, NormalShape {
 
    private final NormalShape shapeA;
 
@@ -47,7 +46,8 @@ public class NormalComplementShape
     * Construct a NormalComplementShape that is the complement of the input
     * shape.
     *
-    * @param shapeA - (NormalShape) The shape from which to form the complement.
+    * @param shapeA
+    *           - (NormalShape) The shape from which to form the complement.
     */
    public NormalComplementShape(NormalShape shapeA) {
       this.shapeA = shapeA;
@@ -77,7 +77,7 @@ public class NormalComplementShape
     */
    @Override
    public void rotate(double[] pivot, double phi, double theta, double psi) {
-      if(!(shapeA instanceof ITransform))
+      if (!(shapeA instanceof ITransform))
          throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
       ((ITransform) shapeA).rotate(pivot, phi, theta, psi);
 
@@ -88,7 +88,7 @@ public class NormalComplementShape
     */
    @Override
    public void translate(double[] distance) {
-      if(!(shapeA instanceof ITransform))
+      if (!(shapeA instanceof ITransform))
          throw new EPQFatalException(shapeA.toString() + " does not support transformation.");
       ((ITransform) shapeA).translate(distance);
 

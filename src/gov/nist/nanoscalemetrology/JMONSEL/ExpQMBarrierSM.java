@@ -85,8 +85,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * barrier wide enough to be in the classical limit.
  */
 
-public class ExpQMBarrierSM
-   implements BarrierScatterMechanism {
+public class ExpQMBarrierSM implements BarrierScatterMechanism {
 
    /*
     * The 3 quantities: work function, Fermi energy, and potential energy are
@@ -108,7 +107,8 @@ public class ExpQMBarrierSM
     * ExpQMBarrierSM -- Constructs a barrier scatter mechanism for the special
     * case of a wide barrier (i.e., a classical barrier scatter mechanism).
     *
-    * @param mat - The material for which to construct it. If the provided
+    * @param mat
+    *           - The material for which to construct it. If the provided
     *           argument is an SEmaterial, the potential energy of an electron
     *           in this material will be determined from the material
     *           properties. Otherwise it is set to 0.
@@ -116,7 +116,7 @@ public class ExpQMBarrierSM
    public ExpQMBarrierSM(Material mat) {
       super();
       // this.mat = mat;
-      if(mat instanceof SEmaterial)
+      if (mat instanceof SEmaterial)
          u0 = ((SEmaterial) mat).getEnergyCBbottom();
       else
          u0 = 0.;
@@ -127,11 +127,13 @@ public class ExpQMBarrierSM
     * ExpQMBarrierSM -- Constructs a barrier scatter mechanism for a quantum
     * mechanical barrier of specified width.
     *
-    * @param mat - The material for which to construct it. If the provided
+    * @param mat
+    *           - The material for which to construct it. If the provided
     *           argument is an SEmaterial, the potential energy of an electron
     *           in this material will be determined from the material
     *           properties. Otherwise it is set to 0.
-    * @param lambda - The width of the barrier in meters.
+    * @param lambda
+    *           - The width of the barrier in meters.
     */
    public ExpQMBarrierSM(Material mat, double lambda) {
       this(mat);
@@ -180,7 +182,7 @@ public class ExpQMBarrierSM
        * 1.0002*deltaE.
        */
       final double k1 = lambdaFactor * rootPerpE;
-      if(k1 > 50.)
+      if (k1 > 50.)
          return 1.;
       final double k2 = lambdaFactor * rootDiff;
       final double kplus = k1 + k2;
@@ -193,6 +195,7 @@ public class ExpQMBarrierSM
 
    /*
     * (non-Javadoc)
+    * 
     * @see
     * gov.nist.nanoscalemetrology.JMONSEL.BarrierScatterMechanism#barrierScatter
     * (gov.nist.microanalysis.NISTMonte.Electron,
@@ -223,15 +226,15 @@ public class ExpQMBarrierSM
 
       double deltaU;
       final Material currentMaterial = currentRegion.getMaterial();
-      if(currentMaterial instanceof SEmaterial)
+      if (currentMaterial instanceof SEmaterial)
          deltaU = -((SEmaterial) currentMaterial).getEnergyCBbottom();
       else
          deltaU = 0.;
 
       assert deltaU == -u0;
-      if(nextmaterial instanceof SEmaterial)
+      if (nextmaterial instanceof SEmaterial)
          deltaU += ((SEmaterial) nextmaterial).getEnergyCBbottom();
-      
+
       if (deltaU != 0.) {
          @SuppressWarnings("unused")
          int dummy = 0;
@@ -240,23 +243,23 @@ public class ExpQMBarrierSM
       /* FIND THE OUTWARD POINTING NORMAL AT THE BOUNDARY */
       double[] nb = null; // We'll store it here
 
-      if(currentRegion.isContainingRegion(nextRegion)) {
+      if (currentRegion.isContainingRegion(nextRegion)) {
          RegionBase struckRegion = nextRegion; // usually this is true
          /*
           * Sometimes we cross multiple boundaries at once. The while loop
           * checks and corrects for this.
           */
-         while(struckRegion.getParent() != currentRegion)
+         while (struckRegion.getParent() != currentRegion)
             struckRegion = struckRegion.getParent();
          final Shape intersectedshape = struckRegion.getShape();
-         if(intersectedshape instanceof NormalShape) {
+         if (intersectedshape instanceof NormalShape) {
             nb = ((NormalShape) intersectedshape).getPreviousNormal().clone();
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
                nb[i] *= -1;
          }
       } else {
          final Shape intersectedshape = currentRegion.getShape();
-         if(intersectedshape instanceof NormalShape)
+         if (intersectedshape instanceof NormalShape)
             nb = ((NormalShape) intersectedshape).getPreviousNormal();
       }
 
@@ -264,11 +267,7 @@ public class ExpQMBarrierSM
       final double theta0 = pe.getTheta();
       final double phi0 = pe.getPhi();
       final double sintheta0 = Math.sin(theta0);
-      final double[] n0 = new double[] {
-         sintheta0 * Math.cos(phi0),
-         sintheta0 * Math.sin(phi0),
-         Math.cos(theta0)
-      };
+      final double[] n0 = new double[]{sintheta0 * Math.cos(phi0), sintheta0 * Math.sin(phi0), Math.cos(theta0)};
 
       /*
        * If the intersected shape is not a NormalShape, we still haven't
@@ -277,7 +276,7 @@ public class ExpQMBarrierSM
        * This choice gives maximum transmission probability and no deflection of
        * the electron's path.
        */
-      if(nb == null)
+      if (nb == null)
          nb = n0;
 
       /*
@@ -286,7 +285,7 @@ public class ExpQMBarrierSM
        */
       final double cosalpha = (n0[0] * nb[0]) + (n0[1] * nb[1]) + (n0[2] * nb[2]);
 
-      if(cosalpha <= 0.) {
+      if (cosalpha <= 0.) {
          /*
           * This case corresponds to the electron "hitting" the barrier while
           * moving away from it. I.e., it didn't really hit the barrier. This
@@ -295,16 +294,13 @@ public class ExpQMBarrierSM
           * inside
           */
          final double[] pos0 = pe.getPosition();
-         pe.setPosition(new double[] {
-            pos0[0] - (MonteCarloSS.SMALL_DISP * nb[0]),
-            pos0[1] - (MonteCarloSS.SMALL_DISP * nb[1]),
-            pos0[2] - (MonteCarloSS.SMALL_DISP * nb[2])
-         });
+         pe.setPosition(new double[]{pos0[0] - (MonteCarloSS.SMALL_DISP * nb[0]), pos0[1] - (MonteCarloSS.SMALL_DISP * nb[1]),
+               pos0[2] - (MonteCarloSS.SMALL_DISP * nb[2])});
 
          return null;
       }
 
-      if(deltaU == 0.) {
+      if (deltaU == 0.) {
          /*
           * This corresponds to no barrier. This is usually due to a
           * mathematical boundary with the same material on both sides. It
@@ -312,11 +308,8 @@ public class ExpQMBarrierSM
           * outside, update the electron's region, and return.
           */
          final double[] pos0 = pe.getPosition();
-         pe.setPosition(new double[] {
-            pos0[0] + (MonteCarloSS.SMALL_DISP * nb[0]),
-            pos0[1] + (MonteCarloSS.SMALL_DISP * nb[1]),
-            pos0[2] + (MonteCarloSS.SMALL_DISP * nb[2])
-         });
+         pe.setPosition(new double[]{pos0[0] + (MonteCarloSS.SMALL_DISP * nb[0]), pos0[1] + (MonteCarloSS.SMALL_DISP * nb[1]),
+               pos0[2] + (MonteCarloSS.SMALL_DISP * nb[2])});
          pe.setCurrentRegion(nextRegion);
 
          return null;
@@ -324,7 +317,7 @@ public class ExpQMBarrierSM
 
       final double kE0 = pe.getEnergy();
       double perpE;
-      if(kE0 <= 0.)
+      if (kE0 <= 0.)
          perpE = 0.;
       else
          perpE = cosalpha * cosalpha * kE0;
@@ -333,7 +326,7 @@ public class ExpQMBarrierSM
 
       /* DECIDE WHETHER IT TRANSMITS OR NOT */
       boolean transmits;
-      if((perpE == 0.) || (perpE <= deltaU))
+      if ((perpE == 0.) || (perpE <= deltaU))
          /*
           * Even if deltaU<0 (the electron is stepping downhill) the quantum
           * mechanical formula gives transmission = 0 when perpE = 0.
@@ -342,11 +335,11 @@ public class ExpQMBarrierSM
       else {
          rootPerpE = Math.sqrt(perpE);
          rootDiff = Math.sqrt(perpE - deltaU);
-         if(classical)
+         if (classical)
             transmits = true; // Since we already know perpE>deltaU
          else {
             double transmissionProb;
-            if(lambda == 0.)
+            if (lambda == 0.)
                transmissionProb = sharpBarrierT(rootPerpE, rootDiff);
             else
                transmissionProb = generalBarrierT(rootPerpE, rootDiff);
@@ -361,7 +354,7 @@ public class ExpQMBarrierSM
        * OR REFLECTION
        */
       final double[] nf = new double[3]; // Direction vector after scattering
-      if(transmits) { // Transmission
+      if (transmits) { // Transmission
          final double factor = cosalpha * ((rootDiff / rootPerpE) - 1.);
          /*
           * Following is the numerator part of the 3 components of the new
@@ -369,7 +362,7 @@ public class ExpQMBarrierSM
           * same factor, for normalization, but we don't bother because we don't
           * need it, except for the z component.
           */
-         for(int i = 0; i < 3; i++)
+         for (int i = 0; i < 3; i++)
             nf[i] = n0[i] + (factor * nb[i]);
          /* Normalize the z component to use later computing theta. */
          // nf[2] /= Math.sqrt(1. + (2. * cosalpha + factor) * factor);
@@ -385,11 +378,8 @@ public class ExpQMBarrierSM
           */
          final double[] pos0 = pe.getPosition();
 
-         pe.setPosition(new double[] {
-            pos0[0] + (MonteCarloSS.SMALL_DISP * nb[0]),
-            pos0[1] + (MonteCarloSS.SMALL_DISP * nb[1]),
-            pos0[2] + (MonteCarloSS.SMALL_DISP * nb[2])
-         });
+         pe.setPosition(new double[]{pos0[0] + (MonteCarloSS.SMALL_DISP * nb[0]), pos0[1] + (MonteCarloSS.SMALL_DISP * nb[1]),
+               pos0[2] + (MonteCarloSS.SMALL_DISP * nb[2])});
          /*
           * TODO On rare occasions, such as when our electron is within
           * SMALL_DISP of a corner, the above displacement can move the electron
@@ -397,15 +387,12 @@ public class ExpQMBarrierSM
           */
       } else { // Total internal reflection
          final double twocosalpha = 2. * cosalpha;
-         for(int i = 0; i < 3; i++)
+         for (int i = 0; i < 3; i++)
             nf[i] = n0[i] - (nb[i] * twocosalpha);
 
          final double[] pos0 = pe.getPosition();
-         pe.setPosition(new double[] {
-            pos0[0] - (MonteCarloSS.SMALL_DISP * nb[0]),
-            pos0[1] - (MonteCarloSS.SMALL_DISP * nb[1]),
-            pos0[2] - (MonteCarloSS.SMALL_DISP * nb[2])
-         });
+         pe.setPosition(new double[]{pos0[0] - (MonteCarloSS.SMALL_DISP * nb[0]), pos0[1] - (MonteCarloSS.SMALL_DISP * nb[1]),
+               pos0[2] - (MonteCarloSS.SMALL_DISP * nb[2])});
       }
 
       final double thetaf = Math.acos(nf[2]);

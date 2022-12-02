@@ -21,8 +21,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class AtomicShellTest
-   extends TestCase {
+public class AtomicShellTest extends TestCase {
    public AtomicShellTest(String test) {
       super(test);
    }

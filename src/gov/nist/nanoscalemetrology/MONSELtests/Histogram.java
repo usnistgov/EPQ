@@ -37,8 +37,7 @@ public class Histogram {
    private double[] mBinMin;
    private int[] mCounts;
 
-   public class BinName
-      implements Comparable<BinName> {
+   public class BinName implements Comparable<BinName> {
       private final int mBin;
       private final String mFormat;
 
@@ -51,13 +50,8 @@ public class Histogram {
 
       @Override
       public String toString() {
-         return "[" + (mBin < 0 ? "-inf"
-               : MessageFormat.format(mFormat, new Object[] {
-                  Double.valueOf(minValue(mBin))
-               })) + "-" + (mBin >= binCount() ? "inf"
-                     : MessageFormat.format(mFormat, new Object[] {
-                        Double.valueOf(maxValue(mBin))
-         })) + ")";
+         return "[" + (mBin < 0 ? "-inf" : MessageFormat.format(mFormat, new Object[]{Double.valueOf(minValue(mBin))})) + "-"
+               + (mBin >= binCount() ? "inf" : MessageFormat.format(mFormat, new Object[]{Double.valueOf(maxValue(mBin))})) + ")";
       }
 
       @Override
@@ -78,17 +72,20 @@ public class Histogram {
     * Bin[-1]-&gt;[-inf,min), Bin[nBins] -&gt; [max,inf) where inf is infinity.
     * </p>
     *
-    * @param min double
-    * @param max double
-    * @param nBins int - The number of bins (excluding over- and under-range)
+    * @param min
+    *           double
+    * @param max
+    *           double
+    * @param nBins
+    *           int - The number of bins (excluding over- and under-range)
     */
    public Histogram(double min, double max, int nBins) {
-      if(max < min) {
+      if (max < min) {
          final double tmp = min;
          min = max;
          max = tmp;
       }
-      if(min == max)
+      if (min == max)
          throw new EPQFatalException("Histogram: min can not equal max");
       assert min < max;
       assert nBins > 0;
@@ -96,7 +93,7 @@ public class Histogram {
       mBinMin = new double[nBins + 1];
       final double delta = (max - min) / nBins;
       mBinMin[0] = min;
-      for(int i = 1; i < mBinMin.length; ++i)
+      for (int i = 1; i < mBinMin.length; ++i)
          mBinMin[i] = min + (i * delta);
       Arrays.sort(mBinMin);
    }
@@ -110,18 +107,17 @@ public class Histogram {
     * @param ratio
     * @throws EPQException
     */
-   public Histogram(double min, double max, double ratio)
-         throws EPQException {
-      if(ratio <= 1.0)
+   public Histogram(double min, double max, double ratio) throws EPQException {
+      if (ratio <= 1.0)
          throw new EPQException("Histogram: ration must be greater than 1.0");
-      if(min >= max)
+      if (min >= max)
          throw new EPQException("Histogram: min must be less than max");
-      if(min <= 0.0)
+      if (min <= 0.0)
          throw new EPQException("Histogram: min must be larger than 0.0");
       final int nBins = (int) (Math.log(max / min) / Math.log(ratio));
       mCounts = new int[nBins + 2];
       mBinMin = new double[nBins + 1];
-      for(int i = 0; i < mBinMin.length; ++i, min *= ratio)
+      for (int i = 0; i < mBinMin.length; ++i, min *= ratio)
          mBinMin[i] = min;
    }
 
@@ -133,14 +129,13 @@ public class Histogram {
     * @param binMins
     * @param max
     */
-   public Histogram(double[] binMins, double max)
-         throws EPQException {
+   public Histogram(double[] binMins, double max) throws EPQException {
       mBinMin = new double[binMins.length + 1];
-      for(int i = 0; i < binMins.length; ++i)
+      for (int i = 0; i < binMins.length; ++i)
          mBinMin[i] = binMins[i];
       mBinMin[binMins.length] = max;
       Arrays.sort(mBinMin);
-      if(mBinMin[mBinMin.length - 1] != max)
+      if (mBinMin[mBinMin.length - 1] != max)
          throw new EPQException("Histogram: Max is not larger than all binMins.");
       mCounts = new int[binMins.length + 2];
    }
@@ -164,7 +159,8 @@ public class Histogram {
    /**
     * bin - Returns the bin into which the val fits.
     *
-    * @param val double
+    * @param val
+    *           double
     * @return int
     */
    public int bin(double val) {
@@ -172,7 +168,7 @@ public class Histogram {
       i = (i >= 0 ? i : -i - 2);
       assert i >= -1 : "index is " + Integer.toString(i) + " for " + Double.toString(val);
       assert i < mCounts.length;
-      if((val == minValue(i)) && (i > -1))
+      if ((val == minValue(i)) && (i > -1))
          i--;
       return i;
    }
@@ -180,7 +176,8 @@ public class Histogram {
    /**
     * minValue - Returns the minimum value stored in the specified bin
     *
-    * @param bin int
+    * @param bin
+    *           int
     * @return double
     */
    public double minValue(int bin) {
@@ -191,7 +188,8 @@ public class Histogram {
     * maxValue - Returns the upper limit for values stored in this bin. Actually
     * this value is excluded from the bin and included in the next larger bin.
     *
-    * @param bin int
+    * @param bin
+    *           int
     * @return double
     */
    public double maxValue(int bin) {
@@ -201,7 +199,8 @@ public class Histogram {
    /**
     * add - Add the specified value to the histogram.
     *
-    * @param val double
+    * @param val
+    *           double
     */
    public void add(double val) {
       ++mCounts[bin(val) + 1];
@@ -210,10 +209,11 @@ public class Histogram {
    /**
     * add - Add the specified array of values to the histogram.
     *
-    * @param vals double[]
+    * @param vals
+    *           double[]
     */
    public void add(double[] vals) {
-      for(final double v : vals)
+      for (final double v : vals)
          add(v);
    }
 
@@ -232,8 +232,10 @@ public class Histogram {
     * format is used to format numbers using MessageFormat.format(...). An
     * common usage might be <code>binName(i,"{0,number,#.##}")</code>.
     *
-    * @param bin int
-    * @param format String
+    * @param bin
+    *           int
+    * @param format
+    *           String
     * @return String
     */
    public String binName(int bin, String format) {
@@ -243,7 +245,8 @@ public class Histogram {
    /**
     * counts - Returns the number of counts in the specified bin.
     *
-    * @param bin int - -1 to binCount()
+    * @param bin
+    *           int - -1 to binCount()
     * @return int
     */
    public int counts(int bin) {
@@ -277,7 +280,7 @@ public class Histogram {
     */
    public int totalCounts() {
       int res = 0;
-      for(final int c : mCounts)
+      for (final int c : mCounts)
          res += c;
       return res;
    }
@@ -287,15 +290,14 @@ public class Histogram {
       return i >= 0;
    }
 
-   public void removeBin(int binNum)
-         throws EPQException {
-      if((binNum < 0) || (binNum > (mCounts.length - 2)))
+   public void removeBin(int binNum) throws EPQException {
+      if ((binNum < 0) || (binNum > (mCounts.length - 2)))
          throw new EPQException(binNum + " is not a bin in the histogram");
       final double[] newBinMin = new double[mBinMin.length - 1];
-      for(int index = 0; index < mBinMin.length; index++)
-         if(index < binNum)
+      for (int index = 0; index < mBinMin.length; index++)
+         if (index < binNum)
             newBinMin[index] = mBinMin[index];
-         else if(index > binNum)
+         else if (index > binNum)
             newBinMin[index - 1] = mBinMin[index];
       mBinMin = newBinMin;
       Arrays.sort(mBinMin);
@@ -304,17 +306,17 @@ public class Histogram {
       // Since we're deleting the bin, move the counts into
       // the bin before the one being removed
       mCounts[binNum] += mCounts[binNum + 1];
-      for(int index = 0; index < mCounts.length; index++)
-         if(index < (binNum + 1))
+      for (int index = 0; index < mCounts.length; index++)
+         if (index < (binNum + 1))
             newCounts[index] = mCounts[index];
-         else if(index > (binNum + 1))
+         else if (index > (binNum + 1))
             newCounts[index - 1] = mCounts[index];
       mCounts = newCounts;
    }
 
    public TreeMap<BinName, Integer> getResultMap(String format) {
       final TreeMap<BinName, Integer> res = new TreeMap<BinName, Integer>();
-      for(int i = -1; i < (binCount() + 1); ++i)
+      for (int i = -1; i < (binCount() + 1); ++i)
          res.put(new BinName(i, format), counts(i));
       return res;
    }

@@ -28,14 +28,10 @@ import java.util.List;
  * 
  * @author ppinard
  */
-public abstract class LenardCoefficient
-   extends AlgorithmClass {
+public abstract class LenardCoefficient extends AlgorithmClass {
 
-   private static final AlgorithmClass[] mAllImplementations = {
-      LenardCoefficient.DuncumbShields,
-      LenardCoefficient.Heinrich,
-      LenardCoefficient.Citzaf,
-   };
+   private static final AlgorithmClass[] mAllImplementations = {LenardCoefficient.DuncumbShields, LenardCoefficient.Heinrich,
+         LenardCoefficient.Citzaf,};
 
    protected LenardCoefficient(String name, LitReference reference) {
       super("Lenard coefficient", name, reference);
@@ -58,19 +54,18 @@ public abstract class LenardCoefficient
    /**
     * Returns the Lenard coefficient.
     * 
-    * @param e0 beam energy in Joules
-    * @param xray excited x-ray
+    * @param e0
+    *           beam energy in Joules
+    * @param xray
+    *           excited x-ray
     * @return Lenard coefficient
     */
    public abstract double compute(double e0, XRayTransition xray);
 
-   public static class DuncumbShieldsLenardCoefficient
-      extends LenardCoefficient {
+   public static class DuncumbShieldsLenardCoefficient extends LenardCoefficient {
 
-      private static final LitReference reference = new LitReference.BookChapter(LitReference.ElectronMicroprobe, "284", new LitReference.Author[] {
-         LitReference.PDuncumb,
-         new LitReference.Author("P.K.", "Shields)")
-      });
+      private static final LitReference reference = new LitReference.BookChapter(LitReference.ElectronMicroprobe, "284",
+            new LitReference.Author[]{LitReference.PDuncumb, new LitReference.Author("P.K.", "Shields)")});
 
       protected DuncumbShieldsLenardCoefficient() {
          super("Duncumb & Shields 1966", reference);
@@ -85,8 +80,7 @@ public abstract class LenardCoefficient
 
    public static final LenardCoefficient DuncumbShields = new DuncumbShieldsLenardCoefficient();
 
-   public static class HeinrichLenardCoefficient
-      extends LenardCoefficient {
+   public static class HeinrichLenardCoefficient extends LenardCoefficient {
 
       private static final LitReference reference = new LitReference.CrudeReference("Heinrich K. F. J. (1967) EPASA 2, paper no. 7");
 
@@ -103,8 +97,7 @@ public abstract class LenardCoefficient
 
    public static final LenardCoefficient Heinrich = new HeinrichLenardCoefficient();
 
-   public static class CitzafLenardCoefficient
-      extends LenardCoefficient {
+   public static class CitzafLenardCoefficient extends LenardCoefficient {
 
       protected CitzafLenardCoefficient() {
          super("CITZAF", "Taken from Probe for EPMA's implementation of CITZAF");

@@ -21,8 +21,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
  * @author nritchie
  * @version 1.0
  */
-public class GridMountedWindow
-   extends XRayWindow {
+public class GridMountedWindow extends XRayWindow {
 
    private final Material mGridMaterial;
    private final double mGridThickness;
@@ -41,8 +40,7 @@ public class GridMountedWindow
    public double transmission(double energy) {
       // Presumably the transmission of the grid area is the transmission of the
       // window plus the transmission of the grid.
-      final double mt = AlgorithmUser.getDefaultMAC().compute(mGridMaterial, energy) * mGridThickness
-            * mGridMaterial.getDensity();
+      final double mt = AlgorithmUser.getDefaultMAC().compute(mGridMaterial, energy) * mGridThickness * mGridMaterial.getDensity();
       return (super.transmission(energy) / mOpenFraction) * (mOpenFraction + ((1.0 - mOpenFraction) * Math.exp(-mt)));
    }
 

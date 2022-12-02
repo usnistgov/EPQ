@@ -31,8 +31,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class SumShapeTest
-   extends TestCase {
+public class SumShapeTest extends TestCase {
 
    static final double beamEnergy = ToSI.keV(20.0);
    static final double beamDia = 1.0e-8;
@@ -50,75 +49,36 @@ public class SumShapeTest
     * @see junit.framework.TestCase#setUp()
     */
    @Override
-   protected void setUp()
-         throws Exception {
+   protected void setUp() throws Exception {
       super.setUp();
-      final Material mat1 = new Material(new Composition(new Element[] {
-         Element.C,
-         Element.O,
-         Element.Cl
-      }, new double[] {
-         0.7,
-         0.28,
-         0.02
-      }, "Resin"), ToSI.gPerCC(1.14));
-      final Material mat2 = new Material(new Composition(new Element[] {
-         Element.C,
-         Element.O,
-         Element.N,
-         Element.H,
-         Element.S,
-         Element.P,
-         Element.Os
-      }, new double[] {
-         0.4962,
-         0.2988,
-         0.0784,
-         0.0773,
-         0.006,
-         0.0232,
-         0.02
-      }, "Inner"), ToSI.gPerCC(1.11));
+      final Material mat1 = new Material(new Composition(new Element[]{Element.C, Element.O, Element.Cl}, new double[]{0.7, 0.28, 0.02}, "Resin"),
+            ToSI.gPerCC(1.14));
+      final Material mat2 = new Material(new Composition(new Element[]{Element.C, Element.O, Element.N, Element.H, Element.S, Element.P, Element.Os},
+            new double[]{0.4962, 0.2988, 0.0784, 0.0773, 0.006, 0.0232, 0.02}, "Inner"), ToSI.gPerCC(1.11));
 
       mMonte = new MonteCarloSS();
       mMonte.setBeamEnergy(beamEnergy);
       final GaussianBeam beam = new GaussianBeam(beamDia);
       mMonte.setElectronGun(beam);
-      beam.setCenter(new double[] {
-         0,
-         0,
-         -0.05
-      });
+      beam.setCenter(new double[]{0, 0, -0.05});
 
       final MultiPlaneShape blk = MultiPlaneShape.createSubstrate(Math2.MINUS_Z_AXIS, Math2.ORIGIN_3D);
       final MonteCarloSS.Region r1 = mMonte.addSubRegion(mMonte.getChamber(), mat1, blk);
 
-      final double[] end0 = new double[] {
-         -length,
-         0.0,
-         2.0 * radius
-      };
-      final double[] end1 = new double[] {
-         length,
-         0.0,
-         2.0 * radius
-      };
+      final double[] end0 = new double[]{-length, 0.0, 2.0 * radius};
+      final double[] end1 = new double[]{length, 0.0, 2.0 * radius};
 
       mCylOuter = new CylindricalShape(end0, end1, radius);
       mCap0Outer = new Sphere(end0, radius);
       mCap1Outer = new Sphere(end1, radius);
-      mPillOuter = new SumShape(new MonteCarloSS.Shape[] {
-         mCylOuter,
-         mCap0Outer,
-         mCap1Outer
-      });
+      mPillOuter = new SumShape(new MonteCarloSS.Shape[]{mCylOuter, mCap0Outer, mCap1Outer});
       mMonte.addSubRegion(r1, mat2, mPillOuter);
    }
 
    private double[] pointInside() {
       final double[] res = new double[3];
-      switch(mRandom.nextInt(3)) {
-         case 0: {
+      switch (mRandom.nextInt(3)) {
+         case 0 : {
             final double r = radius * mRandom.nextDouble();
             final double th = mRandom.nextDouble() * Math.PI;
             final double phi = 2.0 * mRandom.nextDouble() * Math.PI;
@@ -128,7 +88,7 @@ public class SumShapeTest
             assertTrue(mCap0Outer.contains(res));
          }
             break;
-         case 1: {
+         case 1 : {
             final double phi = 2.0 * mRandom.nextDouble() * Math.PI;
             final double r = radius * mRandom.nextDouble();
             res[0] = 2.0 * length * (mRandom.nextDouble() - 0.5);
@@ -137,7 +97,7 @@ public class SumShapeTest
             assertTrue(mCylOuter.contains(res));
          }
             break;
-         case 2: {
+         case 2 : {
             final double r = radius * mRandom.nextDouble();
             final double th = mRandom.nextDouble() * Math.PI;
             final double phi = 2.0 * mRandom.nextDouble() * Math.PI;
@@ -167,7 +127,7 @@ public class SumShapeTest
     * .
     */
    public void testGetFirstIntersection() {
-      for(int i = 0; i < 1000; ++i) {
+      for (int i = 0; i < 1000; ++i) {
          final double[] inside1 = pointInside();
          assertTrue(mPillOuter.contains(inside1));
          final double[] inside2 = pointInside();

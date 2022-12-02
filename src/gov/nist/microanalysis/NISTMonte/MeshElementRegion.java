@@ -25,8 +25,7 @@ import gov.nist.nanoscalemetrology.JMONSEL.Mesh.ConnectedShape;
  * @author John Villarrubia
  * @version 1.0
  */
-public class MeshElementRegion
-   extends RegionBase {
+public class MeshElementRegion extends RegionBase {
 
    int index;
 
@@ -42,13 +41,13 @@ public class MeshElementRegion
 
    @Override
    public void updateMaterial(Material oldMat, IMaterialScatterModel newMat) {
-      if(mScatterModel.getMaterial() == oldMat)
+      if (mScatterModel.getMaterial() == oldMat)
          mScatterModel = newMat;
    }
 
    @Override
    public void updateMaterial(IMaterialScatterModel oldMat, IMaterialScatterModel newMat) {
-      if(mScatterModel == oldMat)
+      if (mScatterModel == oldMat)
          mScatterModel = newMat;
    }
 
@@ -60,8 +59,10 @@ public class MeshElementRegion
     * (possibly null if the boundary coincides with the chamber). If there is no
     * intersection, findEndOfStep leaves pos1 unaltered and returns this region.
     * 
-    * @param pos0 double[] - The fixed initial point.
-    * @param pos1 double[] - [In] The candidate end point [Out] The actual end
+    * @param pos0
+    *           double[] - The fixed initial point.
+    * @param pos1
+    *           double[] - [In] The candidate end point [Out] The actual end
     *           point
     * @return RegionBase - The RegionBase in which the [Out] pos1 is found
     */
@@ -69,21 +70,17 @@ public class MeshElementRegion
    public RegionBase findEndOfStep(double[] pos0, double[] pos1) {
       final double t = mShape.getFirstIntersection(pos0, pos1);
       assert t >= 0.0 : mShape.toString() + " " + Double.toString(t);
-      if(t > 1.0) // no boundary intersection
+      if (t > 1.0) // no boundary intersection
          return this;
       // Arrive here if the segment does hit a boundary.
       // Put pos1 exactly (within round-off) on the boundary.
-      final double[] delta = {
-         pos1[0] - pos0[0],
-         pos1[1] - pos0[1],
-         pos1[2] - pos0[2]
-      };
+      final double[] delta = {pos1[0] - pos0[0], pos1[1] - pos0[1], pos1[2] - pos0[2]};
       pos1[0] = pos0[0] + (t * delta[0]);
       pos1[1] = pos0[1] + (t * delta[1]);
       pos1[2] = pos0[2] + (t * delta[2]);
       final Mesh.Tetrahedron nextShape = ((Mesh.Tetrahedron) mShape).nextTet();
 
-      if(nextShape == null) { // Trajectory leaves the whole mesh
+      if (nextShape == null) { // Trajectory leaves the whole mesh
          /* Get a point just over the boundary */
          final double[] over = Math2.plus(pos1, Math2.multiply(MonteCarloSS.SMALL_DISP, Math2.normalize(delta)));
          /*
@@ -95,9 +92,9 @@ public class MeshElementRegion
           * MeshElementRegion and its parent MeshedRegion. Therefore, in the
           * next line, we start our search at mParent.mParent.
           */
-         for(RegionBase base = mParent.mParent; base != null; base = base.mParent) {
+         for (RegionBase base = mParent.mParent; base != null; base = base.mParent) {
             final RegionBase nextRegion = base.containingSubRegion(over);
-            if(nextRegion != null)
+            if (nextRegion != null)
                return nextRegion;
          }
          return null; // new point is nowhere in the chamber

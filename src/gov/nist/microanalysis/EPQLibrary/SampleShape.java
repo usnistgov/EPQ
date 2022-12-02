@@ -23,7 +23,10 @@ import gov.nist.microanalysis.Utility.Math2;
 abstract public class SampleShape {
 
    /**
-    * <p> A unit normal pointing out from the surface of the sample. </p> <p>
+    * <p>
+    * A unit normal pointing out from the surface of the sample.
+    * </p>
+    * <p>
     * Orientation = [0.0, 0.0, -1.0 ] (-Z axis) is perpendicular to the beam.
     * </p>
     */
@@ -81,11 +84,13 @@ abstract public class SampleShape {
    abstract public boolean equals(Object ss);
 
    /**
-    * <h2>RightRectangularPrism - Armstrong Green book #1</h2> <p> A rectangular
-    * block with thee different dimensions. </p> @author nritchie
+    * <h2>RightRectangularPrism - Armstrong Green book #1</h2>
+    * <p>
+    * A rectangular block with thee different dimensions.
+    * </p>
+    * @author nritchie
     */
-   public static class RightRectangularPrism
-      extends SampleShape {
+   public static class RightRectangularPrism extends SampleShape {
 
       final private double mHeight;
       final private double mDepth;
@@ -104,9 +109,10 @@ abstract public class SampleShape {
       }
 
       /**
-       * @param height Vertical height of rectangle @param depth Thickness of
-       * the rectangle along the detector axis @param width Thickness of the
-       * rectangle perpendicular to the detector axis
+       * @param height
+       *           Vertical height of rectangle @param depth Thickness of the
+       *           rectangle along the detector axis @param width Thickness of
+       *           the rectangle perpendicular to the detector axis
        */
       public RightRectangularPrism(double height, double depth, double width) {
          mHeight = height;
@@ -116,23 +122,12 @@ abstract public class SampleShape {
 
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -0.5 * mDepth,
-            -0.5 * mWidth,
-            0.0,
-            0.5 * mDepth,
-            0.5 * mWidth,
-            mHeight
-         };
+         return new double[]{-0.5 * mDepth, -0.5 * mWidth, 0.0, 0.5 * mDepth, 0.5 * mWidth, mHeight};
       }
 
       @Override
       public Shape getShape() {
-         final double[] dims = new double[] {
-            mDepth,
-            mWidth,
-            mHeight
-         };
+         final double[] dims = new double[]{mDepth, mWidth, mHeight};
          final double[] pt = Math2.multiply(0.5 * mHeight, Math2.Z_AXIS);
          return MultiPlaneShape.createBlock(dims, pt, 0.0, 0.0, 0.0);
       }
@@ -140,8 +135,7 @@ abstract public class SampleShape {
       @Override
       public String toString() {
          final NumberFormat nf = new HalfUpFormat("0.0 \u00B5m");
-         return "Block[Depth=" + nf.format(1.0e6 * mDepth) + ",Width = " + nf.format(1.0e6 * mWidth) + ",Height="
-               + nf.format(1.0e6 * mHeight) + "]";
+         return "Block[Depth=" + nf.format(1.0e6 * mDepth) + ",Width = " + nf.format(1.0e6 * mWidth) + ",Height=" + nf.format(1.0e6 * mHeight) + "]";
       }
 
       @Override
@@ -177,35 +171,38 @@ abstract public class SampleShape {
       }
 
       /**
-       * @param obj @return true iff equivalent @see
-       * java.lang.Object#equals(java.lang.Object)
+       * @param obj
+       *           @return true iff equivalent @see
+       *           java.lang.Object#equals(java.lang.Object)
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof RightRectangularPrism))
+         if (!(obj instanceof RightRectangularPrism))
             return false;
          final RightRectangularPrism other = (RightRectangularPrism) obj;
-         if(Double.doubleToLongBits(mDepth) != Double.doubleToLongBits(other.mDepth))
+         if (Double.doubleToLongBits(mDepth) != Double.doubleToLongBits(other.mDepth))
             return false;
-         if(Double.doubleToLongBits(mHeight) != Double.doubleToLongBits(other.mHeight))
+         if (Double.doubleToLongBits(mHeight) != Double.doubleToLongBits(other.mHeight))
             return false;
-         if(Double.doubleToLongBits(mWidth) != Double.doubleToLongBits(other.mWidth))
+         if (Double.doubleToLongBits(mWidth) != Double.doubleToLongBits(other.mWidth))
             return false;
          return true;
       }
    }
 
    /**
-    * <h2>Tetragonal prism - Armstrong Green book #2</h2> <p> A rectangular
-    * block with square top rotate by 45 degrees so that the diagonal points
-    * towards the detector. </p> @author nritchie
+    * <h2>Tetragonal prism - Armstrong Green book #2</h2>
+    * <p>
+    * A rectangular block with square top rotate by 45 degrees so that the
+    * diagonal points towards the detector.
+    * </p>
+    * @author nritchie
     */
-   public static class TetragonalPrism
-      extends SampleShape {
+   public static class TetragonalPrism extends SampleShape {
 
       final private double mDiagonal;
       final private double mHeight;
@@ -225,32 +222,20 @@ abstract public class SampleShape {
 
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -0.5 * mDiagonal,
-            -0.5 * mDiagonal,
-            0.0,
-            0.5 * mDiagonal,
-            0.5 * mDiagonal,
-            mHeight
-         };
+         return new double[]{-0.5 * mDiagonal, -0.5 * mDiagonal, 0.0, 0.5 * mDiagonal, 0.5 * mDiagonal, mHeight};
       }
 
       @Override
       public Shape getShape() {
          final double k = 1.0 / Math.sqrt(2.0);
-         final double[] dims = new double[] {
-            k * mDiagonal,
-            k * mDiagonal,
-            mHeight
-         };
+         final double[] dims = new double[]{k * mDiagonal, k * mDiagonal, mHeight};
          return MultiPlaneShape.createBlock(dims, Math2.multiply(0.5 * mHeight, Math2.Z_AXIS), 0.25 * Math.PI, 0.0, 0.0);
       }
 
       @Override
       public String toString() {
          final NumberFormat df = new HalfUpFormat("0.0");
-         return "Tetragonal Prism[Diagonal=" + df.format(1.0e6 * getDiagonal()) + " \u00B5m, Height="
-               + df.format(1.0e6 * getHeight()) + " \u00B5m]";
+         return "Tetragonal Prism[Diagonal=" + df.format(1.0e6 * getDiagonal()) + " \u00B5m, Height=" + df.format(1.0e6 * getHeight()) + " \u00B5m]";
       }
 
       @Override
@@ -284,33 +269,36 @@ abstract public class SampleShape {
       }
 
       /**
-       * @param obj @return true iff equivalent @see
-       * java.lang.Object#equals(java.lang.Object)
+       * @param obj
+       *           @return true iff equivalent @see
+       *           java.lang.Object#equals(java.lang.Object)
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof TetragonalPrism))
+         if (!(obj instanceof TetragonalPrism))
             return false;
          final TetragonalPrism other = (TetragonalPrism) obj;
-         if(Double.doubleToLongBits(mDiagonal) != Double.doubleToLongBits(other.mDiagonal))
+         if (Double.doubleToLongBits(mDiagonal) != Double.doubleToLongBits(other.mDiagonal))
             return false;
-         if(Double.doubleToLongBits(mHeight) != Double.doubleToLongBits(other.mHeight))
+         if (Double.doubleToLongBits(mHeight) != Double.doubleToLongBits(other.mHeight))
             return false;
          return true;
       }
    }
 
    /**
-    * <h2>Triangular prism - Armstrong Green book #3</h2> <p> A prism like you
-    * might use to demonstrate that sunlight contains many different colors.
-    * </p> @author nritchie
+    * <h2>Triangular prism - Armstrong Green book #3</h2>
+    * <p>
+    * A prism like you might use to demonstrate that sunlight contains many
+    * different colors.
+    * </p>
+    * @author nritchie
     */
-   public static class TriangularPrism
-      extends SampleShape {
+   public static class TriangularPrism extends SampleShape {
 
       final private double mLength;
       final private double mHeight;
@@ -333,16 +321,8 @@ abstract public class SampleShape {
          final double sqrt2o2 = 1.0 / Math.sqrt(2.0);
          final MultiPlaneShape sh = new MultiPlaneShape();
          sh.addPlane(Math2.Z_AXIS, Math2.multiply(mHeight, Math2.Z_AXIS));
-         sh.addPlane(new double[] {
-            sqrt2o2,
-            0.0,
-            -sqrt2o2
-         }, Math2.ORIGIN_3D);
-         sh.addPlane(new double[] {
-            -sqrt2o2,
-            0.0,
-            -sqrt2o2
-         }, Math2.ORIGIN_3D);
+         sh.addPlane(new double[]{sqrt2o2, 0.0, -sqrt2o2}, Math2.ORIGIN_3D);
+         sh.addPlane(new double[]{-sqrt2o2, 0.0, -sqrt2o2}, Math2.ORIGIN_3D);
          sh.addPlane(Math2.Y_AXIS, Math2.multiply(0.5 * mLength, Math2.Y_AXIS));
          sh.addPlane(Math2.MINUS_Y_AXIS, Math2.multiply(0.5 * mLength, Math2.MINUS_Y_AXIS));
          return sh;
@@ -350,14 +330,7 @@ abstract public class SampleShape {
 
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -0.5 * mHeight,
-            -0.5 * mLength,
-            0.0,
-            0.5 * mHeight,
-            0.5 * mLength,
-            mHeight
-         };
+         return new double[]{-0.5 * mHeight, -0.5 * mLength, 0.0, 0.5 * mHeight, 0.5 * mLength, mHeight};
       }
 
       @Override
@@ -400,27 +373,29 @@ abstract public class SampleShape {
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof TriangularPrism))
+         if (!(obj instanceof TriangularPrism))
             return false;
          final TriangularPrism other = (TriangularPrism) obj;
-         if(Double.doubleToLongBits(mHeight) != Double.doubleToLongBits(other.mHeight))
+         if (Double.doubleToLongBits(mHeight) != Double.doubleToLongBits(other.mHeight))
             return false;
-         if(Double.doubleToLongBits(mLength) != Double.doubleToLongBits(other.mLength))
+         if (Double.doubleToLongBits(mLength) != Double.doubleToLongBits(other.mLength))
             return false;
          return true;
       }
    }
 
    /**
-    * <h2>Square pyramind - Armstrong Green book #4</h2> <p> A pyramid like in
-    * Egypt. Half as high as the base length. </p> @author nritchie
+    * <h2>Square pyramind - Armstrong Green book #4</h2>
+    * <p>
+    * A pyramid like in Egypt. Half as high as the base length.
+    * </p>
+    * @author nritchie
     */
-   public static class SquarePyramid
-      extends SampleShape {
+   public static class SquarePyramid extends SampleShape {
 
       private final double mBaseLength;
 
@@ -439,30 +414,10 @@ abstract public class SampleShape {
       @Override
       public Shape getShape() {
          final double sqrt2o2 = 1.0 / Math.sqrt(2.0);
-         final double[][] normals = new double[][] {
-            new double[] {
-               sqrt2o2,
-               0.0,
-               -sqrt2o2
-               },
-            new double[] {
-               0.0,
-               sqrt2o2,
-               -sqrt2o2
-               },
-            new double[] {
-               -sqrt2o2,
-               0.0,
-               -sqrt2o2
-               },
-            new double[] {
-               0.0,
-               -sqrt2o2,
-               -sqrt2o2
-               }
-         };
+         final double[][] normals = new double[][]{new double[]{sqrt2o2, 0.0, -sqrt2o2}, new double[]{0.0, sqrt2o2, -sqrt2o2},
+               new double[]{-sqrt2o2, 0.0, -sqrt2o2}, new double[]{0.0, -sqrt2o2, -sqrt2o2}};
          final MultiPlaneShape sh = new MultiPlaneShape();
-         for(int i = 0; i < 4; ++i)
+         for (int i = 0; i < 4; ++i)
             sh.addPlane(normals[i], Math2.ORIGIN_3D);
          sh.addPlane(Math2.Z_AXIS, Math2.multiply(0.5 * mBaseLength, Math2.Z_AXIS));
          return sh;
@@ -470,14 +425,7 @@ abstract public class SampleShape {
 
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -0.5 * mBaseLength,
-            -0.5 * mBaseLength,
-            0.0,
-            0.5 * mBaseLength,
-            0.5 * mBaseLength,
-            0.5 * mBaseLength,
-         };
+         return new double[]{-0.5 * mBaseLength, -0.5 * mBaseLength, 0.0, 0.5 * mBaseLength, 0.5 * mBaseLength, 0.5 * mBaseLength,};
       }
 
       @Override
@@ -518,26 +466,28 @@ abstract public class SampleShape {
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof SquarePyramid))
+         if (!(obj instanceof SquarePyramid))
             return false;
          final SquarePyramid other = (SquarePyramid) obj;
-         if(Double.doubleToLongBits(mBaseLength) != Double.doubleToLongBits(other.mBaseLength))
+         if (Double.doubleToLongBits(mBaseLength) != Double.doubleToLongBits(other.mBaseLength))
             return false;
          return true;
       }
    }
 
    /**
-    * <h2>Cylinder - Armstrong Green book #5</h2> <p> A cylinder oriented like
-    * an upright column </p> @author nritchie
+    * <h2>Cylinder - Armstrong Green book #5</h2>
+    * <p>
+    * A cylinder oriented like an upright column
+    * </p>
+    * @author nritchie
     */
 
-   public static class Cylinder
-      extends SampleShape {
+   public static class Cylinder extends SampleShape {
       private final double mRadius;
       private final double mHeight;
 
@@ -552,14 +502,7 @@ abstract public class SampleShape {
 
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -mRadius,
-            -mRadius,
-            0.0,
-            mRadius,
-            mRadius,
-            mHeight
-         };
+         return new double[]{-mRadius, -mRadius, 0.0, mRadius, mRadius, mHeight};
       }
 
       @Override
@@ -617,28 +560,30 @@ abstract public class SampleShape {
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof Cylinder))
+         if (!(obj instanceof Cylinder))
             return false;
          final Cylinder other = (Cylinder) obj;
-         if(Double.doubleToLongBits(mHeight) != Double.doubleToLongBits(other.mHeight))
+         if (Double.doubleToLongBits(mHeight) != Double.doubleToLongBits(other.mHeight))
             return false;
-         if(Double.doubleToLongBits(mRadius) != Double.doubleToLongBits(other.mRadius))
+         if (Double.doubleToLongBits(mRadius) != Double.doubleToLongBits(other.mRadius))
             return false;
          return true;
       }
    }
 
    /**
-    * <h2>Fiber - Armstrong Green book #6</h2> <p> A cylinder on its side.
-    * Cylindrical symmetry axis perpendicular to the detector axis. </p> @author
-    * nritchie
+    * <h2>Fiber - Armstrong Green book #6</h2>
+    * <p>
+    * A cylinder on its side. Cylindrical symmetry axis perpendicular to the
+    * detector axis.
+    * </p>
+    * @author nritchie
     */
-   public static class Fiber
-      extends SampleShape {
+   public static class Fiber extends SampleShape {
       private final double mRadius;
       private final double mLength;
 
@@ -656,10 +601,8 @@ abstract public class SampleShape {
          if (getClass() != obj.getClass())
             return false;
          Fiber other = (Fiber) obj;
-         return Double.doubleToLongBits(mLength) == Double
-               .doubleToLongBits(other.mLength)
-               && Double.doubleToLongBits(mRadius) == Double
-                     .doubleToLongBits(other.mRadius);
+         return Double.doubleToLongBits(mLength) == Double.doubleToLongBits(other.mLength)
+               && Double.doubleToLongBits(mRadius) == Double.doubleToLongBits(other.mRadius);
       }
 
       public double getRadius() {
@@ -682,14 +625,7 @@ abstract public class SampleShape {
 
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -mRadius,
-            -0.5 * mLength,
-            0.0,
-            mRadius,
-            0.5 * mLength,
-            2.0 * mRadius
-         };
+         return new double[]{-mRadius, -0.5 * mLength, 0.0, mRadius, 0.5 * mLength, 2.0 * mRadius};
       }
 
       @Override
@@ -724,11 +660,13 @@ abstract public class SampleShape {
    }
 
    /**
-    * <h2>Hemisphere - Armstrong Green book #7</h2> <p> A hemisphere with
-    * rounded side up </p> @author nritchie
+    * <h2>Hemisphere - Armstrong Green book #7</h2>
+    * <p>
+    * A hemisphere with rounded side up
+    * </p>
+    * @author nritchie
     */
-   public static class Hemisphere
-      extends SampleShape {
+   public static class Hemisphere extends SampleShape {
       private final double mRadius;
 
       /**
@@ -744,14 +682,7 @@ abstract public class SampleShape {
 
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -mRadius,
-            -mRadius,
-            0.0,
-            mRadius,
-            mRadius,
-            mRadius
-         };
+         return new double[]{-mRadius, -mRadius, 0.0, mRadius, mRadius, mRadius};
       }
 
       @Override
@@ -802,24 +733,26 @@ abstract public class SampleShape {
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof Hemisphere))
+         if (!(obj instanceof Hemisphere))
             return false;
          final Hemisphere other = (Hemisphere) obj;
-         if(Double.doubleToLongBits(mRadius) != Double.doubleToLongBits(other.mRadius))
+         if (Double.doubleToLongBits(mRadius) != Double.doubleToLongBits(other.mRadius))
             return false;
          return true;
       }
    }
    /**
-    * <h2>Sphere - Armstrong Green book #8</h2> <p> A sphere </p> @author
-    * nritchie
+    * <h2>Sphere - Armstrong Green book #8</h2>
+    * <p>
+    * A sphere
+    * </p>
+    * @author nritchie
     */
-   public static class Sphere
-      extends SampleShape {
+   public static class Sphere extends SampleShape {
       private final double mRadius;
 
       /**
@@ -841,14 +774,7 @@ abstract public class SampleShape {
 
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -mRadius,
-            -mRadius,
-            0.0,
-            mRadius,
-            mRadius,
-            2.0 * mRadius
-         };
+         return new double[]{-mRadius, -mRadius, 0.0, mRadius, mRadius, 2.0 * mRadius};
       }
 
       @Override
@@ -890,25 +816,26 @@ abstract public class SampleShape {
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(!(obj instanceof Sphere))
+         if (!(obj instanceof Sphere))
             return false;
          final Sphere other = (Sphere) obj;
-         if(Double.doubleToLongBits(mRadius) != Double.doubleToLongBits(other.mRadius))
+         if (Double.doubleToLongBits(mRadius) != Double.doubleToLongBits(other.mRadius))
             return false;
          return true;
       }
    }
 
    /**
-    * <p> Bulk represents a bulk, flat polished sample (possibly tilted).
-    * </p> @author nritchie
+    * <p>
+    * Bulk represents a bulk, flat polished sample (possibly tilted).
+    * </p>
+    * @author nritchie
     */
-   public static class Bulk
-      extends SampleShape {
+   public static class Bulk extends SampleShape {
 
       @Override
       public boolean equals(Object ss) {
@@ -932,14 +859,7 @@ abstract public class SampleShape {
 
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -1.0e-3,
-            -1.0e-3,
-            0.0,
-            1.0e-3,
-            1.0e-3,
-            2.0e-3
-         };
+         return new double[]{-1.0e-3, -1.0e-3, 0.0, 1.0e-3, 1.0e-3, 2.0e-3};
       }
 
       @Override
@@ -949,7 +869,7 @@ abstract public class SampleShape {
 
       @Override
       public String toString() {
-         if(Math2.distance(mOrientation, Math2.MINUS_Z_AXIS) < 1.0e-6)
+         if (Math2.distance(mOrientation, Math2.MINUS_Z_AXIS) < 1.0e-6)
             return "Bulk";
          else
             return "Bulk[" + Math2.toString(mOrientation, new HalfUpFormat("0.00")) + "]";
@@ -971,8 +891,7 @@ abstract public class SampleShape {
       }
    }
 
-   static public class ThinFilm
-      extends SampleShape {
+   static public class ThinFilm extends SampleShape {
 
       private final double mThickness;
 
@@ -999,18 +918,11 @@ abstract public class SampleShape {
 
       /**
        * @return @see
-       * gov.nist.microanalysis.EPQLibrary.SampleShape#getBoundingBox()
+       *         gov.nist.microanalysis.EPQLibrary.SampleShape#getBoundingBox()
        */
       @Override
       public double[] getBoundingBox() {
-         return new double[] {
-            -1.0e-3,
-            -1.0e-3,
-            0.0,
-            1.0e-3,
-            1.0e-3,
-            mThickness
-         };
+         return new double[]{-1.0e-3, -1.0e-3, 0.0, 1.0e-3, 1.0e-3, mThickness};
       }
 
       /**
@@ -1032,18 +944,19 @@ abstract public class SampleShape {
       public double getThickness() {
          return mThickness;
       }
-      
+
       public int hashCode() {
          return Double.hashCode(mThickness);
       }
 
       /**
-       * @param ss @return @see
-       * gov.nist.microanalysis.EPQLibrary.SampleShape#equals(java.lang.Object)
+       * @param ss
+       *           @return @see
+       *           gov.nist.microanalysis.EPQLibrary.SampleShape#equals(java.lang.Object)
        */
       @Override
       public boolean equals(Object ss) {
-         if(!(ss instanceof ThinFilm))
+         if (!(ss instanceof ThinFilm))
             return false;
          final ThinFilm tf = (ThinFilm) ss;
          return Arrays.equals(mOrientation, tf.mOrientation) && (mThickness == tf.mThickness);

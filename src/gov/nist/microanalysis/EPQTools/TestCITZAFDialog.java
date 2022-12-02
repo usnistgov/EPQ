@@ -38,8 +38,7 @@ public class TestCITZAFDialog {
    public static void main(String[] args) {
       try {
          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace(System.err);
       }
 
@@ -73,55 +72,54 @@ public class TestCITZAFDialog {
                try (final BufferedReader br = new BufferedReader(rd)) {
 
                   // Read Header
-                  for(int index = 0; index < 5; index++)
+                  for (int index = 0; index < 5; index++)
                      br.readLine();
 
                   // Read MACs
                   br.mark(300);
-                  String line=br.readLine();
+                  String line = br.readLine();
                   while ((line != null) && !line.startsWith("Z-LINE"))
                      br.mark(300);
                   br.reset();
-                  for(int index = 0; index < (2 + (numElements * numElements)); index++)
+                  for (int index = 0; index < (2 + (numElements * numElements)); index++)
                      System.out.println(br.readLine());
 
                   System.out.println("------------------------------------------------");
 
                   // Read ZAF Corrections
                   br.mark(300);
-                  line=br.readLine();
-                  while((line!=null) && !line.startsWith("ELEMENT"))
+                  line = br.readLine();
+                  while ((line != null) && !line.startsWith("ELEMENT"))
                      br.mark(300);
                   br.reset();
 
-                  for(int index = 0; index < (2 + numElements); index++)
+                  for (int index = 0; index < (2 + numElements); index++)
                      System.out.println(br.readLine());
 
                   System.out.println("------------------------------------------------");
                   // Read Sample Results
                   line = br.readLine();
-                  while((line != null) && !line.startsWith("SAMPLE"))
+                  while ((line != null) && !line.startsWith("SAMPLE"))
                      line = br.readLine();
 
                   br.readLine();
                   br.readLine();
 
-                  for(int index = 0; index < (4 + numElements); index++) {
+                  for (int index = 0; index < (4 + numElements); index++) {
                      line = br.readLine();
                      System.out.println(line != null ? line : "NULL!!!");
                   }
                   br.readLine();
                   br.readLine();
                   System.out.println();
-                  for(int index = 0; index < (2 + numElements); index++) {
+                  for (int index = 0; index < (2 + numElements); index++) {
                      line = br.readLine();
                      System.out.println(line != null ? line : "NULL!!!");
                   }
                }
             }
          }
-      }
-      catch(final IOException ioex) {
+      } catch (final IOException ioex) {
          System.out.println("Reached the end of file");
       }
    }

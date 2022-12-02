@@ -22,9 +22,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumUtils;
  * @author Nicholas
  * @version 1.0
  */
-abstract public class DetectorLineshapeModel
-   implements
-   Cloneable {
+abstract public class DetectorLineshapeModel implements Cloneable {
 
    /**
     * The inverse of compute on the left (lower energy side of the peak.) At
@@ -53,8 +51,10 @@ abstract public class DetectorLineshapeModel
     * at <code>center</code> The integral over all energies is normalized to
     * 1.0.
     * 
-    * @param eV - The energy of interest
-    * @param center - The peak center in eV
+    * @param eV
+    *           - The energy of interest
+    * @param center
+    *           - The peak center in eV
     * @return double - width in eV
     */
    abstract public double compute(double eV, double center);

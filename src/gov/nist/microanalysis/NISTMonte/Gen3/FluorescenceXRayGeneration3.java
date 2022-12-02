@@ -25,8 +25,7 @@ import gov.nist.microanalysis.Utility.Math2;
  *
  * @author nicholas
  */
-final public class FluorescenceXRayGeneration3
-   extends BaseXRayGeneration3 {
+final public class FluorescenceXRayGeneration3 extends BaseXRayGeneration3 {
 
    /**
     * The max distance a photon may travel before being discarded as
@@ -72,8 +71,10 @@ final public class FluorescenceXRayGeneration3
     * Use this static method instead of the constructor to create instances of
     * this class and initialize it with an instance of the MonteCarloSS class. *
     *
-    * @param mcss An instance of MonteCarloSS
-    * @param src The source of the primary x-rays
+    * @param mcss
+    *           An instance of MonteCarloSS
+    * @param src
+    *           The source of the primary x-rays
     * @return FluorescenceXRayGeneration
     */
    public static FluorescenceXRayGeneration3 create(final MonteCarloSS mcss, final BaseXRayGeneration3 src) {
@@ -121,27 +122,27 @@ final public class FluorescenceXRayGeneration3
       // absorbed by 'absorber' now figure out which shell
       int highE = AtomicShell.NoShell;
       {
-         for(int sh = AtomicShell.K; sh <= AtomicShell.MV; ++sh)
-            if((shells[sh] != null) && (energy > shells[sh].mEdgeEnergy)) {
+         for (int sh = AtomicShell.K; sh <= AtomicShell.MV; ++sh)
+            if ((shells[sh] != null) && (energy > shells[sh].mEdgeEnergy)) {
                // Only consider the highest energy family below the specified
                // x-ray energy
                highE = sh;
                break;
             }
       }
-      if(highE != AtomicShell.NoShell) {
+      if (highE != AtomicShell.NoShell) {
          final int lowE = AtomicShell.getLastInFamily(AtomicShell.getFamily(highE));
          assert AtomicShell.getFamily(lowE) == AtomicShell.getFamily(highE);
          assert lowE >= highE;
          assert AtomicShell.getEdgeEnergy(absorber, highE) >= AtomicShell.getEdgeEnergy(absorber, lowE);
          double r = mRandom.nextDouble();
          double sc = 1.0;
-         for(int sh = highE; sh <= lowE; ++sh) {
+         for (int sh = highE; sh <= lowE; ++sh) {
             final ShellData shellData = shells[sh];
-            if(shellData != null) {
+            if (shellData != null) {
                final double f = sc * shellData.mIonizationFrac;
                r -= f;
-               if(r < 0.0)
+               if (r < 0.0)
                   return shellData.mShell;
                sc *= (1.0 - f);
             }
@@ -159,12 +160,12 @@ final public class FluorescenceXRayGeneration3
     */
    private ShellData[] getShells(final Element absorber) {
       ShellData[] shells = mShells.get(absorber);
-      if(shells == null) {
+      if (shells == null) {
          shells = new ShellData[AtomicShell.NI];
-         for(int sh = AtomicShell.K; sh <= AtomicShell.MV; ++sh)
-            if(AtomicShell.exists(absorber, sh)) {
+         for (int sh = AtomicShell.K; sh <= AtomicShell.MV; ++sh)
+            if (AtomicShell.exists(absorber, sh)) {
                final ShellData shellData = new ShellData(new AtomicShell(absorber, sh));
-               if(shellData.mIonizationFrac > 0.0)
+               if (shellData.mIonizationFrac > 0.0)
                   shells[sh] = shellData;
             }
          mShells.put(absorber, shells);
@@ -181,24 +182,24 @@ final public class FluorescenceXRayGeneration3
       assert e.getSource() instanceof BaseXRayGeneration3;
       assert e.getSource() == mSource;
       reset(); // Reset the result accumulator...
-      switch(e.getID()) {
-         case BaseXRayGeneration3.XRayGeneration: {
+      switch (e.getID()) {
+         case BaseXRayGeneration3.XRayGeneration : {
             // Randomly select only MODEL_FRAC of all x-rays to simulate SF
-            if(mRandom.nextDouble() >= mModelFraction)
+            if (mRandom.nextDouble() >= mModelFraction)
                return;
             mMac = (MassAbsorptionCoefficient) getAlgorithm(MassAbsorptionCoefficient.class);
             double[] pos = null;
             MonteCarloSS.RegionBase region = null;
             final BremsstrahlungAngularDistribution bremAngular = AlgorithmUser.getDefaultAngularDistribution();
-            for(int i = mSource.getEventCount() - 1; i >= 0; --i) {
+            for (int i = mSource.getEventCount() - 1; i >= 0; --i) {
                // Only model a fraction of the primary photons for secondary
                final BaseXRayGeneration3.XRay xr = mSource.getXRay(i);
                // Scale the intensity to account for the neglected events
                final double xrI = xr.getIntensity() / mModelFraction;
                assert xrI > 0.0;
-               if(xrI > 0.0)
+               if (xrI > 0.0)
                   try {
-                     if(xr.getPosition() != pos) {
+                     if (xr.getPosition() != pos) {
                         pos = xr.getPosition();
                         region = mMonte.findRegionContaining(pos);
                      }
@@ -207,7 +208,8 @@ final public class FluorescenceXRayGeneration3
                      final double[] dir = Math2.randomDir();
                      final BremsstrahlungXRay bxr = (xr instanceof BremsstrahlungXRay ? (BremsstrahlungXRay) xr : null);
                      // Account for Bremsstrahlung shape function if necessary.
-                     final double scale = (bxr == null ? 1.0
+                     final double scale = (bxr == null
+                           ? 1.0
                            : bremAngular.compute(bxr.getElement(), bxr.getAngle(dir), bxr.getElectronEnergy(), xr.getEnergy()));
                      mScaleStats.add(scale);
                      // final double scale = 1.0;
@@ -218,7 +220,7 @@ final public class FluorescenceXRayGeneration3
                      // Find the region and point at which this x-ray is
                      // absorbed...
                      boolean generateFluor = true;
-                     for(boolean takeAnotherStep = true; takeAnotherStep;) {
+                     for (boolean takeAnotherStep = true; takeAnotherStep;) {
                         startR = endR;
                         start = end;
                         // Generate a random step of absLen in direction dir
@@ -229,10 +231,10 @@ final public class FluorescenceXRayGeneration3
                         end = Math2.plus(start, Math2.multiply(len, dir));
                         endR = startR.findEndOfStep(start, end);
                         takeAnotherStep = (endR != startR) && (endR != null);
-                        if(takeAnotherStep) {
+                        if (takeAnotherStep) {
                            // Pass through the interface and continue
                            end = Math2.plusEquals(end, eps);
-                           if(Math2.magnitude(Math2.minus(pos, end)) > MAX_TRAVEL) {
+                           if (Math2.magnitude(Math2.minus(pos, end)) > MAX_TRAVEL) {
                               // Terminate event due to traveling outside
                               // detection region
                               generateFluor = false;
@@ -243,32 +245,30 @@ final public class FluorescenceXRayGeneration3
 
                      // X-ray scatter event occurs at double[] 'end' in Region
                      // 'endR'
-                     if((endR != null) && generateFluor)
+                     if ((endR != null) && generateFluor)
                         performFluorescence(scale * xrI, endR, end, xrE);
-                  }
-                  catch(final EPQException e1) {
+                  } catch (final EPQException e1) {
                      e1.printStackTrace();
                   }
             }
             fireXRayListeners(BaseXRayGeneration3.XRayGeneration);
          }
             break;
-         default:
+         default :
             fireXRayListeners(e.getID());
             break;
       }
    }
 
-   private void performFluorescence(final double xrI, final MonteCarloSS.RegionBase endR, final double[] end, final double xrE)
-         throws EPQException {
+   private void performFluorescence(final double xrI, final MonteCarloSS.RegionBase endR, final double[] end, final double xrE) throws EPQException {
       assert endR.getMaterial().getDensity() > 0.0 : endR.getMaterial().toString();
       final AtomicShell ionized = pickShell(endR.getMaterial(), xrE);
-      if(ionized != null) {
+      if (ionized != null) {
          final TreeMap<XRayTransition, Double> tm = getTransitions(ionized);
-         for(final Map.Entry<XRayTransition, Double> me2 : tm.entrySet()) {
+         for (final Map.Entry<XRayTransition, Double> me2 : tm.entrySet()) {
             final XRayTransition sfXrt = me2.getKey();
             final double energy = sfXrt.getEnergy();
-            if(energy > 0.0) {
+            if (energy > 0.0) {
                final Double trProb = me2.getValue();
                addCharXRay(end, energy, trProb * xrI, trProb * xrI, sfXrt);
             }
@@ -285,7 +285,7 @@ final public class FluorescenceXRayGeneration3
     */
    private TreeMap<XRayTransition, Double> getTransitions(final AtomicShell ionized) {
       TreeMap<XRayTransition, Double> tm = mTransitionMap.get(ionized);
-      if(tm == null) {
+      if (tm == null) {
          final TransitionProbabilities tp = (TransitionProbabilities) getAlgorithm(TransitionProbabilities.class);
          assert tp != null;
          tm = tp.getTransitions(ionized, MIN_WEIGHT);
@@ -309,7 +309,8 @@ final public class FluorescenceXRayGeneration3
     * x-rays which are used to estimate the secondary fluorescence. Default is
     * 0.1.
     *
-    * @param modelfraction The value to which to set modelfraction [0.01, 1.0]
+    * @param modelfraction
+    *           The value to which to set modelfraction [0.01, 1.0]
     */
    public static void setModelfraction(final double modelfraction) {
       mModelFraction = Math2.bound(modelfraction, 0.01, 1.0);

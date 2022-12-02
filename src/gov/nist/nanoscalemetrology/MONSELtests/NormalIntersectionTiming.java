@@ -16,25 +16,14 @@ public class NormalIntersectionTiming {
 
       // Create a union shape for testing.
       final NormalMultiPlaneShape substrate = new NormalMultiPlaneShape();
-      substrate.addPlane(new double[] {
-         0.,
-         0.,
-         1.
-      }, new double[] {
-         0.,
-         0.,
-         0.
-      });
+      substrate.addPlane(new double[]{0., 0., 1.}, new double[]{0., 0., 0.});
 
-      final NormalSphereShape sphere = new NormalSphereShape(new double[] {
-         0.,
-         0.,
-         0.
-      }, 1.);
+      final NormalSphereShape sphere = new NormalSphereShape(new double[]{0., 0., 0.}, 1.);
 
       final NormalShape inter1 = new NormalIntersectionShape(substrate, sphere);
       @SuppressWarnings("unused")
-      final NormalShape inter2 = new NormalComplementShape(new NormalUnionShape(new NormalComplementShape(substrate), new NormalComplementShape(sphere)));
+      final NormalShape inter2 = new NormalComplementShape(
+            new NormalUnionShape(new NormalComplementShape(substrate), new NormalComplementShape(sphere)));
 
       // Repeatedly execute the routine
       @SuppressWarnings("unused")
@@ -43,31 +32,19 @@ public class NormalIntersectionTiming {
       final double result1;
 
       double[] pos0;
-      double[] pos1 = {
-         (Math.random() * 4.) - 2.,
-         (Math.random() * 4.) - 2.,
-         (Math.random() * 4.) - 2
-      };
+      double[] pos1 = {(Math.random() * 4.) - 2., (Math.random() * 4.) - 2., (Math.random() * 4.) - 2};
       t0 = System.currentTimeMillis();
 
-      for(long i = 0; i < repeats; i++) {
+      for (long i = 0; i < repeats; i++) {
          pos0 = pos1;
-         pos1 = new double[] {
-            (Math.random() * 4.) - 2.,
-            (Math.random() * 4.) - 2.,
-            (Math.random() * 4.) - 2
-         };
+         pos1 = new double[]{(Math.random() * 4.) - 2., (Math.random() * 4.) - 2., (Math.random() * 4.) - 2};
          result = inter1.getFirstNormal(pos0, pos1);
       }
 
       tint = System.currentTimeMillis();
-      for(long i = 0; i < repeats; i++) {
+      for (long i = 0; i < repeats; i++) {
          pos0 = pos1;
-         pos1 = new double[] {
-            (Math.random() * 4.) - 2.,
-            (Math.random() * 4.) - 2.,
-            (Math.random() * 4.) - 2
-         };
+         pos1 = new double[]{(Math.random() * 4.) - 2., (Math.random() * 4.) - 2., (Math.random() * 4.) - 2};
       }
 
       tf = System.currentTimeMillis();

@@ -3,8 +3,7 @@ package gov.nist.microanalysis.EPQLibrary;
 import java.util.Arrays;
 import java.util.List;
 
-abstract public class ProportionalIonizationCrossSection
-   extends IonizationCrossSection {
+abstract public class ProportionalIonizationCrossSection extends IonizationCrossSection {
    private ProportionalIonizationCrossSection(String name, String ref) {
       super(name, ref);
    }
@@ -18,8 +17,7 @@ abstract public class ProportionalIonizationCrossSection
     * Pichoir's IXCOM 11 (1986) article. An additional factor is inserted to
     * account for the variation between different shells within the family.
     */
-   static public class Pouchou86ICX
-      extends ProportionalIonizationCrossSection {
+   static public class Pouchou86ICX extends ProportionalIonizationCrossSection {
 
       protected Pouchou86ICX() {
          super("Pouchou & Pichoir 1986", "Pochou & Pichoir in the proceedings from IXCOM 11 (1986)");
@@ -34,19 +32,19 @@ abstract public class ProportionalIonizationCrossSection
          // From PAP1991, agrees with Scott, Love &amp; Reed
          double m;
          final double za = shell.getElement().getAtomicNumber();
-         switch(shell.getFamily()) {
-            case AtomicShell.KFamily:
+         switch (shell.getFamily()) {
+            case AtomicShell.KFamily :
                m = 0.86 + (0.12 * Math.exp((-za * za) / 25.0));
                break;
-            case AtomicShell.LFamily:
+            case AtomicShell.LFamily :
                m = 0.82;
                break;
-            case AtomicShell.MFamily:
+            case AtomicShell.MFamily :
                m = 0.78;
                break;
-            default:
-               throw new EPQFatalException("Unsupported shell (" + shell.toString()
-                     + ") in the the Pouchou & Pichoir IXCOM-11 ionization cross section.");
+            default :
+               throw new EPQFatalException(
+                     "Unsupported shell (" + shell.toString() + ") in the the Pouchou & Pichoir IXCOM-11 ionization cross section.");
          }
          return m;
       }
@@ -55,7 +53,7 @@ abstract public class ProportionalIonizationCrossSection
       public double computeFamily(AtomicShell shell, double beamE) {
          final double eCrit = FromSI.keV(shell.getEdgeEnergy());
          final double u = FromSI.keV(beamE) / eCrit;
-         if(u <= 1.0)
+         if (u <= 1.0)
             return 0.0;
          return Math.log(u) / ((eCrit * eCrit) * Math.pow(u, computeExponent(shell)));
       }
@@ -67,8 +65,7 @@ abstract public class ProportionalIonizationCrossSection
     * additional factor is inserted to account for the variation between
     * different shells within the family.
     */
-   static public class Proza96ICX
-      extends ProportionalIonizationCrossSection {
+   static public class Proza96ICX extends ProportionalIonizationCrossSection {
 
       protected Proza96ICX() {
          super("Dijkstra and Heijliger 1998", LitReference.Proza96);
@@ -81,32 +78,32 @@ abstract public class ProportionalIonizationCrossSection
 
       static public double computeExponent(AtomicShell shell) {
          double m;
-         switch(shell.getFamily()) {
-            case AtomicShell.KFamily: {
+         switch (shell.getFamily()) {
+            case AtomicShell.KFamily : {
                // PROZA96 makes special cases out of the following elements
-               switch(shell.getElement().getAtomicNumber()) {
-                  case Element.elmC:
+               switch (shell.getElement().getAtomicNumber()) {
+                  case Element.elmC :
                      m = 0.888;
                      break;
-                  case Element.elmN:
+                  case Element.elmN :
                      m = 0.86;
                      break;
-                  case Element.elmO:
+                  case Element.elmO :
                      m = 0.89;
                      break;
-                  default:
+                  default :
                      m = 0.90;
                      break;
                }
                break;
             }
-            case AtomicShell.LFamily:
+            case AtomicShell.LFamily :
                m = 0.82;
                break;
-            case AtomicShell.MFamily:
+            case AtomicShell.MFamily :
                m = 0.78;
                break;
-            default:
+            default :
                assert (false);
                throw new EPQFatalException("Unsupported line family in Proza96 constructor.");
          }
@@ -117,7 +114,7 @@ abstract public class ProportionalIonizationCrossSection
       public double computeFamily(AtomicShell shell, double beamE) {
          final double eCrit = FromSI.keV(shell.getEdgeEnergy());
          final double u = FromSI.keV(beamE) / eCrit;
-         if(u <= 1.0)
+         if (u <= 1.0)
             return 0.0;
          return Math.log(u) / ((eCrit * eCrit) * Math.pow(u, computeExponent(shell)));
       }
@@ -149,10 +146,7 @@ abstract public class ProportionalIonizationCrossSection
     */
    public static final Proza96ICX Proza96 = new Proza96ICX();
 
-
-   private static final AlgorithmClass[] mAllImplementations = {
-		      ProportionalIonizationCrossSection.Pouchou86,
-		      ProportionalIonizationCrossSection.Proza96,
-		   };
+   private static final AlgorithmClass[] mAllImplementations = {ProportionalIonizationCrossSection.Pouchou86,
+         ProportionalIonizationCrossSection.Proza96,};
 
 }

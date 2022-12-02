@@ -27,8 +27,7 @@ import java.util.Iterator;
  * @author Nicholas
  * @version 1.0
  */
-public class ExtremumSpectrum
-   extends BaseSpectrum {
+public class ExtremumSpectrum extends BaseSpectrum {
 
    static final private double NORMALIZATION = 1.0e4;
 
@@ -48,17 +47,17 @@ public class ExtremumSpectrum
    private ISpectrumTransformation mTransformation = null;
 
    private void updateSpectrumName() {
-      switch(mMode) {
-         case MAX_PIXEL:
+      switch (mMode) {
+         case MAX_PIXEL :
             mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, "Max-Pixel Spectrum");
             break;
-         case NORM_MAX_PIXEL:
+         case NORM_MAX_PIXEL :
             mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, "Normalized Max-Pixel Spectrum");
             break;
-         case MIN_PIXEL:
+         case MIN_PIXEL :
             mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, "Min-Pixel Spectrum");
             break;
-         case NORM_MIN_PIXEL:
+         case NORM_MIN_PIXEL :
             mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, "Normalized Min-Pixel Spectrum");
             break;
       }
@@ -71,8 +70,7 @@ public class ExtremumSpectrum
       super();
    }
 
-   public ExtremumSpectrum(Iterator<ISpectrumData> specI)
-         throws EPQException {
+   public ExtremumSpectrum(Iterator<ISpectrumData> specI) throws EPQException {
       super();
       include(specI);
    }
@@ -86,8 +84,7 @@ public class ExtremumSpectrum
     * @param specI
     * @throws EPQException
     */
-   public ExtremumSpectrum(ISpectrumTransformation ss, Iterator<ISpectrumData> specI)
-         throws EPQException {
+   public ExtremumSpectrum(ISpectrumTransformation ss, Iterator<ISpectrumData> specI) throws EPQException {
       super();
       setTransformationAlgorithm(ss);
       include(specI);
@@ -119,8 +116,7 @@ public class ExtremumSpectrum
     * @param spec
     * @throws EPQException
     */
-   public void include(ISpectrumData spec)
-         throws EPQException {
+   public void include(ISpectrumData spec) throws EPQException {
       include(spec, SpectrumUtils.totalCounts(spec, true));
    }
 
@@ -132,12 +128,11 @@ public class ExtremumSpectrum
     * @param integral
     * @throws EPQException
     */
-   public void include(ISpectrumData spec, double integral)
-         throws EPQException {
+   public void include(ISpectrumData spec, double integral) throws EPQException {
       boolean notFirst = true;
-      if(mTransformation != null)
+      if (mTransformation != null)
          spec = mTransformation.compute(spec);
-      if(mMaxPixel == null) {
+      if (mMaxPixel == null) {
          mMaxPixel = new double[spec.getChannelCount()];
          mNormMaxPixel = new double[spec.getChannelCount()];
          mMinPixel = new double[spec.getChannelCount()];
@@ -151,25 +146,25 @@ public class ExtremumSpectrum
          setEnergyScale(spec.getZeroOffset(), spec.getChannelWidth());
          notFirst = false;
       }
-      if(SpectrumUtils.areCompatible(this, spec)) {
-         if(notFirst)
+      if (SpectrumUtils.areCompatible(this, spec)) {
+         if (notFirst)
             mProperties = SpectrumProperties.merge(mProperties, spec.getProperties());
          else
             mProperties.addAll(spec.getProperties());
          updateSpectrumName();
          final double norm = integral != 0 ? NORMALIZATION / integral : 1.0;
-         for(int ch = mMaxPixel.length - 1; ch >= 0; --ch) {
+         for (int ch = mMaxPixel.length - 1; ch >= 0; --ch) {
             final double counts = spec.getCounts(ch);
-            if(counts > mMaxPixel[ch])
+            if (counts > mMaxPixel[ch])
                mMaxPixel[ch] = counts;
             final double normCounts = counts * norm;
-            if(normCounts > mNormMaxPixel[ch]) {
+            if (normCounts > mNormMaxPixel[ch]) {
                mNormMaxPixel[ch] = normCounts;
                mNormMaxPixelId[ch] = spec;
             }
-            if(counts < mMinPixel[ch])
+            if (counts < mMinPixel[ch])
                mMinPixel[ch] = counts;
-            if(normCounts < mNormMinPixel[ch])
+            if (normCounts < mNormMinPixel[ch])
                mNormMinPixel[ch] = normCounts;
          }
          ++mNSpectra;
@@ -177,9 +172,8 @@ public class ExtremumSpectrum
          throw new EPQException("This spectrum is not compatible with the previous spectra in this running average.");
    }
 
-   public void include(Iterator<ISpectrumData> specs)
-         throws EPQException {
-      while(specs.hasNext())
+   public void include(Iterator<ISpectrumData> specs) throws EPQException {
+      while (specs.hasNext())
          include(specs.next());
    }
 
@@ -188,23 +182,22 @@ public class ExtremumSpectrum
     * normalized max pixel spectrum which produced these channels. Format
     * "###\t###\tspectrum"
     * 
-    * @param wr Writer
+    * @param wr
+    *           Writer
     * @throws IOException
     */
-   public void mapMaxPixelToSpectrum(Writer wr)
-         throws IOException {
+   public void mapMaxPixelToSpectrum(Writer wr) throws IOException {
       ISpectrumData prevSpec = null;
       int prev = -1;
-      for(int i = 0; i < mNormMaxPixelId.length; ++i)
-         if(mNormMaxPixelId[i] != prevSpec) {
-            if(prev != -1)
+      for (int i = 0; i < mNormMaxPixelId.length; ++i)
+         if (mNormMaxPixelId[i] != prevSpec) {
+            if (prev != -1)
                wr.write(Integer.toString(prev) + "\t" + Integer.toString(i - 1) + "\t" + prevSpec.toString() + "\n");
             prev = (mNormMaxPixelId[i] != null ? i : -1);
             prevSpec = mNormMaxPixelId[i];
          }
-      if((prev != (mNormMaxPixelId.length - 1)) && (prev != -1))
-         wr.write(Integer.toString(prev) + "\t" + Integer.toString(mNormMaxPixelId.length - 1) + "\t" + prevSpec.toString()
-               + "\n");
+      if ((prev != (mNormMaxPixelId.length - 1)) && (prev != -1))
+         wr.write(Integer.toString(prev) + "\t" + Integer.toString(mNormMaxPixelId.length - 1) + "\t" + prevSpec.toString() + "\n");
       wr.flush();
    }
 
@@ -228,14 +221,14 @@ public class ExtremumSpectrum
     */
    @Override
    public double getCounts(int i) {
-      switch(mMode) {
-         case MAX_PIXEL:
+      switch (mMode) {
+         case MAX_PIXEL :
             return mMaxPixel[i];
-         case NORM_MAX_PIXEL:
+         case NORM_MAX_PIXEL :
             return mNormMaxPixel[i];
-         case MIN_PIXEL:
+         case MIN_PIXEL :
             return mMinPixel[i];
-         case NORM_MIN_PIXEL:
+         case NORM_MIN_PIXEL :
             return mNormMinPixel[i];
       }
       assert false;
@@ -250,7 +243,7 @@ public class ExtremumSpectrum
     * @param mode
     */
    public void setMode(int mode) {
-      if((mode >= MAX_PIXEL) && (mode <= NORM_MIN_PIXEL) && (mMode != mode)) {
+      if ((mode >= MAX_PIXEL) && (mode <= NORM_MIN_PIXEL) && (mMode != mode)) {
          mMode = mode;
          updateSpectrumName();
       }

@@ -18,8 +18,7 @@ package gov.nist.microanalysis.EPQLibrary;
  * @version 1.0
  */
 
-public interface ISpectrumData
-   extends Comparable<ISpectrumData> {
+public interface ISpectrumData extends Comparable<ISpectrumData> {
 
    /**
     * getChannelCount - Returns the number of channels in the spectrum

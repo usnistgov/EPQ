@@ -32,8 +32,7 @@ import gov.nist.microanalysis.EPQLibrary.FromSI;
  * @author nritchie
  * @version 1.0
  */
-final public class DiagnosticListener
-   implements ActionListener {
+final public class DiagnosticListener implements ActionListener {
    private int mElectronIndex;
    private int mStepIndex;
    private final MonteCarloSS mMonte;
@@ -53,13 +52,11 @@ final public class DiagnosticListener
       mWriter = new PrintWriter(os);
    }
 
-   public DiagnosticListener(MonteCarloSS mcss, File f)
-         throws FileNotFoundException {
+   public DiagnosticListener(MonteCarloSS mcss, File f) throws FileNotFoundException {
       this(mcss, new FileOutputStream(f));
    }
 
-   public DiagnosticListener(MonteCarloSS mcss, String filename)
-         throws FileNotFoundException {
+   public DiagnosticListener(MonteCarloSS mcss, String filename) throws FileNotFoundException {
       this(mcss, new FileOutputStream(filename));
    }
 
@@ -77,7 +74,8 @@ final public class DiagnosticListener
    /**
     * actionPerformed
     * 
-    * @param arg0 (non-Javadoc)
+    * @param arg0
+    *           (non-Javadoc)
     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
     */
    @Override
@@ -86,52 +84,52 @@ final public class DiagnosticListener
       final int event = arg0.getID();
       boolean output = true;
       String name = "";
-      switch(event) {
-         case MonteCarloSS.ScatterEvent:
+      switch (event) {
+         case MonteCarloSS.ScatterEvent :
             ++mStepIndex;
             name = "Scatter";
             break;
-         case MonteCarloSS.NonScatterEvent:
+         case MonteCarloSS.NonScatterEvent :
             name = "Non-scatter";
             break;
-         case MonteCarloSS.BackscatterEvent:
+         case MonteCarloSS.BackscatterEvent :
             name = "Backscatter";
             break;
-         case MonteCarloSS.ExitMaterialEvent:
+         case MonteCarloSS.ExitMaterialEvent :
             name = mMonte.getElectron().getPreviousRegion().getMaterial().toString() + " to "
                   + mMonte.getElectron().getCurrentRegion().getMaterial().toString();
             break;
-         case MonteCarloSS.TrajectoryStartEvent:
+         case MonteCarloSS.TrajectoryStartEvent :
             ++mElectronIndex;
             mStepIndex = 0;
             name = "Electron";
             break;
-         case MonteCarloSS.TrajectoryEndEvent:
+         case MonteCarloSS.TrajectoryEndEvent :
             output = false;
             break;
-         case MonteCarloSS.LastTrajectoryEvent:
+         case MonteCarloSS.LastTrajectoryEvent :
             output = false;
             break;
-         case MonteCarloSS.FirstTrajectoryEvent:
+         case MonteCarloSS.FirstTrajectoryEvent :
             mElectronIndex = 0;
             output = false;
             break;
-         case MonteCarloSS.StartSecondaryEvent:
+         case MonteCarloSS.StartSecondaryEvent :
             ++mDepth;
             output = false;
             break;
-         case MonteCarloSS.EndSecondaryEvent:
+         case MonteCarloSS.EndSecondaryEvent :
             --mDepth;
             output = false;
             break;
-         case MonteCarloSS.BeamEnergyChanged:
+         case MonteCarloSS.BeamEnergyChanged :
             mWriter.print("\"Beam energy changed to\"\t");
             mWriter.print(FromSI.keV(mMonte.getBeamEnergy()));
             mWriter.println(" keV");
             output = false;
             break;
       }
-      if(output) {
+      if (output) {
          final StringBuffer sb = new StringBuffer();
          final Electron e = mMonte.getElectron();
          sb.append(mElectronIndex);
@@ -153,7 +151,7 @@ final public class DiagnosticListener
          sb.append("\t");
          sb.append(name);
          mWriter.println(sb.toString());
-         if((mStepIndex % 10) == 0)
+         if ((mStepIndex % 10) == 0)
             mWriter.flush();
       }
    }

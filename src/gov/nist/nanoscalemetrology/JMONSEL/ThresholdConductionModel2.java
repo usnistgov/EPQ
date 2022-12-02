@@ -30,7 +30,7 @@ import gov.nist.nanoscalemetrology.JMONSEL.Mesh.Tetrahedron;
  * threshold, the electron flows along the field lines until it reaches a region
  * where the field is lower than the threshold. In this model, electrons will
  * flow across material boundaries, but will not flow into regions with density
- *&lt;100 kg/m^3.
+ * &lt;100 kg/m^3.
  * </p>
  * <p>
  * Copyright: Pursuant to title 17 Section 105 of the United States Code this
@@ -49,8 +49,7 @@ import gov.nist.nanoscalemetrology.JMONSEL.Mesh.Tetrahedron;
  * full FEA to recompute fields after flowing charges.
  */
 
-public class ThresholdConductionModel2
-   implements IConductionModel {
+public class ThresholdConductionModel2 implements IConductionModel {
 
    private double frac;
    private final int maxIterations = 20;
@@ -64,8 +63,9 @@ public class ThresholdConductionModel2
    /**
     * Constructs a ThresholdConductionModel
     *
-    * @param frac - fraction of dielectric breakdown field at which current
-    *           begins to flow
+    * @param frac
+    *           - fraction of dielectric breakdown field at which current begins
+    *           to flow
     */
    public ThresholdConductionModel2(double frac) {
       this.frac = frac;
@@ -82,9 +82,10 @@ public class ThresholdConductionModel2
     * (deltat) is included only for conformity to the more general
     * IConductionModel interface. The supplied value of deltat is not used.
     *
-    * @param thisMeshedRegion - The MeshedRegion in which to possibly conduct
-    *           charges
-    * @param deltat - the time to conduct them (unused)
+    * @param thisMeshedRegion
+    *           - The MeshedRegion in which to possibly conduct charges
+    * @param deltat
+    *           - the time to conduct them (unused)
     * @param feaRunner
     * @return - true if an FEA update is needed due to moved charges, false if
     *         it is not needed (either because charges were not moved or because
@@ -114,17 +115,17 @@ public class ThresholdConductionModel2
       final Mesh mesh = thisMeshedRegion.getMesh(); // debug
       final ChargeFlowDebugInfo cfDebug = new ChargeFlowDebugInfo(mesh, maxIterations); // debug
       boolean currentSolnIsFEA = true;
-      for(int iterNum = 0; iterNum < maxIterations; iterNum++) {
+      for (int iterNum = 0; iterNum < maxIterations; iterNum++) {
          final HashMap<TetFace, Integer> flowMap = new HashMap<TetFace, Integer>();
          final boolean chargesMoved = flowChargesOnce(thisMeshedRegion, flowMap, cfDebug);
          /* Start debug section */
          /* Initialize nodes and elements to track immediately after each FEA */
-         if(currentSolnIsFEA) {
+         if (currentSolnIsFEA) {
             debugStats(cfDebug); // debug
             // cfDebug.resetTracked(); //With this included I track only since
             // most recent FEA. With it excluded, since iteration 0.
             final Set<Map.Entry<TetFace, Integer>> flowSet = flowMap.entrySet();
-            for(final Map.Entry<TetFace, Integer> flow : flowSet) {
+            for (final Map.Entry<TetFace, Integer> flow : flowSet) {
                final Integer deltaQ = flow.getValue();
                final Integer source = flow.getKey().getLeftTet();
                final Integer destination = flow.getKey().getRightTet();
@@ -138,8 +139,8 @@ public class ThresholdConductionModel2
             }
          }
          /* End debug section */
-         if(!chargesMoved) { // tentatively converged
-            if(currentSolnIsFEA) {// truly converged, so return
+         if (!chargesMoved) { // tentatively converged
+            if (currentSolnIsFEA) {// truly converged, so return
                debugStats(cfDebug); // debug
                return false;
             } else { // otherwise, do a possibly unscheduled FEA update and
@@ -151,8 +152,9 @@ public class ThresholdConductionModel2
                cfDebug.trackedSnapShot(); // debug
                currentSolnIsFEA = true;
             }
-         } else if((iterNum % feaInterval) == (feaInterval - 1)) { // Use an FEA
-                                                                   // update
+         } else if ((iterNum % feaInterval) == (feaInterval - 1)) { // Use an
+                                                                    // FEA
+                                                                    // update
             feaRunner.runFEA(thisMeshedRegion);
             cfDebug.trackedSnapShot(); // debug
             currentSolnIsFEA = true;
@@ -162,7 +164,7 @@ public class ThresholdConductionModel2
             currentSolnIsFEA = false;
          }
       } // End iteration over maxIterations charge flows
-      if(!currentSolnIsFEA) {
+      if (!currentSolnIsFEA) {
          feaRunner.runFEA(thisMeshedRegion);
          cfDebug.trackedSnapShot(); // debug
       }
@@ -184,14 +186,13 @@ public class ThresholdConductionModel2
 
       final Set<Map.Entry<Integer, ArrayList<Integer>>> elements = cfDebug.getTrackedElements().entrySet();
       final HashMap<Integer, ArrayList<Double[]>> elementFields = cfDebug.getTrackedElementFields();
-      if(elements.size() == 0)
+      if (elements.size() == 0)
          return;
       final int s = elements.size();
       final double[] deltaQerror = new double[s];
       final double[] deltaQactual = new double[s];
       final double[] absDeltaQactual = new double[s];
-      final int[] elementIndices = new int[s];
-      ;
+      final int[] elementIndices = new int[s];;
       final double[] efield0X = new double[s];
       final double[] efield0Y = new double[s];
       final double[] efield0Z = new double[s];
@@ -199,7 +200,7 @@ public class ThresholdConductionModel2
       final double[] efieldfY = new double[s];
       final double[] efieldfZ = new double[s];
       int i = 0;
-      for(final Map.Entry<Integer, ArrayList<Integer>> e : elements) {
+      for (final Map.Entry<Integer, ArrayList<Integer>> e : elements) {
          final ArrayList<Integer> snapshots = e.getValue();
          final double q0 = snapshots.get(0);
          final int len = snapshots.size();
@@ -234,7 +235,7 @@ public class ThresholdConductionModel2
       final double[] absDeltaVactual = new double[nodes.size()];
       final double[] deltaVfractionalError = new double[nodes.size()];
       i = 0;
-      for(final Map.Entry<Integer, ArrayList<Double>> n : nodes) {
+      for (final Map.Entry<Integer, ArrayList<Double>> n : nodes) {
          final ArrayList<Double> snapshots = n.getValue();
          final double v0 = snapshots.get(0);
          final int len = snapshots.size();
@@ -243,7 +244,7 @@ public class ThresholdConductionModel2
          deltaVerror[i] = vfQuick - vfActual;
          deltaVactual[i] = vfActual - v0;
          absDeltaVactual[i] = Math.abs(deltaVactual[i]);
-         if(deltaVactual[i] != 0.)
+         if (deltaVactual[i] != 0.)
             deltaVfractionalError[i] = deltaVerror[i] / deltaVactual[i];
          i++;
       }
@@ -315,22 +316,22 @@ public class ThresholdConductionModel2
       // ArrayList<double[]>();
       // final ArrayList<Double> eThreshSquared = new ArrayList<Double>();
 
-      for(int elemNum = 1; elemNum < nElements; elemNum++)
+      for (int elemNum = 1; elemNum < nElements; elemNum++)
          // elements
          /* restrict to volume elements with nonzero charge */
-         if(mesh.isVolumeType(elemNum) && (mesh.getChargeNumber(elemNum) != 0)) {
+         if (mesh.isVolumeType(elemNum) && (mesh.getChargeNumber(elemNum) != 0)) {
 
             /* Compute net current out of this tet */
             final Tetrahedron tet = Tetrahedron.getTetrahedron(mesh, elemNum);
 
             double current = 0.;
-            for(int i = 0; i <= 3; i++) {
+            for (int i = 0; i <= 3; i++) {
                final int adjacentIndex = tet.adjacentTetIndex(i);
-               if(adjacentIndex > 0) { // Face is in the interior
+               if (adjacentIndex > 0) { // Face is in the interior
                   double fc;
                   // If not already saved in opposite direction, compute
                   // and save it
-                  if(!facesCurrentPairs.containsKey(new TetFace(adjacentIndex, elemNum))) {
+                  if (!facesCurrentPairs.containsKey(new TetFace(adjacentIndex, elemNum))) {
                      fc = faceCurrent(thisMeshedRegion, elemNum, adjacentIndex);
                      facesCurrentPairs.put(new TetFace(elemNum, adjacentIndex), fc);
                      current += fc;
@@ -348,11 +349,11 @@ public class ThresholdConductionModel2
              * one.
              */
             final double abscurrent = Math.abs(current);
-            if(abscurrent > maxTetCurrent)
+            if (abscurrent > maxTetCurrent)
                maxTetCurrent = abscurrent;
-            if(abscurrent > (MINFRAC * maxTetCurrent))
+            if (abscurrent > (MINFRAC * maxTetCurrent))
                tetCurrentPairs.add(new TetCurrentPair(elemNum, abscurrent));
-            if(abscurrent != 0.)
+            if (abscurrent != 0.)
                tetCount++;
          } // End mesh Element is Volume type
 
@@ -361,7 +362,7 @@ public class ThresholdConductionModel2
        * of largest, making the currents flow.
        */
       final Iterator<TetCurrentPair> it = tetCurrentPairs.descendingIterator();
-      if(!it.hasNext()) {
+      if (!it.hasNext()) {
          cfDebug.addTetCount(tetCount);
          cfDebug.addAttemptedChargeFlowCount(attemptedChargeFlowCount);
          cfDebug.addSuccessfulChargeFlowCount(successfulChargeFlowCount);
@@ -381,10 +382,10 @@ public class ThresholdConductionModel2
       double tetCurrent = nextTetCurrent.getCurrent();
       maxCurrent = tetCurrent; // debug
 
-      while(tetCurrent > minCurrent) {
+      while (tetCurrent > minCurrent) {
          attemptedChargeFlowCount++; // debug
          /* Decide whether to move a charge in this tet */
-         if(Math2.rgen.nextDouble() < (tetCurrent / maxTetCurrent)) {
+         if (Math2.rgen.nextDouble() < (tetCurrent / maxTetCurrent)) {
             /*
              * Here if we have decided yes. Get IDs of affected tets (this one
              * and its neighbors) and pull the faceCurrents out of storage.
@@ -395,12 +396,12 @@ public class ThresholdConductionModel2
 
             final double[] current = new double[4];
             final double[] currentSign = new double[4];
-            for(int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++) {
                adjacentTetNumber[i] = tet.adjacentTetIndex(i);
                final TetFace tf = new TetFace(elemNum, adjacentTetNumber[i]);
                final Double fc = facesCurrentPairs.get(tf);
-               if(fc != null) {
-                  if(fc < 0.) {
+               if (fc != null) {
+                  if (fc < 0.) {
                      currentSign[i] = -1.;
                      current[i] = -fc;
                   } else {
@@ -414,13 +415,13 @@ public class ThresholdConductionModel2
             // Choose a face with probability proportional to its current
             final int index = randomPick(current);
             final int adjTet = adjacentTetNumber[index];
-            if(!tetsWithAlteredCharge.contains(adjTet)) {
+            if (!tetsWithAlteredCharge.contains(adjTet)) {
                /*
                 * Arrive here only if the chosen tet has not already had a
                 * charge flow since the last FEA. In that case, move one charge
                 * between the chosen pair
                 */
-               if(currentSign[index] > 0.) { // + Charge flows out
+               if (currentSign[index] > 0.) { // + Charge flows out
                   mesh.decrementChargeNumber(elemNum);
                   mesh.incrementChargeNumber(adjTet);
                   flowMap.put(new TetFace(elemNum, adjTet), 1);
@@ -437,12 +438,12 @@ public class ThresholdConductionModel2
          }
 
          /* Get the next unprocessed region */
-         while(it.hasNext()) {
+         while (it.hasNext()) {
             nextTetCurrent = it.next();
-            if(!tetsWithAlteredCharge.contains(nextTetCurrent.getTetID()))
+            if (!tetsWithAlteredCharge.contains(nextTetCurrent.getTetID()))
                break;
          }
-         if(it.hasNext())
+         if (it.hasNext())
             tetCurrent = nextTetCurrent.getCurrent();
          else
             tetCurrent = 0.;
@@ -472,7 +473,7 @@ public class ThresholdConductionModel2
       final Mesh mesh = thisMeshedRegion.getMesh();
 
       final Set<Map.Entry<TetFace, Integer>> flowSet = flowMap.entrySet();
-      for(final Map.Entry<TetFace, Integer> fc : flowSet) {
+      for (final Map.Entry<TetFace, Integer> fc : flowSet) {
          final TetFace tf = fc.getKey();
          int source;
          int destination;
@@ -481,7 +482,7 @@ public class ThresholdConductionModel2
           * destination if necessary, such that positive charge always flows out
           * of the source into the destination.
           */
-         if(fc.getValue() > 0) {
+         if (fc.getValue() > 0) {
             source = tf.getLeftTet();
             destination = tf.getRightTet();
          } else {
@@ -498,7 +499,7 @@ public class ThresholdConductionModel2
          /* Get the nearby nodes and affected volumes */
          final Set<Map.Entry<Integer, Double>> nodes = getNearbyNodes(thisMeshedRegion, source, destination, r0).entrySet();
          /* Make corrections to potentials of the nearby nodes */
-         for(final Entry<Integer, Double> nodeEntry : nodes) {
+         for (final Entry<Integer, Double> nodeEntry : nodes) {
             final int nodeNum = nodeEntry.getKey();
             final double eps = nodeEntry.getValue();
             final double[] x = mesh.getNodeCoordinates(nodeNum);
@@ -523,18 +524,21 @@ public class ThresholdConductionModel2
     * of boundaries, or the FEA smearing of charge uniformly over the
     * tetrahedral region it occupies.
     *
-    * @param xSource - 3-vector coordinates of source charge
-    * @param epsSource - relative dielectric constant at xSource
-    * @param x - 3-vector coordinates of point where potential is desired
-    * @param eps - relative dielectric constant at x
+    * @param xSource
+    *           - 3-vector coordinates of source charge
+    * @param epsSource
+    *           - relative dielectric constant at xSource
+    * @param x
+    *           - 3-vector coordinates of point where potential is desired
+    * @param eps
+    *           - relative dielectric constant at x
     * @return - the potential in volts at x due charge +1e at xSource
     */
-   final private double eOver2PiEps0 = PhysicalConstants.ElectronCharge
-         / (2. * Math.PI * PhysicalConstants.PermittivityOfFreeSpace);
+   final private double eOver2PiEps0 = PhysicalConstants.ElectronCharge / (2. * Math.PI * PhysicalConstants.PermittivityOfFreeSpace);
 
    private double phiPointCharge(double[] xSource, double epsSource, double[] x, double eps) {
       final double r2 = Math2.distanceSqr(xSource, x);
-      if(r2 > CUTOFFRADIUS2)
+      if (r2 > CUTOFFRADIUS2)
          return 0.;
       else
          return (eOver2PiEps0 * ((1. / Math.sqrt(r2)) - (1. / CUTOFFRADIUS))) / (epsSource + eps);
@@ -560,14 +564,14 @@ public class ThresholdConductionModel2
       volumes.add(source);
       volumes.add(destination);
       HashSet<Integer> nextLayer = new HashSet<Integer>(volumes);
-      for(final int elemNum : nextLayer) {
+      for (final int elemNum : nextLayer) {
          final int[] nodes = mesh.getNodeIndices(elemNum);
          final double eps = thisMeshedRegion.getDielectricConstant(elemNum);
-         for(int i = 0; i < 4; i++)
-            if(!nodeMap.containsKey(nodes[i])) { // Skip if this node was
-                                                 // already collected
+         for (int i = 0; i < 4; i++)
+            if (!nodeMap.containsKey(nodes[i])) { // Skip if this node was
+                                                  // already collected
                final double dist2 = Math2.distanceSqr(mesh.getNodeCoordinates(nodes[i]), r0);
-               if(dist2 < CUTOFFRADIUS2)
+               if (dist2 < CUTOFFRADIUS2)
                   nodeMap.put(nodes[i], eps);
             }
       }
@@ -577,24 +581,24 @@ public class ThresholdConductionModel2
        * list if they are close enough. If none are close enough, strike that
        * element from our list. Repeat until the list is empty.
        */
-      while(nextLayer.size() > 0) {
+      while (nextLayer.size() > 0) {
          final HashSet<Integer> previousLayer = nextLayer;
          nextLayer = new HashSet<Integer>(); // A new empty set to hold what we
                                              // find
-         for(final int elemNum : previousLayer)
-            for(int i = 0; i < 4; i++) {
+         for (final int elemNum : previousLayer)
+            for (int i = 0; i < 4; i++) {
                final int newVol = mesh.getAdjacentVolumeIndex(elemNum, i);
-               if(!volumes.contains(newVol)) { // it really is a new one
+               if (!volumes.contains(newVol)) { // it really is a new one
                   final int[] nodes = mesh.getNodeIndices(newVol); // get its
                                                                    // nodes
                   boolean inRange = false;
                   final double eps = thisMeshedRegion.getDielectricConstant(newVol);
-                  for(int nodeIndex = 0; nodeIndex < 4; nodeIndex++)
-                     if(nodeMap.containsKey(nodes[nodeIndex]))
+                  for (int nodeIndex = 0; nodeIndex < 4; nodeIndex++)
+                     if (nodeMap.containsKey(nodes[nodeIndex]))
                         inRange = true;
                      else {
                         final double dist2 = Math2.distanceSqr(mesh.getNodeCoordinates(nodes[nodeIndex]), r0);
-                        if(dist2 < CUTOFFRADIUS2) { // Add if close enough
+                        if (dist2 < CUTOFFRADIUS2) { // Add if close enough
                            nodeMap.put(nodes[nodeIndex], eps);
                            inRange = true;
                         }
@@ -603,7 +607,7 @@ public class ThresholdConductionModel2
                    * If we used a node from this volume, add it to nextLayer and
                    * volumes
                    */
-                  if(inRange) {
+                  if (inRange) {
                      nextLayer.add(newVol);
                      volumes.add(newVol);
                   }
@@ -644,8 +648,10 @@ public class ThresholdConductionModel2
     * by the tets specified by the two ID numbers. Returns 0 if there is no
     * current.
     *
-    * @param tet1ID integer index of the source tet
-    * @param tet2ID integer index of the destination tet
+    * @param tet1ID
+    *           integer index of the source tet
+    * @param tet2ID
+    *           integer index of the destination tet
     * @return
     */
    private double faceCurrent(MeshedRegion thisMeshedRegion, int tet1ID, int tet2ID) {
@@ -663,7 +669,7 @@ public class ThresholdConductionModel2
       final long tag2 = mesh.getTags(tet2ID)[0];
       final SEmaterial mat2 = (SEmaterial) thisMeshedRegion.getMSM(tag2).getMaterial();
       final double density2 = mat2.getDensity();
-      if(density2 < DENSITY_THRESHOLD)
+      if (density2 < DENSITY_THRESHOLD)
          return 0.;
 
       final Tetrahedron tet1 = Tetrahedron.getTetrahedron(mesh, tet1ID);
@@ -688,16 +694,15 @@ public class ThresholdConductionModel2
 
       final double effDeltaV = effectivePotentialDifference(n1, n2, r1, r2, eps1, eps2, deltaV);
 
-      final double thresholdEnergy = frac
-            * ((mat1.getDielectricBreakdownField() * r1) + (mat2.getDielectricBreakdownField() * r2));
+      final double thresholdEnergy = frac * ((mat1.getDielectricBreakdownField() * r1) + (mat2.getDielectricBreakdownField() * r2));
       double current = 0.;
-      if(effDeltaV < -thresholdEnergy)
+      if (effDeltaV < -thresholdEnergy)
          /*
           * Pass the positive magnitude of effDeltaV/distance, but retain the
           * sign of the current.
           */
          current = -currentFromField(-effDeltaV / (r1 + r2));
-      else if(effDeltaV > thresholdEnergy)
+      else if (effDeltaV > thresholdEnergy)
          current = currentFromField(effDeltaV / (r1 + r2));
       return current;
    }
@@ -721,20 +726,27 @@ public class ThresholdConductionModel2
     * negative if the reverse. All corrections are made in the approximation
     * that the regions are spheres with radii as supplied.
     *
-    * @param n1 - Signed number of charges in region 1
-    * @param n2 - Signed number of charges in region 2
-    * @param r1 - effective radius of region 1
-    * @param r2 - effective radius of region 2
-    * @param eps1 - relative dielectric constant in region 1
-    * @param eps2 - relative dielectric constant in region 2
-    * @param deltaV - mean FEA potential in region 2 minus the mean potential in
+    * @param n1
+    *           - Signed number of charges in region 1
+    * @param n2
+    *           - Signed number of charges in region 2
+    * @param r1
+    *           - effective radius of region 1
+    * @param r2
+    *           - effective radius of region 2
+    * @param eps1
+    *           - relative dielectric constant in region 1
+    * @param eps2
+    *           - relative dielectric constant in region 2
+    * @param deltaV
+    *           - mean FEA potential in region 2 minus the mean potential in
     *           region 1
     * @return - the effective potential difference (including corrections).
     */
    private double effectivePotentialDifference(int n1, int n2, double r1, double r2, double eps1, double eps2, double deltaV) {
       final double PREFACTOR0 = PhysicalConstants.ElectronCharge / (20. * Math.PI * PhysicalConstants.PermittivityOfFreeSpace);
       double epsr;
-      if(eps1 == eps2)
+      if (eps1 == eps2)
          epsr = eps1;
       else
          epsr = ((eps1 * r1) + (eps2 * r2)) / (r1 + r2);
@@ -761,13 +773,13 @@ public class ThresholdConductionModel2
        * both directions of current are always possible, we would always choose
        * the larger r value, as in the final else statement.
        */
-      if(term1 > 0.) {
+      if (term1 > 0.) {
          double rchoice;
-         if((n1 >= 1) && (n2 >= 0)) // Only positive carrier out of region 1 is
-                                    // permitted
+         if ((n1 >= 1) && (n2 >= 0)) // Only positive carrier out of region 1 is
+                                     // permitted
             rchoice = r1;
-         else if((n1 <= 0) && (n2 <= 1)) // Only negative carrier out of region
-                                         // 2
+         else if ((n1 <= 0) && (n2 <= 1)) // Only negative carrier out of region
+                                          // 2
             rchoice = r2;
          else
             rchoice = r1 > r2 ? r1 : r2; // Both permitted so carrier from
@@ -777,11 +789,12 @@ public class ThresholdConductionModel2
          return effPot > 0. ? effPot : 0.;
       } else {
          double rchoice;
-         if((n1 <= -1) && (n2 <= 0)) // Only negative carrier out of region 1 is
-                                     // permitted
+         if ((n1 <= -1) && (n2 <= 0)) // Only negative carrier out of region 1
+                                      // is
+                                      // permitted
             rchoice = r1;
-         else if((n1 >= 0) && (n2 >= 1)) // Only positive carrier out of region
-                                         // 2
+         else if ((n1 >= 0) && (n2 >= 1)) // Only positive carrier out of region
+                                          // 2
             rchoice = r2;
          else
             rchoice = r1 > r2 ? r1 : r2; // Both permitted so carrier from
@@ -807,8 +820,8 @@ public class ThresholdConductionModel2
       final Tetrahedron tet = (Tetrahedron) tetRegion.getShape();
 
       double[] eField = tet.getEField();
-      for(int faceIndex = 0; faceIndex < 4; faceIndex++)
-         if(!currentAllowed(tetRegion, tet, faceIndex))
+      for (int faceIndex = 0; faceIndex < 4; faceIndex++)
+         if (!currentAllowed(tetRegion, tet, faceIndex))
             eField = perpendicularProjection(eField, tet.faceNormal(faceIndex));
       return eField;
    }
@@ -834,7 +847,7 @@ public class ThresholdConductionModel2
     */
    private boolean currentAllowed(MeshElementRegion tetRegion, Tetrahedron tet, int faceIndex) {
       final Tetrahedron nextTet = tet.adjacentTet(faceIndex);
-      if(nextTet == null) {
+      if (nextTet == null) {
          /*
           * Next region is outside the mesh. This is a rare case but must be
           * handled first because nextTet is null, so will not support the
@@ -844,17 +857,17 @@ public class ThresholdConductionModel2
          final double[] pos1 = Math2.plus(Math2.timesEquals(2. * MonteCarloSS.ChamberRadius, tet.faceNormal(faceIndex)), pos0);
          final RegionBase nextRegion = tetRegion.findEndOfStep(pos0, pos1);
          final double density = nextRegion.getMaterial().getDensity();
-         if(density >= DENSITY_THRESHOLD)
+         if (density >= DENSITY_THRESHOLD)
             return true;
          else
             return false;
-      } else if(tet.getTags()[0] == nextTet.getTags()[0])
+      } else if (tet.getTags()[0] == nextTet.getTags()[0])
          /*
           * The most common case. Tag[0] the same means material is the same.
           * Current is always allowed.
           */
          return true;
-      else if(tetMSM((MeshedRegion) tetRegion.getParent(), nextTet).getMaterial().getDensity() >= DENSITY_THRESHOLD)
+      else if (tetMSM((MeshedRegion) tetRegion.getParent(), nextTet).getMaterial().getDensity() >= DENSITY_THRESHOLD)
          /*
           * Materials are different but the new material is high density enough
           * to allow current.
@@ -885,7 +898,7 @@ public class ThresholdConductionModel2
     */
    private double[] faceCurrents(MeshElementRegion tetRegion, double[] eField0) {
       final double[] result = new double[4];
-      for(int faceIndex = 0; faceIndex < 4; faceIndex++)
+      for (int faceIndex = 0; faceIndex < 4; faceIndex++)
          result[faceIndex] = faceCurrent(tetRegion, eField0, faceIndex);
       return result;
    }
@@ -915,10 +928,10 @@ public class ThresholdConductionModel2
        * through which current is allowed.
        */
       double result = 0.;
-      if(currentAllowed(tetRegion, tet, faceIndex)) {
+      if (currentAllowed(tetRegion, tet, faceIndex)) {
          final Tetrahedron nextTet = tet.adjacentTet(faceIndex);
          double[] eField;
-         if(nextTet == null)
+         if (nextTet == null)
             /*
              * Here if this face is a boundary of the mesh. We're going to treat
              * such faces as though all current incident on them is conducted
@@ -964,21 +977,21 @@ public class ThresholdConductionModel2
     * one with probability proportional to the current.
     */
    private MeshElementRegion oneStep(MeshElementRegion startRegion, Mesh mesh, boolean positiveCharge) {
-      if(startRegion.isConstrained())
+      if (startRegion.isConstrained())
          return startRegion;
       // int elemNum = s.getIndex();
       /* Determine the material in this tet and its dielectric Strength */
       // final long tetMaterialTag = mesh.getTags(elemNum)[0];
       final SEmaterial tetMaterial = (SEmaterial) startRegion.getMaterial();
       double eThresh = tetMaterial.getDielectricBreakdownField();
-      if(eThresh >= Double.MAX_VALUE)
+      if (eThresh >= Double.MAX_VALUE)
          return startRegion;
       else
          eThresh *= frac;
 
       final double[] eField = correctedEField(startRegion);
       final double eMagSquared = Math2.dot(eField, eField);
-      if(eMagSquared < (eThresh * eThresh))
+      if (eMagSquared < (eThresh * eThresh))
          return startRegion;
 
       final double[] faceCurrents = faceCurrents(startRegion, eField);
@@ -995,15 +1008,15 @@ public class ThresholdConductionModel2
       int count = 0;
       int faceIndex = 0;
 
-      for(int i = 0; i < 4; i++) {
+      for (int i = 0; i < 4; i++) {
          final Tetrahedron nextTet = tet.adjacentTet(i);
          boolean chargeCanFlow;
-         if(positiveCharge)
+         if (positiveCharge)
             chargeCanFlow = (faceCurrents[i] > 0.) && ((nextTet == null) || (nextTet.getPotential(nextTet.getCenter()) < v0));
          else
             chargeCanFlow = (faceCurrents[i] < 0.) && ((nextTet == null) || (nextTet.getPotential(nextTet.getCenter()) > v0));
-         if(chargeCanFlow) {
-            if(!positiveCharge)
+         if (chargeCanFlow) {
+            if (!positiveCharge)
                faceCurrents[i] *= -1.;
             faceIndex = i;
             count++;
@@ -1016,17 +1029,17 @@ public class ThresholdConductionModel2
        * (E.g., the element straddles a potential extremum.) If this happens, we
        * just leave our charge here.
        */
-      if(count == 0)
+      if (count == 0)
          return startRegion;
       /*
        * If there's more than 1 candidate, we put the electron through one of
        * them with probability proportional to the face current.
        */
-      if(count > 1)
+      if (count > 1)
          faceIndex = randomPick(faceCurrents);
 
       final Tetrahedron nextTet = tet.adjacentTet(faceIndex);
-      if(nextTet == null)
+      if (nextTet == null)
          return null;
       final MeshedRegion parent = (MeshedRegion) (startRegion.getParent());
       final IMaterialScatterModel msm = tetMSM(parent, nextTet);
@@ -1037,8 +1050,10 @@ public class ThresholdConductionModel2
     * Computes (v.n)n where v and n are vectors and "." is the dot product. If n
     * is normalized, this is the projection of v in the n direction.
     *
-    * @param v - A vector
-    * @param n - A vector
+    * @param v
+    *           - A vector
+    * @param n
+    *           - A vector
     * @return
     */
    private double[] parallelProjection(double[] v, double[] n) {
@@ -1050,8 +1065,10 @@ public class ThresholdConductionModel2
     * If n is normalized, this is the projection of v onto the plane for which n
     * is the normal vector.
     *
-    * @param v - A vector
-    * @param n - A vector
+    * @param v
+    *           - A vector
+    * @param n
+    *           - A vector
     * @return
     */
    private double[] perpendicularProjection(double[] v, double[] n) {
@@ -1063,13 +1080,13 @@ public class ThresholdConductionModel2
 
       runningTotal[0] = x[0];
       final int len = x.length;
-      for(int i = 1; i < len; i++)
+      for (int i = 1; i < len; i++)
          runningTotal[i] = runningTotal[i - 1] + x[i];
 
       final double val = Math2.rgen.nextDouble() * runningTotal[len - 1];
 
       int pick = 0;
-      while(runningTotal[pick] < val)
+      while (runningTotal[pick] < val)
          pick++;
 
       return pick;
@@ -1081,10 +1098,11 @@ public class ThresholdConductionModel2
     * of this function and the dielectric breakdown field is obtained from the
     * SEmaterial that occupies the region.
     *
-    * @param frac The value to which to set frac.
+    * @param frac
+    *           The value to which to set frac.
     */
    public void setFrac(double frac) {
-      if(this.frac != frac)
+      if (this.frac != frac)
          this.frac = frac;
    }
 
@@ -1094,7 +1112,7 @@ public class ThresholdConductionModel2
    }
 
    public void setFEAInterval(int feaInterval) {
-      if(feaInterval > 0)
+      if (feaInterval > 0)
          this.feaInterval = feaInterval;
    }
 
@@ -1116,17 +1134,17 @@ public class ThresholdConductionModel2
       double[] x = new double[3];// debug
       double v = 0.;
       int id = 0;// debug
-      while(finalRegion != startRegion) {
+      while (finalRegion != startRegion) {
          startRegion = finalRegion;
          finalRegion = oneStep(startRegion, mesh, chargeIsPositive);
          count++;// debug
-         if(finalRegion == null)
+         if (finalRegion == null)
             return finalRegion;
          x = ((Tetrahedron) (finalRegion.getShape())).getCenter();// debug
          v = ((Tetrahedron) (finalRegion.getShape())).getPotential(x); // debug
          id = ((Tetrahedron) (finalRegion.getShape())).getIndex();// debug
 
-         if(count > 100) {
+         if (count > 100) {
             final int dummy;// debug
             dummy = 0;
          }
@@ -1138,8 +1156,10 @@ public class ThresholdConductionModel2
     * Utility to return the msm of a given tetrahedron. User supplies the tet
     * and the MeshedRegion that contains it.
     *
-    * @param parent - The MeshedRegion that contains the tet
-    * @param tet - the tetrahedron
+    * @param parent
+    *           - The MeshedRegion that contains the tet
+    * @param tet
+    *           - the tetrahedron
     * @return
     */
    private IMaterialScatterModel tetMSM(MeshedRegion parent, Tetrahedron tet) {
@@ -1158,8 +1178,7 @@ public class ThresholdConductionModel2
     * @author John Villarrubia
     * @version 1.0
     */
-   private class TetCurrentPair
-      implements Comparable<TetCurrentPair> {
+   private class TetCurrentPair implements Comparable<TetCurrentPair> {
       private final int tetID;
       private final double current;
 
@@ -1203,9 +1222,9 @@ public class ThresholdConductionModel2
       public int compareTo(TetCurrentPair other) {
          final double otherAbsCurrent = Math.abs(other.getCurrent());
          final double thisAbsCurrent = Math.abs(current);
-         if(thisAbsCurrent < otherAbsCurrent)
+         if (thisAbsCurrent < otherAbsCurrent)
             return -1;
-         else if(thisAbsCurrent > otherAbsCurrent)
+         else if (thisAbsCurrent > otherAbsCurrent)
             return 1;
          else
             return 0;
@@ -1276,18 +1295,18 @@ public class ThresholdConductionModel2
        */
       @Override
       public boolean equals(Object obj) {
-         if(this == obj)
+         if (this == obj)
             return true;
-         if(obj == null)
+         if (obj == null)
             return false;
-         if(getClass() != obj.getClass())
+         if (getClass() != obj.getClass())
             return false;
          final TetFace other = (TetFace) obj;
-         if(!getOuterType().equals(other.getOuterType()))
+         if (!getOuterType().equals(other.getOuterType()))
             return false;
-         if(leftTet != other.leftTet)
+         if (leftTet != other.leftTet)
             return false;
-         if(rightTet != other.rightTet)
+         if (rightTet != other.rightTet)
             return false;
          return true;
       }
@@ -1344,7 +1363,8 @@ public class ThresholdConductionModel2
       /**
        * Sets the value assigned to tetCount.
        *
-       * @param tetCount The value to which to set tetCount.
+       * @param tetCount
+       *           The value to which to set tetCount.
        */
       @SuppressWarnings("unused")
       public void setTetCount(int i, int tetCount) {
@@ -1354,7 +1374,8 @@ public class ThresholdConductionModel2
       /**
        * Appends new value assigned to tetCount.
        *
-       * @param tetCount The value to which to set tetCount.
+       * @param tetCount
+       *           The value to which to set tetCount.
        */
       public void addTetCount(int tetCount) {
          this.tetCount[nextTetCount] = tetCount;
@@ -1374,8 +1395,8 @@ public class ThresholdConductionModel2
       /**
        * Sets the value assigned to attemptedChargeFlowCount.
        *
-       * @param attemptedChargeFlowCount The value to which to set
-       *           attemptedChargeFlowCount.
+       * @param attemptedChargeFlowCount
+       *           The value to which to set attemptedChargeFlowCount.
        */
       @SuppressWarnings("unused")
       public void setAttemptedChargeFlowCount(int i, int attemptedChargeFlowCount) {
@@ -1385,8 +1406,8 @@ public class ThresholdConductionModel2
       /**
        * Appends new value assigned to attemptedChargeFlowCount.
        *
-       * @param attemptedChargeFlowCount The value to which to set
-       *           attemptedChargeFlowCount.
+       * @param attemptedChargeFlowCount
+       *           The value to which to set attemptedChargeFlowCount.
        */
       public void addAttemptedChargeFlowCount(int attemptedChargeFlowCount) {
          this.attemptedChargeFlowCount[nextAttemptedChargeFlowCount] = attemptedChargeFlowCount;
@@ -1406,8 +1427,8 @@ public class ThresholdConductionModel2
       /**
        * Sets the value assigned to successfulChargeFLowCount.
        *
-       * @param successfulChargeFLowCount The value to which to set
-       *           successfulChargeFLowCount.
+       * @param successfulChargeFLowCount
+       *           The value to which to set successfulChargeFLowCount.
        */
       @SuppressWarnings("unused")
       public void setSuccessfulChargeFlowCount(int i, int successfulChargeFlowCount) {
@@ -1418,8 +1439,8 @@ public class ThresholdConductionModel2
       /**
        * Appends new value assigned to successfulChargeFLowCount.
        *
-       * @param successfulChargeFLowCount The value to which to set
-       *           successfulChargeFLowCount.
+       * @param successfulChargeFLowCount
+       *           The value to which to set successfulChargeFLowCount.
        */
       public void addSuccessfulChargeFlowCount(int successfulChargeFlowCount) {
          this.successfulChargeFlowCount[nextSuccessfulChargeFlowCount] = successfulChargeFlowCount;
@@ -1439,7 +1460,8 @@ public class ThresholdConductionModel2
       /**
        * Sets the value assigned to maxCurrent.
        *
-       * @param maxCurrent The value to which to set maxCurrent.
+       * @param maxCurrent
+       *           The value to which to set maxCurrent.
        */
       @SuppressWarnings("unused")
       public void setMaxCurrent(int i, double maxCurrent) {
@@ -1449,7 +1471,8 @@ public class ThresholdConductionModel2
       /**
        * Appends new value assigned to maxCurrent.
        *
-       * @param maxCurrent The value to which to set maxCurrent.
+       * @param maxCurrent
+       *           The value to which to set maxCurrent.
        */
       public void addMaxCurrent(double maxCurrent) {
          this.maxCurrent[nextMaxCurrent] = maxCurrent;
@@ -1478,10 +1501,11 @@ public class ThresholdConductionModel2
        * Adds nodes to trackedNodes. Records the potential at the node at the
        * time it's added. Ignores the addition if the node is already tracked.
        *
-       * @param nodeNum - The index of the node to track
+       * @param nodeNum
+       *           - The index of the node to track
        */
       public void addTrackedNode(Integer nodeNum) {
-         if(!trackedNodes.containsKey(nodeNum) && (nodeNum > 0)) {
+         if (!trackedNodes.containsKey(nodeNum) && (nodeNum > 0)) {
             final ArrayList<Double> potentials = new ArrayList<Double>();
             potentials.add(mesh.getNodePotential(nodeNum));
             trackedNodes.put(nodeNum, potentials);
@@ -1511,11 +1535,13 @@ public class ThresholdConductionModel2
        * addition if the element is already tracked. Automatically adds this
        * element's nodes to trackedNodes.
        *
-       * @param elementNum - The index of the new element to track.
-       * @param q0 - The initial charge to record for this element.
+       * @param elementNum
+       *           - The index of the new element to track.
+       * @param q0
+       *           - The initial charge to record for this element.
        */
       public void addTrackedElement(Integer elementNum, Integer q0) {
-         if(!trackedElements.containsKey(elementNum)) {
+         if (!trackedElements.containsKey(elementNum)) {
             final ArrayList<Integer> qvalues = new ArrayList<Integer>();
             qvalues.add(q0);
             trackedElements.put(elementNum, qvalues);
@@ -1523,15 +1549,11 @@ public class ThresholdConductionModel2
             final Tetrahedron tet = Tetrahedron.getTetrahedron(mesh, elementNum);
             tet.updatePotentials();
             final double[] temp = tet.getEField();
-            final Double[] efield = new Double[] {
-               temp[0],
-               temp[1],
-               temp[2]
-            };
+            final Double[] efield = new Double[]{temp[0], temp[1], temp[2]};
             efields.add(efield);
             trackedElementFields.put(elementNum, efields);
             final int[] nodeList = mesh.getNodeIndices(elementNum);
-            for(final int n : nodeList)
+            for (final int n : nodeList)
                addTrackedNode(n);
          }
       }
@@ -1544,23 +1566,19 @@ public class ThresholdConductionModel2
        */
       public void trackedSnapShot() {
          final Set<Map.Entry<Integer, ArrayList<Integer>>> elements = trackedElements.entrySet();
-         for(final Map.Entry<Integer, ArrayList<Integer>> e : elements)
+         for (final Map.Entry<Integer, ArrayList<Integer>> e : elements)
             e.getValue().add(mesh.getChargeNumber(e.getKey()));
          final Set<Map.Entry<Integer, ArrayList<Double[]>>> fields = trackedElementFields.entrySet();
-         for(final Map.Entry<Integer, ArrayList<Double[]>> e : fields) {
+         for (final Map.Entry<Integer, ArrayList<Double[]>> e : fields) {
             final Tetrahedron tet = Tetrahedron.getTetrahedron(mesh, e.getKey());
             tet.updatePotentials();
             final double[] temp = tet.getEField();
-            final Double[] efield = new Double[] {
-               temp[0],
-               temp[1],
-               temp[2]
-            };
+            final Double[] efield = new Double[]{temp[0], temp[1], temp[2]};
             e.getValue().add(efield);
          }
 
          final Set<Map.Entry<Integer, ArrayList<Double>>> nodes = trackedNodes.entrySet();
-         for(final Map.Entry<Integer, ArrayList<Double>> n : nodes)
+         for (final Map.Entry<Integer, ArrayList<Double>> n : nodes)
             n.getValue().add(mesh.getNodePotential((n.getKey())));
       }
 

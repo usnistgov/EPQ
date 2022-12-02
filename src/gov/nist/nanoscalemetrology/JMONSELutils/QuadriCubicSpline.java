@@ -56,18 +56,15 @@ public class QuadriCubicSpline {
       this.mPoints = x2.length;
       this.lPoints = x3.length;
       this.kPoints = x4.length;
-      if(this.nPoints != y.length)
+      if (this.nPoints != y.length)
          throw new IllegalArgumentException("Arrays x1 and y-row are of different length " + this.nPoints + " " + y.length);
-      if(this.mPoints != y[0].length)
-         throw new IllegalArgumentException("Arrays x2 and y-column are of different length " + this.mPoints + " "
-               + y[0].length);
-      if(this.lPoints != y[0][0].length)
-         throw new IllegalArgumentException("Arrays x3 and y-column are of different length " + this.mPoints + " "
-               + y[0][0].length);
-      if(this.kPoints != y[0][0][0].length)
-         throw new IllegalArgumentException("Arrays x4 and y-column are of different length " + this.kPoints + " "
-               + y[0][0][0].length);
-      if((this.nPoints < 3) || (this.mPoints < 3) || (this.lPoints < 3) || (this.kPoints < 3))
+      if (this.mPoints != y[0].length)
+         throw new IllegalArgumentException("Arrays x2 and y-column are of different length " + this.mPoints + " " + y[0].length);
+      if (this.lPoints != y[0][0].length)
+         throw new IllegalArgumentException("Arrays x3 and y-column are of different length " + this.mPoints + " " + y[0][0].length);
+      if (this.kPoints != y[0][0][0].length)
+         throw new IllegalArgumentException("Arrays x4 and y-column are of different length " + this.kPoints + " " + y[0][0][0].length);
+      if ((this.nPoints < 3) || (this.mPoints < 3) || (this.lPoints < 3) || (this.kPoints < 3))
          throw new IllegalArgumentException("The tabulated 4D array must have a minimum size of 3 X 3 X 3 X 3");
 
       this.csm = new CubicSpline(this.nPoints);
@@ -79,18 +76,18 @@ public class QuadriCubicSpline {
 
       this.y = new double[this.nPoints][this.mPoints][this.lPoints][this.kPoints];
       this.d2ydx2 = new double[this.nPoints][this.mPoints][this.lPoints][this.kPoints];
-      for(int i = 0; i < this.nPoints; i++)
+      for (int i = 0; i < this.nPoints; i++)
          this.x1[i] = x1[i];
-      for(int j = 0; j < this.mPoints; j++)
+      for (int j = 0; j < this.mPoints; j++)
          this.x2[j] = x2[j];
-      for(int j = 0; j < this.lPoints; j++)
+      for (int j = 0; j < this.lPoints; j++)
          this.x3[j] = x3[j];
-      for(int j = 0; j < this.kPoints; j++)
+      for (int j = 0; j < this.kPoints; j++)
          this.x4[j] = x4[j];
-      for(int i = 0; i < this.nPoints; i++)
-         for(int j = 0; j < this.mPoints; j++)
-            for(int k = 0; k < this.lPoints; k++)
-               for(int l = 0; l < this.kPoints; l++)
+      for (int i = 0; i < this.nPoints; i++)
+         for (int j = 0; j < this.mPoints; j++)
+            for (int k = 0; k < this.lPoints; k++)
+               for (int l = 0; l < this.kPoints; l++)
                   this.y[i][j][k][l] = y[i][j][k][l];
    }
 
@@ -101,20 +98,20 @@ public class QuadriCubicSpline {
    public double interpolate(double xx1, double xx2, double xx3, double xx4) {
 
       final double[][][] yTempml = new double[this.mPoints][this.lPoints][this.kPoints];
-      for(int i = 0; i < this.nPoints; i++) {
-         for(int j = 0; j < this.mPoints; j++)
-            for(int k = 0; k < this.lPoints; k++)
-               for(int l = 0; l < this.kPoints; l++)
+      for (int i = 0; i < this.nPoints; i++) {
+         for (int j = 0; j < this.mPoints; j++)
+            for (int k = 0; k < this.lPoints; k++)
+               for (int l = 0; l < this.kPoints; l++)
                   yTempml[j][k][l] = y[i][j][k][l];
          this.tcsn[i].resetData(x2, x3, x4, yTempml);
       }
       final double[] yTempm = new double[nPoints];
 
-      for(int i = 0; i < nPoints; i++) {
-         if(this.derivCalculated)
+      for (int i = 0; i < nPoints; i++) {
+         if (this.derivCalculated)
             this.tcsn[i].setDeriv(d2ydx2[i]);
          yTempm[i] = this.tcsn[i].interpolate(xx2, xx3, xx4);
-         if(!this.derivCalculated)
+         if (!this.derivCalculated)
             d2ydx2[i] = this.tcsn[i].getDeriv();
       }
       derivCalculated = true;

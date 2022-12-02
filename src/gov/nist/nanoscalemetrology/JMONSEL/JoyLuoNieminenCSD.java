@@ -39,9 +39,7 @@ import gov.nist.microanalysis.NISTMonte.Electron;
  * @author John Villarrubia
  * @version 1.0
  */
-public class JoyLuoNieminenCSD
-   implements
-   SlowingDownAlg {
+public class JoyLuoNieminenCSD implements SlowingDownAlg {
 
    private Material mat;
 
@@ -68,12 +66,14 @@ public class JoyLuoNieminenCSD
     * JoyLuoNieminenCSD - Creates a continuous slowing down object for the
     * specified material.
     *
-    * @param mat - SEmaterial The material
-    * @param breakE - double The energy (in J) at which to switch between the
-    *           two approximations. May be no lower than work function + 1 eV
+    * @param mat
+    *           - SEmaterial The material
+    * @param breakE
+    *           - double The energy (in J) at which to switch between the two
+    *           approximations. May be no lower than work function + 1 eV
     */
    public JoyLuoNieminenCSD(SEmaterial mat, double breakE) {
-      if(breakE > (mat.getWorkfunction() + ToSI.eV(1.)))
+      if (breakE > (mat.getWorkfunction() + ToSI.eV(1.)))
          this.breakE = breakE;
       else
          throw new EPQFatalException("Supplied breakpoint energy is too small.");
@@ -84,13 +84,16 @@ public class JoyLuoNieminenCSD
     * JoyLuoNieminenCSD - Creates a continuous slowing down object for the
     * specified material.
     *
-    * @param mat - the material
-    * @param bh - the barrier height in Joules.
-    * @param breakE - The energy (in J) at which to switch between the two
+    * @param mat
+    *           - the material
+    * @param bh
+    *           - the barrier height in Joules.
+    * @param breakE
+    *           - The energy (in J) at which to switch between the two
     *           approximations. May be no lower than barrier height + 1 eV.
     */
    public JoyLuoNieminenCSD(Material mat, double bh, double breakE) {
-      if(breakE > (bh + ToSI.eV(1.)))
+      if (breakE > (bh + ToSI.eV(1.)))
          this.breakE = breakE;
       else
          throw new EPQFatalException("Supplied breakpoint energy is too small.");
@@ -101,8 +104,10 @@ public class JoyLuoNieminenCSD
     * setMaterial - Sets the material, residual energy loss rate, work function
     * for which losses are to be computed.
     *
-    * @param mat - the material
-    * @param bh - the barrier height (min kinetic energy to escape) in Joules.
+    * @param mat
+    *           - the material
+    * @param bh
+    *           - the barrier height (min kinetic energy to escape) in Joules.
     */
    public void setMaterial(Material mat, double bh) {
       this.mat = mat.clone();
@@ -115,7 +120,8 @@ public class JoyLuoNieminenCSD
     * work function is taken from the properties of the supplied (SEmaterial)
     * argument.
     *
-    * @param mat - the material
+    * @param mat
+    *           - the material
     */
    @Override
    public void setMaterial(SEmaterial mat) {
@@ -130,28 +136,28 @@ public class JoyLuoNieminenCSD
     */
    private void init() {
       nce = mat.getElementCount();
-      if(nce == 0)
+      if (nce == 0)
          return;
       recipJ = new double[nce];
       coef = new double[nce];
       beta = new double[nce];
       bhplus1eV = bh + ToSI.eV(1.);
-      if(breakE < bhplus1eV)
+      if (breakE < bhplus1eV)
          breakE = bhplus1eV;
       final Object[] el = mat.getElementSet().toArray();
       /* Why can't I cast the above array to Element[]? */
-      for(int i = 0; i < nce; i++) {
-         recipJ[i] = 1.166
-               / (((Element) el[i]).getAtomicNumber() < 13 ? MeanIonizationPotential.Wilson41.compute((Element) el[i])
-                     : MeanIonizationPotential.Sternheimer64.compute((Element) el[i]));
+      for (int i = 0; i < nce; i++) {
+         recipJ[i] = 1.166 / (((Element) el[i]).getAtomicNumber() < 13
+               ? MeanIonizationPotential.Wilson41.compute((Element) el[i])
+               : MeanIonizationPotential.Sternheimer64.compute((Element) el[i]));
          beta[i] = 1. - (recipJ[i] * bhplus1eV);
          /*
           * The constant in the following expression is in units of J^2 m^2/kg.
           * It is appropriate for density in kg/m^3, energy in Joules, and
           * resulting continuous energy loss in J/m.
           */
-         coef[i] = (2.01507E-28 * mat.getDensity() * mat.weightFraction((Element) el[i], true)
-               * ((Element) el[i]).getAtomicNumber()) / ((Element) el[i]).getAtomicWeight();
+         coef[i] = (2.01507E-28 * mat.getDensity() * mat.weightFraction((Element) el[i], true) * ((Element) el[i]).getAtomicNumber())
+               / ((Element) el[i]).getAtomicWeight();
       }
       /*
        * In the original MONSEL, the CSD routine knows the minEforTracking and
@@ -164,7 +170,7 @@ public class JoyLuoNieminenCSD
 
       // Determine the proportionality constant
       gamma = 0.;
-      for(int i = 0; i < nce; i++)
+      for (int i = 0; i < nce; i++)
          gamma += coef[i] * Math.log((recipJ[i] * breakE) + beta[i]);
       gamma /= Math.pow(breakE, 3.5);
    }
@@ -175,8 +181,10 @@ public class JoyLuoNieminenCSD
     * compute - Computes the energy change for an electron that starts with
     * energy kE and moves a distance len.
     *
-    * @param len - the distance of travel for which to compute the loss.
-    * @param pe - the Electron object
+    * @param len
+    *           - the distance of travel for which to compute the loss.
+    * @param pe
+    *           - the Electron object
     * @return - returns the energy lost by the electron in this step.
     */
    @Override
@@ -190,22 +198,22 @@ public class JoyLuoNieminenCSD
        * No energy loss in vacuum, and don't waste time on any with energy
        * already low enough to be dropped.
        */
-      if((nce == 0) || (kE < minEforTracking) || (kE <= 0.))
+      if ((nce == 0) || (kE < minEforTracking) || (kE <= 0.))
          return 0.;
       /*
        * For energies below the break use the Nieminen formula, which can be
        * integrated exactly to give the energy loss for distance len.
        */
-      if(kE <= breakE)
+      if (kE <= breakE)
          return (kE / Math.pow(1. + (1.5 * gamma * len * kE * Math.sqrt(kE)), 2. / 3.)) - kE;
 
       // Otherwise, Joy/Luo formula
       double loss = 0.;
-      for(int i = 0; i < nce; i++)
+      for (int i = 0; i < nce; i++)
          loss += coef[i] * Math.log((recipJ[i] * kE) + beta[i]);
       loss *= len / kE;
 
-      if(loss <= (maxlossfraction * kE))
+      if (loss <= (maxlossfraction * kE))
          return -loss;
 
       /*
@@ -226,7 +234,8 @@ public class JoyLuoNieminenCSD
    /**
     * Sets the
     *
-    * @param breakE The breakE to set.
+    * @param breakE
+    *           The breakE to set.
     */
    public void setBreakE(double breakE) {
       this.breakE = breakE;
@@ -242,7 +251,6 @@ public class JoyLuoNieminenCSD
     */
    @Override
    public String toString() {
-      return "JoyLuoNieminenCSD(" + mat.toString() + "," + Double.valueOf(bh).toString() + "," + Double.valueOf(breakE).toString()
-            + ")";
+      return "JoyLuoNieminenCSD(" + mat.toString() + "," + Double.valueOf(bh).toString() + "," + Double.valueOf(breakE).toString() + ")";
    }
 }

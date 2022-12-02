@@ -105,18 +105,18 @@ public class GnuplotFile {
    }
 
    private double scale(double x, boolean up) {
-      if(x < 1.0e-6)
+      if (x < 1.0e-6)
          return x;
       final double den = Math.pow(10.0, Math.floor(Math.log10(x)));
-      if(up)
+      if (up)
          return (den * Math.ceil((10.0 * x) / den)) / 10.0;
       else
          return (den * Math.floor((10.0 * x) / den)) / 10.0;
    }
 
    private double transformY(double ii, double maxY, double minY, int i) {
-      if(mStagger) {
-         if(mLogY) {
+      if (mStagger) {
+         if (mLogY) {
             final double k = Math.pow(10.0, (Math.log10(maxY) - Math.log10(minY)) * STAGGER_Y);
             return ii * (1.0 + (i * k));
          } else
@@ -129,35 +129,34 @@ public class GnuplotFile {
       return mStagger ? xx + (i * dx) : xx;
    }
 
-   public void write(PrintWriter pw)
-         throws IOException {
+   public void write(PrintWriter pw) throws IOException {
       final boolean isLatex = mTerminal.startsWith("latex");
       final NumberFormat nf = new HalfUpFormat("0.0");
       double minX = mXMin, maxX = mXMax;
-      if(mAutoX) {
+      if (mAutoX) {
          minX = 0.0;
          maxX = 1.0e3; // eV
-         for(final ISpectrumData spec : mSpectra) {
+         for (final ISpectrumData spec : mSpectra) {
             final double max = SpectrumUtils.maxEnergyForChannel(spec, SpectrumUtils.maxChannel(spec));
-            if(max > maxX)
+            if (max > maxX)
                maxX = max;
          }
       }
-      if(mStagger)
+      if (mStagger)
          maxX += (mSpectra.size() - 1) * (maxX - minX) * STAGGER_X;
       minX = scale(minX, false);
       maxX = scale(maxX, true);
       double minY = mYMin, maxY = mYMax;
-      if(mAutoY) {
+      if (mAutoY) {
          minY = 0.0;
          maxY = 16.0;
-         for(final ISpectrumData spec : mSpectra) {
+         for (final ISpectrumData spec : mSpectra) {
             final double max = spec.getCounts(SpectrumUtils.maxChannel(spec));
-            if(max > maxY)
+            if (max > maxY)
                maxY = max;
          }
       }
-      if(mStagger)
+      if (mStagger)
          maxY += (mSpectra.size() - 1) * (maxY - minY) * STAGGER_Y;
       minY = scale(minY, false);
       maxY = scale(maxY, true);
@@ -166,34 +165,31 @@ public class GnuplotFile {
       {
          final TreeSet<KLMLine> lines = new TreeSet<KLMLine>();
          lines.addAll(mLines.keySet());
-         while(!lines.isEmpty()) {
+         while (!lines.isEmpty()) {
             final TreeSet<KLMLine> fam = new TreeSet<KLMLine>();
             final KLMLine l = lines.first();
-            for(final KLMLine klm : lines) {
+            for (final KLMLine klm : lines) {
                final AtomicShell ks = klm.getShell();
                final AtomicShell ls = l.getShell();
-               if(ks.getElement().equals(ls.getElement()) && (ks.getFamily() == ls.getFamily()))
+               if (ks.getElement().equals(ls.getElement()) && (ks.getFamily() == ls.getFamily()))
                   fam.add(klm);
             }
             KLMLine mi = fam.first();
-            for(final KLMLine klm : fam)
-               if(klm.getAmplitude() > mi.getAmplitude())
+            for (final KLMLine klm : fam)
+               if (klm.getAmplitude() > mi.getAmplitude())
                   mi = klm;
             double maxI = 0.0;
-            for(final ISpectrumData spec : mSpectra) {
+            for (final ISpectrumData spec : mSpectra) {
                final int ch = SpectrumUtils.channelForEnergy(spec, FromSI.eV(mi.getEnergy()));
-               for(int j = (ch - 5) >= 0 ? ch - 5 : 0; j < (ch + 5); j++)
-                  if(j < spec.getChannelCount()) {
+               for (int j = (ch - 5) >= 0 ? ch - 5 : 0; j < (ch + 5); j++)
+                  if (j < spec.getChannelCount()) {
                      final double cc = spec.getCounts(j);
-                     if(cc > maxI)
+                     if (cc > maxI)
                         maxI = cc;
                   }
             }
-            for(final KLMLine klm : fam)
-               displayed.put(new double[] {
-                  maxI * (klm.getAmplitude() / mi.getAmplitude()),
-                  klm.getEnergy()
-               }, mLines.get(klm));
+            for (final KLMLine klm : fam)
+               displayed.put(new double[]{maxI * (klm.getAmplitude() / mi.getAmplitude()), klm.getEnergy()}, mLines.get(klm));
             lines.removeAll(fam);
          }
       }
@@ -203,17 +199,17 @@ public class GnuplotFile {
       pw.println("# NOTE: TO SAVE FILES AS ENCAPSULATED POST SCRIPT FILES, OR AS OTHER FILE FORMATS,");
       pw.println("#     COMMENT OUT THE \"TERMINAL WINDOW\" SECTION, SET THE TERMINAL AS");
       pw.println("#     THE CHOSEN TYPE, AND SET THE OUTPUT.");
-      if(!mTerminal.startsWith("post"))
+      if (!mTerminal.startsWith("post"))
          pw.println("# set terminal postscript enhanced \"Times-Roman\" 12");
-      if(!mTerminal.startsWith("png"))
+      if (!mTerminal.startsWith("png"))
          pw.println("# set terminal png");
-      if(!mTerminal.startsWith("window"))
+      if (!mTerminal.startsWith("window"))
          pw.println("# set terminal window");
-      if(mTerminal.startsWith("latex"))
+      if (mTerminal.startsWith("latex"))
          pw.println("set size 1.2, 0.6");
-      if(mTerminal.length() > 0)
+      if (mTerminal.length() > 0)
          pw.println("set terminal " + mTerminal);
-      if(mLogY) {
+      if (mLogY) {
          pw.println("unset logscale x");
          pw.println("set logscale y");
          minY = 1.0;
@@ -232,7 +228,7 @@ public class GnuplotFile {
       pw.print(nf.format(maxY));
       pw.println("]");
       // Energy label
-      if(mTerminal.equalsIgnoreCase("window")) {
+      if (mTerminal.equalsIgnoreCase("window")) {
          pw.println("set xlabel \"(Energy) eV\" font \"Arial,16\"");
          pw.println("set ylabel \"\" font \"Arial,16\"");
       } else {
@@ -244,12 +240,12 @@ public class GnuplotFile {
       // Add klm labels
       int i = 1;
       pw.println("unset label");
-      for(final Map.Entry<double[], String> klm : displayed.entrySet()) {
+      for (final Map.Entry<double[], String> klm : displayed.entrySet()) {
          // Add a label
          pw.println("# " + klm.getValue());
          pw.print("set label ");
          pw.print(i);
-         if(mTerminal.startsWith("latex")) {
+         if (mTerminal.startsWith("latex")) {
             pw.print(" \"{\\\\tiny ");
             pw.print(klm.getValue());
             pw.print("}\" at first ");
@@ -268,10 +264,10 @@ public class GnuplotFile {
       }
       i = 0;
       // Plot spectra
-      for(final String title : mTitles) {
+      for (final String title : mTitles) {
          pw.print(i == 0 ? "plot " : ", ");
          pw.print("\"-\" with lines ");
-         if(isLatex)
+         if (isLatex)
             pw.print("lt -1");
          pw.print(" title \"");
          pw.print(title);
@@ -279,16 +275,16 @@ public class GnuplotFile {
          ++i;
       }
       // This is the klm lines
-      if(displayed.size() > 0)
+      if (displayed.size() > 0)
          pw.print(", \"-\" with impulses lt -1 notitle");
       pw.println();
       // Add the spectrum data...
       i = 0;
-      for(final ISpectrumData spec : mSpectra) {
+      for (final ISpectrumData spec : mSpectra) {
          pw.println("# " + spec.toString());
          final int minCh = SpectrumUtils.bound(spec, SpectrumUtils.channelForEnergy(spec, minX));
          final int maxCh = SpectrumUtils.bound(spec, SpectrumUtils.channelForEnergy(spec, maxX));
-         for(int ch = minCh; ch < maxCh; ++ch) {
+         for (int ch = minCh; ch < maxCh; ++ch) {
             pw.print(nf.format(transformX(SpectrumUtils.avgEnergyForChannel(spec, ch), (maxX - minX) * STAGGER_X, i)));
             pw.print(", ");
             pw.println(nf.format(transformY(spec.getCounts(ch), maxY, minY, i)));
@@ -297,11 +293,11 @@ public class GnuplotFile {
          ++i;
       }
       // Add klm line positions
-      if(displayed.size() > 0) {
-         for(final Map.Entry<double[], String> klm : displayed.entrySet()) {
+      if (displayed.size() > 0) {
+         for (final Map.Entry<double[], String> klm : displayed.entrySet()) {
             final double[] value = klm.getKey();
             final double e = FromSI.eV(value[1]);
-            if((e > minX) && (e < maxX)) {
+            if ((e > minX) && (e < maxX)) {
                pw.println("# " + klm.getValue());
                pw.print(nf.format(e));
                pw.print(", ");
@@ -323,7 +319,7 @@ public class GnuplotFile {
 
    public void setXRange(double xMin, double xMax) {
       mAutoX = false;
-      if(xMin > xMax) {
+      if (xMin > xMax) {
          final double tmp = xMin;
          xMin = xMax;
          xMax = tmp;
@@ -334,7 +330,7 @@ public class GnuplotFile {
 
    public void setYRange(double yMin, double yMax) {
       mAutoY = false;
-      if(yMin > yMax) {
+      if (yMin > yMax) {
          final double tmp = yMin;
          yMin = yMax;
          yMax = tmp;
@@ -352,9 +348,9 @@ public class GnuplotFile {
    }
 
    static public void setGnuPlotPath(String path) {
-      if(!path.equals(mGnuPlotPath)) {
+      if (!path.equals(mGnuPlotPath)) {
          final File gnuPlot = new File(path);
-         if(gnuPlot.exists()) {
+         if (gnuPlot.exists()) {
             mGnuPlotPath = path;
             final Preferences pref = Preferences.userNodeForPackage(GnuplotFile.class);
             pref.put(GNU_PLOT, mGnuPlotPath);
@@ -366,7 +362,7 @@ public class GnuplotFile {
       final StringBuffer res = new StringBuffer();
       int begin = 0;
       int end = path.indexOf("\\", 0);
-      while(end >= 0) {
+      while (end >= 0) {
          res.append(path.substring(begin, end));
          res.append("/");
          begin = end + 1;
@@ -380,18 +376,19 @@ public class GnuplotFile {
     * Generate a file by generating a temporary GNUPlot script then executing
     * the script using the static path to GnuPlot.
     * 
-    * @param file A file into which to generate the output
-    * @param terminal A string containing the identifier of one of the GNUPlot
+    * @param file
+    *           A file into which to generate the output
+    * @param terminal
+    *           A string containing the identifier of one of the GNUPlot
     *           supported terminal devices.
     * @throws IOException
     */
-   public void generate(File file, String terminal)
-         throws EPQException, IOException {
+   public void generate(File file, String terminal) throws EPQException, IOException {
       mTerminal = terminal;
       final File newFile = File.createTempFile("gnuPlot", ".plt");
       {
          try (final PrintWriter pw = new PrintWriter(newFile, CHAR_SET)) {
-            if(!terminal.equalsIgnoreCase("window"))
+            if (!terminal.equalsIgnoreCase("window"))
                pw.println("set output \'" + gnuize(file.getCanonicalPath()) + "\'");
             write(pw);
             pw.println();
@@ -400,20 +397,16 @@ public class GnuplotFile {
       }
 
       final File gnuPlot = new File(mGnuPlotPath);
-      if(gnuPlot.exists()) {
-         final String[] cmds = new String[] {
-            gnuPlot.getCanonicalPath(),
-            newFile.getCanonicalPath()
-         };
+      if (gnuPlot.exists()) {
+         final String[] cmds = new String[]{gnuPlot.getCanonicalPath(), newFile.getCanonicalPath()};
          final Process p = Runtime.getRuntime().exec(cmds, null, gnuPlot.getParentFile());
          try {
             p.waitFor();
             newFile.deleteOnExit();
-         }
-         catch(final InterruptedException e) {
+         } catch (final InterruptedException e) {
             throw new EPQException("Taking too long to process " + newFile.getAbsolutePath());
          }
-         if(p.exitValue() != 0)
+         if (p.exitValue() != 0)
             throw new EPQException("Unable to generate output for " + newFile.getAbsolutePath());
       }
    }
@@ -422,11 +415,11 @@ public class GnuplotFile {
     * Generate a file by generating a temporary GNUPlot script then executing
     * the script using the static path to GnuPlot.
     * 
-    * @param file A file into which to generate the output
+    * @param file
+    *           A file into which to generate the output
     * @throws IOException
     */
-   public void generateLatex(File file)
-         throws EPQException, IOException {
+   public void generateLatex(File file) throws EPQException, IOException {
       generate(file, "latex");
    }
 
@@ -434,12 +427,13 @@ public class GnuplotFile {
     * Generate a file by generating a temporary GNUPlot script then executing
     * the script using the static path to GnuPlot.
     * 
-    * @param file A file into which to generate the output
-    * @param options PNG options to apply following "set terminal PNG "
+    * @param file
+    *           A file into which to generate the output
+    * @param options
+    *           PNG options to apply following "set terminal PNG "
     * @throws IOException
     */
-   public void generatePNG(File file, String options)
-         throws EPQException, IOException {
+   public void generatePNG(File file, String options) throws EPQException, IOException {
       generate(file, "png " + options);
    }
 
@@ -447,12 +441,13 @@ public class GnuplotFile {
     * Generate a file by generating a temporary GNUPlot script then executing
     * the script using the static path to GnuPlot.
     * 
-    * @param file A file into which to generate the output
-    * @param options PNG options to apply following "set terminal PNG "
+    * @param file
+    *           A file into which to generate the output
+    * @param options
+    *           PNG options to apply following "set terminal PNG "
     * @throws IOException
     */
-   public void generatePostscript(File file, String options)
-         throws EPQException, IOException {
+   public void generatePostscript(File file, String options) throws EPQException, IOException {
       generate(file, "postscript " + options);
    }
 
@@ -468,7 +463,8 @@ public class GnuplotFile {
    /**
     * Sets the value assigned to terminal.
     * 
-    * @param terminal The value to which to set terminal.
+    * @param terminal
+    *           The value to which to set terminal.
     */
    public void setTerminal(String terminal) {
       mTerminal = terminal;
@@ -488,7 +484,8 @@ public class GnuplotFile {
     * Determines whether the multiple spectra are drawn in a right diagonal
     * stairstep pattern.
     * 
-    * @param stagger The value to which to set stagger.
+    * @param stagger
+    *           The value to which to set stagger.
     */
    public void setStagger(boolean stagger) {
       mStagger = stagger;

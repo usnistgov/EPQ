@@ -26,9 +26,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * @version 1.0
  */
 
-public class XRayWindow3
-   implements
-   IXRayWindowProperties {
+public class XRayWindow3 implements IXRayWindowProperties {
 
    private String mName;
    private final SpectrumProperties mProperties;
@@ -52,12 +50,13 @@ public class XRayWindow3
     * Plotted input resource against XRayWindow2.transmission(..) and they
     * agree. 19-Feb-2008
     * 
-    * @param resourceName "AP3_3.csv" or similar
-    * @param sp SpectrumProperties associated with the Window
+    * @param resourceName
+    *           "AP3_3.csv" or similar
+    * @param sp
+    *           SpectrumProperties associated with the Window
     * @throws EPQException
     */
-   public XRayWindow3(String resourceName, SpectrumProperties sp)
-         throws EPQException {
+   public XRayWindow3(String resourceName, SpectrumProperties sp) throws EPQException {
       mProperties = sp.clone();
       mResourceName = resourceName;
    }
@@ -69,10 +68,10 @@ public class XRayWindow3
 
    @Override
    public double transmission(double energy) {
-      if(mTransmission == null)
+      if (mTransmission == null)
          loadTransmission();
       int ch = Arrays.binarySearch(mEnergy, energy);
-      if(ch < 0)
+      if (ch < 0)
          ch = -ch - 1;
       return mTransmission[Math.min(ch, mTransmission.length - 1)];
    }
@@ -99,7 +98,8 @@ public class XRayWindow3
    /**
     * setName
     * 
-    * @param name (non-Javadoc)
+    * @param name
+    *           (non-Javadoc)
     * @see gov.nist.microanalysis.EPQLibrary.Detector.IXRayWindowProperties#setName(java.lang.String)
     */
    @Override
@@ -127,29 +127,29 @@ public class XRayWindow3
 
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE)
+      if (mHash == Integer.MAX_VALUE)
          mHash = Objects.hash(mProperties, mName, mResourceName);
       return mHash;
    }
 
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final XRayWindow3 other = (XRayWindow3) obj;
-      if(!Arrays.equals(mEnergy, other.mEnergy))
+      if (!Arrays.equals(mEnergy, other.mEnergy))
          return false;
-      if(!Arrays.equals(mTransmission, other.mTransmission))
+      if (!Arrays.equals(mTransmission, other.mTransmission))
          return false;
-      if(!Objects.equals(mName, other.mName))
+      if (!Objects.equals(mName, other.mName))
          return false;
-      if(!Objects.equals(mResourceName, other.mResourceName))
+      if (!Objects.equals(mResourceName, other.mResourceName))
          return false;
-      if(!Objects.equals(mProperties, other.mProperties))
+      if (!Objects.equals(mProperties, other.mProperties))
          return false;
       return true;
    }

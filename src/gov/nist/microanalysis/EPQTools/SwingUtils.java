@@ -26,7 +26,8 @@ public class SwingUtils {
    private static final Color createLineColor() {
       final Color c1 = SystemColor.controlShadow;
       final Color c2 = SystemColor.control;
-      return new Color(balance(c1.getRed(), c2.getRed()), balance(c1.getGreen(), c2.getGreen()), balance(c1.getBlue(), c2.getBlue()), balance(c1.getAlpha(), c2.getAlpha()));
+      return new Color(balance(c1.getRed(), c2.getRed()), balance(c1.getGreen(), c2.getGreen()), balance(c1.getBlue(), c2.getBlue()),
+            balance(c1.getAlpha(), c2.getAlpha()));
    }
 
    public static TitledBorder createTitledBorder(String name) {

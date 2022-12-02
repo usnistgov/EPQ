@@ -11,8 +11,7 @@ import gov.nist.nanoscalemetrology.JMONSEL.NormalMultiPlaneShape;
 /**
  * @author jvillar
  */
-public class NormalMultiPlaneShapeTiming
-   extends MultiPlaneShape {
+public class NormalMultiPlaneShapeTiming extends MultiPlaneShape {
 
    public static double timetest(long repeats) {
       long t0; // Start time
@@ -21,60 +20,12 @@ public class NormalMultiPlaneShapeTiming
 
       // Create a 6-plane figure for testing.
       final NormalMultiPlaneShape s = new NormalMultiPlaneShape();
-      s.addPlane(new double[] {
-         0.,
-         0.,
-         1.
-      }, new double[] {
-         0.,
-         0.,
-         1.
-      });
-      s.addPlane(new double[] {
-         0.,
-         0.,
-         -1.
-      }, new double[] {
-         0.,
-         0.,
-         -1.
-      });
-      s.addPlane(new double[] {
-         0.,
-         1.,
-         0.
-      }, new double[] {
-         0.,
-         1.,
-         0.
-      });
-      s.addPlane(new double[] {
-         0.,
-         -1.,
-         0.
-      }, new double[] {
-         0.,
-         -1.,
-         0.
-      });
-      s.addPlane(new double[] {
-         1.,
-         0.,
-         0.
-      }, new double[] {
-         1.,
-         0.,
-         0.
-      });
-      s.addPlane(new double[] {
-         -1.,
-         0.,
-         0.
-      }, new double[] {
-         -1.,
-         0.,
-         0.
-      });
+      s.addPlane(new double[]{0., 0., 1.}, new double[]{0., 0., 1.});
+      s.addPlane(new double[]{0., 0., -1.}, new double[]{0., 0., -1.});
+      s.addPlane(new double[]{0., 1., 0.}, new double[]{0., 1., 0.});
+      s.addPlane(new double[]{0., -1., 0.}, new double[]{0., -1., 0.});
+      s.addPlane(new double[]{1., 0., 0.}, new double[]{1., 0., 0.});
+      s.addPlane(new double[]{-1., 0., 0.}, new double[]{-1., 0., 0.});
 
       // Repeatedly execute the routine
       @SuppressWarnings("unused")
@@ -83,31 +34,19 @@ public class NormalMultiPlaneShapeTiming
       final double result1;
 
       double[] pos0;
-      double[] pos1 = {
-         (Math.random() * 4.) - 2.,
-         (Math.random() * 4.) - 2.,
-         (Math.random() * 4.) - 2
-      };
+      double[] pos1 = {(Math.random() * 4.) - 2., (Math.random() * 4.) - 2., (Math.random() * 4.) - 2};
       t0 = System.currentTimeMillis();
 
-      for(long i = 0; i < repeats; i++) {
+      for (long i = 0; i < repeats; i++) {
          pos0 = pos1;
-         pos1 = new double[] {
-            (Math.random() * 4.) - 2.,
-            (Math.random() * 4.) - 2.,
-            (Math.random() * 4.) - 2
-         };
+         pos1 = new double[]{(Math.random() * 4.) - 2., (Math.random() * 4.) - 2., (Math.random() * 4.) - 2};
          result = s.getFirstNormal(pos0, pos1);
       }
 
       tint = System.currentTimeMillis();
-      for(long i = 0; i < repeats; i++) {
+      for (long i = 0; i < repeats; i++) {
          pos0 = pos1;
-         pos1 = new double[] {
-            (Math.random() * 4.) - 2.,
-            (Math.random() * 4.) - 2.,
-            (Math.random() * 4.) - 2
-         };
+         pos1 = new double[]{(Math.random() * 4.) - 2., (Math.random() * 4.) - 2., (Math.random() * 4.) - 2};
       }
 
       /*

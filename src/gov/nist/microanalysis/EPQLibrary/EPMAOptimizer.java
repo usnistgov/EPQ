@@ -65,8 +65,7 @@ abstract public class EPMAOptimizer {
     * @author Nicholas
     * @version 1.0
     */
-   public class OptimizedStandard
-      implements Comparable<OptimizedStandard> {
+   public class OptimizedStandard implements Comparable<OptimizedStandard> {
       private final Composition mStandard;
       protected double mScore;
       private final RegionOfInterestSet.RegionOfInterest mRoi;
@@ -76,12 +75,15 @@ abstract public class EPMAOptimizer {
        * Constructs a OptimizedStandard associated with the specified
        * Composition
        * 
-       * @param std The Composition of the standard
-       * @param region The single element ROI with which the standard is
-       *           associated.
-       * @param score The quality metric associated with the standard (higher
-       *           are better)
-       * @param sp Spectrum properties defining the conditions under which the
+       * @param std
+       *           The Composition of the standard
+       * @param region
+       *           The single element ROI with which the standard is associated.
+       * @param score
+       *           The quality metric associated with the standard (higher are
+       *           better)
+       * @param sp
+       *           Spectrum properties defining the conditions under which the
        *           standard was collected.
        * @throws EPQException
        */
@@ -120,7 +122,7 @@ abstract public class EPMAOptimizer {
          sb.append("<h2>" + mStandard.getName() + "</h2>");
          sb.append("<table><tr><th>Element</th><th>Mass<br>Fraction</th><th>Atomic<br>Fraction</th></tr>");
          final HalfUpFormat nf = new HalfUpFormat("0.0000");
-         for(final Element elm : mStandard.getSortedElements()) {
+         for (final Element elm : mStandard.getSortedElements()) {
             sb.append("<tr><td>" + elm.toAbbrev() + "</td>");
             sb.append("<td>" + nf.format(mStandard.weightFraction(elm, false)) + "</td>");
             sb.append("<td>" + nf.format(mStandard.atomicPercent(elm)) + "</td></tr>");
@@ -152,8 +154,8 @@ abstract public class EPMAOptimizer {
        * @return RegionOfInterest
        */
       public RegionOfInterest getAllElementROI() {
-         for(final RegionOfInterest roi : getAllElementROIS())
-            if(roi.fullyContains(mRoi))
+         for (final RegionOfInterest roi : getAllElementROIS())
+            if (roi.fullyContains(mRoi))
                return roi;
          assert false;
          return null;
@@ -163,8 +165,8 @@ abstract public class EPMAOptimizer {
          final RegionOfInterestSet rois = LinearSpectrumFit.createElementROIS(elm, mDetector, getBeamEnergy());
          final List<RegionOfInterest> res = new ArrayList<RegionOfInterestSet.RegionOfInterest>();
          final RegionOfInterest allElmRoi = getAllElementROI();
-         for(final RegionOfInterest roi : rois)
-            if(roi.intersects(allElmRoi))
+         for (final RegionOfInterest roi : rois)
+            if (roi.intersects(allElmRoi))
                res.add(roi);
          return res;
       }
@@ -189,11 +191,11 @@ abstract public class EPMAOptimizer {
       @Override
       public int compareTo(OptimizedStandard o) {
          int res = -Double.compare(mScore, o.mScore);
-         if(res == 0)
+         if (res == 0)
             res = mRoi.compareTo(o.mRoi);
-         if(res == 0)
+         if (res == 0)
             res = mStandard.compareTo(o.mStandard);
-         if(res == 0)
+         if (res == 0)
             res = Double.compare(getBeamEnergy(), o.getBeamEnergy());
          return res;
       }
@@ -252,8 +254,10 @@ abstract public class EPMAOptimizer {
     * Constructs a EPMAOptimizer to optimize the measurement of a mateial with
     * the estimated composition on the specified detector.
     * 
-    * @param det An EDSDetector
-    * @param estComp The estimated composition of the unknown.
+    * @param det
+    *           An EDSDetector
+    * @param estComp
+    *           The estimated composition of the unknown.
     */
    public EPMAOptimizer(EDSDetector det, Composition estComp) {
       mDetector = det;
@@ -301,44 +305,45 @@ abstract public class EPMAOptimizer {
     * Returns a sorted List of OptimizedStandard objects for the specified
     * element.
     * 
-    * @param elm The Element to get standards for
-    * @param sp SpectrumProperties object containing at a minimum the BeamEnergy
+    * @param elm
+    *           The Element to get standards for
+    * @param sp
+    *           SpectrumProperties object containing at a minimum the BeamEnergy
     * @return List&lt;OptimizedStandard&gt;
     * @throws EPQException
     */
-   abstract public List<OptimizedStandard> getOptimizedStandards(Element elm, SpectrumProperties sp)
-         throws EPQException;
+   abstract public List<OptimizedStandard> getOptimizedStandards(Element elm, SpectrumProperties sp) throws EPQException;
 
    /**
     * Suggests Composition objects which are suitable for use as references for
     * the specified single element RegionOfInterest
     * 
-    * @param roi A single element ROI
+    * @param roi
+    *           A single element ROI
     * @return A list of Composition objects
     * @throws EPQException
     */
-   abstract public ArrayList<Composition> suggestReferences(RegionOfInterest roi)
-         throws EPQException;
+   abstract public ArrayList<Composition> suggestReferences(RegionOfInterest roi) throws EPQException;
 
    /**
     * Returns a sorted List of OptimizedStandard objects for the specified
     * element.
     * 
-    * @param elm The Element to get standards for
-    * @param beamEnergy In Joules
+    * @param elm
+    *           The Element to get standards for
+    * @param beamEnergy
+    *           In Joules
     * @return List&lt;OptimizedStandard&gt;
     * @throws EPQException
     */
-   public List<OptimizedStandard> getOptimizedStandards(Element elm, double beamEnergy)
-         throws EPQException {
+   public List<OptimizedStandard> getOptimizedStandards(Element elm, double beamEnergy) throws EPQException {
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(beamEnergy));
       sp.setDetector(mDetector);
       return getOptimizedStandards(elm, sp);
    }
 
-   public Map<XRayTransition, Double> getMeasuredIntensities(Composition comp, double beamEnergy, double probeDose)
-         throws EPQException {
+   public Map<XRayTransition, Double> getMeasuredIntensities(Composition comp, double beamEnergy, double probeDose) throws EPQException {
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(beamEnergy));
       sp.setNumericProperty(SpectrumProperties.ProbeCurrent, 1.0);
@@ -352,14 +357,16 @@ abstract public class EPMAOptimizer {
     * Returns a sorted List of OptimizedStandard objects for the specified
     * element.
     * 
-    * @param elm The Element to get standards for
-    * @param beamEnergy In Joules
-    * @param dose In amp*s (60.0 * 10^-9 = 6.0e-8 A*s)
+    * @param elm
+    *           The Element to get standards for
+    * @param beamEnergy
+    *           In Joules
+    * @param dose
+    *           In amp*s (60.0 * 10^-9 = 6.0e-8 A*s)
     * @return List&lt;OptimizedStandard&gt;
     * @throws EPQException
     */
-   public List<OptimizedStandard> getOptimizedStandards(Element elm, double beamEnergy, double dose)
-         throws EPQException {
+   public List<OptimizedStandard> getOptimizedStandards(Element elm, double beamEnergy, double dose) throws EPQException {
       final double NOMINAL_CURRENT = 1.0e-9;
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setDetector(mDetector);
@@ -380,13 +387,12 @@ abstract public class EPMAOptimizer {
     * @param elm
     * @param os
     */
-   public void assignStandard(Element elm, OptimizedStandard os)
-         throws EPQException {
-      if(os != null) {
-         if(!os.getComposition().containsElement(elm))
+   public void assignStandard(Element elm, OptimizedStandard os) throws EPQException {
+      if (os != null) {
+         if (!os.getComposition().containsElement(elm))
             throw new EPQException("This standard does not contain the required element.");
          final double e0 = ToSI.keV(os.mProperties.getNumericWithDefault(SpectrumProperties.BeamEnergy, 1000.0));
-         if(e0 > mDetector.getOwner().getMaxBeamEnergy())
+         if (e0 > mDetector.getOwner().getMaxBeamEnergy())
             throw new EPQException("The specified standard energy is higher than the instrument is capable of achieving.");
          mStandards.put(elm, os);
          mUnmeasuredElements.remove(elm);
@@ -398,17 +404,17 @@ abstract public class EPMAOptimizer {
 
    public boolean isSingleEnergy() {
       double e0 = Double.NaN;
-      for(final OptimizedStandard os : mStandards.values()) {
-         if(Double.isNaN(e0))
+      for (final OptimizedStandard os : mStandards.values()) {
+         if (Double.isNaN(e0))
             e0 = os.getBeamEnergy();
-         if(e0 != os.getBeamEnergy())
+         if (e0 != os.getBeamEnergy())
             return false;
       }
       return true;
    }
 
    public double getBeamEnergy() {
-      if(isSingleEnergy())
+      if (isSingleEnergy())
          return mStandards.firstEntry().getValue().getBeamEnergy();
       else
          return Double.NaN;
@@ -427,8 +433,8 @@ abstract public class EPMAOptimizer {
 
    public double getMaxBeamEnergy() {
       double max = 0.0;
-      for(final OptimizedStandard os : mStandards.values())
-         if(os.getBeamEnergy() > max)
+      for (final OptimizedStandard os : mStandards.values())
+         if (os.getBeamEnergy() > max)
             max = os.getBeamEnergy();
       return max;
    }
@@ -437,37 +443,36 @@ abstract public class EPMAOptimizer {
       mReqReferences.clear();
       mOptReferences.clear();
       // Add entries for all references required by the standards
-      for(final OptimizedStandard os : mStandards.values()) {
+      for (final OptimizedStandard os : mStandards.values()) {
          final RegionOfInterest allElmRoi = os.getAllElementROI();
-         if(allElmRoi.equals(os.getROI()))
-            mReqReferences.put(allElmRoi, mUserReferences.containsKey(allElmRoi) ? mUserReferences.get(allElmRoi)
-                  : os.getComposition());
+         if (allElmRoi.equals(os.getROI()))
+            mReqReferences.put(allElmRoi, mUserReferences.containsKey(allElmRoi) ? mUserReferences.get(allElmRoi) : os.getComposition());
          else
-            for(final Element allElm : allElmRoi.getElementSet())
-               for(final RegionOfInterest lroi : os.getElementROIS(allElm))
+            for (final Element allElm : allElmRoi.getElementSet())
+               for (final RegionOfInterest lroi : os.getElementROIS(allElm))
                   mReqReferences.put(lroi, mUserReferences.containsKey(lroi) ? mUserReferences.get(lroi) : null);
       }
       // Add entries for all references required by the unmeasured elements in
       // the unknown
       final double e0 = getMaxBeamEnergy();
-      for(final Element elm : mUnmeasuredElements)
-         for(final RegionOfInterest roi : LinearSpectrumFit.createElementROIS(elm, mDetector, e0))
-            for(final RegionOfInterest reqRoi : mReqReferences.keySet())
-               if(roi.intersects(reqRoi))
+      for (final Element elm : mUnmeasuredElements)
+         for (final RegionOfInterest roi : LinearSpectrumFit.createElementROIS(elm, mDetector, e0))
+            for (final RegionOfInterest reqRoi : mReqReferences.keySet())
+               if (roi.intersects(reqRoi))
                   mReqReferences.put(roi, mUserReferences.containsKey(roi) ? mUserReferences.get(roi) : null);
                else
                   mOptReferences.put(roi, mUserReferences.containsKey(roi) ? mUserReferences.get(roi) : null);
       // Add optional entries for all other lines in the unknown
       final Set<Element> unkElms = mEstimatedUnknown.getElementSet();
-      for(final Element unkElm : unkElms)
-         if(!mUnmeasuredElements.contains(unkElm))
-            for(final RegionOfInterest unkElmRoi : LinearSpectrumFit.createElementROIS(unkElm, mDetector, e0))
-               if(!mReqReferences.containsKey(unkElmRoi)) {
+      for (final Element unkElm : unkElms)
+         if (!mUnmeasuredElements.contains(unkElm))
+            for (final RegionOfInterest unkElmRoi : LinearSpectrumFit.createElementROIS(unkElm, mDetector, e0))
+               if (!mReqReferences.containsKey(unkElmRoi)) {
                   Composition ref = mUserReferences.containsKey(unkElmRoi) ? mUserReferences.get(unkElmRoi) : null;
-                  if((ref == null) && mStandards.containsKey(unkElm)) {
+                  if ((ref == null) && mStandards.containsKey(unkElm)) {
                      assert mStandards.get(unkElm).getComposition().containsElement(unkElm);
                      final RegionOfInterestSet rois = mStandards.get(unkElm).getAllElementROIS();
-                     if(rois.contains(unkElmRoi))
+                     if (rois.contains(unkElmRoi))
                         ref = mStandards.get(unkElm).getComposition();
                   }
                   mOptReferences.put(unkElmRoi, ref);
@@ -487,8 +492,8 @@ abstract public class EPMAOptimizer {
    }
 
    public boolean isStandard(Composition comp) {
-      for(final OptimizedStandard os : mStandards.values())
-         if(os.getComposition().equals(comp))
+      for (final OptimizedStandard os : mStandards.values())
+         if (os.getComposition().equals(comp))
             return true;
       return false;
    }
@@ -496,17 +501,18 @@ abstract public class EPMAOptimizer {
    /**
     * Assign a reference to a RegionOfInterest
     * 
-    * @param roi A single element roi associated with an element in comp
-    * @param comp The material to use as a reference
+    * @param roi
+    *           A single element roi associated with an element in comp
+    * @param comp
+    *           The material to use as a reference
     * @throws EPQException
     */
-   public void assignReference(RegionOfInterest roi, Composition comp)
-         throws EPQException {
-      if(comp != Material.Null) {
-         if(roi.getElementSet().size() > 1)
+   public void assignReference(RegionOfInterest roi, Composition comp) throws EPQException {
+      if (comp != Material.Null) {
+         if (roi.getElementSet().size() > 1)
             throw new EPQException("The ROI " + roi + " contains more than one element.");
          final Element elm = roi.getElementSet().first();
-         if(!comp.getElementSet().contains(elm))
+         if (!comp.getElementSet().contains(elm))
             throw new EPQException(comp.toString() + " does not contain the element " + elm + ".");
          mUserReferences.put(roi, comp);
          updateReferences();
@@ -559,7 +565,7 @@ abstract public class EPMAOptimizer {
     */
    public List<Composition> getStandards() {
       final TreeSet<Composition> res = new TreeSet<Composition>();
-      for(final OptimizedStandard os : mStandards.values())
+      for (final OptimizedStandard os : mStandards.values())
          res.add(os.getComposition());
       return Collections.unmodifiableList(new ArrayList<Composition>(res));
    }
@@ -573,11 +579,11 @@ abstract public class EPMAOptimizer {
     */
    public List<Composition> getReferences() {
       final TreeSet<Composition> res = new TreeSet<Composition>();
-      for(final Composition comp : mReqReferences.values())
-         if(comp != null)
+      for (final Composition comp : mReqReferences.values())
+         if (comp != null)
             res.add(comp);
-      for(final Composition comp : mOptReferences.values())
-         if(comp != null)
+      for (final Composition comp : mOptReferences.values())
+         if (comp != null)
             res.add(comp);
       return Collections.unmodifiableList(new ArrayList<Composition>(res));
    }
@@ -591,9 +597,9 @@ abstract public class EPMAOptimizer {
     */
    public List<Composition> getReferences(OptimizedStandard os) {
       final TreeSet<Composition> res = new TreeSet<Composition>();
-      for(final Element elm : os.getAllElementROI().getElementSet())
-         for(final RegionOfInterest eroi : os.getElementROIS(elm))
-            if(mReqReferences.containsKey(eroi))
+      for (final Element elm : os.getAllElementROI().getElementSet())
+         for (final RegionOfInterest eroi : os.getElementROIS(elm))
+            if (mReqReferences.containsKey(eroi))
                res.add(mReqReferences.get(eroi));
       return Collections.unmodifiableList(new ArrayList<Composition>(res));
    }
@@ -644,16 +650,16 @@ abstract public class EPMAOptimizer {
 
    public Map<RegionOfInterest, Composition> getAssignedRequiredReferences() {
       final TreeMap<RegionOfInterest, Composition> res = new TreeMap<RegionOfInterest, Composition>();
-      for(final Map.Entry<RegionOfInterest, Composition> me : mReqReferences.entrySet())
-         if(me.getValue() != null)
+      for (final Map.Entry<RegionOfInterest, Composition> me : mReqReferences.entrySet())
+         if (me.getValue() != null)
             res.put(me.getKey(), me.getValue());
       return Collections.unmodifiableMap(res);
    }
 
    public Map<RegionOfInterest, Composition> getAssignedOptionalReferences() {
       final TreeMap<RegionOfInterest, Composition> res = new TreeMap<RegionOfInterest, Composition>();
-      for(final Map.Entry<RegionOfInterest, Composition> me : mOptReferences.entrySet())
-         if(me.getValue() != null)
+      for (final Map.Entry<RegionOfInterest, Composition> me : mOptReferences.entrySet())
+         if (me.getValue() != null)
             res.put(me.getKey(), me.getValue());
       return Collections.unmodifiableMap(res);
    }
@@ -666,24 +672,24 @@ abstract public class EPMAOptimizer {
       final Set<Element> elms = new TreeSet<Element>(mEstimatedUnknown.getElementSet());
       elms.removeAll(mUnmeasuredElements);
       final List<Element> missing = new ArrayList<Element>();
-      for(final Element elm : elms)
-         if(!mStandards.containsKey(elm))
+      for (final Element elm : elms)
+         if (!mStandards.containsKey(elm))
             missing.add(elm);
       return Collections.unmodifiableList(missing);
    }
 
    public List<RegionOfInterest> getMissingOptionalReferences() {
       final ArrayList<RegionOfInterest> res = new ArrayList<RegionOfInterestSet.RegionOfInterest>();
-      for(final RegionOfInterest roi : mOptReferences.keySet())
-         if(mOptReferences.get(roi) == null)
+      for (final RegionOfInterest roi : mOptReferences.keySet())
+         if (mOptReferences.get(roi) == null)
             res.add(roi);
       return Collections.unmodifiableList(res);
    }
 
    public List<RegionOfInterest> getMissingRequiredReferences() {
       final ArrayList<RegionOfInterest> res = new ArrayList<RegionOfInterest>();
-      for(final Map.Entry<RegionOfInterest, Composition> me : mReqReferences.entrySet())
-         if(me.getValue() == null)
+      for (final Map.Entry<RegionOfInterest, Composition> me : mReqReferences.entrySet())
+         if (me.getValue() == null)
             res.add(me.getKey());
       return Collections.unmodifiableList(res);
    }
@@ -692,18 +698,20 @@ abstract public class EPMAOptimizer {
     * Is the specified composition suitable for use as a reference for the
     * specified ROI.
     * 
-    * @param roi The ROI
-    * @param refComp The reference Composition
+    * @param roi
+    *           The ROI
+    * @param refComp
+    *           The reference Composition
     * @return true if suitable, false otherwise.
     */
    public boolean isSuitableAsReference(RegionOfInterest roi, Composition refComp) {
       assert roi.getElementSet().size() == 1;
       final Element elm = roi.getElementSet().first();
-      if(refComp.containsElement(elm)) {
+      if (refComp.containsElement(elm)) {
          final double e0 = ToSI.keV(mStandards.get(elm).mProperties.getNumericWithDefault(SpectrumProperties.BeamEnergy, Double.NaN));
          final RegionOfInterestSet refRois = LinearSpectrumFit.createAllElementROIS(refComp, mDetector, e0);
-         for(final RegionOfInterest refRoi : refRois)
-            if(refRoi.equals(roi) && (refRoi.getElementSet().size() == 1))
+         for (final RegionOfInterest refRoi : refRois)
+            if (refRoi.equals(roi) && (refRoi.getElementSet().size() == 1))
                return true;
       }
       // Missing the required element
@@ -713,10 +721,10 @@ abstract public class EPMAOptimizer {
 
    final double maxBeamEnergy() {
       double e0 = -1000.0;
-      for(final OptimizedStandard os : mStandards.values())
-         if(os.getBeamEnergy() > e0)
+      for (final OptimizedStandard os : mStandards.values())
+         if (os.getBeamEnergy() > e0)
             e0 = os.getBeamEnergy();
-      if(e0 < 0.0)
+      if (e0 < 0.0)
          e0 = mDetector.getOwner().getMaxBeamEnergy();
       return e0;
    }
@@ -728,10 +736,10 @@ abstract public class EPMAOptimizer {
     */
    public double getMaxEdgeEnergy() {
       double eeMax = 0.0;
-      for(final OptimizedStandard os : mStandards.values()) {
+      for (final OptimizedStandard os : mStandards.values()) {
          final XRayTransitionSet xrts = os.mRoi.getXRayTransitionSet(os.mRoi.getElementSet().first());
          final double ee = xrts.getWeighiestTransition().getSource().getEdgeEnergy();
-         if(ee > eeMax)
+         if (ee > eeMax)
             eeMax = ee;
       }
       return eeMax;
@@ -743,11 +751,11 @@ abstract public class EPMAOptimizer {
     * @return boolean
     */
    public boolean meetsMinimumRequirements() {
-      for(final Element elm : mEstimatedUnknown.getElementSet())
-         if(!(mStandards.containsKey(elm) || mUnmeasuredElements.contains(elm)))
+      for (final Element elm : mEstimatedUnknown.getElementSet())
+         if (!(mStandards.containsKey(elm) || mUnmeasuredElements.contains(elm)))
             return false;
-      for(final Map.Entry<RegionOfInterest, Composition> me : mReqReferences.entrySet())
-         if(me.getValue() == null)
+      for (final Map.Entry<RegionOfInterest, Composition> me : mReqReferences.entrySet())
+         if (me.getValue() == null)
             return false;
       return true;
    }
@@ -756,16 +764,17 @@ abstract public class EPMAOptimizer {
     * Returns the reference associated with the specified ROI or null if no
     * reference is assigned
     * 
-    * @param roi The RegionOfInterest
+    * @param roi
+    *           The RegionOfInterest
     * @return A {@link Composition} or null
     */
    public Composition getReference(RegionOfInterest roi) {
       Composition comp = null;
-      if(mReqReferences.containsKey(roi))
+      if (mReqReferences.containsKey(roi))
          comp = mReqReferences.get(roi);
-      else if(mOptReferences.containsKey(roi))
+      else if (mOptReferences.containsKey(roi))
          comp = mOptReferences.get(roi);
-      else if(mUserReferences.containsKey(roi))
+      else if (mUserReferences.containsKey(roi))
          comp = mUserReferences.get(roi);
       return comp;
    }
@@ -785,7 +794,7 @@ abstract public class EPMAOptimizer {
       res.append("<table>");
       res.append("<th>Element</th><th>Mass Fraction</th><th>Atomic Fraction</th></tr>");
       final NumberFormat nf4 = new HalfUpFormat("0.0000");
-      for(final Element elm : mEstimatedUnknown.getElementSet()) {
+      for (final Element elm : mEstimatedUnknown.getElementSet()) {
          res.append("<th>" + elm.toString() + "</th>");
          res.append("<td>" + nf4.format(mEstimatedUnknown.weightFraction(elm, false)) + "</td>");
          res.append("<td>" + nf4.format(mEstimatedUnknown.atomicPercent(elm)) + "</td></tr>");
@@ -795,10 +804,11 @@ abstract public class EPMAOptimizer {
       res.append("</table>");
       res.append("<h3>Standards</h3>");
       res.append("<table>");
-      res.append("<tr><th>Element</th><th>Standard</th><th>Region-of-<br/>Interest</th><th>Full Region-of-<br/>Interest</th><th>Mass<br/>Fraction</th><th>Score</th><th>Beam<br/Energy</th></tr>");
+      res.append(
+            "<tr><th>Element</th><th>Standard</th><th>Region-of-<br/>Interest</th><th>Full Region-of-<br/>Interest</th><th>Mass<br/>Fraction</th><th>Score</th><th>Beam<br/Energy</th></tr>");
       // Table of standards, line, ZAF corrections, k-ratios
       final NumberFormat nf1 = new HalfUpFormat("0.0");
-      for(final Map.Entry<Element, OptimizedStandard> me : mStandards.entrySet()) {
+      for (final Map.Entry<Element, OptimizedStandard> me : mStandards.entrySet()) {
          final Element elm = me.getKey();
          final OptimizedStandard os = me.getValue();
          final Composition comp = os.getComposition();
@@ -819,13 +829,13 @@ abstract public class EPMAOptimizer {
          res.append(" keV</td></tr>");
       }
       res.append("</table>");
-      if(mUnmeasuredElements.size() > 0) {
+      if (mUnmeasuredElements.size() > 0) {
          res.append("<h3>Unmeasured elements</h3>");
          res.append("<table><tr><th>Element</th><th>ROI in unknown</th></tr>");
-         for(final Element unmElm : mUnmeasuredElements) {
+         for (final Element unmElm : mUnmeasuredElements) {
             res.append("<tr><td>" + unmElm + "</td><td>");
-            for(final RegionOfInterest roi : mUnknownRois)
-               if(roi.getElementSet().contains(unmElm))
+            for (final RegionOfInterest roi : mUnknownRois)
+               if (roi.getElementSet().contains(unmElm))
                   res.append(roi.toString() + "<br/>");
             res.append("</td></tr>");
          }
@@ -836,19 +846,19 @@ abstract public class EPMAOptimizer {
       final TreeMap<RegionOfInterest, Composition> refs = new TreeMap<RegionOfInterestSet.RegionOfInterest, Composition>();
       refs.putAll(mReqReferences);
       refs.putAll(mOptReferences);
-      if(refs.size() == 0)
+      if (refs.size() == 0)
          res.append("<p>No references required</p>");
       else {
          res.append("<table>");
          res.append("<tr><th>Region-of-<br>Interest</th><th>Material</th><th>Required?</th><th>Also standard</th></tr>");
-         for(final Map.Entry<RegionOfInterest, Composition> me : refs.entrySet()) {
+         for (final Map.Entry<RegionOfInterest, Composition> me : refs.entrySet()) {
             final RegionOfInterest roi = me.getKey();
             final Composition comp = me.getValue();
             final boolean opt = !mReqReferences.containsKey(roi);
             boolean alsoStd = false;
-            if(comp != null) {
-               for(final OptimizedStandard os : mStandards.values())
-                  if(os.mStandard.equals(comp)) {
+            if (comp != null) {
+               for (final OptimizedStandard os : mStandards.values())
+                  if (os.mStandard.equals(comp)) {
                      alsoStd = true;
                      break;
                   }
@@ -898,48 +908,44 @@ abstract public class EPMAOptimizer {
       List<Double> res = new ArrayList<Double>();
       final double max = mDetector.getOwner().getMaxBeamEnergy();
       final double min = mDetector.getOwner().getMinBeamEnergy();
-      final int[] lines = new int[] {
-         XRayTransition.MA1,
-         XRayTransition.LA1,
-         XRayTransition.KA1
-      };
+      final int[] lines = new int[]{XRayTransition.MA1, XRayTransition.LA1, XRayTransition.KA1};
       final TreeSet<XRayTransition> xrts = new TreeSet<XRayTransition>(new Comparator<XRayTransition>() {
          @Override
          public int compare(XRayTransition o1, XRayTransition o2) {
             int res = Double.compare(o1.getEdgeEnergy(), o2.getEdgeEnergy());
-            if(res == 0)
+            if (res == 0)
                res = o1.compareTo(o2);
             return res;
          }
       });
       final List<Element> elms = new ArrayList<Element>(mEstimatedUnknown.getElementSet());
-      for(int i = 0; i < elms.size(); ++i)
-         for(final int line : lines) {
+      for (int i = 0; i < elms.size(); ++i)
+         for (final int line : lines) {
             final XRayTransition xrt = new XRayTransition(elms.get(i), line);
-            if(mDetector.isVisible(xrt, max))
+            if (mDetector.isVisible(xrt, max))
                xrts.add(xrt);
          }
-      for(final XRayTransition xrt : xrts) {
+      for (final XRayTransition xrt : xrts) {
          elms.remove(xrt.getElement());
-         if(elms.size() == 0) {
+         if (elms.size() == 0) {
             final double ee = xrt.getEdgeEnergy();
-            if(((2.0 * ee) >= min) && ((2.0 * ee) <= max))
+            if (((2.0 * ee) >= min) && ((2.0 * ee) <= max))
                res.add(2.0 * ee);
-            else if((1.5 * ee) <= max)
+            else if ((1.5 * ee) <= max)
                res.add(1.5 * ee);
          }
       }
-      if(elms.size() == 0) {
+      if (elms.size() == 0) {
          final double e0 = 2.0 * res.get(res.size() - 1);
-         if((e0 >= min) && (e0 <= max))
+         if ((e0 >= min) && (e0 <= max))
             res.add(e0);
       }
-      if(rationalized) {
+      if (rationalized) {
          final List<Double> rat = new ArrayList<Double>();
          double last = -Double.MAX_VALUE;
-         for(final Double e0 : res) {
+         for (final Double e0 : res) {
             final double tmp = ToSI.keV(5.0 * Math.ceil(FromSI.keV(e0) / 5.0));
-            if(tmp > last) {
+            if (tmp > last) {
                rat.add(Double.valueOf(tmp));
                last = tmp;
             }
@@ -949,8 +955,7 @@ abstract public class EPMAOptimizer {
       return res;
    }
 
-   public static class SimilarOptimizer
-      extends EPMAOptimizer {
+   public static class SimilarOptimizer extends EPMAOptimizer {
 
       private final StandardsDatabase2 mDatabase;
       private final TreeSet<StandardBlock2> mExclude = null;
@@ -961,14 +966,13 @@ abstract public class EPMAOptimizer {
       }
 
       @Override
-      public List<OptimizedStandard> getOptimizedStandards(Element elm, SpectrumProperties sp)
-            throws EPQException {
+      public List<OptimizedStandard> getOptimizedStandards(Element elm, SpectrumProperties sp) throws EPQException {
          final ArrayList<OptimizedStandard> res = new ArrayList<EPMAOptimizer.OptimizedStandard>();
          final List<Composition> comps = mDatabase.findStandards(elm, 0.01, mExclude);
          final double e0 = sp.getNumericProperty(SpectrumProperties.BeamEnergy);
          final RegionOfInterestSet rois = LinearSpectrumFit.createElementROIS(elm, mDetector, ToSI.keV(e0));
-         for(final Composition comp : comps)
-            for(final RegionOfInterest roi : rois) {
+         for (final Composition comp : comps)
+            for (final RegionOfInterest roi : rois) {
                final double score = (1.0 / Math.max(1.0e-3, comp.difference(mEstimatedUnknown)))
                      * roi.getXRayTransitionSet(elm).getWeighiestTransition().getNormalizedWeight();
                res.add(new OptimizedStandard(comp, roi, score, sp));
@@ -977,8 +981,7 @@ abstract public class EPMAOptimizer {
          return res;
       }
 
-      private class RefComparitor
-         implements Comparator<Composition> {
+      private class RefComparitor implements Comparator<Composition> {
          private final Element mElement;
 
          public RefComparitor(Element elm) {
@@ -992,20 +995,18 @@ abstract public class EPMAOptimizer {
       }
 
       @Override
-      public ArrayList<Composition> suggestReferences(RegionOfInterest roi)
-            throws EPQException {
-         if(roi.getElementSet().size() > 1)
-            throw new EPQException("suggestReferences(..) requires a single element ROI. Yours = "
-                  + roi.getElementSet().toString());
+      public ArrayList<Composition> suggestReferences(RegionOfInterest roi) throws EPQException {
+         if (roi.getElementSet().size() > 1)
+            throw new EPQException("suggestReferences(..) requires a single element ROI. Yours = " + roi.getElementSet().toString());
          assert roi.getElementSet().size() == 1;
          final Element elm = roi.getElementSet().first();
          final List<Composition> comps = mDatabase.findStandards(elm, 0.1, mExclude);
          final double e0 = mDetector.getOwner().getMaxBeamEnergy();
          final ArrayList<Composition> res = new ArrayList<Composition>();
-         for(final Composition comp : comps) {
+         for (final Composition comp : comps) {
             final RegionOfInterestSet allElmRois = LinearSpectrumFit.createAllElementROIS(comp, mDetector, e0);
-            for(final RegionOfInterest allElmRoi : allElmRois)
-               if(allElmRoi.equals(roi) && (allElmRoi.getElementSet().size() == 1))
+            for (final RegionOfInterest allElmRoi : allElmRois)
+               if (allElmRoi.equals(roi) && (allElmRoi.getElementSet().size() == 1))
                   res.add(comp);
          }
          Collections.sort(res, new RefComparitor(elm));
@@ -1020,7 +1021,7 @@ abstract public class EPMAOptimizer {
          sb.append("<h3>Standard Blocks</h3>");
          sb.append("<table>");
          sb.append("<tr><th>Block</th><th>Contains materials</th></tr>");
-         for(final StandardBlock2 block : blocks) {
+         for (final StandardBlock2 block : blocks) {
             sb.append("<tr><td>");
             sb.append(block.toString());
             sb.append("</td><td>");

@@ -36,8 +36,7 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
  * Google of the AMPTEK website didn't find a specification document for the MCA
  * file format.
  */
-public class PMCASpectrum
-   extends BaseSpectrum {
+public class PMCASpectrum extends BaseSpectrum {
 
    private SpectrumProperties mProperties = new SpectrumProperties();
    private double[] mChannels;
@@ -47,7 +46,8 @@ public class PMCASpectrum
    /**
     * Is the file specified by this Reader likely to be a PMCA file?
     * 
-    * @param is InputStream - Which will be closed by isInstanceOf
+    * @param is
+    *           InputStream - Which will be closed by isInstanceOf
     * @return boolean
     */
    public static boolean isInstanceOf(InputStream is) {
@@ -58,12 +58,10 @@ public class PMCASpectrum
                final String line = br.readLine().trim();
                res = line.startsWith("<<PMCA SPECTRUM>>");
             }
-         }
-         finally {
+         } finally {
             is.close(); // force closure to ensure it is not reused...
          }
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          res = false;
       }
       return res;
@@ -72,8 +70,7 @@ public class PMCASpectrum
    /**
     * Constructs a PMCASpectrum from the contents of the specified input stream.
     */
-   public PMCASpectrum(InputStream is)
-         throws IOException {
+   public PMCASpectrum(InputStream is) throws IOException {
       super();
       read(is);
    }
@@ -90,18 +87,17 @@ public class PMCASpectrum
 
    private void storeData(String prefix, String data) {
       try {
-         if(prefix.startsWith("TAG"))
+         if (prefix.startsWith("TAG"))
             mProperties.setTextProperty(SpectrumProperties.SpectrumComment, data);
-         else if(prefix.startsWith("DESCRIPTION"))
+         else if (prefix.startsWith("DESCRIPTION"))
             mProperties.setTextProperty(SpectrumProperties.Software, data);
-         else if(prefix.startsWith("LIVE_TIME"))
+         else if (prefix.startsWith("LIVE_TIME"))
             mProperties.setNumericProperty(SpectrumProperties.LiveTime, mDefaultFormat.parse(data).doubleValue());
-         else if(prefix.startsWith("REAL_TIME"))
+         else if (prefix.startsWith("REAL_TIME"))
             mProperties.setNumericProperty(SpectrumProperties.RealTime, mDefaultFormat.parse(data).doubleValue());
-         else if(prefix.startsWith("SERIAL_NUMBER"))
+         else if (prefix.startsWith("SERIAL_NUMBER"))
             mProperties.setTextProperty(SpectrumProperties.ClientsSampleID, data);
-      }
-      catch(final ParseException e) {
+      } catch (final ParseException e) {
          // Just ignore it...
       }
    }
@@ -110,12 +106,12 @@ public class PMCASpectrum
     * read - reads the parsed file in PMCA format and converts it into the
     * intermediate format, ISpectrumData.
     * 
-    * @param is InputStream - the PMCA file
-    * @throws IOException throws an IOException if there is an error reading the
-    *            file
+    * @param is
+    *           InputStream - the PMCA file
+    * @throws IOException
+    *            throws an IOException if there is an error reading the file
     */
-   private void read(InputStream is)
-         throws IOException {
+   private void read(InputStream is) throws IOException {
       reset();
       final Reader rd = new InputStreamReader(is, Charset.forName("US-ASCII"));
       final BufferedReader br = new BufferedReader(rd);
@@ -124,25 +120,24 @@ public class PMCASpectrum
       String line;
       do {
          line = br.readLine();
-         if(line != null) {
+         if (line != null) {
             final int p = line.indexOf("-");
-            if(p != -1)
+            if (p != -1)
                storeData(line.substring(0, p).trim(), line.substring(p + 1).trim());
          }
-      } while(!((line == null) || (line.startsWith("<<DATA>>"))));
+      } while (!((line == null) || (line.startsWith("<<DATA>>"))));
       line = br.readLine();
       // Cases: nextDatum then "," or nextDatum then EOL or EOL
       final ArrayList<String> al = new ArrayList<String>();
-      while(!((line == null) || (line.startsWith("<<END>>")))) {
+      while (!((line == null) || (line.startsWith("<<END>>")))) {
          al.add(line.trim());
          line = br.readLine();
       }
       mChannels = new double[al.size()];
-      for(int i = 0; i < mChannels.length; ++i)
+      for (int i = 0; i < mChannels.length; ++i)
          try {
             mChannels[i] = mDefaultFormat.parse(al.get(i)).doubleValue();
-         }
-         catch(final ParseException e) {
+         } catch (final ParseException e) {
             mChannels[i] = 0.0;
          }
    }

@@ -47,12 +47,14 @@ public class MACCache {
     * getMAC - get a MAC from the cache. Returns a number less than zero when
     * the MAC is not in the cache.
     * 
-    * @param mat Material - The absorber material
-    * @param energy double - The x-ray energy
+    * @param mat
+    *           Material - The absorber material
+    * @param energy
+    *           double - The x-ray energy
     * @return double - The MAC or a value equal to MACCache.NOT_IN_CACHE when
     *         the MAC is not in the cache.
     */
    public double getMAC(Material mat, double energy) {
-	   return mMac.compute(mat, energy);
+      return mMac.compute(mat, energy);
    }
 }

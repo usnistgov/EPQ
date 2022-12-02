@@ -76,11 +76,7 @@ import gov.nist.microanalysis.EPQLibrary.ToSI;
  * @author John Villarrubia
  * @version 1.0
  */
-public class SEmaterial
-   extends
-   Material
-   implements
-   Cloneable {
+public class SEmaterial extends Material implements Cloneable {
    private static final long serialVersionUID = 0x42;
 
    // Additional material properties
@@ -166,8 +162,10 @@ public class SEmaterial
     * to set the work function, plasmon energy, energy of the conduction band
     * bottom, and density of occupied electronic states.
     *
-    * @param comp - The composition of the material
-    * @param density - The density of the material in kg/m^3
+    * @param comp
+    *           - The composition of the material
+    * @param density
+    *           - The density of the material in kg/m^3
     */
    public SEmaterial(Composition comp, double density) {
       super(comp, density);
@@ -184,10 +182,14 @@ public class SEmaterial
     * energy, energy of the conduction band bottom, and density of occupied
     * electronic states.
     *
-    * @param elms - Element[] An array of elements that comprise this material
-    * @param weightFracs - double[] The corresponding weight fractions
-    * @param density - The density of the material in kg/m^3
-    * @param name - String A name for this material.
+    * @param elms
+    *           - Element[] An array of elements that comprise this material
+    * @param weightFracs
+    *           - double[] The corresponding weight fractions
+    * @param density
+    *           - The density of the material in kg/m^3
+    * @param name
+    *           - String A name for this material.
     */
    public SEmaterial(Element[] elms, double[] weightFracs, double density, String name) {
       super(elms, weightFracs, density, name);
@@ -201,7 +203,8 @@ public class SEmaterial
     * density as mat, but with specifically secondary electron properties set as
     * appropriate for vacuum.
     *
-    * @param mat - A material
+    * @param mat
+    *           - A material
     */
    public SEmaterial(Material mat) {
       super(mat, mat.getDensity());
@@ -217,14 +220,15 @@ public class SEmaterial
     * positive for bound electrons. The density is the number of electrons per
     * cubic meter of this material that have this binding energy.
     *
-    * @param bindingEnergy - binding energy in Joules
-    * @param density - # electrons/meter^3 in this material at this binding
-    *           energy
+    * @param bindingEnergy
+    *           - binding energy in Joules
+    * @param density
+    *           - # electrons/meter^3 in this material at this binding energy
     */
    public void addBindingEnergy(double bindingEnergy, double density) {
-      if(bindingEnergy < 0.0)
+      if (bindingEnergy < 0.0)
          throw new EPQFatalException("Binding energies must be positive.");
-      if(density < 0.0)
+      if (density < 0.0)
          throw new EPQFatalException("Electron density must be positive.");
       this.bindingEnergy.add(bindingEnergy);
       /*
@@ -234,7 +238,7 @@ public class SEmaterial
        * energy, a choice based upon the virial theorem. -- Or should I use
        * binding energy + CBbottom?
        */
-      if(-bindingEnergy > energyCBbottom)
+      if (-bindingEnergy > energyCBbottom)
          this.kineticEnergy.add(-bindingEnergy - energyCBbottom);
       else
          this.kineticEnergy.add(bindingEnergy + energyCBbottom);
@@ -249,17 +253,19 @@ public class SEmaterial
     * bound electrons. The density is the number of electrons per cubic meter of
     * this material that has this binding energy.
     *
-    * @param bindingEnergy - binding energy in Joules
-    * @param kineticEnergy - binding energy in Joules
-    * @param density - # electrons/meter^3 in this material at this binding
-    *           energy
+    * @param bindingEnergy
+    *           - binding energy in Joules
+    * @param kineticEnergy
+    *           - binding energy in Joules
+    * @param density
+    *           - # electrons/meter^3 in this material at this binding energy
     */
    public void addBindingEnergy(double bindingEnergy, double kineticEnergy, double density) {
-      if(bindingEnergy < 0.0)
+      if (bindingEnergy < 0.0)
          throw new EPQFatalException("Binding energies must be positive.");
-      if(kineticEnergy < 0.0)
+      if (kineticEnergy < 0.0)
          throw new EPQFatalException("Kinetic energies must be positive.");
-      if(density < 0.0)
+      if (density < 0.0)
          throw new EPQFatalException("Electron density must be positive.");
       this.bindingEnergy.add(bindingEnergy);
       this.kineticEnergy.add(kineticEnergy);
@@ -273,24 +279,25 @@ public class SEmaterial
     * adding multiple binding energies and densities, because the
     * re-initialization of the scatter mechanisms is only done once at the end.
     *
-    * @param bindingEnergy - binding energy in Joules
-    * @param density - # electrons/meter^3 in this material at this binding
-    *           energy
+    * @param bindingEnergy
+    *           - binding energy in Joules
+    * @param density
+    *           - # electrons/meter^3 in this material at this binding energy
     */
    public void addBindingEnergy(List<Double> bindingEnergy, List<Double> density) {
       // Error checking
-      if(bindingEnergy.size() != density.size())
+      if (bindingEnergy.size() != density.size())
          throw new EPQFatalException("Unequal # of binding energies and densities");
-      for(final Double b : bindingEnergy)
-         if(b < 0.0)
+      for (final Double b : bindingEnergy)
+         if (b < 0.0)
             throw new EPQFatalException("Binding energies must be positive.");
-      for(final Double d : density)
-         if(d < 0.0)
+      for (final Double d : density)
+         if (d < 0.0)
             throw new EPQFatalException("Electron density must be positive.");
       this.bindingEnergy.addAll(bindingEnergy);
       // Use default kinetic energy
-      for(final Double b : bindingEnergy)
-         if(-b > energyCBbottom)
+      for (final Double b : bindingEnergy)
+         if (-b > energyCBbottom)
             this.kineticEnergy.add(-b - energyCBbottom);
          else
             this.kineticEnergy.add(b + energyCBbottom);
@@ -303,23 +310,26 @@ public class SEmaterial
     * adding multiple binding energies and densities, because the
     * re-initialization of the scatter mechanisms is only done once at the end.
     *
-    * @param bindingEnergy - a list of binding energies in Joules
-    * @param kineticEnergy - a list of corresponding kinetic energies in Joules
-    * @param density - corresponding list of # electrons/meter^3 in this
-    *           material at this binding energy
+    * @param bindingEnergy
+    *           - a list of binding energies in Joules
+    * @param kineticEnergy
+    *           - a list of corresponding kinetic energies in Joules
+    * @param density
+    *           - corresponding list of # electrons/meter^3 in this material at
+    *           this binding energy
     */
    public void addBindingEnergy(List<Double> bindingEnergy, List<Double> kineticEnergy, List<Double> density) {
       // Error checking
-      if((bindingEnergy.size() != density.size()) || (kineticEnergy.size() != density.size()))
+      if ((bindingEnergy.size() != density.size()) || (kineticEnergy.size() != density.size()))
          throw new EPQFatalException("Lists of energies and densities must be equal length");
-      for(final Double b : bindingEnergy)
-         if(b < 0.0)
+      for (final Double b : bindingEnergy)
+         if (b < 0.0)
             throw new EPQFatalException("Binding energies must be positive.");
-      for(final Double b : kineticEnergy)
-         if(b < 0.0)
+      for (final Double b : kineticEnergy)
+         if (b < 0.0)
             throw new EPQFatalException("Kinetic energies must be positive.");
-      for(final Double d : density)
-         if(d < 0.0)
+      for (final Double d : density)
+         if (d < 0.0)
             throw new EPQFatalException("Electron density must be positive.");
       this.bindingEnergy.addAll(bindingEnergy);
       this.kineticEnergy.addAll(kineticEnergy);
@@ -335,10 +345,11 @@ public class SEmaterial
     * differences between core level and lowest unoccupied state (Fermi energy
     * For a metal, conduction band minimum for a non-metal).
     *
-    * @param coreEnergy - binding energy in Joules
+    * @param coreEnergy
+    *           - binding energy in Joules
     */
    public void addCoreEnergy(double coreEnergy) {
-      if(coreEnergy < 0.0)
+      if (coreEnergy < 0.0)
          throw new EPQFatalException("Core energies must be positive.");
       this.coreEnergy.add(coreEnergy);
 
@@ -349,12 +360,13 @@ public class SEmaterial
     * addCoreEnergy -- Adds all core energies in a list. (Previous values are
     * not cleared.)
     *
-    * @param coreEnergy - a list of core energies in Joules
+    * @param coreEnergy
+    *           - a list of core energies in Joules
     */
    public void addCoreEnergy(List<Double> coreEnergy) {
       // Error checking
-      for(final Double cE : coreEnergy)
-         if(cE < 0.0)
+      for (final Double cE : coreEnergy)
+         if (cE < 0.0)
             throw new EPQFatalException("Core energies must be positive.");
       this.coreEnergy.addAll(coreEnergy);
       version = (version == Long.MAX_VALUE) ? 0L : version + 1L;
@@ -509,7 +521,8 @@ public class SEmaterial
     * removeBindingEnergy - Removes a binding energy, kinetic energy, and
     * density of states triplet from the existing list.
     *
-    * @param index int - index of binding energy/density entry to remove
+    * @param index
+    *           int - index of binding energy/density entry to remove
     */
    public void removeBindingEnergy(int index) {
       bindingEnergy.remove(index);
@@ -522,7 +535,8 @@ public class SEmaterial
     * removeCoreEnergy - Removes the specified core energy from the existing
     * list.
     *
-    * @param energy Double - binding energy entry to remove
+    * @param energy
+    *           Double - binding energy entry to remove
     */
    public void removeCoreEnergy(Double energy) {
       coreEnergy.remove(energy);
@@ -534,7 +548,8 @@ public class SEmaterial
     * existing list. The index corresponds to the core energies in sorted order,
     * as returned by getCoreEnergyArray().
     *
-    * @param index int - index of the binding energy entry to remove
+    * @param index
+    *           int - index of the binding energy entry to remove
     */
    public void removeCoreEnergy(int index) {
       Double energy = getCoreEnergyArray()[index];
@@ -566,15 +581,17 @@ public class SEmaterial
     * overridden, the corresponding kinetic energy is set according to the
     * default algorithm.
     *
-    * @param index - the index of the entry to change
-    * @param energy - the new density in electrons/m^3
+    * @param index
+    *           - the index of the entry to change
+    * @param energy
+    *           - the new density in electrons/m^3
     */
    public void setBindingEnergy(int index, double energy) {
-      if(energy < 0.)
+      if (energy < 0.)
          throw new EPQFatalException("Binding energies must be positive.");
       bindingEnergy.set(index, energy);
-      if(!userSetKE)
-         if(-energy > energyCBbottom)
+      if (!userSetKE)
+         if (-energy > energyCBbottom)
             this.kineticEnergy.set(index, -energy - energyCBbottom);
          else
             this.kineticEnergy.set(index, energy + energyCBbottom);
@@ -601,12 +618,13 @@ public class SEmaterial
     * setCoreEnergy - Sets the core energy list to the supplied list. (Any
     * previous values are cleared.)
     *
-    * @param coreEnergy - List of Energies of core levels in Joules
+    * @param coreEnergy
+    *           - List of Energies of core levels in Joules
     */
    public void setCoreEnergy(List<Double> coreEnergy) {
       this.coreEnergy = new TreeSet<Double>();
-      for(final double cE : coreEnergy) {
-         if(cE < 0.0)
+      for (final double cE : coreEnergy) {
+         if (cE < 0.0)
             throw new EPQFatalException("Core energies must be positive.");
          this.coreEnergy.add(cE);
       }
@@ -617,11 +635,13 @@ public class SEmaterial
     * setElectronDensity -- Changes the density associated with the state at a
     * given index to a new value.
     *
-    * @param index - the index of the entry to change
-    * @param density - the new density in electrons/m^3
+    * @param index
+    *           - the index of the entry to change
+    * @param density
+    *           - the new density in electrons/m^3
     */
    public void setElectronDensity(int index, double density) {
-      if(density < 0.)
+      if (density < 0.)
          throw new EPQFatalException("Electron density must be positive.");
       electronDensity.set(index, density);
       version = (version == Long.MAX_VALUE) ? 0L : version + 1L;
@@ -631,11 +651,12 @@ public class SEmaterial
     * energyCBbottom is the energy of the conduction band bottom. The vacuum
     * energy is defined to be 0, so energyCBbottom should be negative.
     *
-    * @param energyCBbottom The energyCBbottom to set.
+    * @param energyCBbottom
+    *           The energyCBbottom to set.
     */
    public void setEnergyCBbottom(double energyCBbottom) {
       this.energyCBbottom = energyCBbottom;
-      if(!userSetKE)
+      if (!userSetKE)
          setKEtoDefault();
       version = (version == Long.MAX_VALUE) ? 0L : version + 1L;
    }
@@ -644,7 +665,8 @@ public class SEmaterial
     * bandgap is the width of an insulating or semiconducting material's
     * bandgap, in Joules. bandgap = 0 for conductors.
     *
-    * @param bandgap The bandgap to set.
+    * @param bandgap
+    *           The bandgap to set.
     */
    public void setBandgap(double bandgap) {
       this.bandgap = bandgap;
@@ -654,7 +676,8 @@ public class SEmaterial
    /**
     * setEplasmon - Sets the material's plasmon energy.
     *
-    * @param eplasmon double - plasmon energy in Joules
+    * @param eplasmon
+    *           double - plasmon energy in Joules
     */
    public void setEplasmon(double eplasmon) {
       this.eplasmon = eplasmon;
@@ -699,10 +722,10 @@ public class SEmaterial
       double shellenergy;
       setCoreEnergy(); // Clear any existing ones.
       final Set<Element> constituentElements = this.getElementSet();
-      for(final Element el : constituentElements) {
+      for (final Element el : constituentElements) {
          int i = 0;
          AtomicShell as = new AtomicShell(el, i);
-         while((shellenergy = as.getGroundStateOccupancy() > 0 ? as.getEdgeEnergy() : Double.NaN) > cutoff) {
+         while ((shellenergy = as.getGroundStateOccupancy() > 0 ? as.getEdgeEnergy() : Double.NaN) > cutoff) {
             addCoreEnergy(shellenergy);
             i++;
             as = new AtomicShell(el, i);
@@ -723,8 +746,8 @@ public class SEmaterial
     * information is available, the default should be overridden.
     */
    void setKEtoDefault() {
-      for(int i = 0; i < kineticEnergy.size(); i++)
-         if(-bindingEnergy.get(i) > energyCBbottom)
+      for (int i = 0; i < kineticEnergy.size(); i++)
+         if (-bindingEnergy.get(i) > energyCBbottom)
             kineticEnergy.set(i, -bindingEnergy.get(i) - energyCBbottom);
          else
             kineticEnergy.set(i, bindingEnergy.get(i) + energyCBbottom);
@@ -736,11 +759,13 @@ public class SEmaterial
     * setKineticEnergy -- Changes the kinetic energy associated with the state
     * at a given index to a new value.
     *
-    * @param index - the index of the entry to change
-    * @param energy - the new density in electrons/m^3
+    * @param index
+    *           - the index of the entry to change
+    * @param energy
+    *           - the new density in electrons/m^3
     */
    public void setKineticEnergy(int index, double energy) {
-      if(energy < 0.)
+      if (energy < 0.)
          throw new EPQFatalException("Kinetic energies must be positive.");
       kineticEnergy.set(index, energy);
       version = (version == Long.MAX_VALUE) ? 0L : version + 1L;
@@ -755,11 +780,12 @@ public class SEmaterial
     * to be a source of secondary electrons may be ignored in making this
     * assignment.
     *
-    * @param workfunction double - work function in Joules
+    * @param workfunction
+    *           double - work function in Joules
     */
    public void setWorkfunction(double workfunction) {
       this.workfunction = workfunction;
-      if(energyCBbottom > -workfunction)
+      if (energyCBbottom > -workfunction)
          energyCBbottom = -workfunction;
       version = (version == Long.MAX_VALUE) ? 0L : version + 1L;
    }
@@ -781,8 +807,9 @@ public class SEmaterial
     * models. By default it is set to infinity (no charge redistribution
     * occurs).
     *
-    * @param breakdownField - the magnitude of the electric field (volts/meter)
-    *           for which there is significant conduction.
+    * @param breakdownField
+    *           - the magnitude of the electric field (volts/meter) for which
+    *           there is significant conduction.
     */
    public void setDielectricBreakdownField(double breakdownField) {
       dielectricBreakdownField = breakdownField;

@@ -21,8 +21,7 @@ import java.util.List;
  * @author nritchie
  * @version 1.0
  */
-public abstract class CharacteristicXRayGeneration
-   extends AlgorithmClass {
+public abstract class CharacteristicXRayGeneration extends AlgorithmClass {
 
    /**
     * Constructs a CharacteristicXRayGeneration algorithm instance
@@ -42,9 +41,7 @@ public abstract class CharacteristicXRayGeneration
     */
    @Override
    public List<AlgorithmClass> getAllImplementations() {
-      return Arrays.asList(new AlgorithmClass[] {
-         NWMR2005a
-      });
+      return Arrays.asList(new AlgorithmClass[]{NWMR2005a});
    }
 
    /**
@@ -59,8 +56,7 @@ public abstract class CharacteristicXRayGeneration
 
    abstract public double compute(XRayTransition xrt, double kE, double atomsPerCC);
 
-   static public class DefaultCharacteristicXRayGeneration
-      extends CharacteristicXRayGeneration {
+   static public class DefaultCharacteristicXRayGeneration extends CharacteristicXRayGeneration {
       DefaultCharacteristicXRayGeneration() {
          super("NWMR 2005a", "Cobbled together from various sources");
       }
@@ -73,9 +69,12 @@ public abstract class CharacteristicXRayGeneration
        * weights are reasonably well known for K &amp; L-shell but less well
        * known for M-shell.
        * 
-       * @param xrt The x-ray transition of interest
-       * @param kE The electron energy in Joules
-       * @param atomDensity - The atomic density in atoms per cubic meter
+       * @param xrt
+       *           The x-ray transition of interest
+       * @param kE
+       *           The electron energy in Joules
+       * @param atomDensity
+       *           - The atomic density in atoms per cubic meter
        * @return The generated x-ray intensity
        * @see gov.nist.microanalysis.EPQLibrary.CharacteristicXRayGeneration#compute(gov.nist.microanalysis.EPQLibrary.XRayTransition,
        *      double, double)
@@ -85,28 +84,25 @@ public abstract class CharacteristicXRayGeneration
          final AbsoluteIonizationCrossSection icx = (AbsoluteIonizationCrossSection) getAlgorithm(AbsoluteIonizationCrossSection.class);
          double res = 0.0;
          final AtomicShell dest = xrt.getDestination();
-         if(kE > dest.getEdgeEnergy()) {
+         if (kE > dest.getEdgeEnergy()) {
             final double iz = atomDensity * icx.computeShell(dest, kE);
-            if(iz > 0.0)
-               switch(dest.getShell()) {
-                  case AtomicShell.K:
-                  case AtomicShell.LI:
-                  case AtomicShell.LII:
-                  case AtomicShell.LIII:
-                     res = iz * AlgorithmUser.getDefaultFluorescenceYield().compute(dest)
-                           * xrt.getWeight(XRayTransition.NormalizeDestination);
+            if (iz > 0.0)
+               switch (dest.getShell()) {
+                  case AtomicShell.K :
+                  case AtomicShell.LI :
+                  case AtomicShell.LII :
+                  case AtomicShell.LIII :
+                     res = iz * AlgorithmUser.getDefaultFluorescenceYield().compute(dest) * xrt.getWeight(XRayTransition.NormalizeDestination);
                      break;
-                  case AtomicShell.MI:
-                  case AtomicShell.MII:
-                  case AtomicShell.MIII:
-                  case AtomicShell.MIV:
-                  case AtomicShell.MV:
-                     final double f = IonizationCrossSection.shellDependence(dest)
-                           / IonizationCrossSection.shellDependence(AtomicShell.MV);
-                     res = f * iz * AlgorithmUser.getDefaultFluorescenceYieldMean().compute(dest)
-                           * xrt.getWeight(XRayTransition.NormalizeFamily);
+                  case AtomicShell.MI :
+                  case AtomicShell.MII :
+                  case AtomicShell.MIII :
+                  case AtomicShell.MIV :
+                  case AtomicShell.MV :
+                     final double f = IonizationCrossSection.shellDependence(dest) / IonizationCrossSection.shellDependence(AtomicShell.MV);
+                     res = f * iz * AlgorithmUser.getDefaultFluorescenceYieldMean().compute(dest) * xrt.getWeight(XRayTransition.NormalizeFamily);
                      break;
-                  default:
+                  default :
                      assert (false); // res=0.0;
                      break;
                }

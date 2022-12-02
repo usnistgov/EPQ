@@ -27,8 +27,7 @@ import gov.nist.microanalysis.NISTMonte.Gen3.BaseXRayGeneration3.XRay;
  * @author nritchie
  * @version 1.0
  */
-final public class ContinuumImage3
-   extends EmissionImageBase {
+final public class ContinuumImage3 extends EmissionImageBase {
 
    private final double mMinE;
    private final double mMaxE;
@@ -48,16 +47,16 @@ final public class ContinuumImage3
    @Override
    public void actionPerformed(ActionEvent e) {
       final XRayTransport3 xrg = (XRayTransport3) e.getSource();
-      switch(e.getID()) {
-         case MonteCarloSS.TrajectoryEndEvent:
+      switch (e.getID()) {
+         case MonteCarloSS.TrajectoryEndEvent :
             ++mTrajectoryCount;
             break;
-         case BaseXRayGeneration3.XRayGeneration: {
-            if(mTrajectoryCount < mMaxTrajectories) {
-               for(int i = xrg.getEventCount() - 1; i >= 0; --i) {
+         case BaseXRayGeneration3.XRayGeneration : {
+            if (mTrajectoryCount < mMaxTrajectories) {
+               for (int i = xrg.getEventCount() - 1; i >= 0; --i) {
                   final XRay xr = xrg.getXRay(i);
                   final double exr = xr.getEnergy();
-                  if((exr >= mMinE) && (exr <= mMaxE)) {
+                  if ((exr >= mMinE) && (exr <= mMaxE)) {
                      final double ii = mEmission ? xr.getIntensity() : xr.getGenerated();
                      final double[] pos = xr.getGenerationPos();
                      setPixel(pos[0], pos[2], ii);

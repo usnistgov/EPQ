@@ -41,8 +41,10 @@ public class QuantifyUsingZetaFactors {
    /**
     * Constructs a QuantifyUsingZetaFactors
     *
-    * @param det EDSDetector
-    * @param beamEnergy in Joules
+    * @param det
+    *           EDSDetector
+    * @param beamEnergy
+    *           in Joules
     */
    public QuantifyUsingZetaFactors(final EDSDetector det, final double beamEnergy) {
       mDetector = det;
@@ -60,22 +62,21 @@ public class QuantifyUsingZetaFactors {
     * @param spec
     * @throws EPQException
     */
-   public void assignStandard(final Element elm, ISpectrumData spec)
-         throws EPQException {
+   public void assignStandard(final Element elm, ISpectrumData spec) throws EPQException {
       spec = preProcessSpectrum(spec);
       final SpectrumProperties sp = spec.getProperties();
       final Composition comp = sp.getCompositionProperty(SpectrumProperties.StandardComposition);
-      if(!comp.containsElement(elm))
+      if (!comp.containsElement(elm))
          throw new EPQException("The standard does not contain " + elm.toString() + ".");
       sp.getNumericProperty(SpectrumProperties.LiveTime);
-      if(Double.isNaN(SpectrumUtils.getAverageFaradayCurrent(sp, Double.NaN)))
+      if (Double.isNaN(SpectrumUtils.getAverageFaradayCurrent(sp, Double.NaN)))
          throw new EPQException("The sample must define the probe current");
-      if(Double.isNaN(SpectrumUtils.getMassThickness(sp)))
+      if (Double.isNaN(SpectrumUtils.getMassThickness(sp)))
          throw new EPQException("The sample must define the mass-thickness.");
       final double e0 = ToSI.keV(sp.getNumericWithDefault(SpectrumProperties.BeamEnergy, FromSI.keV(mBeamEnergy)));
-      if(Math.abs((e0 - mBeamEnergy) / mBeamEnergy) > 0.01)
+      if (Math.abs((e0 - mBeamEnergy) / mBeamEnergy) > 0.01)
          throw new EPQException("The standard was not collected at the correct beam energy.");
-      if(mStrip.containsKey(elm))
+      if (mStrip.containsKey(elm))
          mStrip.remove(elm);
       mStandards.put(elm, spec);
    }
@@ -84,18 +85,19 @@ public class QuantifyUsingZetaFactors {
     * Assigns a reference spectrum to use to strip any characteristic peaks for
     * the specified element.
     *
-    * @param elm Element
-    * @param spec A reference containing unobstructed views of the
-    *           characteristic peak associated with elm.
+    * @param elm
+    *           Element
+    * @param spec
+    *           A reference containing unobstructed views of the characteristic
+    *           peak associated with elm.
     */
    public void assignStrip(final Element elm, final ISpectrumData spec) {
-      if(mStandards.containsKey(elm))
+      if (mStandards.containsKey(elm))
          mStandards.remove(elm);
       mStrip.put(elm, preProcessSpectrum(spec));
    }
 
-   public class Result
-      extends Pair<Number, Composition> {
+   public class Result extends Pair<Number, Composition> {
 
       private final ISpectrumData mUnknown;
       private final ISpectrumData mResidual;
@@ -134,37 +136,38 @@ public class QuantifyUsingZetaFactors {
     * ZetaFactor algorithm. Returns the estimated mass thickness and estimated
     * composition of the thin film.
     *
-    * @param unk The unknown spectrum
-    * @param withAbsorption Whether to apply the absorption correction.
+    * @param unk
+    *           The unknown spectrum
+    * @param withAbsorption
+    *           Whether to apply the absorption correction.
     * @return Pair&lt;Number, Composition&gt;
     * @throws EPQException
     */
-   public Result compute(final ISpectrumData unk, boolean withAbsorption)
-         throws EPQException {
+   public Result compute(final ISpectrumData unk, boolean withAbsorption) throws EPQException {
       final ISpectrumData dup = preProcessSpectrum(unk);
       final FilterFit ff = new FilterFit(mDetector, mBeamEnergy);
-      for(final Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())
+      for (final Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())
          ff.addReference(me.getKey(), me.getValue());
-      for(final Map.Entry<Element, ISpectrumData> me : mStrip.entrySet())
+      for (final Map.Entry<Element, ISpectrumData> me : mStrip.entrySet())
          ff.addReference(me.getKey(), me.getValue());
       final KRatioSet kr = new KRatioSet();
       final SpectrumProperties unkProps = unk.getProperties();
       {
          final KRatioSet all = ff.getKRatios(dup);
          unkProps.setKRatioProperty(SpectrumProperties.KRatios, all);
-         for(final XRayTransitionSet xrts : all.getTransitions())
-            if(mStandards.containsKey(xrts.getElement()))
+         for (final XRayTransitionSet xrts : all.getTransitions())
+            if (mStandards.containsKey(xrts.getElement()))
                kr.addKRatio(xrts, all.getKRatioU(xrts));
       }
       final Map<XRayTransitionSet, Number> measurements = new HashMap<XRayTransitionSet, Number>();
-      for(final XRayTransitionSet xrts : kr.getTransitions()) {
+      for (final XRayTransitionSet xrts : kr.getTransitions()) {
          final Element elm = xrts.getElement();
          final ISpectrumData std = mStandards.get(elm);
          final Material stdMat = (Material) std.getProperties().getCompositionProperty(SpectrumProperties.StandardComposition);
          final double dose = 1.0; // Dose already handled in k-ratios
          final double massThickness = ToSI.ugPcm2(SpectrumUtils.getMassThickness(std.getProperties())).doubleValue();
          final double toa = SpectrumUtils.getTakeOffAngle(std.getProperties());
-         if(withAbsorption)
+         if (withAbsorption)
             mAlg.addStandard(xrts, mAlg.computeZeta(xrts, stdMat, UncertainValue2.ONE, dose, massThickness, toa));
          else
             mAlg.addStandard(xrts, mAlg.computeZeta(massThickness, UncertainValue2.ONE, stdMat.weightFraction(elm, false), dose));
@@ -172,12 +175,11 @@ public class QuantifyUsingZetaFactors {
       }
       final double unkToa = SpectrumUtils.getTakeOffAngle(unkProps);
       final double unkDose = 1.0; // Dose already handled in k-ratios
-      final Pair<Number, Composition> tmp = withAbsorption ? mAlg.compute(measurements, unkDose, unkToa)
-            : mAlg.compute(measurements, unkDose);
+      final Pair<Number, Composition> tmp = withAbsorption ? mAlg.compute(measurements, unkDose, unkToa) : mAlg.compute(measurements, unkDose);
       final Result res = new Result(tmp, unk, ff.getResidualSpectrum(unk));
       unkProps.setCompositionProperty(SpectrumProperties.MicroanalyticalComposition, tmp.second);
       KRatioSet optimal = new KRatioSet();
-      for(XRayTransitionSet xrts : mAlg.getOptimal())
+      for (XRayTransitionSet xrts : mAlg.getOptimal())
          optimal.addKRatio(xrts, kr.getKRatio(xrts));
       unkProps.setKRatioProperty(SpectrumProperties.OptimalKRatios, optimal);
       unkProps.setNumericProperty(SpectrumProperties.MassThickness, FromSI.ugPcm2(res.getMassThickness()));
@@ -211,7 +213,7 @@ public class QuantifyUsingZetaFactors {
       // Header row
       Set<Element> elms = mStandards.keySet();
       pw.print("<tr><th>Spectrum</th><th>Quantity</th>");
-      for(final Element el : elms) {
+      for (final Element el : elms) {
          pw.print("<TH COLSPAN=3 ALIGN=CENTER>");
          pw.print(el.toAbbrev());
          pw.print("</TH>");
@@ -219,13 +221,13 @@ public class QuantifyUsingZetaFactors {
       pw.print("<th>Sum</th>");
       pw.print("</tr>");
       boolean first = true;
-      for(ISpectrumData spec : quantifiedSpectra) {
+      for (ISpectrumData spec : quantifiedSpectra) {
          // Separator line between spectra
          final Composition comp = spec.getProperties().getCompositionWithDefault(SpectrumProperties.MicroanalyticalComposition, null);
-         if(comp == null)
+         if (comp == null)
             continue;
          boolean boldNorm = false;
-         if(!first) {
+         if (!first) {
             pw.print("<tr><td colspan = ");
             pw.print(3 + (3 * elms.size()) + 1);
             pw.print("</td></tr>");
@@ -239,9 +241,9 @@ public class QuantifyUsingZetaFactors {
          pw.print("</th>");
          // Characteristic line family
          pw.print("<td>Line</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             final XRayTransitionSet xrts = optKrs != null ? optKrs.optimalDatum(elm) : null;
-            if(xrts != null) {
+            if (xrts != null) {
                pw.print("<TD COLSPAN = 3 ALIGN=CENTER>");
                pw.print(xrts);
                pw.print("</TD>");
@@ -251,9 +253,9 @@ public class QuantifyUsingZetaFactors {
          pw.println("<TD></TD></TR>");
          // k-ratios
          pw.print("<tr><td>k-ratios</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             final XRayTransitionSet xrts = optKrs != null ? optKrs.optimalDatum(elm) : null;
-            if(xrts != null) {
+            if (xrts != null) {
                pw.print("<TD ALIGN=RIGHT>");
                pw.print(nf4.format(measKrs.getRawKRatio(xrts)));
                pw.print("</TD><TD align=center>\u00B1</TD><TD ALIGN=LEFT>");
@@ -267,21 +269,21 @@ public class QuantifyUsingZetaFactors {
          pw.println("<TR><th>");
          {
             final Number mth = specProps.getNumericWithDefault(SpectrumProperties.MassThickness, null);
-            if(mth != null)
+            if (mth != null)
                pw.print("<br>Mass-thickness<br>" + UncertainValue2.format(nf1, mth) + " &mu;g/cm<sup>2</sup></TD>");
             else
                pw.print("<br>?WFT?");
          }
          pw.print("</th><td>mass fraction</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             pw.print(((!boldNorm) ? "<TH" : "<TD") + " ALIGN=RIGHT>");
             final UncertainValue2 wf = comp.weightFractionU(elm, false);
             pw.print(nf2.format(wf.doubleValue()));
             pw.print((!boldNorm) ? "</TH>" : "</TD>");
             pw.print("<TD align=center>\u00B1</TD><TD ALIGN=LEFT>");
             boolean first2 = true;
-            for(final String name : wf.getComponentNames()) {
-               if(!first2)
+            for (final String name : wf.getComponentNames()) {
+               if (!first2)
                   pw.print("<br/>");
                pw.print("<nobr>");
                pw.print(wf.formatComponent(name, 5));
@@ -297,16 +299,15 @@ public class QuantifyUsingZetaFactors {
          pw.println("</TR>");
          // norm(wgt%)
          pw.print("<TR>");
-         pw.print("<TD align=\"right\">I = " + nf3.format(SpectrumUtils.getAverageFaradayCurrent(specProps, Double.NaN))
-               + " nA</TD>");
+         pw.print("<TD align=\"right\">I = " + nf3.format(SpectrumUtils.getAverageFaradayCurrent(specProps, Double.NaN)) + " nA</TD>");
          pw.print("<td>norm(mass<br/>fraction)</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             final UncertainValue2 nwf = comp.weightFractionU(elm, true);
             pw.print((boldNorm ? "<TH" : "<TD") + " ALIGN=RIGHT>");
             pw.print(nf2.format(nwf.doubleValue()));
             pw.print(boldNorm ? "</TH>" : "</TD>");
             pw.print("<TD align=center>\u00B1</TD><TD ALIGN=LEFT>");
-            if(nwf.uncertainty() > 0.0)
+            if (nwf.uncertainty() > 0.0)
                pw.print(nf2.format(nwf.uncertainty()));
             pw.print("</TD>");
          }
@@ -314,29 +315,28 @@ public class QuantifyUsingZetaFactors {
          pw.println("</TR>");
          // atomic %
          pw.print("<TR>");
-         pw.print("<TD align=\"right\">LT = "
-               + nf1.format(specProps.getNumericWithDefault(SpectrumProperties.LiveTime, Double.NaN)) + " s</TD>");
+         pw.print("<TD align=\"right\">LT = " + nf1.format(specProps.getNumericWithDefault(SpectrumProperties.LiveTime, Double.NaN)) + " s</TD>");
          pw.print("<td>atomic<br/>fraction</td>");
-         for(final Element elm : elms) {
+         for (final Element elm : elms) {
             final UncertainValue2 ap = comp.atomicPercentU(elm);
             pw.print((boldNorm ? "<TH" : "<TD") + " ALIGN=RIGHT>");
             pw.print(nf2.format(ap.doubleValue()));
             pw.print(boldNorm ? "</TH>" : "</TD>");
             pw.print("<TD align=center>\u00B1</TD><TD ALIGN=LEFT>");
-            if(ap.uncertainty() > 0.0)
+            if (ap.uncertainty() > 0.0)
                pw.print(nf2.format(ap.uncertainty()));
             pw.print("</TD>");
          }
          pw.println("<TD></TD></TR>");
-         if(extResults != null) {
+         if (extResults != null) {
             ISpectrumData res = null;
-            for(final ISpectrumData rs : extResults)
-               if(rs instanceof DerivedSpectrum)
-                  if((((DerivedSpectrum) rs).getBaseSpectrum() == spec) && rs.toString().startsWith("Residual")) {
+            for (final ISpectrumData rs : extResults)
+               if (rs instanceof DerivedSpectrum)
+                  if ((((DerivedSpectrum) rs).getBaseSpectrum() == spec) && rs.toString().startsWith("Residual")) {
                      res = rs;
                      break;
                   }
-            if(res != null) {
+            if (res != null) {
                pw.print("<TR>");
                pw.print("<TD align=\"right\">Residual</TD>");
                pw.print("<TD COLSPAN=" + Integer.toString(1 + (3 * elms.size())) + " ALIGN=LEFT>");
@@ -350,8 +350,7 @@ public class QuantifyUsingZetaFactors {
                   pw.print("\">");
                   pw.print(f.toString());
                   pw.print("</A>");
-               }
-               catch(final Exception e) {
+               } catch (final Exception e) {
                   pw.print("Error writing the residual");
                }
                pw.println("</TD>");
@@ -395,11 +394,11 @@ public class QuantifyUsingZetaFactors {
       }
       {
          final Set<Element> stripped = mStrip.keySet();
-         if(stripped.size() > 0) {
+         if (stripped.size() > 0) {
             pw.print("<tr><td>Stripped elements</td><td>");
             boolean first = true;
-            for(final Element elm : stripped) {
-               if(!first)
+            for (final Element elm : stripped) {
+               if (!first)
                   pw.print(", ");
                pw.print(elm.toAbbrev());
                first = false;
@@ -413,7 +412,7 @@ public class QuantifyUsingZetaFactors {
          pw.println("<h3>Standards</h3>");
          pw.println("<table>");
          pw.print("<tr><th>Element</th><th>Material</th><th>Dose</th><th>Mass-Thickness<br/>&mu;g/cm<sup>2</sup></th><th>Spectrum</th></tr>");
-         for(final Map.Entry<Element, ISpectrumData> me : mStandards.entrySet()) {
+         for (final Map.Entry<Element, ISpectrumData> me : mStandards.entrySet()) {
             final NumberFormat nf3 = new DecimalFormat("0.000");
             final ISpectrumData spec = me.getValue();
             final SpectrumProperties props = spec.getProperties();
@@ -426,8 +425,7 @@ public class QuantifyUsingZetaFactors {
             pw.print("</td><td>");
             try {
                pw.print(nf3.format(SpectrumUtils.getDose(props)));
-            }
-            catch(EPQException e) {
+            } catch (EPQException e) {
                pw.print("N/A");
                e.printStackTrace();
             }
@@ -445,8 +443,7 @@ public class QuantifyUsingZetaFactors {
       return sw.toString();
    }
 
-   private static ISpectrumData loadResSpectrum(String name)
-         throws IOException {
+   private static ISpectrumData loadResSpectrum(String name) throws IOException {
       ClassLoader cl = ClassLoader.getSystemClassLoader();
       try (InputStream is = cl.getResourceAsStream("gov/nist/microanalysis/EPQTests/TestData/STEM/" + name)) {
          EMSAFile res = new EMSAFile(is);
@@ -454,8 +451,7 @@ public class QuantifyUsingZetaFactors {
       }
    }
 
-   public static ISpectrumData test()
-         throws IOException, EPQException {
+   public static ISpectrumData test() throws IOException, EPQException {
       ISpectrumData unk = loadResSpectrum("SRM-2063a std with scatter.msa");
       EDSDetector det = EDSDetector.createSiLiDetector(2048, 10.0, 135.0);
       QuantifyUsingZetaFactors qzf = new QuantifyUsingZetaFactors(det, ToSI.keV(30.0));
@@ -470,10 +466,9 @@ public class QuantifyUsingZetaFactors {
       final Result res = qzf.compute(unk, false);
       final HalfUpFormat nf = new HalfUpFormat("0.0");
       System.out.println("MT = " + UncertainValue2.format(nf, FromSI.ugPcm2(res.first)));
-      final Composition comp = res.second,
-            unkComp = unk.getProperties().getCompositionProperty(SpectrumProperties.StandardComposition);
+      final Composition comp = res.second, unkComp = unk.getProperties().getCompositionProperty(SpectrumProperties.StandardComposition);
       System.out.println(comp.descriptiveString(false));
-      for(Element elm : comp.getElementSet()) {
+      for (Element elm : comp.getElementSet()) {
          System.out.print(elm.toAbbrev());
          System.out.print("\t");
          System.out.print(comp.weightFraction(elm, false));

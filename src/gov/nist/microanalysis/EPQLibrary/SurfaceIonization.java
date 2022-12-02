@@ -20,8 +20,7 @@ import java.util.List;
  * @version 1.0
  */
 
-abstract public class SurfaceIonization
-   extends AlgorithmClass {
+abstract public class SurfaceIonization extends AlgorithmClass {
 
    @Override
    protected void initializeDefaultStrategy() {
@@ -48,9 +47,12 @@ abstract public class SurfaceIonization
     * of energy e0 (Joules) impinging on the Composition comp, ionizing the
     * AtomicShell shell.
     * 
-    * @param comp Composition
-    * @param shell AtomicShell
-    * @param e0 double - In Joules
+    * @param comp
+    *           Composition
+    * @param shell
+    *           AtomicShell
+    * @param e0
+    *           double - In Joules
     * @return double
     */
    abstract public double compute(Composition comp, AtomicShell shell, double e0);
@@ -61,9 +63,12 @@ abstract public class SurfaceIonization
     * arguments to the compute method. The result is a user friendly string
     * itemizing the limitations of the algorithm as known by the library author.
     * 
-    * @param comp Composition
-    * @param shell AtomicShell
-    * @param e0 double - In Joules
+    * @param comp
+    *           Composition
+    * @param shell
+    *           AtomicShell
+    * @param e0
+    *           double - In Joules
     * @return String
     */
    public String caveat(Composition comp, AtomicShell shell, double e0) {
@@ -74,8 +79,7 @@ abstract public class SurfaceIonization
     * Pouchou1991 - Pouchou &amp; Pichoir in Electron Probe Quantitation,
     * Newbury &amp; Heinrich (eds), Plenum (1991)
     */
-   public static class Pouchou1991SurfaceIonization
-      extends SurfaceIonization {
+   public static class Pouchou1991SurfaceIonization extends SurfaceIonization {
       public Pouchou1991SurfaceIonization() {
          super("Pouchou & Pichoir 1991", "Pouchou & Pichoir in Electron Probe Quantitation, Newbury & Heinrich (eds), Plenum (1991)");
       }
@@ -103,8 +107,7 @@ abstract public class SurfaceIonization
     * Bastin1998 - Bastin GF, Dijkstra JM and Heijligers HJM, X-Ray
     * Spectrometry, Vol 27, 3-10 (1998)
     */
-   static public class Bastin1998SurfaceIonization
-      extends SurfaceIonization {
+   static public class Bastin1998SurfaceIonization extends SurfaceIonization {
       public Bastin1998SurfaceIonization() {
          super("Bastin, Dijkstra & Heijligers 1998 (Proza96)", "Bastin GF, Dijkstra JM and Heijligers HJM, X-Ray Spectrometry, Vol 27, 3-10 (1998)");
       }
@@ -125,8 +128,7 @@ abstract public class SurfaceIonization
     * Reuter1972 - Reuter, W., Proc. 6th Int. Conf. on X-Ray Optics and
     * Microanalysis 1971, University of Tokyo Press 121 (1972)
     */
-   public static class Reuter1972SurfaceIonization
-      extends SurfaceIonization {
+   public static class Reuter1972SurfaceIonization extends SurfaceIonization {
       public Reuter1972SurfaceIonization() {
          super("Reuter 1972", "Reuter, W., Proc. 6th Int. Conf. on X-Ray Optics and Microanalysis 1971, University of Tokyo Press 121 (1972)");
       }
@@ -150,8 +152,7 @@ abstract public class SurfaceIonization
     * Love1978 - Love, G., The surface ionisation function fi(0) derived derived
     * using a Monte Carlo method, J. Phys. D. (1978)
     */
-   public static class Love1978SurfaceIonization
-      extends SurfaceIonization {
+   public static class Love1978SurfaceIonization extends SurfaceIonization {
       public Love1978SurfaceIonization() {
          super("Love 1978", "Love, G., The surface ionisation function fi(0) derived using a Monte Carlo method, J. Phys. D. (1978)");
       }
@@ -170,8 +171,7 @@ abstract public class SurfaceIonization
     * Love1978 - Love, G., The surface ionisation function fi(0) derived derived
     * using a Monte Carlo method, J. Phys. D. (1978)
     */
-   public static class Love1978CitzafSurfaceIonization
-      extends SurfaceIonization {
+   public static class Love1978CitzafSurfaceIonization extends SurfaceIonization {
       public Love1978CitzafSurfaceIonization() {
          super("Love 1978", "Love, G., J. Phys. D. (1978) as in CITZAF 3.06");
       }
@@ -200,10 +200,7 @@ abstract public class SurfaceIonization
    // Anal.
    // 285 (1988)
 
-   static private final AlgorithmClass[] mAllImplementations = {
-      SurfaceIonization.Bastin1998,
-      SurfaceIonization.Pouchou1991,
-      SurfaceIonization.Reuter1972
-   };
+   static private final AlgorithmClass[] mAllImplementations = {SurfaceIonization.Bastin1998, SurfaceIonization.Pouchou1991,
+         SurfaceIonization.Reuter1972};
 
 }

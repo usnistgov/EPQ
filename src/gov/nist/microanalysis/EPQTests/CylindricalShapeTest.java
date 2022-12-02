@@ -23,8 +23,7 @@ import junit.framework.TestCase;
  * @author Nicholas
  * @version 1.0
  */
-public class CylindricalShapeTest
-   extends TestCase {
+public class CylindricalShapeTest extends TestCase {
 
    private double mPhi, mTheta, mPsi;
    double[] mOffset;
@@ -42,22 +41,10 @@ public class CylindricalShapeTest
       mPhi = mRandom.nextDouble() * Math.PI;
       mTheta = mRandom.nextDouble() * Math.PI;
       mPsi = mRandom.nextDouble() * Math.PI;
-      mOffset = new double[] {
-         mScale * mRandom.nextDouble(),
-         mScale * mRandom.nextDouble(),
-         mScale * mRandom.nextDouble()
-      };
+      mOffset = new double[]{mScale * mRandom.nextDouble(), mScale * mRandom.nextDouble(), mScale * mRandom.nextDouble()};
       mScale = (mRandom.nextDouble() + 1.0e-4) * 10.0e-6;
       mRadius = (mRandom.nextDouble() + 1.0e-4) * 10.0e-6;
-      mShape = new CylindricalShape(transform(new double[] {
-         -mScale,
-         0.0,
-         0.0
-      }), transform(new double[] {
-         mScale,
-         0.0,
-         0.0
-      }), mRadius);
+      mShape = new CylindricalShape(transform(new double[]{-mScale, 0.0, 0.0}), transform(new double[]{mScale, 0.0, 0.0}), mRadius);
    }
 
    public CylindricalShapeTest(String test) {
@@ -73,7 +60,7 @@ public class CylindricalShapeTest
 
    private boolean isOnCylinder(double[] pt) {
       final double t = closestPtOnAxis(pt);
-      if((t >= 0) && (t <= 1)) {
+      if ((t >= 0) && (t <= 1)) {
          final double[] axisPt = Math2.plus(mShape.getEnd0(), Math2.multiply(t, Math2.minus(mShape.getEnd1(), mShape.getEnd0())));
          return Math.abs(Math2.distance(pt, axisPt) - mRadius) < (mRadius * 1.0e-6);
       } else
@@ -83,9 +70,9 @@ public class CylindricalShapeTest
    private boolean isOnEndCap(double[] pt) {
       final double t = closestPtOnAxis(pt);
       double[] axisPt = null;
-      if(Math.abs(t) < 1.0e-6)
+      if (Math.abs(t) < 1.0e-6)
          axisPt = mShape.getEnd0();
-      else if(Math.abs(t - 1.0) < 1.0e-6)
+      else if (Math.abs(t - 1.0) < 1.0e-6)
          axisPt = mShape.getEnd1();
       else
          return false;
@@ -96,16 +83,8 @@ public class CylindricalShapeTest
     * Test going into and coming out of a side...
     */
    public void testOne() {
-      final double[] parm0 = transform(new double[] {
-         -mScale / 2.0,
-         -mRadius / 2.0,
-         2.0 * mRadius
-      });
-      final double[] parm1 = transform(new double[] {
-         -mScale / 2.0,
-         -mRadius / 2.0,
-         0.0
-      });
+      final double[] parm0 = transform(new double[]{-mScale / 2.0, -mRadius / 2.0, 2.0 * mRadius});
+      final double[] parm1 = transform(new double[]{-mScale / 2.0, -mRadius / 2.0, 0.0});
 
       final double t = mShape.getFirstIntersection(parm0, parm1);
       assertTrue(isOnCylinder(Math2.pointBetween(parm0, parm1, t)));
@@ -118,16 +97,8 @@ public class CylindricalShapeTest
     * Test going through from one side to the other
     */
    public void testTwo() {
-      final double[] parm0 = transform(new double[] {
-         -mScale / 2.0,
-         -mRadius / 2.0,
-         2.0 * mRadius
-      });
-      final double[] parm1 = transform(new double[] {
-         -mScale / 2.0,
-         -mRadius / 2.0,
-         -2.0 * mRadius
-      });
+      final double[] parm0 = transform(new double[]{-mScale / 2.0, -mRadius / 2.0, 2.0 * mRadius});
+      final double[] parm1 = transform(new double[]{-mScale / 2.0, -mRadius / 2.0, -2.0 * mRadius});
 
       final double t = mShape.getFirstIntersection(parm0, parm1);
       assertTrue(isOnCylinder(Math2.pointBetween(parm0, parm1, t)));
@@ -146,16 +117,8 @@ public class CylindricalShapeTest
     * Test going through the end caps
     */
    public void testThree() {
-      final double[] parm0 = transform(new double[] {
-         -2.0 * mScale,
-         -mRadius,
-         mRadius
-      });
-      final double[] parm1 = transform(new double[] {
-         0.0,
-         0.0,
-         0.0
-      });
+      final double[] parm0 = transform(new double[]{-2.0 * mScale, -mRadius, mRadius});
+      final double[] parm1 = transform(new double[]{0.0, 0.0, 0.0});
 
       final double t = mShape.getFirstIntersection(parm0, parm1);
       assertTrue(isOnEndCap(Math2.pointBetween(parm0, parm1, t)));
@@ -174,16 +137,8 @@ public class CylindricalShapeTest
     * Test going through the end caps
     */
    public void testFour() {
-      final double[] parm0 = transform(new double[] {
-         2.0 * mScale,
-         mRadius / 2.0,
-         1.5 * mRadius
-      });
-      final double[] parm1 = transform(new double[] {
-         mScale / 2.0,
-         0.0,
-         0.0
-      });
+      final double[] parm0 = transform(new double[]{2.0 * mScale, mRadius / 2.0, 1.5 * mRadius});
+      final double[] parm1 = transform(new double[]{mScale / 2.0, 0.0, 0.0});
 
       final double t = mShape.getFirstIntersection(parm0, parm1);
       assertTrue(isOnEndCap(Math2.pointBetween(parm0, parm1, t)));
@@ -202,16 +157,8 @@ public class CylindricalShapeTest
     * Test parallel to axes
     */
    public void testFive() {
-      final double[] parm0 = transform(new double[] {
-         2.0 * mScale,
-         mRadius / 2.0,
-         mRadius / 2.0
-      });
-      final double[] parm1 = transform(new double[] {
-         mScale / 2.0,
-         mRadius / 2.0,
-         mRadius / 2.0
-      });
+      final double[] parm0 = transform(new double[]{2.0 * mScale, mRadius / 2.0, mRadius / 2.0});
+      final double[] parm1 = transform(new double[]{mScale / 2.0, mRadius / 2.0, mRadius / 2.0});
 
       final double t = mShape.getFirstIntersection(parm0, parm1);
       assertTrue(isOnEndCap(Math2.pointBetween(parm0, parm1, t)));
@@ -230,16 +177,8 @@ public class CylindricalShapeTest
     * Test misses (parallel to axis)
     */
    public void testSix() {
-      final double[] parm0 = transform(new double[] {
-         2.0 * mScale,
-         2.0 * mRadius,
-         mRadius / 2.0
-      });
-      final double[] parm1 = transform(new double[] {
-         -2.0 * mScale,
-         2.0 * mRadius,
-         mRadius / 2.0
-      });
+      final double[] parm0 = transform(new double[]{2.0 * mScale, 2.0 * mRadius, mRadius / 2.0});
+      final double[] parm1 = transform(new double[]{-2.0 * mScale, 2.0 * mRadius, mRadius / 2.0});
 
       final double t = mShape.getFirstIntersection(parm0, parm1);
       assertEquals(t, Double.MAX_VALUE, 1.0e-6);
@@ -252,16 +191,8 @@ public class CylindricalShapeTest
     * Test misses (parallel to axis)
     */
    public void testSeven() {
-      final double[] parm0 = transform(new double[] {
-         2.0 * mScale,
-         mRadius / 2.0,
-         mRadius / 2.0
-      });
-      final double[] parm1 = transform(new double[] {
-         1.1 * mScale,
-         mRadius / 2.0,
-         mRadius / 2.0
-      });
+      final double[] parm0 = transform(new double[]{2.0 * mScale, mRadius / 2.0, mRadius / 2.0});
+      final double[] parm1 = transform(new double[]{1.1 * mScale, mRadius / 2.0, mRadius / 2.0});
 
       final double t = mShape.getFirstIntersection(parm0, parm1);
       assertTrue(t > 1.0);
@@ -274,21 +205,9 @@ public class CylindricalShapeTest
     * Test misses (not parallel to axis)
     */
    public void testEight() {
-      final double[] parm0 = transform(new double[] {
-         -mScale / 2.0,
-         -mRadius / 2.0,
-         2.0 * mRadius
-      });
-      final double[] parm1 = transform(new double[] {
-         mScale / 2.0,
-         mRadius / 2.0,
-         1.1 * mRadius
-      });
-      final double[] parm2 = transform(new double[] {
-         mScale / 2.0,
-         mRadius / 2.0,
-         mRadius / 2.0
-      });
+      final double[] parm0 = transform(new double[]{-mScale / 2.0, -mRadius / 2.0, 2.0 * mRadius});
+      final double[] parm1 = transform(new double[]{mScale / 2.0, mRadius / 2.0, 1.1 * mRadius});
+      final double[] parm2 = transform(new double[]{mScale / 2.0, mRadius / 2.0, mRadius / 2.0});
 
       final double t = mShape.getFirstIntersection(parm0, parm1);
       assertTrue(t > 1.0);
@@ -307,16 +226,8 @@ public class CylindricalShapeTest
     * Test through both end cap and side (end0)
     */
    public void testNine() {
-      final double[] parm0 = transform(new double[] {
-         -1.1 * mScale,
-         -mRadius / 10.0,
-         0.0
-      });
-      final double[] parm1 = transform(new double[] {
-         0.0,
-         0.0,
-         1.1 * mRadius
-      });
+      final double[] parm0 = transform(new double[]{-1.1 * mScale, -mRadius / 10.0, 0.0});
+      final double[] parm1 = transform(new double[]{0.0, 0.0, 1.1 * mRadius});
       final double tp = mShape.getFirstIntersection(parm1, parm0);
       assertTrue(isOnCylinder(Math2.pointBetween(parm1, parm0, tp)));
 
@@ -330,16 +241,8 @@ public class CylindricalShapeTest
     * Test through both end cap and side (end1)
     */
    public void testTen() {
-      final double[] parm0 = transform(new double[] {
-         1.1 * mScale,
-         -mRadius / 10.0,
-         0.0
-      });
-      final double[] parm1 = transform(new double[] {
-         0.0,
-         0.0,
-         1.1 * mRadius
-      });
+      final double[] parm0 = transform(new double[]{1.1 * mScale, -mRadius / 10.0, 0.0});
+      final double[] parm1 = transform(new double[]{0.0, 0.0, 1.1 * mRadius});
       final double t = mShape.getFirstIntersection(parm0, parm1);
       assertFalse(isOnCylinder(Math2.pointBetween(parm0, parm1, t)));
       assertTrue(isOnEndCap(Math2.pointBetween(parm0, parm1, t)));
@@ -355,31 +258,16 @@ public class CylindricalShapeTest
       final double SCALE = 1.0e-5;
       final int ITERATIONS = 1000;
       final Random rand = new Random(0x4321);
-      final CylindricalShape shape = new CylindricalShape(new double[] {
-         -SCALE,
-         SCALE,
-         SCALE
-      }, new double[] {
-         SCALE,
-         SCALE,
-         SCALE
-      }, 0.5 * SCALE);
-      for(int i = 0; i < ITERATIONS; ++i) {
+      final CylindricalShape shape = new CylindricalShape(new double[]{-SCALE, SCALE, SCALE}, new double[]{SCALE, SCALE, SCALE}, 0.5 * SCALE);
+      for (int i = 0; i < ITERATIONS; ++i) {
          double r = 0.49 * SCALE * rand.nextDouble();
          double th = rand.nextDouble() * Math.PI * 2.0;
-         final double[] inside = new double[] {
-            1.9 * SCALE * (rand.nextDouble() - 0.5),
-            SCALE + (Math.cos(th) * r),
-            SCALE + (Math.sin(th) * r)
-         };
+         final double[] inside = new double[]{1.9 * SCALE * (rand.nextDouble() - 0.5), SCALE + (Math.cos(th) * r), SCALE + (Math.sin(th) * r)};
          assertTrue(shape.contains(inside));
          th = rand.nextDouble() * Math.PI * 2.0;
          r = SCALE * rand.nextDouble();
-         final double[] outside = new double[] {
-            3.0 * SCALE * (rand.nextDouble() - 0.5),
-            SCALE + (Math.cos(th) * ((0.501 * SCALE) + r)),
-            SCALE + (Math.sin(th) * ((0.501 * SCALE) + r))
-         };
+         final double[] outside = new double[]{3.0 * SCALE * (rand.nextDouble() - 0.5), SCALE + (Math.cos(th) * ((0.501 * SCALE) + r)),
+               SCALE + (Math.sin(th) * ((0.501 * SCALE) + r))};
          assertFalse(shape.contains(outside));
          final double t = shape.getFirstIntersection(inside, outside);
          final double tp = shape.getFirstIntersection(outside, inside);
@@ -390,26 +278,10 @@ public class CylindricalShapeTest
    }
 
    public void testTwelve() {
-      final CylindricalShape shape = new CylindricalShape(new double[] {
-         1.0e-6,
-         0.0,
-         1.0e-6
-      }, new double[] {
-         -1.0e-6,
-         0.0,
-         1.0e-6
-      }, 0.5e-6);
-      final double[] sa = new double[] {
-         -1.413972850134937E-7,
-         -1.5600411637508016E-7,
-         1.4006819741698632E-6
-      };
+      final CylindricalShape shape = new CylindricalShape(new double[]{1.0e-6, 0.0, 1.0e-6}, new double[]{-1.0e-6, 0.0, 1.0e-6}, 0.5e-6);
+      final double[] sa = new double[]{-1.413972850134937E-7, -1.5600411637508016E-7, 1.4006819741698632E-6};
       assertTrue(shape.contains(sa));
-      final double[] sb = new double[] {
-         -8.248126103570508E-9,
-         -2.5333627600912425E-7,
-         7.734838104262905E-7
-      };
+      final double[] sb = new double[]{-8.248126103570508E-9, -2.5333627600912425E-7, 7.734838104262905E-7};
       assertTrue(shape.contains(sb));
       final double t = shape.getFirstIntersection(sa, sb);
       assertTrue(t != Double.MAX_VALUE);

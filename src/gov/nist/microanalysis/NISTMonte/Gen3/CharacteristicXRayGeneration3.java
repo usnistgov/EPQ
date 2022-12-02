@@ -31,9 +31,7 @@ import gov.nist.microanalysis.Utility.Math2;
  * 
  * @author nicholas
  */
-final public class CharacteristicXRayGeneration3
-   extends BaseXRayGeneration3
-   implements ActionListener {
+final public class CharacteristicXRayGeneration3 extends BaseXRayGeneration3 implements ActionListener {
 
    /**
     * Use this static method instead of the constructor to create instances of
@@ -54,17 +52,15 @@ final public class CharacteristicXRayGeneration3
       super("Characteristic", "Default");
    }
 
-   private static class XRayData
-      implements Comparable<XRayData> {
+   private static class XRayData implements Comparable<XRayData> {
       private final XRayTransition mTransition;
       private final double mEnergy;
       private final double mProbability;
 
-      private XRayData(XRayTransition xrt, double prob)
-            throws EPQException {
+      private XRayData(XRayTransition xrt, double prob) throws EPQException {
          mTransition = xrt;
          mEnergy = xrt.getEnergy();
-         if(mEnergy == 0.0)
+         if (mEnergy == 0.0)
             throw new EPQException("Trying to create a transition with zero energy. " + mTransition.toString());
          mProbability = prob;
       }
@@ -86,35 +82,33 @@ final public class CharacteristicXRayGeneration3
    private final double mMinWeight = 0.001;
    private final int mMaxTrajectories = Integer.MAX_VALUE;
 
-   public void initialize()
-         throws EPQException {
-      if(!mInitialized) {
+   public void initialize() throws EPQException {
+      if (!mInitialized) {
          // Initialize the algorithms...
          mICX = (AbsoluteIonizationCrossSection) getAlgorithm(AbsoluteIonizationCrossSection.class);
          mTP = (TransitionProbabilities) getAlgorithm(TransitionProbabilities.class);
          final Set<Element> elms = mMonte.getElementSet();
          final Set<AtomicShell> ionizedShells = new TreeSet<AtomicShell>();
          // Determine all the ionized shells
-         for(final Element elm : elms)
-            for(int sh = AtomicShell.K; sh <= AtomicShell.MV; ++sh) {
+         for (final Element elm : elms)
+            for (int sh = AtomicShell.K; sh <= AtomicShell.MV; ++sh) {
                final double ee = AtomicShell.getEdgeEnergy(elm, sh);
-               if((ee > 0.0) && (ee < mMonte.getBeamEnergy()))
+               if ((ee > 0.0) && (ee < mMonte.getBeamEnergy()))
                   ionizedShells.add(new AtomicShell(elm, sh));
             }
          mData = new TreeMap<AtomicShell, TreeSet<XRayData>>();
          // Determine which transitions result from which ionizations
          { // Associate transitions and weights with shells
-            for(final AtomicShell shell : ionizedShells) {
+            for (final AtomicShell shell : ionizedShells) {
                final TreeSet<XRayData> xrd = new TreeSet<XRayData>();
-               for(final Map.Entry<XRayTransition, Double> me : mTP.getTransitions(shell, mMinWeight).entrySet())
+               for (final Map.Entry<XRayTransition, Double> me : mTP.getTransitions(shell, mMinWeight).entrySet())
                   try {
-                     if(me.getKey().getEnergy() > 0.0)
+                     if (me.getKey().getEnergy() > 0.0)
                         xrd.add(new XRayData(me.getKey(), me.getValue().doubleValue()));
-                  }
-                  catch(final EPQException e) {
+                  } catch (final EPQException e) {
                      System.err.print("Unable to simulate " + me.getKey() + "\n");
                   }
-               if(xrd.size() > 0)
+               if (xrd.size() > 0)
                   mData.put(shell, xrd);
             }
          }
@@ -128,13 +122,12 @@ final public class CharacteristicXRayGeneration3
     * @return XRayTranstion[]
     * @throws EPQException
     */
-   public XRayTransition[] getTransitions()
-         throws EPQException {
-      if(!mInitialized)
+   public XRayTransition[] getTransitions() throws EPQException {
+      if (!mInitialized)
          initialize();
       final TreeSet<XRayTransition> res = new TreeSet<XRayTransition>();
-      for(final TreeSet<XRayData> shellData : mData.values())
-         for(final XRayData xrd : shellData)
+      for (final TreeSet<XRayData> shellData : mData.values())
+         for (final XRayData xrd : shellData)
             res.add(xrd.mTransition);
       return res.toArray(new XRayTransition[res.size()]);
    }
@@ -148,24 +141,23 @@ final public class CharacteristicXRayGeneration3
     */
    @Override
    public void actionPerformed(ActionEvent ae) {
-      if(mTrajCount > mMaxTrajectories)
+      if (mTrajCount > mMaxTrajectories)
          return;
       assert (ae.getSource() instanceof MonteCarloSS);
       assert (mMonte == (MonteCarloSS) ae.getSource());
       reset();
-      switch(ae.getID()) {
-         case MonteCarloSS.FirstTrajectoryEvent:
+      switch (ae.getID()) {
+         case MonteCarloSS.FirstTrajectoryEvent :
             try {
                initialize();
-            }
-            catch(final EPQException e1) {
+            } catch (final EPQException e1) {
                e1.printStackTrace();
             }
             ++mTrajCount;
             fireXRayListeners(ae.getID());
             break;
-         case MonteCarloSS.NonScatterEvent:
-         case MonteCarloSS.ScatterEvent: {
+         case MonteCarloSS.NonScatterEvent :
+         case MonteCarloSS.ScatterEvent : {
             assert mInitialized;
             // Get the index associated with this material
             final Electron e = mMonte.getElectron();
@@ -188,16 +180,16 @@ final public class CharacteristicXRayGeneration3
             final double pos[] = Math2.pointBetween(e.getPrevPosition(), e.getPosition(), mRandom.nextDouble());
             final double stepLen = e.stepLength();
             final double energy = e.getEnergy();
-            if(mData.size() > 0) {
-               for(final Map.Entry<AtomicShell, TreeSet<XRayData>> me : mData.entrySet()) {
+            if (mData.size() > 0) {
+               for (final Map.Entry<AtomicShell, TreeSet<XRayData>> me : mData.entrySet()) {
                   final AtomicShell shell = me.getKey();
-                  if(energy > shell.getEdgeEnergy()) {
+                  if (energy > shell.getEdgeEnergy()) {
                      final double density = mat.atomsPerCubicMeter(shell.getElement());
-                     if(density > 0.0) {
+                     if (density > 0.0) {
                         final double iz = mICX.computeShell(shell, energy) * stepLen * density;
                         assert !Double.isInfinite(iz);
-                        if(iz > 0.0)
-                           for(final XRayData xrd : me.getValue())
+                        if (iz > 0.0)
+                           for (final XRayData xrd : me.getValue())
                               addCharXRay(pos, xrd.mEnergy, iz * xrd.mProbability, iz * xrd.mProbability, xrd.mTransition);
                      }
                   }
@@ -206,17 +198,16 @@ final public class CharacteristicXRayGeneration3
             }
             break;
          }
-         case MonteCarloSS.BeamEnergyChanged:
+         case MonteCarloSS.BeamEnergyChanged :
             try {
                mInitialized = false;
                initialize();
-            }
-            catch(final EPQException e) {
+            } catch (final EPQException e) {
                e.printStackTrace();
             }
             fireXRayListeners(ae.getID());
             break;
-         default:
+         default :
             fireXRayListeners(ae.getID());
             break;
       }

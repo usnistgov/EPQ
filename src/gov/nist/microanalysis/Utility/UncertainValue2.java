@@ -47,11 +47,7 @@ import gov.nist.microanalysis.EPQLibrary.EPQException;
  * @author nicholas
  * @version 1.0
  */
-final public class UncertainValue2
-   extends
-   Number
-   implements
-   Comparable<UncertainValue2> {
+final public class UncertainValue2 extends Number implements Comparable<UncertainValue2> {
 
    public static final String DEFAULT = "Default";
    private static transient long sDefIndex = 0;
@@ -81,8 +77,10 @@ final public class UncertainValue2
     * Constructs a UncertainValue2 with value <code>v</code> and uncertainty
     * <code>dv</code>.
     * 
-    * @param v The value
-    * @param dv The associated uncertainty
+    * @param v
+    *           The value
+    * @param dv
+    *           The associated uncertainty
     */
    public UncertainValue2(final double v, final double dv) {
       this(v, DEFAULT + Long.toString(++sDefIndex), dv);
@@ -91,7 +89,8 @@ final public class UncertainValue2
    /**
     * Constructs a UncertainValue2 with value <code>v</code> and no uncertainty.
     * 
-    * @param v The value
+    * @param v
+    *           The value
     */
    public UncertainValue2(final double v) {
       this(v, 0.0);
@@ -104,9 +103,12 @@ final public class UncertainValue2
    /**
     * Constructs a UncertainValue2
     * 
-    * @param v double
-    * @param source String The name of the source of the uncertainty
-    * @param dv The associate uncertainty
+    * @param v
+    *           double
+    * @param source
+    *           String The name of the source of the uncertainty
+    * @param dv
+    *           The associate uncertainty
     */
    public UncertainValue2(final double v, final String source, final double dv) {
       mValue = v;
@@ -117,14 +119,16 @@ final public class UncertainValue2
     * Constructs a UncertainValue2 with value <code>v</code> and uncertainties
     * <code>sigmas</code>.
     * 
-    * @param v The value
-    * @param sigmas The associated uncertainties
+    * @param v
+    *           The value
+    * @param sigmas
+    *           The associated uncertainties
     */
    public UncertainValue2(final double v, final Map<String, Double> sigmas) {
       super();
       mValue = v;
-      if(sigmas != null)
-         for(final Map.Entry<String, Double> me : sigmas.entrySet())
+      if (sigmas != null)
+         for (final Map.Entry<String, Double> me : sigmas.entrySet())
             assignComponent(me.getKey(), me.getValue());
    }
 
@@ -145,34 +149,36 @@ final public class UncertainValue2
     * Any previous value assigned to this source is replaced. If sigma is zero
     * then any earlier value is erased.
     * 
-    * @param name The name of the source of the uncertainty
-    * @param sigma The magnitude of the uncertainty
+    * @param name
+    *           The name of the source of the uncertainty
+    * @param sigma
+    *           The magnitude of the uncertainty
     */
    public void assignComponent(final String name, final double sigma) {
-      if(sigma != 0.0)
+      if (sigma != 0.0)
          mSigmas.put(name, Math.abs(sigma));
       else
          mSigmas.remove(name);
    }
 
    public void assignComponents(final Map<String, Double> comps) {
-      for(final Map.Entry<String, Double> me : comps.entrySet())
+      for (final Map.Entry<String, Double> me : comps.entrySet())
          assignComponent(me.getKey(), me.getValue());
    }
 
    @Override
    public String toString() {
-      if(mSigmas.size() > 0)
+      if (mSigmas.size() > 0)
          return Double.toString(mValue) + " \u00B1 " + Double.toString(uncertainty());
       else
          return Double.toString(mValue);
    }
 
    public String toLongString() {
-      if(mSigmas.size() > 0) {
+      if (mSigmas.size() > 0) {
          final StringBuffer sb = new StringBuffer();
          sb.append(mValue);
-         for(final Map.Entry<String, Double> me : mSigmas.entrySet()) {
+         for (final Map.Entry<String, Double> me : mSigmas.entrySet()) {
             sb.append("\u00B1");
             sb.append(me.getValue());
             sb.append("(");
@@ -185,7 +191,7 @@ final public class UncertainValue2
    }
 
    static public String format(final NumberFormat nf, Number n) {
-      if(n instanceof UncertainValue2)
+      if (n instanceof UncertainValue2)
          return ((UncertainValue2) n).format(nf);
       else
          return nf.format(n);
@@ -199,7 +205,7 @@ final public class UncertainValue2
     * @return String
     */
    public String format(final NumberFormat nf) {
-      if(mSigmas.size() > 0)
+      if (mSigmas.size() > 0)
          return nf.format(mValue) + "\u00B1" + nf.format(uncertainty());
       else
          return nf.format(mValue);
@@ -215,7 +221,7 @@ final public class UncertainValue2
    public String formatLong(final NumberFormat nf) {
       final StringBuffer sb = new StringBuffer();
       sb.append(nf.format(mValue));
-      for(final Map.Entry<String, Double> me : mSigmas.entrySet()) {
+      for (final Map.Entry<String, Double> me : mSigmas.entrySet()) {
          sb.append("\u00B1");
          sb.append(nf.format(me.getValue()));
          sb.append("(");
@@ -268,11 +274,11 @@ final public class UncertainValue2
    public String formatComponent(final String comp, final int dec) {
       final Double v = mSigmas.get(comp);
       NumberFormat nf;
-      if((v != null) && (Math.abs(v.doubleValue()) < (10.0 * Math.pow(10, -dec))))
+      if ((v != null) && (Math.abs(v.doubleValue()) < (10.0 * Math.pow(10, -dec))))
          nf = new ExponentFormat(2);
       else {
          final StringBuffer sf = new StringBuffer("0.");
-         for(int i = 1; i < dec; ++i)
+         for (int i = 1; i < dec; ++i)
             sf.append("0");
          nf = new HalfUpFormat(sf.toString());
       }
@@ -304,17 +310,16 @@ final public class UncertainValue2
     * @param oldName
     * @param newName
     */
-   public void renameComponent(final String oldName, final String newName)
-         throws EPQException {
-      if(mSigmas.containsKey(newName))
+   public void renameComponent(final String oldName, final String newName) throws EPQException {
+      if (mSigmas.containsKey(newName))
          throw new EPQException("A component named " + newName + " already exists.");
       final Double val = mSigmas.remove(oldName);
-      if(val != null)
+      if (val != null)
          mSigmas.put(newName, val);
    }
 
    static private UncertainValue2 toUV2(Number num) {
-      if(num instanceof UncertainValue2)
+      if (num instanceof UncertainValue2)
          return (UncertainValue2) num;
       else
          return new UncertainValue2(num.doubleValue());
@@ -329,15 +334,15 @@ final public class UncertainValue2
    static public UncertainValue2 add(final Collection<? extends Number> uvs) {
       final HashSet<String> srcs = new HashSet<String>();
       double sum = 0.0;
-      for(final Number n2 : uvs) {
+      for (final Number n2 : uvs) {
          final UncertainValue2 uv2 = toUV2(n2);
          srcs.addAll(uv2.mSigmas.keySet());
          sum += uv2.mValue;
       }
       final UncertainValue2 res = new UncertainValue2(sum);
-      for(final String src : srcs) {
+      for (final String src : srcs) {
          double unc = 0.0;
-         for(final Number n2 : uvs) {
+         for (final Number n2 : uvs) {
             unc += toUV2(n2).getComponent(src);
          }
          res.assignComponent(src, unc);
@@ -355,7 +360,7 @@ final public class UncertainValue2
       final Set<String> srcs = new HashSet<String>();
       srcs.addAll(uva.mSigmas.keySet());
       srcs.addAll(uvb.mSigmas.keySet());
-      for(final String src : srcs)
+      for (final String src : srcs)
          res.assignComponent(src, Math.abs((a * uva.getComponent(src)) + (b * uvb.getComponent(src))));
       return res;
    }
@@ -390,14 +395,13 @@ final public class UncertainValue2
     * @param cuv
     * @return UncertainValue2
     */
-   static public UncertainValue2 weightedMean(final Collection<? extends Number> cuv)
-         throws UtilException {
+   static public UncertainValue2 weightedMean(final Collection<? extends Number> cuv) throws UtilException {
       double varSum = 0.0;
       UncertainValue2 sum = ZERO;
-      for(final Number nuv : cuv) {
+      for (final Number nuv : cuv) {
          final UncertainValue2 uv = toUV2(nuv);
          final double ivar = 1.0 / uv.variance();
-         if(Double.isNaN(ivar))
+         if (Double.isNaN(ivar))
             throw new UtilException("Unable to compute the weighted mean when one or more datapoints have zero uncertainty.");
          varSum += ivar;
          sum = UncertainValue2.add(sum, UncertainValue2.multiply(ivar, uv));
@@ -419,12 +423,12 @@ final public class UncertainValue2
    static public UncertainValue2 safeWeightedMean(final Collection<? extends Number> cuv) {
       double varSum = 0.0;
       UncertainValue2 sum = ZERO;
-      for(final Number nuv : cuv) {
-         if(!(nuv instanceof UncertainValue2))
+      for (final Number nuv : cuv) {
+         if (!(nuv instanceof UncertainValue2))
             continue;
          final UncertainValue2 uv = (UncertainValue2) nuv;
          final double ivar = 1.0 / uv.variance();
-         if(Double.isNaN(ivar))
+         if (Double.isNaN(ivar))
             continue;
          varSum += ivar;
          sum = UncertainValue2.add(sum, UncertainValue2.multiply(ivar, uv));
@@ -443,14 +447,14 @@ final public class UncertainValue2
     */
    public static UncertainValue2 min(final Collection<Number> uvs) {
       UncertainValue2 res = null;
-      for(final Number nuv : uvs) {
+      for (final Number nuv : uvs) {
          final UncertainValue2 uv = toUV2(nuv);
-         if(res == null)
+         if (res == null)
             res = uv;
-         else if(uv.doubleValue() < res.doubleValue())
+         else if (uv.doubleValue() < res.doubleValue())
             res = uv;
-         else if(uv.doubleValue() == res.doubleValue())
-            if(uv.uncertainty() > res.uncertainty())
+         else if (uv.doubleValue() == res.doubleValue())
+            if (uv.uncertainty() > res.uncertainty())
                res = uv;
       }
       return res;
@@ -466,14 +470,14 @@ final public class UncertainValue2
     */
    public static UncertainValue2 max(final Collection<UncertainValue2> uvs) {
       UncertainValue2 res = null;
-      for(final Number nuv : uvs) {
+      for (final Number nuv : uvs) {
          final UncertainValue2 uv = toUV2(nuv);
-         if(res == null)
+         if (res == null)
             res = uv;
-         else if(uv.doubleValue() > res.doubleValue())
+         else if (uv.doubleValue() > res.doubleValue())
             res = uv;
-         else if(uv.doubleValue() == res.doubleValue())
-            if(uv.uncertainty() > res.uncertainty())
+         else if (uv.doubleValue() == res.doubleValue())
+            if (uv.uncertainty() > res.uncertainty())
                res = uv;
       }
       return res;
@@ -487,7 +491,7 @@ final public class UncertainValue2
     * @return An UncertainValue2
     */
    static public Number add(final Number v1, final double v2) {
-      if(v1 instanceof UncertainValue2)
+      if (v1 instanceof UncertainValue2)
          return new UncertainValue2(((UncertainValue2) v1).mValue + v2, ((UncertainValue2) v1).mSigmas);
       else
          return Double.valueOf(v1.doubleValue() + v2);
@@ -501,7 +505,7 @@ final public class UncertainValue2
     * @return An UncertainValue2
     */
    static public UncertainValue2 add(final double v1, final Number v2) {
-      if(v2 instanceof UncertainValue2)
+      if (v2 instanceof UncertainValue2)
          return new UncertainValue2(((UncertainValue2) v2).mValue + v1, ((UncertainValue2) v2).mSigmas);
       else
          return UncertainValue2.valueOf(v1 + v2.doubleValue());
@@ -529,7 +533,7 @@ final public class UncertainValue2
       UncertainValue2 v2 = toUV2(n2);
       assert v2.uncertainty() >= 0.0 : v2.toLongString();
       final UncertainValue2 res = new UncertainValue2(v1 * v2.mValue);
-      for(final Map.Entry<String, Double> me : v2.mSigmas.entrySet())
+      for (final Map.Entry<String, Double> me : v2.mSigmas.entrySet())
          res.assignComponent(me.getKey(), v1 * me.getValue());
       return res;
    }
@@ -549,7 +553,7 @@ final public class UncertainValue2
       srcs.addAll(b.mSigmas.keySet());
       final double ca = b.mValue;
       final double cb = a.mValue;
-      for(final String src : srcs) {
+      for (final String src : srcs) {
          final double ua = a.getComponent(src), ub = b.getComponent(src);
          res.assignComponent(src, Math.abs((ca * ua) + (cb * ub)));
       }
@@ -559,11 +563,11 @@ final public class UncertainValue2
    static public UncertainValue2 invert(final Number nv) {
       final UncertainValue2 v = toUV2(nv);
       final UncertainValue2 res = new UncertainValue2(1.0 / v.mValue);
-      if(!Double.isNaN(res.doubleValue())) {
+      if (!Double.isNaN(res.doubleValue())) {
          final double cb = 1.0 / (v.mValue * v.mValue);
-         if(Double.isNaN(cb))
+         if (Double.isNaN(cb))
             return UncertainValue2.NaN;
-         for(final String src : v.mSigmas.keySet())
+         for (final String src : v.mSigmas.keySet())
             res.assignComponent(src, Math.abs(cb * v.getComponent(src)));
       }
       return res;
@@ -579,15 +583,15 @@ final public class UncertainValue2
    static public UncertainValue2 divide(final Number na, final Number nb) {
       final UncertainValue2 a = toUV2(na), b = toUV2(nb);
       final UncertainValue2 res = new UncertainValue2(a.mValue / b.mValue);
-      if(!Double.isNaN(res.doubleValue())) {
+      if (!Double.isNaN(res.doubleValue())) {
          final Set<String> srcs = new TreeSet<String>();
          srcs.addAll(a.mSigmas.keySet());
          srcs.addAll(b.mSigmas.keySet());
          final double ca = 1.0 / b.mValue;
          final double cb = -a.mValue / (b.mValue * b.mValue);
-         if(Double.isNaN(ca) || Double.isNaN(cb))
+         if (Double.isNaN(ca) || Double.isNaN(cb))
             return UncertainValue2.NaN;
-         for(final String src : srcs) {
+         for (final String src : srcs) {
             final double ua = a.getComponent(src), ub = b.getComponent(src);
             res.assignComponent(src, Math.abs((ca * ua) + (cb * ub)));
          }
@@ -598,9 +602,9 @@ final public class UncertainValue2
    static public UncertainValue2 divide(final double a, final Number nb) {
       final UncertainValue2 b = toUV2(nb);
       final UncertainValue2 res = new UncertainValue2(a / b.mValue);
-      if(!Double.isNaN(res.doubleValue())) {
+      if (!Double.isNaN(res.doubleValue())) {
          final double ub = Math.abs(a / (b.mValue * b.mValue));
-         for(final Map.Entry<String, Double> me : b.mSigmas.entrySet())
+         for (final Map.Entry<String, Double> me : b.mSigmas.entrySet())
             res.assignComponent(me.getKey(), ub * me.getValue().doubleValue());
       }
       return res;
@@ -609,10 +613,10 @@ final public class UncertainValue2
    static public UncertainValue2 divide(final Number na, final double b) {
       final UncertainValue2 a = toUV2(na);
       final double den = 1.0 / b;
-      if(!Double.isNaN(den)) {
+      if (!Double.isNaN(den)) {
          final UncertainValue2 res = new UncertainValue2(den * a.doubleValue());
          final double ua = Math.abs(den);
-         for(final Map.Entry<String, Double> me : a.mSigmas.entrySet())
+         for (final Map.Entry<String, Double> me : a.mSigmas.entrySet())
             res.assignComponent(me.getKey(), ua * me.getValue().doubleValue());
          return res;
       } else
@@ -631,7 +635,7 @@ final public class UncertainValue2
       assert !Double.isNaN(x.mValue) : x.toString();
       final double ex = Math.exp(x.mValue);
       final UncertainValue2 res = new UncertainValue2(ex);
-      for(final Map.Entry<String, Double> me : x.mSigmas.entrySet())
+      for (final Map.Entry<String, Double> me : x.mSigmas.entrySet())
          res.assignComponent(me.getKey(), ex * me.getValue().doubleValue());
       return res;
    }
@@ -646,9 +650,9 @@ final public class UncertainValue2
       final UncertainValue2 v2 = toUV2(nx);
       final double tmp = 1.0 / v2.mValue;
       final double lv = Math.log(v2.mValue);
-      if(!(Double.isNaN(tmp) || Double.isNaN(lv))) {
+      if (!(Double.isNaN(tmp) || Double.isNaN(lv))) {
          final UncertainValue2 res = new UncertainValue2(lv);
-         for(final Map.Entry<String, Double> me : v2.mSigmas.entrySet())
+         for (final Map.Entry<String, Double> me : v2.mSigmas.entrySet())
             res.assignComponent(me.getKey(), tmp * me.getValue());
          return res;
       } else
@@ -658,17 +662,19 @@ final public class UncertainValue2
    /**
     * Compute an UncertainValue2 raised to the specified power.
     * 
-    * @param n1 The value
-    * @param n The exponent
+    * @param n1
+    *           The value
+    * @param n
+    *           The exponent
     * @return An UncertainValue2
     */
    static public UncertainValue2 pow(final Number n1, final double n) {
       UncertainValue2 v1 = toUV2(n1);
-      if(v1.mValue != 0.0) {
+      if (v1.mValue != 0.0) {
          final double f = Math.pow(v1.mValue, n);
          final double df = n * Math.pow(v1.mValue, n - 1.0);
          final UncertainValue2 res = new UncertainValue2(f);
-         for(final Map.Entry<String, Double> me : v1.mSigmas.entrySet())
+         for (final Map.Entry<String, Double> me : v1.mSigmas.entrySet())
             res.assignComponent(me.getKey(), me.getValue() * df);
          return res;
       } else
@@ -697,12 +703,9 @@ final public class UncertainValue2
       // q=-0.5*(b+signum(b)*sqrt(pow(b,2.0)-4*a*c))
       // return [ q/a, c/q ]
       final UncertainValue2 r = UncertainValue2.add(1.0, UncertainValue2.pow(b, 2.0), -4.0, UncertainValue2.multiply(a, c));
-      if(r.doubleValue() > 0.0) {
+      if (r.doubleValue() > 0.0) {
          final UncertainValue2 q = UncertainValue2.multiply(-0.5, UncertainValue2.add(b, UncertainValue2.multiply(Math.signum(b.mValue), r.sqrt())));
-         return new UncertainValue2[] {
-            UncertainValue2.divide(q, a),
-            UncertainValue2.divide(c, q)
-         };
+         return new UncertainValue2[]{UncertainValue2.divide(q, a), UncertainValue2.divide(c, q)};
       } else
          return null;
 
@@ -747,7 +750,7 @@ final public class UncertainValue2
     */
    public double variance() {
       double sigma2 = 0.0;
-      for(final Double s : mSigmas.values())
+      for (final Double s : mSigmas.values())
          sigma2 += s * s;
       return sigma2;
    }
@@ -768,7 +771,7 @@ final public class UncertainValue2
     * @return A double
     */
    public static double fractionalUncertainty(Number n) {
-      if(n instanceof UncertainValue2)
+      if (n instanceof UncertainValue2)
          return ((UncertainValue2) n).fractionalUncertainty();
       else
          return 0.0;
@@ -795,11 +798,11 @@ final public class UncertainValue2
     */
    @Override
    public boolean equals(final Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final UncertainValue2 other = (UncertainValue2) obj;
       return mSigmas.equals(other.mSigmas) && (mValue == other.mValue);
@@ -814,13 +817,13 @@ final public class UncertainValue2
     * @return true if equal to within tolerance, false otherwise.
     */
    public boolean equals(final UncertainValue2 other, double tolerance) {
-      if(this == other)
+      if (this == other)
          return true;
       Set<String> keys = new TreeSet<String>();
       keys.addAll(other.mSigmas.keySet());
       keys.addAll(mSigmas.keySet());
-      for(String key : keys)
-         if(Math.abs(mSigmas.get(key) - other.mSigmas.get(key)) >= tolerance)
+      for (String key : keys)
+         if (Math.abs(mSigmas.get(key) - other.mSigmas.get(key)) >= tolerance)
             return false;
       return (Math.abs(uncertainty() - other.uncertainty()) < tolerance) && (Math.abs(mValue - other.mValue) < tolerance);
    }
@@ -862,9 +865,9 @@ final public class UncertainValue2
    static public UncertainValue2 atan(final UncertainValue2 uv) {
       final double f = Math.atan(uv.doubleValue());
       final double df = 1.0 / (1.0 + (uv.doubleValue() * uv.doubleValue()));
-      if(!(Double.isNaN(f) || Double.isNaN(df))) {
+      if (!(Double.isNaN(f) || Double.isNaN(df))) {
          final UncertainValue2 res = new UncertainValue2(f);
-         for(final Map.Entry<String, Double> me : uv.mSigmas.entrySet())
+         for (final Map.Entry<String, Double> me : uv.mSigmas.entrySet())
             res.assignComponent(me.getKey(), df * me.getValue());
          return res;
       } else
@@ -874,9 +877,9 @@ final public class UncertainValue2
    static public UncertainValue2 atan2(final UncertainValue2 y, final UncertainValue2 x) {
       final double f = Math.atan2(y.doubleValue(), x.doubleValue());
       final double df = 1.0 / (1.0 + Math2.sqr(y.doubleValue() / x.doubleValue()));
-      if(!(Double.isNaN(f) || Double.isNaN(df))) {
+      if (!(Double.isNaN(f) || Double.isNaN(df))) {
          final UncertainValue2 res = new UncertainValue2(f);
-         for(final Map.Entry<String, Double> me : UncertainValue2.divide(y, x).mSigmas.entrySet())
+         for (final Map.Entry<String, Double> me : UncertainValue2.divide(y, x).mSigmas.entrySet())
             res.assignComponent(me.getKey(), df * me.getValue());
          return res;
       } else
@@ -923,7 +926,7 @@ final public class UncertainValue2
 
          @Override
          public boolean equals(final Object obj) {
-            if(obj instanceof Key) {
+            if (obj instanceof Key) {
                final Key k2 = (Key) obj;
                return (mSource1.equals(k2.mSource1) && mSource2.equals(k2.mSource2))
                      || (mSource1.equals(k2.mSource2) && mSource2.equals(k2.mSource1));
@@ -943,7 +946,8 @@ final public class UncertainValue2
        * 
        * @param src1
        * @param src2
-       * @param corr The correlation on the range [-1.0,1.0]
+       * @param corr
+       *           The correlation on the range [-1.0,1.0]
        */
       public void add(final String src1, final String src2, final double corr) {
          assert (corr >= -1.0) && (corr <= 1.0);
@@ -966,7 +970,7 @@ final public class UncertainValue2
 
    public double uncertainty(final Collection<String> comps) {
       double sum2 = 0.0;
-      for(final String comp : comps)
+      for (final String comp : comps)
          sum2 += getComponent(comp);
       return Math.sqrt(sum2);
    }
@@ -983,10 +987,10 @@ final public class UncertainValue2
    public double variance(final Correlations corr) {
       final ArrayList<String> keys = new ArrayList<String>(mSigmas.keySet());
       double res = 0.0;
-      for(int i = 0; i < keys.size(); ++i)
+      for (int i = 0; i < keys.size(); ++i)
          res += Math2.sqr(mSigmas.get(keys.get(i)));
-      for(int i = 0; i < (keys.size() - 1); ++i)
-         for(int j = i + 1; j < keys.size(); ++j)
+      for (int i = 0; i < (keys.size() - 1); ++i)
+         for (int j = i + 1; j < keys.size(); ++j)
             res += 2.0 * mSigmas.get(keys.get(i)) * mSigmas.get(keys.get(j)) * corr.get(keys.get(i), keys.get(j));
       return res;
    }
@@ -1040,9 +1044,9 @@ final public class UncertainValue2
    public UncertainValue2[] normalize(UncertainValue2[] vals) {
       UncertainValue2[] res = new UncertainValue2[vals.length];
       double norm = 0.0;
-      for(UncertainValue2 val : vals)
+      for (UncertainValue2 val : vals)
          norm += val.doubleValue();
-      for(int i = 0; i < vals.length; ++i)
+      for (int i = 0; i < vals.length; ++i)
          res[i] = UncertainValue2.multiply(1.0 / norm, vals[i]);
       return res;
    }

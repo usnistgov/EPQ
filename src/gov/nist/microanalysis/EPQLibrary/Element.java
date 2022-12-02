@@ -30,8 +30,7 @@ import gov.nist.microanalysis.Utility.CSVReader;
  * @version 1.0
  */
 
-public class Element
-   implements Comparable<Element>, Serializable {
+public class Element implements Comparable<Element>, Serializable {
    static final private long serialVersionUID = 0x987360133793L;
 
    public static final int elmNone = 0;
@@ -264,354 +263,29 @@ public class Element
    public static final Element Uuu = new Element(111);
    public static final Element Uub = new Element(112);
 
-   private static final Element[] mAllElements = {
-      H,
-      He,
-      Li,
-      Be,
-      B,
-      C,
-      N,
-      O,
-      F,
-      Ne,
-      Na,
-      Mg,
-      Al,
-      Si,
-      P,
-      S,
-      Cl,
-      Ar,
-      K,
-      Ca,
-      Sc,
-      Ti,
-      V,
-      Cr,
-      Mn,
-      Fe,
-      Co,
-      Ni,
-      Cu,
-      Zn,
-      Ga,
-      Ge,
-      As,
-      Se,
-      Br,
-      Kr,
-      Rb,
-      Sr,
-      Y,
-      Zr,
-      Nb,
-      Mo,
-      Tc,
-      Ru,
-      Rh,
-      Pd,
-      Ag,
-      Cd,
-      In,
-      Sn,
-      Sb,
-      Te,
-      I,
-      Xe,
-      Cs,
-      Ba,
-      La,
-      Ce,
-      Pr,
-      Nd,
-      Pm,
-      Sm,
-      Eu,
-      Gd,
-      Tb,
-      Dy,
-      Ho,
-      Er,
-      Tm,
-      Yb,
-      Lu,
-      Hf,
-      Ta,
-      W,
-      Re,
-      Os,
-      Ir,
-      Pt,
-      Au,
-      Hg,
-      Tl,
-      Pb,
-      Bi,
-      Po,
-      At,
-      Rn,
-      Fr,
-      Ra,
-      Ac,
-      Th,
-      Pa,
-      U,
-      Np,
-      Pu,
-      Am,
-      Cm,
-      Bk,
-      Cf,
-      Es,
-      Fm,
-      Md,
-      No,
-      Lr,
-      Rf,
-      Db,
-      Sg,
-      Bh,
-      Hs,
-      Mt,
-      Uun,
-      Uuu,
-      Uub
-   };
+   private static final Element[] mAllElements = {H, He, Li, Be, B, C, N, O, F, Ne, Na, Mg, Al, Si, P, S, Cl, Ar, K, Ca, Sc, Ti, V, Cr, Mn, Fe, Co,
+         Ni, Cu, Zn, Ga, Ge, As, Se, Br, Kr, Rb, Sr, Y, Zr, Nb, Mo, Tc, Ru, Rh, Pd, Ag, Cd, In, Sn, Sb, Te, I, Xe, Cs, Ba, La, Ce, Pr, Nd, Pm, Sm, Eu,
+         Gd, Tb, Dy, Ho, Er, Tm, Yb, Lu, Hf, Ta, W, Re, Os, Ir, Pt, Au, Hg, Tl, Pb, Bi, Po, At, Rn, Fr, Ra, Ac, Th, Pa, U, Np, Pu, Am, Cm, Bk, Cf, Es,
+         Fm, Md, No, Lr, Rf, Db, Sg, Bh, Hs, Mt, Uun, Uuu, Uub};
 
-   private static final String[] mElementNames = {
-      "None",
-      "Hydrogen",
-      "Helium",
-      "Lithium",
-      "Beryllium",
-      "Boron",
-      "Carbon",
-      "Nitrogen",
-      "Oxygen",
-      "Fluorine",
-      "Neon",
-      "Sodium",
-      "Magnesium",
-      "Aluminum",
-      "Silicon",
-      "Phosphorus",
-      "Sulfur",
-      "Chlorine",
-      "Argon",
-      "Potassium",
-      "Calcium",
-      "Scandium",
-      "Titanium",
-      "Vanadium",
-      "Chromium",
-      "Manganese",
-      "Iron",
-      "Cobalt",
-      "Nickel",
-      "Copper",
-      "Zinc",
-      "Gallium",
-      "Germanium",
-      "Arsenic",
-      "Selenium",
-      "Bromine",
-      "Krypton",
-      "Rubidium",
-      "Strontium",
-      "Yttrium",
-      "Zirconium",
-      "Niobium",
-      "Molybdenum",
-      "Technetium",
-      "Ruthenium",
-      "Rhodium",
-      "Palladium",
-      "Silver",
-      "Cadmium",
-      "Indium",
-      "Tin",
-      "Antimony",
-      "Tellurium",
-      "Iodine",
-      "Xenon",
-      "Cesium",
-      "Barium",
-      "Lanthanum",
-      "Cerium",
-      "Praseodymium",
-      "Neodymium",
-      "Promethium",
-      "Samarium",
-      "Europium",
-      "Gadolinium",
-      "Terbium",
-      "Dysprosium",
-      "Holmium",
-      "Erbium",
-      "Thulium",
-      "Ytterbium",
-      "Lutetium",
-      "Hafnium",
-      "Tantalum",
-      "Tungsten",
-      "Rhenium",
-      "Osmium",
-      "Iridium",
-      "Platinum",
-      "Gold",
-      "Mercury",
-      "Thallium",
-      "Lead",
-      "Bismuth",
-      "Polonium",
-      "Astatine",
-      "Radon",
-      "Francium",
-      "Radium",
-      "Actinium",
-      "Thorium",
-      "Protactinium",
-      "Uranium",
-      "Neptunium",
-      "Plutonium",
-      "Americium",
-      "Curium",
-      "Berkelium",
-      "Californium",
-      "Einsteinium",
-      "Fermium",
-      "Mendelevium",
-      "Nobelium",
-      "Lawrencium",
-      "Rutherfordium",
-      "Dubnium",
-      "Seaborgium",
-      "Bohrium",
-      "Hassium",
-      "Meitnerium",
-      "Ununnilium",
-      "Unununium",
-      "Ununbium",
-      "End-of-elements"
-   };
+   private static final String[] mElementNames = {"None", "Hydrogen", "Helium", "Lithium", "Beryllium", "Boron", "Carbon", "Nitrogen", "Oxygen",
+         "Fluorine", "Neon", "Sodium", "Magnesium", "Aluminum", "Silicon", "Phosphorus", "Sulfur", "Chlorine", "Argon", "Potassium", "Calcium",
+         "Scandium", "Titanium", "Vanadium", "Chromium", "Manganese", "Iron", "Cobalt", "Nickel", "Copper", "Zinc", "Gallium", "Germanium", "Arsenic",
+         "Selenium", "Bromine", "Krypton", "Rubidium", "Strontium", "Yttrium", "Zirconium", "Niobium", "Molybdenum", "Technetium", "Ruthenium",
+         "Rhodium", "Palladium", "Silver", "Cadmium", "Indium", "Tin", "Antimony", "Tellurium", "Iodine", "Xenon", "Cesium", "Barium", "Lanthanum",
+         "Cerium", "Praseodymium", "Neodymium", "Promethium", "Samarium", "Europium", "Gadolinium", "Terbium", "Dysprosium", "Holmium", "Erbium",
+         "Thulium", "Ytterbium", "Lutetium", "Hafnium", "Tantalum", "Tungsten", "Rhenium", "Osmium", "Iridium", "Platinum", "Gold", "Mercury",
+         "Thallium", "Lead", "Bismuth", "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Thorium", "Protactinium", "Uranium",
+         "Neptunium", "Plutonium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Fermium", "Mendelevium", "Nobelium",
+         "Lawrencium", "Rutherfordium", "Dubnium", "Seaborgium", "Bohrium", "Hassium", "Meitnerium", "Ununnilium", "Unununium", "Ununbium",
+         "End-of-elements"};
 
-   private static final String[] mAbbreviations = {
-      "",
-      "H",
-      "He",
-      "Li",
-      "Be",
-      "B",
-      "C",
-      "N",
-      "O",
-      "F",
-      "Ne",
-      "Na",
-      "Mg",
-      "Al",
-      "Si",
-      "P",
-      "S",
-      "Cl",
-      "Ar",
-      "K",
-      "Ca",
-      "Sc",
-      "Ti",
-      "V",
-      "Cr",
-      "Mn",
-      "Fe",
-      "Co",
-      "Ni",
-      "Cu",
-      "Zn",
-      "Ga",
-      "Ge",
-      "As",
-      "Se",
-      "Br",
-      "Kr",
-      "Rb",
-      "Sr",
-      "Y",
-      "Zr",
-      "Nb",
-      "Mo",
-      "Tc",
-      "Ru",
-      "Rh",
-      "Pd",
-      "Ag",
-      "Cd",
-      "In",
-      "Sn",
-      "Sb",
-      "Te",
-      "I",
-      "Xe",
-      "Cs",
-      "Ba",
-      "La",
-      "Ce",
-      "Pr",
-      "Nd",
-      "Pm",
-      "Sm",
-      "Eu",
-      "Gd",
-      "Tb",
-      "Dy",
-      "Ho",
-      "Er",
-      "Tm",
-      "Yb",
-      "Lu",
-      "Hf",
-      "Ta",
-      "W",
-      "Re",
-      "Os",
-      "Ir",
-      "Pt",
-      "Au",
-      "Hg",
-      "Tl",
-      "Pb",
-      "Bi",
-      "Po",
-      "At",
-      "Rn",
-      "Fr",
-      "Ra",
-      "Ac",
-      "Th",
-      "Pa",
-      "U",
-      "Np",
-      "Pu",
-      "Am",
-      "Cm",
-      "Bk",
-      "Cf",
-      "Es",
-      "Fm",
-      "Md",
-      "No",
-      "Lr",
-      "Rf",
-      "Db",
-      "Sg",
-      "Bh",
-      "Hs",
-      "Mt",
-      "Uun",
-      "Uuu",
-      "Uub",
-      "EOE"
-   };
+   private static final String[] mAbbreviations = {"", "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl",
+         "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb",
+         "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd",
+         "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr",
+         "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Uun",
+         "Uuu", "Uub", "EOE"};
 
    private static double[] mIonizationEnergy; // Nominal in Joules
    private static double[] mAtomicWeight; // nominal, in AMU
@@ -631,16 +305,15 @@ public class Element
 
    private static void readAtomicWeights() {
       try {
-         synchronized(Element.class) {
-            if(mAtomicWeight == null) {
+         synchronized (Element.class) {
+            if (mAtomicWeight == null) {
                final double[][] TempDoubleArray = (new CSVReader.ResourceReader("AtomicWeights.csv", true)).getResource(Element.class);
                mAtomicWeight = new double[TempDoubleArray.length];
-               for(int index = 0; index < TempDoubleArray.length; ++index)
+               for (int index = 0; index < TempDoubleArray.length; ++index)
                   mAtomicWeight[index] = TempDoubleArray[index][0];
             }
          }
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          throw new EPQFatalException("Fatal error while attempting to load the atomic weights data file.");
       }
    }
@@ -649,72 +322,73 @@ public class Element
     * atomicNumberForName - Get the atomic number for the named element. THe
     * name may be the abbreviation or the full name (case insensitive)
     * 
-    * @param name String
+    * @param name
+    *           String
     * @return int
     */
    static public int atomicNumberForName(String name) {
-      for(int i = 0; i < mElementNames.length; ++i)
-         if((mElementNames[i].compareToIgnoreCase(name) == 0) || (mAbbreviations[i].compareTo(name) == 0))
+      for (int i = 0; i < mElementNames.length; ++i)
+         if ((mElementNames[i].compareToIgnoreCase(name) == 0) || (mAbbreviations[i].compareTo(name) == 0))
             return i;
       try {
          return Integer.parseInt(name);
-      }
-      catch(final NumberFormatException ex) {
+      } catch (final NumberFormatException ex) {
          return Element.elmNone;
       }
    }
 
-   
    /**
     * atomicNumberForName - Get the atomic number for the named element. THe
     * name may be the abbreviation or the full name (case insensitive)
     * 
-    * @param name String
+    * @param name
+    *           String
     * @return int
     */
    static public int atomicNumberForNameUncase(String name) {
-      for(int i = 0; i < mElementNames.length; ++i)
-         if((mElementNames[i].compareToIgnoreCase(name) == 0) || (mAbbreviations[i].compareToIgnoreCase(name) == 0))
+      for (int i = 0; i < mElementNames.length; ++i)
+         if ((mElementNames[i].compareToIgnoreCase(name) == 0) || (mAbbreviations[i].compareToIgnoreCase(name) == 0))
             return i;
       try {
          return Integer.parseInt(name);
-      }
-      catch(final NumberFormatException ex) {
+      } catch (final NumberFormatException ex) {
          return Element.elmNone;
       }
    }
-   
+
    /**
     * byName - Get the Element associated with the specified name or
     * abbreviation.
     * 
-    * @param name String
+    * @param name
+    *           String
     * @return Element
     */
    static public Element byName(String name) {
       final int z = atomicNumberForName(name);
       return z == 0 ? None : mAllElements[z - 1];
    }
-   
-   
+
    /**
     * atomicNumberForAbbrev - Get the atomic number for the named element. THe
     * name may be the abbreviation.
     * 
-    * @param abbrev String
+    * @param abbrev
+    *           String
     * @return int
     */
    static public int atomicNumberForAbbrev(String abbrev) {
-      for(int i = 0; i < mElementNames.length; ++i)
-         if(mAbbreviations[i].compareToIgnoreCase(abbrev) == 0)
+      for (int i = 0; i < mElementNames.length; ++i)
+         if (mAbbreviations[i].compareToIgnoreCase(abbrev) == 0)
             return i;
       return Element.elmNone;
    }
-   
+
    /**
     * byAbbrev - Get the Element associated with the specified abbreviation.
     * 
-    * @param name String
+    * @param name
+    *           String
     * @return Element
     */
    static public Element byAbbrev(String name) {
@@ -722,11 +396,11 @@ public class Element
       return z == 0 ? None : mAllElements[z - 1];
    }
 
-
    /**
     * byName - Get the Element associated with the specified atomic number.
     * 
-    * @param an int - The atomic number
+    * @param an
+    *           int - The atomic number
     * @return Element
     */
    static public Element byAtomicNumber(int an) {
@@ -737,11 +411,12 @@ public class Element
     * getAtomicWeight - A static method to return the atomic weight of an
     * element specified by the atomic number.
     * 
-    * @param atomicNo int - The atomic number.
+    * @param atomicNo
+    *           int - The atomic number.
     * @return double - The atomic weight in AMU.
     */
    final public static double getAtomicWeight(int atomicNo) {
-      if(mAtomicWeight == null)
+      if (mAtomicWeight == null)
          readAtomicWeights();
       return mAtomicWeight[atomicNo - 1];
    }
@@ -764,14 +439,14 @@ public class Element
     * meanIonizationPotential - Returns the meanIonizationPotential for the
     * specified element in Joules.
     * 
-    * @param atomicNo int
+    * @param atomicNo
+    *           int
     * @return double
     */
    public static double meanIonizationPotential(int atomicNo) {
       try {
          return MeanIonizationPotential.Berger64.compute(Element.byAtomicNumber(atomicNo));
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          return MeanIonizationPotential.Sternheimer64.compute(Element.byAtomicNumber(atomicNo));
       }
    }
@@ -816,7 +491,8 @@ public class Element
     * toAbbrev - A static method that returns the abbreviation associated with
     * the specified atomic number.
     * 
-    * @param atomicNo int - The atomic number.
+    * @param atomicNo
+    *           int - The atomic number.
     * @return String
     */
    final public static String toAbbrev(int atomicNo) {
@@ -827,7 +503,8 @@ public class Element
     * toString - A static method that returns the name of the element with the
     * specified atomic number.
     * 
-    * @param el int - The atomic number
+    * @param el
+    *           int - The atomic number
     * @return String
     */
    public static String toString(int el) {
@@ -844,8 +521,7 @@ public class Element
    public double meanIonizationPotential() {
       try {
          return MeanIonizationPotential.Berger64.compute(this);
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          return MeanIonizationPotential.Sternheimer64.compute(this);
       }
    }
@@ -855,7 +531,8 @@ public class Element
     * energy. Formula from Bethe with Joy-Luo's modification from Goldstein et
     * al
     * 
-    * @param eK double - The electron energy in Joules
+    * @param eK
+    *           double - The electron energy in Joules
     * @return double - in Joules per meter per kg/meter^3
     */
    public double energyLoss(double eK) {
@@ -866,7 +543,8 @@ public class Element
     * massAbsorptionCoefficient - Calculates the mass absorption coefficient for
     * x-rays of the specified energy in this element.
     * 
-    * @param energy double - X-ray energy in Joules
+    * @param energy
+    *           double - X-ray energy in Joules
     * @return double - Absorption per unit length (meter) per unit density
     *         (kg/m^3)
     */
@@ -879,13 +557,13 @@ public class Element
     * massAbsorptionCoefficient - Calculates the mass absorption coefficient for
     * x-rays of the specified x-ray transition.
     * 
-    * @param xrt XRayTransition
+    * @param xrt
+    *           XRayTransition
     * @return double - Absorption per unit length (meter) per unit density
     *         (kg/m^3)
     */
    @Deprecated
-   public double massAbsorptionCoefficient(XRayTransition xrt)
-         throws EPQException {
+   public double massAbsorptionCoefficient(XRayTransition xrt) throws EPQException {
       return AlgorithmUser.getDefaultMAC().compute(this, xrt);
    }
 
@@ -893,7 +571,8 @@ public class Element
     * isValid - A static method for determining whether an atomic number is in
     * range understood by this class.
     * 
-    * @param atomicNo int
+    * @param atomicNo
+    *           int
     * @return boolean
     */
    final static public boolean isValid(int atomicNo) {
@@ -913,12 +592,13 @@ public class Element
    /**
     * compareTo - Implements the Comparable interface.
     * 
-    * @param e Element
+    * @param e
+    *           Element
     * @return int
     */
    @Override
    public int compareTo(Element e) {
-      if(mAtomicNumber < e.mAtomicNumber)
+      if (mAtomicNumber < e.mAtomicNumber)
          return -1;
       else
          return mAtomicNumber == e.mAtomicNumber ? 0 : 1;
@@ -941,12 +621,13 @@ public class Element
     * equals - Returns true if this and obj represent the equivalent elements.
     * (Same atomic number)
     * 
-    * @param obj Object
+    * @param obj
+    *           Object
     * @return boolean
     */
    @Override
    public boolean equals(Object obj) {
-      if(obj instanceof Element) {
+      if (obj instanceof Element) {
          final Element el = (Element) obj;
          return el.mAtomicNumber == mAtomicNumber;
       } else
@@ -970,18 +651,18 @@ public class Element
     * @return In Joules
     */
    public double getIonizationEnergy() {
-      if(mIonizationEnergy == null)
-         synchronized(Element.class) {
-            if(mIonizationEnergy == null) {
+      if (mIonizationEnergy == null)
+         synchronized (Element.class) {
+            if (mIonizationEnergy == null) {
                final double[][] arr = (new CSVReader.ResourceReader("IonizationEnergies.csv", true)).getResource(Element.class);
                mIonizationEnergy = new double[arr.length];
-               for(int index = 0; index < arr.length; ++index)
+               for (int index = 0; index < arr.length; ++index)
                   mIonizationEnergy[index] = arr[index] != null ? ToSI.eV(arr[index][0]) : -1.0;
             }
          }
       assert mAtomicNumber >= 1 : toString();
       final double res = (mAtomicNumber - 1) < mIonizationEnergy.length ? mIonizationEnergy[mAtomicNumber - 1] : -1.0;
-      if(res == -1.0)
+      if (res == -1.0)
          throw new EPQFatalException("The ionization energy is not available for " + toAbbrev());
       return res;
    }
@@ -994,36 +675,35 @@ public class Element
     * @return An Element cast to Object
     * @throws ObjectStreamException
     */
-   private Object readResolve()
-         throws ObjectStreamException {
+   private Object readResolve() throws ObjectStreamException {
       return Element.byAtomicNumber(mAtomicNumber);
    }
 
    static public final ArrayList<String> getListOfAbbreviations(Element minEl, Element maxEl) {
       final ArrayList<String> res = new ArrayList<String>();
-      for(int z = minEl.getAtomicNumber(); z <= maxEl.getAtomicNumber(); ++z)
+      for (int z = minEl.getAtomicNumber(); z <= maxEl.getAtomicNumber(); ++z)
          res.add(toAbbrev(z));
       return res;
    }
 
    static public final ArrayList<String> getListOfElements(Element minEl, Element maxEl) {
       final ArrayList<String> res = new ArrayList<String>();
-      for(int z = minEl.getAtomicNumber(); z <= maxEl.getAtomicNumber(); ++z)
+      for (int z = minEl.getAtomicNumber(); z <= maxEl.getAtomicNumber(); ++z)
          res.add(toString(z));
       return res;
    }
 
    static public Set<Element> parseElementString(String text) {
       text = text.trim();
-      if(text.startsWith("["))
+      if (text.startsWith("["))
          text = text.substring(1);
-      if(text.endsWith("]"))
+      if (text.endsWith("]"))
          text = text.substring(0, text.length() - 1);
       final String[] items = text.split("\\t|\\n|\\x0B|\\f|\\r|,| ");
       final TreeSet<Element> elms = new TreeSet<Element>();
-      for(final String item : items) {
+      for (final String item : items) {
          final Element elm = Element.byName(item.trim());
-         if(!elm.equals(Element.None))
+         if (!elm.equals(Element.None))
             elms.add(elm);
       }
       return elms;
@@ -1032,8 +712,8 @@ public class Element
    static public String toString(Collection<Element> elms, boolean abbrev) {
       final StringBuffer sb = new StringBuffer();
       boolean first = true;
-      for(final Element elm : elms) {
-         if(!first)
+      for (final Element elm : elms) {
+         if (!first)
             sb.append(", ");
          sb.append(abbrev ? elm.toAbbrev() : elm.toString());
          first = false;

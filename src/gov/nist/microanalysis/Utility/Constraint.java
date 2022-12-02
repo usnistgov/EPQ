@@ -27,7 +27,8 @@ public interface Constraint {
    /**
     * A function that maps <code>param</code> onto a constrained range.
     * 
-    * @param param the value to constrain
+    * @param param
+    *           the value to constrain
     * @return The constrained result
     */
    double realToConstrained(double param);
@@ -36,7 +37,8 @@ public interface Constraint {
     * The inversion function of compute(...).
     * <code>inverse(compute(param))==param</code> evaluates true.
     * 
-    * @param param the value to constrain
+    * @param param
+    *           the value to constrain
     * @return The <code>param</code> such that <code>compute(param)=res</code>
     */
    double constrainedToReal(double param);
@@ -45,7 +47,8 @@ public interface Constraint {
     * The derivative of the function in <code>compute(..)</code> with respect to
     * the argument <code>param</code>.
     * 
-    * @param param the value
+    * @param param
+    *           the value
     * @return The derivative
     */
    double derivative(double param);
@@ -54,7 +57,8 @@ public interface Constraint {
     * Returns the same as <code>compute(..)</code> except also propogates the
     * error in <code>param</code> into error in the result.
     * 
-    * @param param the value
+    * @param param
+    *           the value
     * @return An UncertainValue containing the error propogated result of the
     *         constraint.
     */
@@ -76,8 +80,7 @@ public interface Constraint {
     * @author nritchie
     * @version 1.0
     */
-   public class Positive
-      implements Constraint {
+   public class Positive implements Constraint {
       private final double mScale;
 
       public Positive(double scale) {
@@ -110,8 +113,7 @@ public interface Constraint {
       }
    }
 
-   public class Fractional
-      implements Constraint {
+   public class Fractional implements Constraint {
       private final String mName;
       private final double mScale;
       private final double mFraction;
@@ -141,8 +143,7 @@ public interface Constraint {
 
       @Override
       public UncertainValue2 getResult(UncertainValue2 param) {
-         return UncertainValue2.add(mScale, UncertainValue2.multiply(mScale * mFraction
-               * TWO_OVER_PI, UncertainValue2.atan(param)));
+         return UncertainValue2.add(mScale, UncertainValue2.multiply(mScale * mFraction * TWO_OVER_PI, UncertainValue2.atan(param)));
       }
 
       @Override
@@ -168,8 +169,7 @@ public interface Constraint {
     * @author nritchie
     * @version 1.0
     */
-   public class Bounded
-      implements Constraint {
+   public class Bounded implements Constraint {
       private final double mCenter;
       private final double mWidth;
 
@@ -222,8 +222,7 @@ public interface Constraint {
     * @author nritchie
     * @version 1.0
     */
-   public class None
-      implements Constraint {
+   public class None implements Constraint {
 
       public None() {
          super();

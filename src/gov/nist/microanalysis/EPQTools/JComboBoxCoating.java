@@ -30,23 +30,15 @@ import gov.nist.microanalysis.EPQLibrary.ToSI;
  * @author nritchie
  * @version 1.0
  */
-public class JComboBoxCoating
-   extends
-   JComboBox<Material> {
+public class JComboBoxCoating extends JComboBox<Material> {
 
    private final Session mSession;
    private final JDialog mParent;
    private final JPanel mPanel;
 
    private static Material[] defaultMaterials() {
-      Material[] mats = new Material[] {
-         new Material(Element.C, ToSI.gPerCC(1.9)),
-         new Material(Element.Au, ToSI.gPerCC(19.30)),
-         new Material(Element.Ir, ToSI.gPerCC(22.56)),
-         new Material(Element.Pt, ToSI.gPerCC(21.45)),
-         Material.Null,
-         Material.Other
-      };
+      Material[] mats = new Material[]{new Material(Element.C, ToSI.gPerCC(1.9)), new Material(Element.Au, ToSI.gPerCC(19.30)),
+            new Material(Element.Ir, ToSI.gPerCC(22.56)), new Material(Element.Pt, ToSI.gPerCC(21.45)), Material.Null, Material.Other};
       return mats;
    }
 
@@ -64,8 +56,8 @@ public class JComboBoxCoating
          @Override
          public void actionPerformed(ActionEvent e) {
             Material mat = (Material) getSelectedItem();
-            if(mat != null) {
-               if(mat == Material.Other) {
+            if (mat != null) {
+               if (mat == Material.Other) {
                   mat = (Material) MaterialsCreator.createMaterial(mParent, mSession, true);
                   getModel().setSelectedItem(mat);
                }
@@ -86,19 +78,19 @@ public class JComboBoxCoating
          @Override
          public void actionPerformed(ActionEvent e) {
             Material mat = (Material) getSelectedItem();
-            if(mat != null) {
-               if(mat == Material.Other) {
+            if (mat != null) {
+               if (mat == Material.Other) {
                   Container c = mPanel;
                   do {
                      c = c.getParent();
-                     if(c instanceof Frame) {
+                     if (c instanceof Frame) {
                         mat = (Material) MaterialsCreator.createMaterial((Frame) c, mSession, true);
                         break;
-                     } else if(c instanceof Dialog) {
+                     } else if (c instanceof Dialog) {
                         mat = (Material) MaterialsCreator.createMaterial((Dialog) c, mSession, true);
                         break;
                      }
-                  } while(c != null);
+                  } while (c != null);
                   getModel().setSelectedItem(mat);
                }
             }

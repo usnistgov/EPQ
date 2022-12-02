@@ -28,9 +28,7 @@ import gov.nist.microanalysis.EPQLibrary.ToSI;
 import gov.nist.microanalysis.NISTMonte.MonteCarloSS.RegionBase;
 import gov.nist.microanalysis.Utility.Math2;
 
-public class BasicMaterialModel
-   extends AlgorithmUser
-   implements IMaterialScatterModel {
+public class BasicMaterialModel extends AlgorithmUser implements IMaterialScatterModel {
    private final Material mMaterial;
    private double minEforTracking = ToSI.eV(50.0);
 
@@ -40,11 +38,10 @@ public class BasicMaterialModel
     * 
     * @param mat
     */
-   public BasicMaterialModel(Material mat)
-         throws EPQException {
+   public BasicMaterialModel(Material mat) throws EPQException {
       super();
       mMaterial = mat;
-      if(mMaterial instanceof Gas)
+      if (mMaterial instanceof Gas)
          addDefaultAlgorithm(RandomizedScatterFactory.class, GasScatteringCrossSection.Factory);
    }
 
@@ -70,10 +67,9 @@ public class BasicMaterialModel
       final double den = mMaterial.getDensity();
       final RandomizedScatterFactory rsf = (RandomizedScatterFactory) getAlgorithm(RandomizedScatterFactory.class);
       assert rsf != null;
-      for(final Element el : mMaterial.getElementSet()) {
-         final double mfp = (el.getMass() * Math2.expRand())
-               / (den * mMaterial.weightFraction(el, true) * rsf.get(el).totalCrossSection(kE));
-         if(mfp < minMfp) {
+      for (final Element el : mMaterial.getElementSet()) {
+         final double mfp = (el.getMass() * Math2.expRand()) / (den * mMaterial.weightFraction(el, true) * rsf.get(el).totalCrossSection(kE));
+         if (mfp < minMfp) {
             minMfp = mfp;
             bestEl = el;
          }
@@ -83,14 +79,13 @@ public class BasicMaterialModel
    }
 
    /*
-    * @see
-    * gov.nist.microanalysis.NISTMonte.MonteCarloSS.IMaterialScatterModel#scatter
-    * (gov.nist.microanalysis.NISTMonte.MonteCarloSS.Electron)
+    * @see gov.nist.microanalysis.NISTMonte.MonteCarloSS.IMaterialScatterModel#
+    * scatter (gov.nist.microanalysis.NISTMonte.MonteCarloSS.Electron)
     */
    @Override
    public Electron scatter(Electron pe) {
       final Element se = pe.getScatteringElement();
-      if((se != null) && (se != Element.None)) {
+      if ((se != null) && (se != Element.None)) {
          final RandomizedScatterFactory rsf = (RandomizedScatterFactory) getAlgorithm(RandomizedScatterFactory.class);
          assert rsf != null;
          final double alpha = rsf.get(se).randomScatteringAngle(pe.getEnergy());
@@ -124,7 +119,7 @@ public class BasicMaterialModel
       // See Heinrich 1981 pp 226-227
       final double kE = pe.getEnergy();
       double res = 0.0;
-      for(final Element el : mMaterial.getElementSet())
+      for (final Element el : mMaterial.getElementSet())
          res += AlgorithmUser.getDefaultBetheEnergyLoss().compute(el, kE) * mMaterial.weightFraction(el, true);
       return res * mMaterial.getDensity() * len;
    }

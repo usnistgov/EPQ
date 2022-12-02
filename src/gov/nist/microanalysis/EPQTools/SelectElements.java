@@ -41,8 +41,7 @@ import gov.nist.microanalysis.EPQLibrary.Element;
  * @version 1.0
  */
 
-public class SelectElements
-   extends JDialog {
+public class SelectElements extends JDialog {
    private static final long serialVersionUID = 0x1;
    private final JButton jButton_Ok = new JButton("Ok");
    private final JPeriodicTable jPeriodic = new JPeriodicTable();
@@ -56,8 +55,7 @@ public class SelectElements
          init();
          pack();
          setResizable(false);
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -86,16 +84,15 @@ public class SelectElements
 
    }
 
-   private void init()
-         throws Exception {
-      if(this.getTitle().length() == 0)
+   private void init() throws Exception {
+      if (this.getTitle().length() == 0)
          this.setTitle("Periodic table of the elements");
 
       jPeriodic.setDoubleBuffered(false);
       jPeriodic.addActionListener(new java.awt.event.ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if(!mMultiSelect)
+            if (!mMultiSelect)
                jPeriodic.setAllExcept(false, jPeriodic.getLastSelected());
             updateSelected();
          }
@@ -122,22 +119,22 @@ public class SelectElements
             final TreeSet<Element> pre = new TreeSet<Element>(jPeriodic.getSelected());
             final TreeSet<Element> sel = new TreeSet<Element>(jPeriodic.getSelected());
             boolean ok = true;
-            for(final String item : items) {
+            for (final String item : items) {
                final String tr = item.trim();
-               if(tr.length() > 0) {
+               if (tr.length() > 0) {
                   final Element elm = Element.byName(tr);
-                  if(elm != Element.None) {
-                     if(!pre.contains(elm))
+                  if (elm != Element.None) {
+                     if (!pre.contains(elm))
                         jPeriodic.setSelection(elm, true);
                      sel.remove(elm);
-                     if(!mMultiSelect)
+                     if (!mMultiSelect)
                         break;
                   } else
                      ok = false;
                }
             }
             jTextField_Selected.setBackground(ok ? SystemColor.text : Color.pink);
-            for(final Element elm : sel)
+            for (final Element elm : sel)
                jPeriodic.setSelection(elm, false);
          }
       });
@@ -157,9 +154,9 @@ public class SelectElements
    }
 
    public void setMultiSelect(boolean ms) {
-      if(mMultiSelect != ms) {
+      if (mMultiSelect != ms) {
          mMultiSelect = ms;
-         if(!mMultiSelect) {
+         if (!mMultiSelect) {
             jPeriodic.setAllExcept(false, jPeriodic.getLastSelected());
             jTextField_Selected.setText("Select an element from the periodic table.");
          } else
@@ -182,7 +179,7 @@ public class SelectElements
 
    public void enableElements(Collection<Element> enabled) {
       jPeriodic.enableAll(false);
-      for(Element elm : enabled)
+      for (Element elm : enabled)
          jPeriodic.setEnabled(elm, true);
       updateSelected();
    }
@@ -212,8 +209,10 @@ public class SelectElements
     * setEnabled - Determines whether the specified element is available for
     * selection.
     * 
-    * @param elm Element
-    * @param enabled boolean
+    * @param elm
+    *           Element
+    * @param enabled
+    *           boolean
     */
    public void setEnabled(Element elm, boolean enabled) {
       jPeriodic.setEnabled(elm, enabled);
@@ -223,7 +222,8 @@ public class SelectElements
    /**
     * enableAll - Enables or disables all elements for selection.
     * 
-    * @param enabled boolean
+    * @param enabled
+    *           boolean
     */
    public void enableAll(boolean enabled) {
       jPeriodic.enableAll(enabled);
@@ -231,8 +231,8 @@ public class SelectElements
 
    private void updateSelected() {
       final StringBuffer sb = new StringBuffer();
-      for(final Element elm2 : jPeriodic.getSelected()) {
-         if(sb.length() > 0)
+      for (final Element elm2 : jPeriodic.getSelected()) {
+         if (sb.length() > 0)
             sb.append(", ");
          sb.append(elm2.toAbbrev());
       }

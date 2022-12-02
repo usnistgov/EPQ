@@ -31,9 +31,7 @@ import gov.nist.microanalysis.EPQLibrary.XRayTransitionSet;
  * @version 1.0
  */
 
-abstract public class KLMLine
-   implements
-   Comparable<KLMLine> {
+abstract public class KLMLine implements Comparable<KLMLine> {
 
    enum LabelType {
       ELEMENT("Element"), //
@@ -74,34 +72,30 @@ abstract public class KLMLine
    protected double mEnergy;
    protected double mAmplitude;
 
-   public static class Transition
-      extends
-      KLMLine {
+   public static class Transition extends KLMLine {
       private final XRayTransition mTransition;
 
-      public Transition(XRayTransition xrt)
-            throws EPQException {
+      public Transition(XRayTransition xrt) throws EPQException {
          super(TransitionEnergy.Default.compute(xrt), xrt.getWeight(XRayTransition.NormalizeKLM));
          mTransition = xrt;
       }
 
       @Override
       public String toLabel(LabelType lt) {
-         switch(lt) {
-            case ELEMENT:
+         switch (lt) {
+            case ELEMENT :
                return mTransition.getElement().toString();
-            case LARGE_ELEMENT:
-            case ELEMENT_ABBREV:
+            case LARGE_ELEMENT :
+            case ELEMENT_ABBREV :
                return mTransition.getElement().toAbbrev();
-            case SIEGBAHN:
+            case SIEGBAHN :
                return mTransition.getSiegbahnName();
-            case IUPAC:
+            case IUPAC :
                return mTransition.getIUPACName();
-            case FAMILY:
-               return mTransition.getElement().toAbbrev() + " "
-                     + XRayTransitionSet.getClassNameForTransition(mTransition.getTransitionIndex());
-            case NONE:
-            default:
+            case FAMILY :
+               return mTransition.getElement().toAbbrev() + " " + XRayTransitionSet.getClassNameForTransition(mTransition.getTransitionIndex());
+            case NONE :
+            default :
                return "";
          }
       }
@@ -133,20 +127,20 @@ abstract public class KLMLine
       @Override
       public KLMLineType getType() {
          KLMLine.KLMLineType res = KLMLine.KLMLineType.InvalidType;
-         switch(getShell().getFamily()) {
-            case AtomicShell.KFamily:
+         switch (getShell().getFamily()) {
+            case AtomicShell.KFamily :
                res = KLMLine.KLMLineType.KTransition;
                break;
-            case AtomicShell.LFamily:
+            case AtomicShell.LFamily :
                res = KLMLine.KLMLineType.LTransition;
                break;
-            case AtomicShell.MFamily:
+            case AtomicShell.MFamily :
                res = KLMLine.KLMLineType.MTransition;
                break;
-            case AtomicShell.NFamily:
+            case AtomicShell.NFamily :
                res = KLMLine.KLMLineType.NTransition;
                break;
-            default:
+            default :
                res = KLMLine.KLMLineType.InvalidType;
                break;
          }
@@ -156,31 +150,20 @@ abstract public class KLMLine
    }
 
    public static Set<Transition> suggestKLM(Element elm, double eMax) {
-      final int[] DEFAULT_KLM_LINES = {
-         XRayTransition.KA1,
-         XRayTransition.KB1,
-         XRayTransition.LA1,
-         XRayTransition.LB1,
-         XRayTransition.MA1,
-         XRayTransition.MA2,
-         XRayTransition.MB,
-         XRayTransition.MG
-      };
+      final int[] DEFAULT_KLM_LINES = {XRayTransition.KA1, XRayTransition.KB1, XRayTransition.LA1, XRayTransition.LB1, XRayTransition.MA1,
+            XRayTransition.MA2, XRayTransition.MB, XRayTransition.MG};
       final Set<Transition> lines = new TreeSet<Transition>();
-      for(final int tr : DEFAULT_KLM_LINES)
+      for (final int tr : DEFAULT_KLM_LINES)
          try {
-            if(XRayTransition.exists(elm, tr) && (XRayTransition.getEnergy(elm, tr) < eMax))
+            if (XRayTransition.exists(elm, tr) && (XRayTransition.getEnergy(elm, tr) < eMax))
                lines.add(new KLMLine.Transition(new XRayTransition(elm, tr)));
-         }
-         catch(EPQException e) {
+         } catch (EPQException e) {
             // Ignore
          }
       return lines;
    }
 
-   public static class Edge
-      extends
-      KLMLine {
+   public static class Edge extends KLMLine {
 
       private final AtomicShell mShell;
 
@@ -188,13 +171,12 @@ abstract public class KLMLine
          AtomicShell res = sh;
          try {
             final int fam = sh.getFamily();
-            for(int shell = AtomicShell.getFirstInFamily(fam); shell <= AtomicShell.getLastInFamily(fam); shell++) {
+            for (int shell = AtomicShell.getFirstInFamily(fam); shell <= AtomicShell.getLastInFamily(fam); shell++) {
                final AtomicShell tmp = new AtomicShell(sh.getElement(), shell);
-               if(tmp.getGroundStateOccupancy() > res.getGroundStateOccupancy())
+               if (tmp.getGroundStateOccupancy() > res.getGroundStateOccupancy())
                   res = tmp;
             }
-         }
-         catch(final Exception e) {
+         } catch (final Exception e) {
             e.printStackTrace();
          }
          return res;
@@ -212,20 +194,20 @@ abstract public class KLMLine
 
       @Override
       public String toLabel(LabelType lt) {
-         switch(lt) {
-            case ELEMENT:
+         switch (lt) {
+            case ELEMENT :
                return mShell.getElement().toString() + " edge";
-            case LARGE_ELEMENT:
-            case ELEMENT_ABBREV:
+            case LARGE_ELEMENT :
+            case ELEMENT_ABBREV :
                return mShell.getElement().toAbbrev() + " edge";
-            case SIEGBAHN:
+            case SIEGBAHN :
                return mShell.getSiegbahnName() + " edge";
-            case IUPAC:
+            case IUPAC :
                return mShell.getIUPACName() + " edge";
-            case FAMILY:
+            case FAMILY :
                return mShell.getIUPACName() + " edge";
-            case NONE:
-            default:
+            case NONE :
+            default :
                return "";
          }
       }
@@ -253,20 +235,20 @@ abstract public class KLMLine
       @Override
       public KLMLineType getType() {
          KLMLine.KLMLineType res = KLMLine.KLMLineType.InvalidType;
-         switch(getShell().getFamily()) {
-            case AtomicShell.KFamily:
+         switch (getShell().getFamily()) {
+            case AtomicShell.KFamily :
                res = KLMLine.KLMLineType.KEdge;
                break;
-            case AtomicShell.LFamily:
+            case AtomicShell.LFamily :
                res = KLMLine.KLMLineType.LEdge;
                break;
-            case AtomicShell.MFamily:
+            case AtomicShell.MFamily :
                res = KLMLine.KLMLineType.MEdge;
                break;
-            case AtomicShell.NFamily:
+            case AtomicShell.NFamily :
                res = KLMLine.KLMLineType.NEdge;
                break;
-            default:
+            default :
                res = KLMLine.KLMLineType.InvalidType;
                break;
          }
@@ -275,34 +257,31 @@ abstract public class KLMLine
 
    }
 
-   public static class EscapePeak
-      extends
-      KLMLine {
+   public static class EscapePeak extends KLMLine {
       private final XRayTransition mTransition;
 
       static private final XRayTransition SI_K = new XRayTransition(Element.Si, XRayTransition.KA1);
 
-      public EscapePeak(XRayTransition xrt)
-            throws EPQException {
+      public EscapePeak(XRayTransition xrt) throws EPQException {
          super(xrt.getEnergy() - SI_K.getEnergy(), 0.1);
          mTransition = xrt;
       }
 
       @Override
       public String toLabel(LabelType lt) {
-         switch(lt) {
-            case ELEMENT:
+         switch (lt) {
+            case ELEMENT :
                return mTransition.getElement().toString() + " esc";
-            case ELEMENT_ABBREV:
-            case LARGE_ELEMENT:
+            case ELEMENT_ABBREV :
+            case LARGE_ELEMENT :
                return mTransition.getElement().toAbbrev() + " esc";
-            case SIEGBAHN:
+            case SIEGBAHN :
                return mTransition.getSiegbahnName() + " esc";
-            case IUPAC:
-            case FAMILY:
+            case IUPAC :
+            case FAMILY :
                return mTransition.getElement().toAbbrev() + " esc";
-            case NONE:
-            default:
+            case NONE :
+            default :
                return "";
          }
       }
@@ -324,7 +303,7 @@ abstract public class KLMLine
 
       @Override
       public boolean isAssociated(KLMLine line) {
-         if(line instanceof EscapePeak) {
+         if (line instanceof EscapePeak) {
             final EscapePeak tr = (EscapePeak) line;
             return mTransition.equals(tr.mTransition);
          }
@@ -338,7 +317,7 @@ abstract public class KLMLine
 
       @Override
       public boolean equals(Object obj) {
-         if(obj instanceof EscapePeak) {
+         if (obj instanceof EscapePeak) {
             final EscapePeak ep = (EscapePeak) obj;
             return ep.mTransition.equals(mTransition);
          }
@@ -353,22 +332,17 @@ abstract public class KLMLine
        * @return Set&lt;EscapePeak&gt;
        */
       static public Set<EscapePeak> suggestEscapePeak(Element elm) {
-         int[] lines = {
-            XRayTransition.KA1,
-            XRayTransition.LA1,
-            XRayTransition.MA1
-         };
+         int[] lines = {XRayTransition.KA1, XRayTransition.LA1, XRayTransition.MA1};
          final HashSet<EscapePeak> res = new HashSet<EscapePeak>();
-         for(final int line : lines)
+         for (final int line : lines)
             try {
-               if(XRayTransition.exists(elm, line)) {
+               if (XRayTransition.exists(elm, line)) {
                   final XRayTransition xrt = new XRayTransition(elm, line);
                   final double e = xrt.getEnergy();
-                  if(e > ToSI.keV(0.02) + SI_K.getEnergy())
+                  if (e > ToSI.keV(0.02) + SI_K.getEnergy())
                      res.add(new EscapePeak(xrt));
                }
-            }
-            catch(final Exception e) {
+            } catch (final Exception e) {
                // Just ignore it
             }
          return res;
@@ -385,30 +359,23 @@ abstract public class KLMLine
       }
    }
 
-   public static class SumPeak
-      extends
-      KLMLine {
+   public static class SumPeak extends KLMLine {
       private final XRayTransition[] mTransitions;
       private final String mName;
 
-      public SumPeak(XRayTransition xrt1, XRayTransition xrt2)
-            throws EPQException {
+      public SumPeak(XRayTransition xrt1, XRayTransition xrt2) throws EPQException {
          super(xrt1.getEnergy() + xrt2.getEnergy(), 0.1);
-         mTransitions = new XRayTransition[] {
-            xrt1,
-            xrt2
-         };
-         if(xrt1.equals(xrt2))
+         mTransitions = new XRayTransition[]{xrt1, xrt2};
+         if (xrt1.equals(xrt2))
             mName = "2\u00B7" + xrt1.toString();
          else
             mName = xrt1.toString() + "+" + xrt2.toString();
       }
 
-      public SumPeak(XRayTransition xrt, int n)
-            throws EPQException {
+      public SumPeak(XRayTransition xrt, int n) throws EPQException {
          super(xrt.getEnergy() * n, 0.1);
          mTransitions = new XRayTransition[n];
-         for(int i = 0; i < n; ++i)
+         for (int i = 0; i < n; ++i)
             mTransitions[i] = xrt;
          mName = Integer.toString(n) + "\u00B7" + xrt.toString();
       }
@@ -417,38 +384,37 @@ abstract public class KLMLine
       public String toLabel(LabelType lt) {
          final StringBuffer sb = new StringBuffer();
          final TreeMap<XRayTransition, Integer> count = new TreeMap<XRayTransition, Integer>();
-         for(final XRayTransition mTransition : mTransitions)
-            if(count.containsKey(mTransition))
+         for (final XRayTransition mTransition : mTransitions)
+            if (count.containsKey(mTransition))
                count.put(mTransition, Integer.valueOf(count.get(mTransition) + 1));
             else
                count.put(mTransition, Integer.valueOf(1));
-         for(final Map.Entry<XRayTransition, Integer> me : count.entrySet()) {
-            if(sb.length() > 0)
+         for (final Map.Entry<XRayTransition, Integer> me : count.entrySet()) {
+            if (sb.length() > 0)
                sb.append("+");
-            if(me.getValue().intValue() > 1) {
+            if (me.getValue().intValue() > 1) {
                sb.append(me.getValue().toString());
                sb.append("\u00B7");
             }
             final XRayTransition xrt = me.getKey();
-            switch(lt) {
-               case ELEMENT:
+            switch (lt) {
+               case ELEMENT :
                   sb.append(xrt.getElement().toString());
                   break;
-               case LARGE_ELEMENT:
-               case ELEMENT_ABBREV:
+               case LARGE_ELEMENT :
+               case ELEMENT_ABBREV :
                   sb.append(xrt.getElement().toAbbrev());
                   break;
-               case SIEGBAHN:
+               case SIEGBAHN :
                   sb.append(xrt.getSiegbahnName());
-               case IUPAC:
+               case IUPAC :
                   sb.append(xrt.toString());
                   break;
-               case FAMILY:
-                  sb.append(xrt.getElement().toAbbrev() + " "
-                        + XRayTransitionSet.getClassNameForTransition(xrt.getTransitionIndex()));
+               case FAMILY :
+                  sb.append(xrt.getElement().toAbbrev() + " " + XRayTransitionSet.getClassNameForTransition(xrt.getTransitionIndex()));
                   break;
-               case NONE:
-               default:
+               case NONE :
+               default :
                   continue;
             }
          }
@@ -468,25 +434,25 @@ abstract public class KLMLine
       @Override
       public int hashCode() {
          int hash = 0x0;
-         for(final XRayTransition xrt : mTransitions)
+         for (final XRayTransition xrt : mTransitions)
             hash ^= xrt.hashCode();
          return hash;
       }
 
       @Override
       public boolean contains(Element elm) {
-         for(final XRayTransition xrt : mTransitions)
-            if(xrt.getElement().equals(elm))
+         for (final XRayTransition xrt : mTransitions)
+            if (xrt.getElement().equals(elm))
                return true;
          return false;
       }
 
       @Override
       public boolean isAssociated(KLMLine line) {
-         if(line instanceof Transition) {
+         if (line instanceof Transition) {
             final Transition tr = (Transition) line;
-            for(final XRayTransition xrt : mTransitions)
-               if(xrt.equals(tr.mTransition))
+            for (final XRayTransition xrt : mTransitions)
+               if (xrt.equals(tr.mTransition))
                   return true;
          }
          return false;
@@ -494,27 +460,25 @@ abstract public class KLMLine
 
       static public Set<SumPeak> suggestSumPeaks(Set<Element> elms, double lowE, double highE, int order, int[] lines) {
          final ArrayList<XRayTransition> xrts = new ArrayList<XRayTransition>();
-         for(final Element elm : elms)
-            for(final int line : lines)
+         for (final Element elm : elms)
+            for (final int line : lines)
                try {
-                  if(XRayTransition.exists(elm, line) && (XRayTransition.getEnergy(elm, line) < highE))
+                  if (XRayTransition.exists(elm, line) && (XRayTransition.getEnergy(elm, line) < highE))
                      xrts.add(new XRayTransition(elm, line));
-               }
-               catch(final EPQException e3) {
+               } catch (final EPQException e3) {
                   // May happen sometimes but it is harmless.
                }
          final HashSet<SumPeak> res = new HashSet<SumPeak>();
-         for(int i = 0; i < xrts.size(); ++i)
-            for(int j = i; j < xrts.size(); ++j) {
+         for (int i = 0; i < xrts.size(); ++i)
+            for (int j = i; j < xrts.size(); ++j) {
                final XRayTransition xrt1 = xrts.get(i);
                final XRayTransition xrt2 = xrts.get(j);
                try {
                   final double e1 = xrt1.getEnergy();
                   final double e2 = xrt2.getEnergy();
-                  if(((e1 + e2) >= lowE) && ((e1 + e2) <= highE))
+                  if (((e1 + e2) >= lowE) && ((e1 + e2) <= highE))
                      res.add(new SumPeak(xrt1, xrt2));
-               }
-               catch(final EPQException e) {
+               } catch (final EPQException e) {
                   System.err.println("This should never happen!");
                }
             }
@@ -523,12 +487,12 @@ abstract public class KLMLine
 
       @Override
       public String toSiegbahn() {
-         if((mTransitions.length == 2) && (mTransitions[0].equals(mTransitions[1])))
+         if ((mTransitions.length == 2) && (mTransitions[0].equals(mTransitions[1])))
             return Integer.toString(2) + "\u00B7" + mTransitions[1].getSiegbahnName();
          else {
             final StringBuffer sb = new StringBuffer();
             sb.append(mTransitions[0].getSiegbahnName());
-            for(int i = 1; i < mTransitions.length; ++i) {
+            for (int i = 1; i < mTransitions.length; ++i) {
                sb.append("+");
                sb.append(mTransitions[1].getSiegbahnName());
             }
@@ -575,7 +539,8 @@ abstract public class KLMLine
    /**
     * compareTo - Allows to KLM lines to be ordered.
     * 
-    * @param kl KLMLine
+    * @param kl
+    *           KLMLine
     * @return int
     */
    @Override
@@ -586,11 +551,11 @@ abstract public class KLMLine
 
    @Override
    public boolean equals(Object obj) {
-      if(obj==null)
+      if (obj == null)
          return false;
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj.getClass() == this.getClass()) {
+      if (obj.getClass() == this.getClass()) {
          final KLMLine l2 = (KLMLine) obj;
          return (l2.mAmplitude == this.mAmplitude) && (l2.mEnergy == this.mEnergy) && (l2.toString().equals(this.toString()));
       }

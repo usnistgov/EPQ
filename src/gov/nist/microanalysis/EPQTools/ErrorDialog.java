@@ -44,9 +44,12 @@ public class ErrorDialog {
     * thread. In either case, the code will be executed in the event dispatch
     * thread as Swing requires.
     * 
-    * @param parent Component
-    * @param title Dialog box title
-    * @param e The Exception or RuntimeException or Error to display
+    * @param parent
+    *           Component
+    * @param title
+    *           Dialog box title
+    * @param e
+    *           The Exception or RuntimeException or Error to display
     */
    public static void createErrorMessage(Component parent, String title, Throwable e) {
       String stack;
@@ -61,7 +64,7 @@ public class ErrorDialog {
       final StringBuffer sb = new StringBuffer();
       sb.append(e.toString() + "<br>");
       int begin = 0, end = stack.indexOf("\n", 0);
-      while(end >= 0) {
+      while (end >= 0) {
          assert begin >= 0;
          assert end >= 0;
          sb.append(stack.substring(begin, end));
@@ -80,16 +83,18 @@ public class ErrorDialog {
     * thread. In either case, the code will be executed in the event dispatch
     * thread as Swing requires.
     * 
-    * @param parent Component
-    * @param title Dialog box title
-    * @param shortMessage A short message to display by default
-    * @param longMessage A long message to display at the users request
+    * @param parent
+    *           Component
+    * @param title
+    *           Dialog box title
+    * @param shortMessage
+    *           A short message to display by default
+    * @param longMessage
+    *           A long message to display at the users request
     */
    public static void createErrorMessage(Component parent, String title, String shortMessage, String longMessage) {
 
-      class doErrorMsg
-         implements
-         Runnable {
+      class doErrorMsg implements Runnable {
          Component mParent;
          String mTitle;
          String mShortMessage;
@@ -131,9 +136,7 @@ public class ErrorDialog {
             scroll.setVisible(false);
 
             final JButton okButton = new JButton("Ok");
-            class okAction
-               implements
-               ActionListener {
+            class okAction implements ActionListener {
                private final JDialog mDialog;
 
                public okAction(JDialog dialog) {
@@ -149,9 +152,7 @@ public class ErrorDialog {
             dialog.getRootPane().setDefaultButton(okButton);
 
             final JButton detailsButton = new JButton("Details >>");
-            class detailsAction
-               implements
-               ActionListener {
+            class detailsAction implements ActionListener {
                private final String mText;
                private final JLabel mLabel;
                private boolean mPolarity;
@@ -175,7 +176,7 @@ public class ErrorDialog {
 
                private void setDetailsVisible(boolean b) {
                   mPolarity = b;
-                  if(mPolarity) {
+                  if (mPolarity) {
                      mLabel.setText("<html>" + mText + "</html>");
                      mButton.setText("Details <<");
                   } else {
@@ -206,12 +207,11 @@ public class ErrorDialog {
       }
       try {
          final Runnable doIt = new doErrorMsg(parent, title, shortMessage, longMessage);
-         if(!SwingUtilities.isEventDispatchThread())
+         if (!SwingUtilities.isEventDispatchThread())
             SwingUtilities.invokeAndWait(doIt);
          else
             doIt.run();
-      }
-      catch(final Exception e) {
+      } catch (final Exception e) {
          e.printStackTrace();
       }
    }

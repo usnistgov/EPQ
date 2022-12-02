@@ -10,21 +10,18 @@ import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
 import gov.nist.microanalysis.EPQLibrary.XRayTransition;
 import junit.framework.TestCase;
 
-public class BrownJTA1982Test
-   extends TestCase {
+public class BrownJTA1982Test extends TestCase {
    CorrectionAlgorithm ca = CorrectionAlgorithm.Armstrong1982;
    CorrectionAlgorithm ca2 = CorrectionAlgorithm.XPP;
 
-   private void helper(Composition mat, AtomicShell sh, SpectrumProperties props, XRayTransition xrt)
-         throws EPQException {
+   private void helper(Composition mat, AtomicShell sh, SpectrumProperties props, XRayTransition xrt) throws EPQException {
       sh = xrt.getDestination();
       ca.initialize(mat, sh, props);
       ca2.initialize(mat, sh, props);
 
    }
 
-   public void testPhiRhoZ()
-         throws EPQException {
+   public void testPhiRhoZ() throws EPQException {
 
       final SpectrumProperties props = new SpectrumProperties();
       props.setNumericProperty(SpectrumProperties.BeamEnergy, 29.0);

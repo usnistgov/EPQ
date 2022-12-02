@@ -33,7 +33,8 @@ public interface IBasicMesh {
     * Decrements the charge number by 1. This corresponds, e.g., to a gain of
     * one electron in this volume element.
     *
-    * @param index - The index of the element for which charge is to be
+    * @param index
+    *           - The index of the element for which charge is to be
     *           decremented.
     */
    public void decrementChargeNumber(int index);
@@ -54,9 +55,11 @@ public interface IBasicMesh {
     * through the indexed face. If there is no adjacent volume (i.e., the
     * indexed face is on the mesh boundary) 0 is returned.
     *
-    * @param elementIndex - index of the volume element for which the
-    *           neighboring element is to be returned.
-    * @param faceIndex - index of the face shared with the neighbor
+    * @param elementIndex
+    *           - index of the volume element for which the neighboring element
+    *           is to be returned.
+    * @param faceIndex
+    *           - index of the face shared with the neighbor
     * @return
     */
    public int getAdjacentVolumeIndex(int elementIndex, int faceIndex);
@@ -201,7 +204,8 @@ public interface IBasicMesh {
     * Increments the charge number by 1. This corresponds, e.g., to a loss of
     * one electron from this volume element.
     *
-    * @param index - The index of the element for which charge is to be
+    * @param index
+    *           - The index of the element for which charge is to be
     *           incremented.
     */
    public void incrementChargeNumber(int index);
@@ -218,8 +222,10 @@ public interface IBasicMesh {
    /**
     * Sets the charge number to the supplied value.
     *
-    * @param index - The index of the element for which charge is to be set.
-    * @param n - The value to which to set the charge, in units of e.
+    * @param index
+    *           - The index of the element for which charge is to be set.
+    * @param n
+    *           - The value to which to set the charge, in units of e.
     */
    public void setChargeNumber(int index, int n);
 
@@ -234,8 +240,10 @@ public interface IBasicMesh {
     * transformations that meet this requirement are rotations, translations, or
     * affine transforms of the whole mesh.
     *
-    * @param index - index of the node to be moved
-    * @param coords - new coordinates of the node
+    * @param index
+    *           - index of the node to be moved
+    * @param coords
+    *           - new coordinates of the node
     */
    public void setNodeCoordinates(int index, double[] coords);
 
@@ -244,8 +252,10 @@ public interface IBasicMesh {
     * nodes starts from 1 rather than 0, to follow Gmsh convention. Therefore
     * nodes are indexed from 1 to getNumberOfNodes().
     *
-    * @param nodeIndex - the index of the node
-    * @param potVal - the new value of its potential (in volts)
+    * @param nodeIndex
+    *           - the index of the node
+    * @param potVal
+    *           - the new value of its potential (in volts)
     */
    public void setNodePotential(int nodeIndex, double potVal);
 
@@ -255,8 +265,10 @@ public interface IBasicMesh {
     * inside the tetrahedron. (I.e., (n2-n1) x (n3-n1) points out of the
     * tetrahedron.)
     *
-    * @param tetIndex - the index of a tetrahedron
-    * @param faceIndex - index (0-3) of one of the 4 faces of the tretrahedron
+    * @param tetIndex
+    *           - the index of a tetrahedron
+    * @param faceIndex
+    *           - index (0-3) of one of the 4 faces of the tretrahedron
     * @return - an array of indices of the 3 nodes on the referenced face
     */
    public int[] tetFaceNodeIndices(int tetIndex, int faceIndex);

@@ -19,12 +19,11 @@ public class Riveros1993 {
    private final double mBeamEnergy;
    private final double mTakeOff;
    private final double mEtaM;
-   
+
    private double alphaz(Element elm, double e0k, double eck) {
       final double z = elm.getAtomicNumber(), a = elm.getAtomicWeight();
       final double j = ToSI.keV(MeanIonizationPotential.Berger83.compute(elm));
-      return (2.14e5 * Math.pow(z, 1.16)) / (a * Math.pow(e0k, 1.25))
-            * Math.sqrt(Math.log(1.166 * e0k / j) / (e0k - eck));
+      return (2.14e5 * Math.pow(z, 1.16)) / (a * Math.pow(e0k, 1.25)) * Math.sqrt(Math.log(1.166 * e0k / j) / (e0k - eck));
    }
 
    private double betaz(Element elm, double e0k, double eck) {
@@ -35,9 +34,7 @@ public class Riveros1993 {
    private double etam(Element elm, double e0k) {
       final double z = elm.getAtomicNumber();
       final double lz = Math.log(z);
-      return (0.1904 + lz * (-0.2236 + lz * (0.1292 + lz * -0.01491)))
-            * (2.167e-4 * z + 0.9987)
-            * Math.pow(e0k, (0.1382 - 0.9211 / Math.sqrt(z)));
+      return (0.1904 + lz * (-0.2236 + lz * (0.1292 + lz * -0.01491))) * (2.167e-4 * z + 0.9987) * Math.pow(e0k, (0.1382 - 0.9211 / Math.sqrt(z)));
 
    }
 
@@ -51,8 +48,7 @@ public class Riveros1993 {
 
    private double elasticXSec(double zz, double e0k) {
       final double alphaalpha = 3.4e-3 * Math.pow(zz, 0.67) / e0k, mc2 = 511.0;
-      return 5.21e-21 * ((zz / e0k) * (zz / e0k))
-            * (4 * Math.PI / (alphaalpha * (1.0 + alphaalpha)))
+      return 5.21e-21 * ((zz / e0k) * (zz / e0k)) * (4 * Math.PI / (alphaalpha * (1.0 + alphaalpha)))
             * Math.pow(((e0k + mc2) / (e0k + 2.0 * mc2)), 2);
    }
 
@@ -62,8 +58,7 @@ public class Riveros1993 {
       for (Element el : mat.getElementSet()) {
          den += mat.atomicPercent(el) * elasticXSec(el.getAtomicNumber(), e0k);
       }
-      return mat.atomicPercent(elm) * elasticXSec(elm.getAtomicNumber(), e0k)
-            / den;
+      return mat.atomicPercent(elm) * elasticXSec(elm.getAtomicNumber(), e0k) / den;
    }
 
    public Riveros1993(Composition comp, double e0, double takeOff) {
@@ -94,18 +89,15 @@ public class Riveros1993 {
       assert alpha > 0.0;
       assert beta > 0.0;
       // Compute the matrix correction
-      final double xm = MassAbsorptionCoefficient
-            .toCmSqrPerGram(chi(e, mTakeOff, mComposition));
+      final double xm = MassAbsorptionCoefficient.toCmSqrPerGram(chi(e, mTakeOff, mComposition));
       final double ff = xm / (2.0 * alpha);
       final double gg = (beta + xm) / (2.0 * alpha);
       final double fchi = gg < 22.3
             ? (Math.sqrt(Math.PI)
-                  * (Math.exp(ff * ff) * gamma * alpha * (1.0 - Math2.erf(ff))
-                        - Math.exp(gg * gg) * (gamma - phi0) * alpha
-                              * (1.0 - Math2.erf(gg))))
+                  * (Math.exp(ff * ff) * gamma * alpha * (1.0 - Math2.erf(ff)) - Math.exp(gg * gg) * (gamma - phi0) * alpha * (1.0 - Math2.erf(gg))))
                   / (2.0 * alpha * alpha)
             : 0.0;
-      final double f = gg < 22.3 ? (Math.sqrt(Math.PI)*(gamma - Math.exp(gg*gg)*(gamma - phi0)*Math2.erfc(gg)))/(2.0*alpha) : 1.0;
+      final double f = gg < 22.3 ? (Math.sqrt(Math.PI) * (gamma - Math.exp(gg * gg) * (gamma - phi0) * Math2.erfc(gg))) / (2.0 * alpha) : 1.0;
       return fchi / f;
    }
 }

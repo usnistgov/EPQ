@@ -22,16 +22,17 @@ import gov.nist.microanalysis.Utility.CSVReader;
  * @version 1.0
  */
 
-abstract public class MeanIonizationPotential
-   extends AlgorithmClass {
+abstract public class MeanIonizationPotential extends AlgorithmClass {
 
    /**
     * MeanIonizationPotential - Create an instance of the abstract
     * MeanIonizationPotential class with the specified name and literature
     * reference.
     * 
-    * @param name String
-    * @param reference String
+    * @param name
+    *           String
+    * @param reference
+    *           String
     */
    private MeanIonizationPotential(String name, String reference) {
       super("Mean Ionization Potential", name, reference);
@@ -59,7 +60,7 @@ abstract public class MeanIonizationPotential
 
    public String caveat(Composition comp) {
       String res = CaveatBase.None;
-      for(final Element el : comp.getElementSet())
+      for (final Element el : comp.getElementSet())
          res = CaveatBase.append(res, caveat(el));
       return res;
    }
@@ -69,13 +70,14 @@ abstract public class MeanIonizationPotential
     * the rule based on the ln(J_i) where J_i is the elemental
     * MeanIonizationPotential.
     * 
-    * @param comp Composition
+    * @param comp
+    *           Composition
     * @return double
     */
    public double computeLn(Composition comp) {
       double m = 0.0;
       double lnJ = 0.0;
-      for(final Element el : comp.getElementSet()) {
+      for (final Element el : comp.getElementSet()) {
          final double cz_a = (comp.weightFraction(el, true) * el.getAtomicNumber()) / el.getAtomicWeight();
          m += cz_a;
          lnJ += cz_a * Math.log(FromSI.keV(compute(el)));
@@ -87,7 +89,8 @@ abstract public class MeanIonizationPotential
     * eval - Each different version of the algorithm should implement this
     * method.
     * 
-    * @param el Element - The element
+    * @param el
+    *           Element - The element
     * @return double - in Joules
     */
    abstract public double compute(Element el);
@@ -96,8 +99,7 @@ abstract public class MeanIonizationPotential
     * Sternheimer64 - An empirical expression for J attributed to Sternheimer by
     * Berger and Seltzer
     */
-   public static class Sternheimer64MeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class Sternheimer64MeanIonizationPotential extends MeanIonizationPotential {
       public Sternheimer64MeanIonizationPotential() {
          super("Sternheimer 1964", "Sternheimer quoted in Berger MJ, Seltzer S. NASA Technical Publication SP-4012 (1964)");
       }
@@ -114,8 +116,7 @@ abstract public class MeanIonizationPotential
    /**
     * Berger and Seltzer as implemented by JT Armstrong in CITZAF 3.06
     */
-   public static class BergerAndSeltzerCITZAFMeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class BergerAndSeltzerCITZAFMeanIonizationPotential extends MeanIonizationPotential {
       public BergerAndSeltzerCITZAFMeanIonizationPotential() {
          super("Berger & Seltzer as per JTA", "Berger and Seltzer as implemented by CITZAF 3.06");
       }
@@ -132,8 +133,7 @@ abstract public class MeanIonizationPotential
    /**
     * Bloch33 - An empirical expression for J attributed to F Bloch
     */
-   public static class Bloch33MeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class Bloch33MeanIonizationPotential extends MeanIonizationPotential {
       public Bloch33MeanIonizationPotential() {
          super("Bloch 1933", "Bloch F, F. Z. Phys. 81, 363 (1933)");
       }
@@ -150,8 +150,7 @@ abstract public class MeanIonizationPotential
    /**
     * Wilson41 - An empirical expression for J attributed to R R Wilson
     */
-   public static class Wilson41MeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class Wilson41MeanIonizationPotential extends MeanIonizationPotential {
       public Wilson41MeanIonizationPotential() {
          super("Wilson 1941", "Wilson RR. Phys Rev. 60. 749 (1941)");
       }
@@ -168,8 +167,7 @@ abstract public class MeanIonizationPotential
    /**
     * Springer67 - An empirical expression for J attributed to G Springer
     */
-   public static class Springer67MeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class Springer67MeanIonizationPotential extends MeanIonizationPotential {
       public Springer67MeanIonizationPotential() {
          super("Springer 1967", "Springer G. Meues Jahrbuch Fuer Mineralogie, Monatshefte (1967) 9/10, p. 304");
       }
@@ -188,8 +186,7 @@ abstract public class MeanIonizationPotential
     * Yakowitz. (There
     */
 
-   public static class Heinrich70MeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class Heinrich70MeanIonizationPotential extends MeanIonizationPotential {
       public Heinrich70MeanIonizationPotential() {
          super("Heinrich & Yakowitz 1970", "Heinrich KFJ, Yakowitz H. Mikrochim Acta (1970) p 123");
       }
@@ -207,10 +204,10 @@ abstract public class MeanIonizationPotential
     * Duncumb69 - An empirical expression for J attributed to Duncumb &amp;
     * DeCasa
     */
-   public static class Duncumb69MeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class Duncumb69MeanIonizationPotential extends MeanIonizationPotential {
       public Duncumb69MeanIonizationPotential() {
-         super("Duncumb & DeCasa 1969", "Duncumb P, Shields-Mason PK, DeCasa C. Proc. 5th Int. Congr. on X-ray Optics and Microanalysis, Springer, Berlin, 1969 p. 146");
+         super("Duncumb & DeCasa 1969",
+               "Duncumb P, Shields-Mason PK, DeCasa C. Proc. 5th Int. Congr. on X-ray Optics and Microanalysis, Springer, Berlin, 1969 p. 146");
       }
 
       @Override
@@ -225,8 +222,7 @@ abstract public class MeanIonizationPotential
    /**
     * Zeller75 - An empirical expression for J attributed to C Zeller
     */
-   public static class Zeller75MeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class Zeller75MeanIonizationPotential extends MeanIonizationPotential {
       public Zeller75MeanIonizationPotential() {
          super("Zeller 1975", "Zeller C in Ruste J, Gantois M, J. Phys. D. Appl. Phys 8, 872 (1975)");
       }
@@ -244,8 +240,7 @@ abstract public class MeanIonizationPotential
     * Berger64 - Measured values of the mean ionization potential attributed to
     * Berger &amp; Seltzer 1964
     */
-   public static class Berger64MeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class Berger64MeanIonizationPotential extends MeanIonizationPotential {
       Berger64MeanIonizationPotential() {
          super("Berger & Seltzer 1964", "Berger MJ, Seltzer S. NASA Technical Publication SP-4012 (1964)");
       }
@@ -254,23 +249,22 @@ abstract public class MeanIonizationPotential
 
       private void readTabulatedValues() {
          try {
-            synchronized(this) {
-               if(mMeasured == null) {
+            synchronized (this) {
+               if (mMeasured == null) {
                   final double[][] res = (new CSVReader.ResourceReader("BergerSeltzer64.csv", true)).getResource(MeanIonizationPotential.class);
                   mMeasured = new double[res.length];
-                  for(int i = 0; i < res.length; ++i)
+                  for (int i = 0; i < res.length; ++i)
                      mMeasured[i] = (res[i].length > 0 ? ToSI.eV(res[i][0]) : 0.0);
                }
             }
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             throw new EPQFatalException("Fatal error while attempting to load the mean ionization potential data file.");
          }
       }
 
       @Override
       final public double compute(Element el) {
-         if(mMeasured == null)
+         if (mMeasured == null)
             readTabulatedValues();
          return mMeasured[el.getAtomicNumber() - 1];
       }
@@ -282,8 +276,7 @@ abstract public class MeanIonizationPotential
     * Measured values of the mean ionization potential attributed to Berger
     * &amp; Seltzer 1983
     */
-   public static class Berger83MeanIonizationPotential
-      extends MeanIonizationPotential {
+   public static class Berger83MeanIonizationPotential extends MeanIonizationPotential {
       public Berger83MeanIonizationPotential() {
          super("Berger & Seltzer 1983", "Berger MJ, Seltzer S. NBSIR 82-2550-A - US Dept of Commerce, Washington DC (1983)");
       }
@@ -294,17 +287,16 @@ abstract public class MeanIonizationPotential
          try {
             final double[][] res = (new CSVReader.ResourceReader("BergerSeltzer83.csv", true)).getResource(MeanIonizationPotential.class);
             mMeasured = new double[res.length];
-            for(int i = 0; i < res.length; ++i)
+            for (int i = 0; i < res.length; ++i)
                mMeasured[i] = (res[i].length > 0 ? ToSI.eV(res[i][0]) : 0.0);
-         }
-         catch(final Exception ex) {
+         } catch (final Exception ex) {
             throw new EPQFatalException("Fatal error while attempting to load the mean ionization potential data file.");
          }
       }
 
       @Override
       final public double compute(Element el) {
-         if(mMeasured == null)
+         if (mMeasured == null)
             readTabulatedValues();
          return mMeasured[el.getAtomicNumber() - 1];
       }
@@ -312,17 +304,9 @@ abstract public class MeanIonizationPotential
 
    public static final MeanIonizationPotential Berger83 = new Berger83MeanIonizationPotential();
 
-   static private final AlgorithmClass[] mAllImplementations = {
-      MeanIonizationPotential.Berger64,
-      MeanIonizationPotential.Berger83,
-      MeanIonizationPotential.Bloch33,
-      MeanIonizationPotential.Duncumb69,
-      MeanIonizationPotential.BergerAndSeltzerCITZAF,
-      MeanIonizationPotential.Heinrich70,
-      MeanIonizationPotential.Springer67,
-      MeanIonizationPotential.Sternheimer64,
-      MeanIonizationPotential.Wilson41,
-      MeanIonizationPotential.Zeller75
-   };
+   static private final AlgorithmClass[] mAllImplementations = {MeanIonizationPotential.Berger64, MeanIonizationPotential.Berger83,
+         MeanIonizationPotential.Bloch33, MeanIonizationPotential.Duncumb69, MeanIonizationPotential.BergerAndSeltzerCITZAF,
+         MeanIonizationPotential.Heinrich70, MeanIonizationPotential.Springer67, MeanIonizationPotential.Sternheimer64,
+         MeanIonizationPotential.Wilson41, MeanIonizationPotential.Zeller75};
 
 }

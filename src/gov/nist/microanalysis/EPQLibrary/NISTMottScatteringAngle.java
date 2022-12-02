@@ -25,17 +25,13 @@ import java.util.Locale;
  * @version 1.0
  */
 
-public class NISTMottScatteringAngle
-   extends RandomizedScatter {
+public class NISTMottScatteringAngle extends RandomizedScatter {
 
-   static private final LitReference.WebSite mReference = new LitReference.WebSite("http://www.nist.gov/srd/nist64.htm", "NIST Electron Elastic-Scattering Cross-Section Database version 3.1", LitReference.createDate(2007, Calendar.AUGUST, 24), new LitReference.Author[] {
-      LitReference.CPowell,
-      LitReference.FSalvat,
-      LitReference.AJablonski
-   });
+   static private final LitReference.WebSite mReference = new LitReference.WebSite("http://www.nist.gov/srd/nist64.htm",
+         "NIST Electron Elastic-Scattering Cross-Section Database version 3.1", LitReference.createDate(2007, Calendar.AUGUST, 24),
+         new LitReference.Author[]{LitReference.CPowell, LitReference.FSalvat, LitReference.AJablonski});
 
-   public static class NISTMottRandomizedScatterFactory
-      extends RandomizedScatterFactory {
+   public static class NISTMottRandomizedScatterFactory extends RandomizedScatterFactory {
       public NISTMottRandomizedScatterFactory() {
          super("NIST Mott Inelastic Cross-Section", mReference);
       }
@@ -49,7 +45,7 @@ public class NISTMottScatteringAngle
       public RandomizedScatter get(Element elm) {
          final int z = elm.getAtomicNumber();
          RandomizedScatter res = mScatter[z];
-         if(res == null) {
+         if (res == null) {
             mScatter[z] = new NISTMottScatteringAngle(elm);
             res = mScatter[z];
          }
@@ -87,14 +83,16 @@ public class NISTMottScatteringAngle
     * The constructor loads a table of numbers which are used to quickly compute
     * cross sections for any energy in the range 50 eV to 20,000 eV.
     * 
-    * @param elm Element
+    * @param elm
+    *           Element
     */
    public NISTMottScatteringAngle(Element elm) {
       super("NIST Elastic cross-section", mReference);
       assert (elm != null);
       mElement = elm;
       try {
-         final String name = elm.getAtomicNumber() < 10 ? "NistXSec/E0" + Integer.toString(elm.getAtomicNumber()) + ".D64"
+         final String name = elm.getAtomicNumber() < 10
+               ? "NistXSec/E0" + Integer.toString(elm.getAtomicNumber()) + ".D64"
                : "NistXSec/E" + Integer.toString(elm.getAtomicNumber()) + ".D64";
          final InputStream is = gov.nist.microanalysis.EPQLibrary.NISTMottScatteringAngle.class.getResourceAsStream(name);
          final InputStreamReader isr = new InputStreamReader(is, "US-ASCII");
@@ -102,13 +100,12 @@ public class NISTMottScatteringAngle
          // To ensure that numbers are parsed correctly regardless of locale
          final NumberFormat nf = NumberFormat.getInstance(Locale.US);
          br.readLine();
-         for(int j = 0; j < SPWEM_LEN; ++j) {
+         for (int j = 0; j < SPWEM_LEN; ++j) {
             mSpwem[j] = nf.parse(br.readLine().trim()).doubleValue();
-            for(int i = 0; i < X1_LEN; ++i)
+            for (int i = 0; i < X1_LEN; ++i)
                mX1[j][i] = nf.parse(br.readLine().trim()).doubleValue();
          }
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          throw new EPQFatalException("Unable to construct NISTMottScatteringAngle: " + ex.toString());
       }
    }
@@ -133,26 +130,27 @@ public class NISTMottScatteringAngle
     * totalCrossSection - Computes the total cross section for an electron of
     * the specified energy.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - in square meters
     */
    @Override
    final public double totalCrossSection(double energy) {
-      if(energy < MAX_NISTMOTT) {
+      if (energy < MAX_NISTMOTT) {
          final double scale = PhysicalConstants.BohrRadius * PhysicalConstants.BohrRadius;
          final double logE = Math.log(FromSI.eV(energy));
          final int j = 1 + (int) ((logE - DL50) / PARAM);
-         if(j == 1)
+         if (j == 1)
             return value(DL50, DL50 + PARAM, DL50 + (2.0 * PARAM), mSpwem[0], mSpwem[1], mSpwem[2], logE) * scale;
-         else if(j == SPWEM_LEN)
-            return value(DL50 + (58.0 * PARAM), DL50 + (59.0 * PARAM), DL50 + (60.0 * PARAM), mSpwem[SPWEM_LEN - 3], mSpwem[SPWEM_LEN - 2], mSpwem[SPWEM_LEN - 1], logE)
-                  * scale;
+         else if (j == SPWEM_LEN)
+            return value(DL50 + (58.0 * PARAM), DL50 + (59.0 * PARAM), DL50 + (60.0 * PARAM), mSpwem[SPWEM_LEN - 3], mSpwem[SPWEM_LEN - 2],
+                  mSpwem[SPWEM_LEN - 1], logE) * scale;
          else {
             final double e0 = DL50 + ((j - 2) * PARAM);
             return value(e0, e0 + PARAM, e0 + (2.0 * PARAM), mSpwem[j - 2], mSpwem[j - 1], mSpwem[j], logE) * scale;
          }
       } else {
-         if(mRutherford == null)
+         if (mRutherford == null)
             mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
          return mRutherford.totalCrossSection(energy);
       }
@@ -164,20 +162,21 @@ public class NISTMottScatteringAngle
     * electron of specified energy on an atom of the element represented by the
     * instance of this class.
     * 
-    * @param energy double - In Joules
+    * @param energy
+    *           double - In Joules
     * @return double - an angle in radians
     */
    @Override
    final public double randomScatteringAngle(double energy) {
-      if(energy < MAX_NISTMOTT) {
+      if (energy < MAX_NISTMOTT) {
          final double logE = Math.log(FromSI.eV(energy));
          final int j = (int) ((logE - DL50) / PARAM); // offset to zero-based
          final double e2 = DL50 + ((j + 1) * PARAM);
          final double e1 = e2 - PARAM;
          final int i = ((logE - e1) < (e2 - logE) ? j : j + 1); // offset to
          // zero-based
-         assert (i >= 0) && (i < mX1.length) : Integer.toString(i) + "\t" + Double.toString(FromSI.eV(energy)) + "\t"
-               + Double.toString(e1) + "\t" + Double.toString(e2);
+         assert (i >= 0) && (i < mX1.length)
+               : Integer.toString(i) + "\t" + Double.toString(FromSI.eV(energy)) + "\t" + Double.toString(e1) + "\t" + Double.toString(e2);
          // via j
          final int k = (int) (200.0 * Math2.rgen.nextDouble()); // offset to
          // zero-based
@@ -186,7 +185,7 @@ public class NISTMottScatteringAngle
          final double com = 1.0 - (2.0 * q * q);
          return com > -1.0 ? (com < 1.0 ? Math.acos(com) : 0.0) : Math.PI;
       } else {
-         if(mRutherford == null)
+         if (mRutherford == null)
             mRutherford = new ScreenedRutherfordScatteringAngle(mElement);
          return mRutherford.randomScatteringAngle(energy);
       }

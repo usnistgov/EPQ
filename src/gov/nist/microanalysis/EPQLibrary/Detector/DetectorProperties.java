@@ -142,7 +142,8 @@ public class DetectorProperties implements Cloneable {
    /**
     * Set the position of the detector...
     * 
-    * @param pos The position in meters
+    * @param pos
+    *           The position in meters
     */
    public void setPosition(double[] pos) {
       mProperties.setDetectorPosition(pos, 1.0e-3 * mProperties.getNumericWithDefault(SpectrumProperties.DetectorOptWD, Double.NaN));
@@ -199,13 +200,13 @@ public class DetectorProperties implements Cloneable {
     */
    @Override
    public int hashCode() {
-      if(mHash == Integer.MAX_VALUE) {
+      if (mHash == Integer.MAX_VALUE) {
          final int PRIME = 31;
          int result = 1;
          result = (PRIME * result) + mChannelCount;
          result = (PRIME * result) + ((mName == null) ? 0 : mName.hashCode());
          result = (PRIME * result) + ((mProperties == null) ? 0 : mProperties.hashCode());
-         if(result == Integer.MAX_VALUE)
+         if (result == Integer.MAX_VALUE)
             result = Integer.MIN_VALUE;
          mHash = result;
       }
@@ -217,26 +218,26 @@ public class DetectorProperties implements Cloneable {
     */
    @Override
    public boolean equals(Object obj) {
-      if(this == obj)
+      if (this == obj)
          return true;
-      if(obj == null)
+      if (obj == null)
          return false;
-      if(getClass() != obj.getClass())
+      if (getClass() != obj.getClass())
          return false;
       final DetectorProperties other = (DetectorProperties) obj;
-      if(mChannelCount != other.mChannelCount)
+      if (mChannelCount != other.mChannelCount)
          return false;
-      if(mName == null) {
-         if(other.mName != null)
+      if (mName == null) {
+         if (other.mName != null)
             return false;
-      } else if(!mName.equals(other.mName))
+      } else if (!mName.equals(other.mName))
          return false;
-      if(!Arrays.equals(getPosition(), other.getPosition()))
+      if (!Arrays.equals(getPosition(), other.getPosition()))
          return false;
-      if(mProperties == null) {
-         if(other.mProperties != null)
+      if (mProperties == null) {
+         if (other.mProperties != null)
             return false;
-      } else if(!mProperties.equals(other.mProperties))
+      } else if (!mProperties.equals(other.mProperties))
          return false;
       return true;
    }

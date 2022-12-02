@@ -60,9 +60,7 @@ import gov.nist.microanalysis.EPQLibrary.XRayTransition;
  * @author Daniel "Ooblioob" Davis
  * @version 1.0
  */
-public class CITZAFDialog
-   extends
-   JDialog {
+public class CITZAFDialog extends JDialog {
    static final long serialVersionUID = 0x1;
    private transient Vector<ActionListener> WindowClosingListeners;
    private transient Vector<ActionListener> BeginAnalysisListeners;
@@ -219,9 +217,12 @@ public class CITZAFDialog
    /**
     * CITZAFDialog - Creates a new instance of CITZAFDialog
     * 
-    * @param frame Frame - the dialog owner
-    * @param title String - the title that will appear on the dialog
-    * @param modal boolean - if true then parent windows will be disabled while
+    * @param frame
+    *           Frame - the dialog owner
+    * @param title
+    *           String - the title that will appear on the dialog
+    * @param modal
+    *           boolean - if true then parent windows will be disabled while
     *           this dialog is open
     */
 
@@ -230,8 +231,7 @@ public class CITZAFDialog
       try {
          initialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -239,9 +239,12 @@ public class CITZAFDialog
    /**
     * CITZAFDialog - Creates a new instance of CITZAFDialog
     * 
-    * @param dialog Dialog - the parent dialog
-    * @param title String - the title that will appear on the dialog
-    * @param modal boolean - if true then parent windows will be disabled while
+    * @param dialog
+    *           Dialog - the parent dialog
+    * @param title
+    *           String - the title that will appear on the dialog
+    * @param modal
+    *           boolean - if true then parent windows will be disabled while
     *           this dialog is open
     */
 
@@ -250,19 +253,17 @@ public class CITZAFDialog
       try {
          initialize();
          pack();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
 
-   private void initialize()
-         throws Exception {
+   private void initialize() throws Exception {
       jTabbedPane_Main.addChangeListener(new javax.swing.event.ChangeListener() {
          @Override
          public void stateChanged(javax.swing.event.ChangeEvent e) {
             commitToCitzaf();
-            if((jTabbedPane_Main.getSelectedComponent() == jPanel_ManualMACs) && (!threwNumberFormatException))
+            if ((jTabbedPane_Main.getSelectedComponent() == jPanel_ManualMACs) && (!threwNumberFormatException))
                loadMACTable();
          }
       });
@@ -472,7 +473,7 @@ public class CITZAFDialog
 
       jComboBox_Preselected.addItem("No preset material selected");
       final String[] presetItemsList = matFac.getMaterialNames();
-      for(final String element : presetItemsList)
+      for (final String element : presetItemsList)
          jComboBox_Preselected.addItem(element);
 
       jLabel_SelectALine.setText("Select the KLM Lines for each element");
@@ -510,7 +511,7 @@ public class CITZAFDialog
       jLabel_SampleDescriptionQS.setText(Citzaf.formatComposition(Citzaf.getComposition()));
       jLabel_SampleDescriptionQS.setToolTipText(jLabel_SampleDescriptionQS.getText());
 
-      if(!Citzaf.getUsingKRatios())
+      if (!Citzaf.getUsingKRatios())
          drawLines();
    }
 
@@ -529,7 +530,7 @@ public class CITZAFDialog
 
       jPanel_InsideStandards.removeAll();
       jPanel_InsideStandards.setPreferredSize(new Dimension(390, 40 * ElementSet.size()));
-      for(final Element elm : ElementSet) {
+      for (final Element elm : ElementSet) {
          final JPanel jPanel_StandardsSingle = new JPanel();
          jPanel_StandardsSingle.setName(elm.toAbbrev());
 
@@ -539,7 +540,7 @@ public class CITZAFDialog
          final JLabel jLabel_StandardsDescription = new JLabel();
          jLabel_StandardsDescription.setPreferredSize(new Dimension(120, 35));
 
-         if(Citzaf.hasStandard(elm)) {
+         if (Citzaf.hasStandard(elm)) {
             jLabel_StandardsDescription.setText(Citzaf.formatComposition(Citzaf.getAStandard(elm)));
             jLabel_StandardsDescription.setToolTipText(jLabel_StandardsDescription.getText());
          } else
@@ -592,7 +593,7 @@ public class CITZAFDialog
       jPanel_Corrections.add(jPanel_MACs, null);
       gridLayout1.setRows(CorrectionAlgorithms.length / 2);
 
-      for(int index = 0; index < CorrectionAlgorithms.length; index++) {
+      for (int index = 0; index < CorrectionAlgorithms.length; index++) {
          final JRadioButton Correction = new JRadioButton();
          Correction.setPreferredSize(new Dimension(400, 10));
          Correction.setText(CorrectionAlgorithms[index].toString());
@@ -611,7 +612,7 @@ public class CITZAFDialog
       jLabel_MACListing.setText("Select a Mass Absorption Coefficient Table Choice :");
 
       jPanel_MACs.setPreferredSize(new Dimension(400, 100));
-      for(final gov.nist.microanalysis.EPQLibrary.CITZAF.MassAbsorptionCoefficient algorithm : MACAlgorithms) {
+      for (final gov.nist.microanalysis.EPQLibrary.CITZAF.MassAbsorptionCoefficient algorithm : MACAlgorithms) {
          final JRadioButton MACRadioButton = new JRadioButton();
          MACRadioButton.setPreferredSize(new Dimension(400, 20));
          MACRadioButton.setText(algorithm.toString());
@@ -619,7 +620,7 @@ public class CITZAFDialog
             @Override
             public void actionPerformed(ActionEvent e) {
                Citzaf.setMACAlgorithm(e.getActionCommand());
-               if((Citzaf.getMACAlgorithm() == CITZAF.MassAbsorptionCoefficient.MASS_ABSORPTION_COEFFICIENTS_FROM_DATA_TABLES)
+               if ((Citzaf.getMACAlgorithm() == CITZAF.MassAbsorptionCoefficient.MASS_ABSORPTION_COEFFICIENTS_FROM_DATA_TABLES)
                      || (Citzaf.getMACAlgorithm() == CITZAF.MassAbsorptionCoefficient.MASS_ABSORPTION_COEFFICIENTS_FROM_HEINRICH_ICXOM_11_EQN)) {
                   jCheckBox_PrintMACs.setSelected(jCheckBox_PrintMACsWasSelected);
                   jCheckBox_PrintMACs.setEnabled(true);
@@ -641,7 +642,7 @@ public class CITZAFDialog
    }
 
    private void loadCorrectionsTabFromCITZAF() {
-      if((Citzaf.getSampleType() == CITZAF.PARTICLE_OR_THIN_FILM)
+      if ((Citzaf.getSampleType() == CITZAF.PARTICLE_OR_THIN_FILM)
             && ((Citzaf.getCorrectionAlgorithm() == CITZAF.CITZAFCorrectionAlgorithm.CONVENTIONAL_PHILIBERT_DUNCUMB_REED)
                   || (Citzaf.getCorrectionAlgorithm() == CITZAF.CITZAFCorrectionAlgorithm.HEINRICH_DUNCUMB_REED)
                   || (Citzaf.getCorrectionAlgorithm() == CITZAF.CITZAFCorrectionAlgorithm.LOVE_SCOTT_I)
@@ -651,9 +652,9 @@ public class CITZAFDialog
          Citzaf.setCorrectionAlgorithm(CITZAF.CITZAFCorrectionAlgorithm.ARMSTRONG_LOVE_SCOTT.toString());
 
       final Component[] componentsList = jPanel_CorrectionsList.getComponents();
-      for(int index = 0; index < componentsList.length; index++) {
+      for (int index = 0; index < componentsList.length; index++) {
          final JRadioButton Correction = (JRadioButton) componentsList[index];
-         if((Citzaf.getSampleType() == CITZAF.PARTICLE_OR_THIN_FILM)
+         if ((Citzaf.getSampleType() == CITZAF.PARTICLE_OR_THIN_FILM)
                && ((CorrectionAlgorithms[index] == CITZAF.CITZAFCorrectionAlgorithm.CONVENTIONAL_PHILIBERT_DUNCUMB_REED)
                      || (CorrectionAlgorithms[index] == CITZAF.CITZAFCorrectionAlgorithm.HEINRICH_DUNCUMB_REED)
                      || (CorrectionAlgorithms[index] == CITZAF.CITZAFCorrectionAlgorithm.LOVE_SCOTT_I)
@@ -664,14 +665,14 @@ public class CITZAFDialog
          else
             Correction.setEnabled(true);
 
-         if(CorrectionAlgorithms[index] == Citzaf.getCorrectionAlgorithm())
+         if (CorrectionAlgorithms[index] == Citzaf.getCorrectionAlgorithm())
             Correction.setSelected(true);
       }
 
       final Component[] MACComponents = jPanel_MACs.getComponents();
-      for(int index = 0; index < MACComponents.length; index++) {
+      for (int index = 0; index < MACComponents.length; index++) {
          final JRadioButton MACRadioButton = (JRadioButton) MACComponents[index];
-         if(Citzaf.getMACAlgorithm() == MACAlgorithms[index])
+         if (Citzaf.getMACAlgorithm() == MACAlgorithms[index])
             MACRadioButton.setSelected(true);
       }
    }
@@ -883,7 +884,7 @@ public class CITZAFDialog
    }
 
    private void loadOutputTabFromCITZAF() {
-      if(!Citzaf.getTitle().equals(""))
+      if (!Citzaf.getTitle().equals(""))
          jTextField_Title.setText(Citzaf.getTitle());
       else
          jTextField_Title.setText("Enter your sample title here");
@@ -1087,11 +1088,10 @@ public class CITZAFDialog
       final NumberFormat nf = NumberFormat.getInstance();
       try {
          BeamEnergy = nf.parse(jTextField_BeamEnergyQS.getText()).doubleValue();
-         if(BeamEnergy < 0.0)
+         if (BeamEnergy < 0.0)
             throw new NumberFormatException("Beam Energy must be greater than 0.0 keV");
          Citzaf.setBeamEnergy(BeamEnergy);
-      }
-      catch(final ParseException nfe) {
+      } catch (final ParseException nfe) {
          jTabbedPane_Main.setSelectedComponent(jPanel_QuickStart);
          jTextField_BeamEnergyQS.grabFocus();
          jTextField_BeamEnergyQS.selectAll();
@@ -1100,11 +1100,10 @@ public class CITZAFDialog
       double TakeOffAngle = 0.0;
       try {
          TakeOffAngle = nf.parse(jTextField_TakeOffAngleQS.getText()).doubleValue();
-         if(TakeOffAngle < 0.0)
+         if (TakeOffAngle < 0.0)
             throw new Exception("Take off angle must be greater than 0.0 degrees");
          Citzaf.setTakeOffAngle(TakeOffAngle);
-      }
-      catch(final Exception nfe2) {
+      } catch (final Exception nfe2) {
          jTabbedPane_Main.setSelectedComponent(jPanel_QuickStart);
          jTextField_TakeOffAngleQS.grabFocus();
          jTextField_TakeOffAngleQS.selectAll();
@@ -1125,12 +1124,11 @@ public class CITZAFDialog
 
    private void commitAnalyticalConditionsTab() {
       final NumberFormat nf = NumberFormat.getInstance();
-      if(Citzaf.isUsingStageCoordinates()) {
+      if (Citzaf.isUsingStageCoordinates()) {
          try {
             final double X = nf.parse(jTextField_XStageCoordinate.getText()).doubleValue();
             Citzaf.setXStageCoordinate(X);
-         }
-         catch(final ParseException nfex) {
+         } catch (final ParseException nfex) {
             jTextField_XStageCoordinate.grabFocus();
             jTextField_XStageCoordinate.selectAll();
          }
@@ -1138,8 +1136,7 @@ public class CITZAFDialog
          try {
             final double Y = nf.parse(jTextField_YStageCoordinate.getText()).doubleValue();
             Citzaf.setYStageCoordinate(Y);
-         }
-         catch(final ParseException nfex) {
+         } catch (final ParseException nfex) {
             jTextField_YStageCoordinate.grabFocus();
             jTextField_YStageCoordinate.selectAll();
          }
@@ -1148,29 +1145,27 @@ public class CITZAFDialog
 
       try {
          final double deadtimeCorrection = nf.parse(jTextField_DeadtimeCorrection.getText()).doubleValue();
-         if(deadtimeCorrection < 0.0)
+         if (deadtimeCorrection < 0.0)
             throw new NumberFormatException();
          Citzaf.setDeadtimeCorrection(deadtimeCorrection);
-      }
-      catch(final ParseException nfex) {
+      } catch (final ParseException nfex) {
          jTabbedPane_Main.setSelectedComponent(jPanel_AnalyticalConditions);
          jTextField_DeadtimeCorrection.grabFocus();
          jTextField_DeadtimeCorrection.selectAll();
       }
 
-      if(DriftFactorTextFields != null) {
+      if (DriftFactorTextFields != null) {
          int index = 0;
          try {
-            for(index = 0; index < DriftFactorTextFields.length; index++)
-               if(DriftFactorTextFields[index] != null) {
+            for (index = 0; index < DriftFactorTextFields.length; index++)
+               if (DriftFactorTextFields[index] != null) {
                   final double driftFactor = nf.parse(DriftFactorTextFields[index].getText()).doubleValue();
-                  if(driftFactor < 0.0)
+                  if (driftFactor < 0.0)
                      throw new NumberFormatException();
                   Citzaf.setDriftFactor(Element.byName(DriftFactorTextFields[index].getName()), driftFactor);
                } else
                   Citzaf.setDriftFactor(Element.byName(DriftFactorTextFields[index].getName()), 1.0);
-         }
-         catch(final ParseException nfex2) {
+         } catch (final ParseException nfex2) {
             Citzaf.clearDriftFactors();
             jTabbedPane_Main.setSelectedComponent(jPanel_AnalyticalConditions);
             DriftFactorTextFields[index].grabFocus();
@@ -1187,11 +1182,10 @@ public class CITZAFDialog
       final NumberFormat nf = NumberFormat.getInstance();
       try {
          final double Density = nf.parse(jTextField_SampleDensity.getText()).doubleValue();
-         if(Density < 0.0)
+         if (Density < 0.0)
             throw new NumberFormatException();
          Citzaf.setParticleDensity(Density);
-      }
-      catch(final ParseException nfex) {
+      } catch (final ParseException nfex) {
          jTabbedPane_Main.setSelectedComponent(jPanel_Particles);
          jTextField_SampleDensity.grabFocus();
          jTextField_SampleDensity.selectAll();
@@ -1199,11 +1193,10 @@ public class CITZAFDialog
 
       try {
          final double ThicknessFactor = nf.parse(jTextField_SizeFactor.getText()).doubleValue();
-         if(ThicknessFactor < 0.0)
+         if (ThicknessFactor < 0.0)
             throw new NumberFormatException();
          Citzaf.setThicknessFactor(ThicknessFactor);
-      }
-      catch(final ParseException nfex) {
+      } catch (final ParseException nfex) {
          jTabbedPane_Main.setSelectedComponent(jPanel_Particles);
          jTextField_SizeFactor.grabFocus();
          jTextField_SizeFactor.selectAll();
@@ -1211,11 +1204,10 @@ public class CITZAFDialog
 
       try {
          final double IntegrationStep = nf.parse(jTextField_IntegrationStep.getText()).doubleValue();
-         if(IntegrationStep < 0.0)
+         if (IntegrationStep < 0.0)
             throw new NumberFormatException();
          Citzaf.setNumericalIntegrationStep(IntegrationStep);
-      }
-      catch(final ParseException nfex) {
+      } catch (final ParseException nfex) {
          jTabbedPane_Main.setSelectedComponent(jPanel_Particles);
          jTextField_IntegrationStep.grabFocus();
          jTextField_IntegrationStep.selectAll();
@@ -1227,11 +1219,10 @@ public class CITZAFDialog
          double MACvalue = 0.0;
          try {
             MACvalue = mDefaultFmt.parse(box.getText()).doubleValue();
-         }
-         catch(final ParseException ex1) {
+         } catch (final ParseException ex1) {
             throw new NumberFormatException();
          }
-         if(MACvalue < 0.0)
+         if (MACvalue < 0.0)
             throw new NumberFormatException();
 
          final String temp = box.getName();
@@ -1239,24 +1230,23 @@ public class CITZAFDialog
          final Element absorber = Element.byName(temp.substring(temp.indexOf(" ") + 1, temp.length()));
 
          String Line = null;
-         if(Citzaf.hasLine(elm))
+         if (Citzaf.hasLine(elm))
             Line = Citzaf.getLine(elm);
          else
             Line = chooseBestLine(elm);
          XRayTransition xrt = null;
-         if(Line != null)
-            if(Line.startsWith("K"))
+         if (Line != null)
+            if (Line.startsWith("K"))
                xrt = new XRayTransition(elm, XRayTransition.KA1);
-            else if(Line.startsWith("L"))
+            else if (Line.startsWith("L"))
                xrt = new XRayTransition(elm, XRayTransition.LA1);
-            else if(Line.startsWith("M"))
+            else if (Line.startsWith("M"))
                xrt = new XRayTransition(elm, XRayTransition.MA1);
-         if(xrt != null)
+         if (xrt != null)
             Citzaf.setMAC(absorber, xrt, MACvalue);
          threwNumberFormatException = false;
-      }
-      catch(final NumberFormatException ex) {
-         if(box != null) {
+      } catch (final NumberFormatException ex) {
+         if (box != null) {
             threwNumberFormatException = true;
             jTabbedPane_Main.setSelectedComponent(jPanel_ManualMACs);
             box.grabFocus();
@@ -1272,7 +1262,7 @@ public class CITZAFDialog
 
    void jButton_NewMaterialQS_actionPerformed(ActionEvent e) {
       final Composition comp = MaterialsCreator.editMaterial(this, Citzaf.getComposition(), false);
-      if(comp != null) {
+      if (comp != null) {
          Citzaf.setComposition(comp);
          loadDataFromCITZAF();
       }
@@ -1287,7 +1277,7 @@ public class CITZAFDialog
       LineButtonGroup = new ButtonGroup[ElementSet.size()];
 
       int ElementCounter = 0;
-      for(final Element elm : ElementSet) {
+      for (final Element elm : ElementSet) {
 
          final Map<Element, String> CitzafMap = Citzaf.getElementToLineMap();
 
@@ -1302,25 +1292,21 @@ public class CITZAFDialog
 
          LineButtonGroup[ElementCounter] = new ButtonGroup();
 
-         final String[] LineList = {
-            "K",
-            "L",
-            "M"
-         };
-         for(final String element : LineList) {
+         final String[] LineList = {"K", "L", "M"};
+         for (final String element : LineList) {
             final JRadioButton jRadioButton_Line = new JRadioButton();
             jRadioButton_Line.setText(element);
             jRadioButton_Line.setBorder(SwingUtils.createDefaultBorder());
             jRadioButton_Line.addActionListener(new java.awt.event.ActionListener() {
                @Override
                public void actionPerformed(ActionEvent e) {
-                  if(((JRadioButton) e.getSource()).isSelected()) {
+                  if (((JRadioButton) e.getSource()).isSelected()) {
                      final Element elm = Element.byName(((JPanel) ((JRadioButton) e.getSource()).getParent()).getName());
-                     if(e.getActionCommand().matches("K"))
+                     if (e.getActionCommand().matches("K"))
                         Citzaf.setLine(elm, CITZAF.Line.KLINE);
-                     else if(e.getActionCommand().matches("L"))
+                     else if (e.getActionCommand().matches("L"))
                         Citzaf.setLine(elm, CITZAF.Line.LLINE);
-                     else if(e.getActionCommand().matches("M"))
+                     else if (e.getActionCommand().matches("M"))
                         Citzaf.setLine(elm, CITZAF.Line.MLINE);
                   }
                }
@@ -1331,12 +1317,12 @@ public class CITZAFDialog
             LineButtonGroup[ElementCounter].add(jRadioButton_Line);
 
             String Line;
-            if((CitzafMap.size() > 0) && (CitzafMap.containsKey(elm)))
+            if ((CitzafMap.size() > 0) && (CitzafMap.containsKey(elm)))
                Line = CitzafMap.get(elm).toString();
             else
                Line = chooseBestLine(elm);
             ElementToLineMap.put(elm, Line);
-            if(element.compareTo(Line) == 0)
+            if (element.compareTo(Line) == 0)
                jRadioButton_Line.setSelected(true);
          }
          jPanel_LineInside.add(jPanel_LineTemp, null);
@@ -1350,11 +1336,11 @@ public class CITZAFDialog
    }
 
    private String chooseBestLine(Element elm) {
-      if(FromSI.keV(AtomicShell.getEdgeEnergy(elm, AtomicShell.K)) < ((2.0 / 3.0) * Citzaf.getBeamEnergy()))
+      if (FromSI.keV(AtomicShell.getEdgeEnergy(elm, AtomicShell.K)) < ((2.0 / 3.0) * Citzaf.getBeamEnergy()))
          return CITZAF.Line.KLINE.toString();
-      else if(FromSI.keV(AtomicShell.getEdgeEnergy(elm, AtomicShell.LI)) < ((2.0 / 3.0) * Citzaf.getBeamEnergy()))
+      else if (FromSI.keV(AtomicShell.getEdgeEnergy(elm, AtomicShell.LI)) < ((2.0 / 3.0) * Citzaf.getBeamEnergy()))
          return CITZAF.Line.LLINE.toString();
-      else if(FromSI.keV(AtomicShell.getEdgeEnergy(elm, AtomicShell.MI)) < ((2.0 / 3.0) * Citzaf.getBeamEnergy()))
+      else if (FromSI.keV(AtomicShell.getEdgeEnergy(elm, AtomicShell.MI)) < ((2.0 / 3.0) * Citzaf.getBeamEnergy()))
          return CITZAF.Line.MLINE.toString();
       return CITZAF.Line.KLINE.toString();
 
@@ -1380,14 +1366,14 @@ public class CITZAFDialog
       DriftFactorTextFields = new JTextField[ElementSet.size()];
 
       final int Counter = 0;
-      for(final Element elm : ElementSet) {
+      for (final Element elm : ElementSet) {
          final JPanel jPanel_DriftPanel = new JPanel();
          jPanel_DriftPanel.setPreferredSize(new Dimension(200, 30));
 
          final JLabel jLabel_TempElement = new JLabel("Drift factor for " + elm.toAbbrev() + " : ");
 
          final JTextField jTextField_DriftFactor = new JTextField("1.0");
-         if(Citzaf.hasDriftFactor(elm))
+         if (Citzaf.hasDriftFactor(elm))
             jTextField_DriftFactor.setText(Double.toString(Citzaf.getDriftFactor(elm)));
          jTextField_DriftFactor.setName(elm.toAbbrev());
          jTextField_DriftFactor.setPreferredSize(new Dimension(45, 21));
@@ -1452,7 +1438,7 @@ public class CITZAFDialog
    void jButton_StandardsMaterial_actionPerformed(ActionEvent e) {
       final MaterialsCreator mc = new MaterialsCreator(this, "Standard for " + e.getActionCommand(), true);
       mc.setLocationRelativeTo(this);
-      if(Citzaf.hasStandard(Element.byName(e.getActionCommand())))
+      if (Citzaf.hasStandard(Element.byName(e.getActionCommand())))
          mc.setMaterial(Citzaf.getAStandard(Element.byName(e.getActionCommand())));
       else {
          final Composition mat = new Composition();
@@ -1461,7 +1447,7 @@ public class CITZAFDialog
       }
       mc.setVisible(true);
       final Composition mat = mc.getMaterial();
-      if(mat != null) {
+      if (mat != null) {
          String elementName = ((MaterialsCreator) e.getSource()).getTitle();
          elementName = elementName.substring(elementName.lastIndexOf(" ")).trim();
          Citzaf.setAStandard(Element.byName(elementName), mat);
@@ -1506,28 +1492,28 @@ public class CITZAFDialog
    }
 
    void jCheckBox_PrintMACs_actionPerformed(ActionEvent e) {
-      if(jCheckBox_PrintMACs.isEnabled())
+      if (jCheckBox_PrintMACs.isEnabled())
          jCheckBox_PrintMACsWasSelected = jCheckBox_PrintMACs.isSelected();
-      if(jCheckBox_PrintMACs.isSelected())
+      if (jCheckBox_PrintMACs.isSelected())
          Citzaf.setPrintoutMACs(CITZAF.PRINTOUT_MACS);
       else
          Citzaf.setPrintoutMACs(CITZAF.DO_NOT_PRINTOUT_MACS);
    }
 
    void jCheckBox_PrintZAFs_actionPerformed(ActionEvent e) {
-      if(jCheckBox_PrintZAFs.isSelected())
+      if (jCheckBox_PrintZAFs.isSelected())
          Citzaf.setPrintoutZAF(CITZAF.PRINTOUT_ZAF);
       else
          Citzaf.setPrintoutZAF(CITZAF.DO_NOT_PRINTOUT_ZAF);
    }
 
    void jRadioButton_NearestPPM_actionPerformed(ActionEvent e) {
-      if(jRadioButton_NearestPPM.isSelected())
+      if (jRadioButton_NearestPPM.isSelected())
          Citzaf.setMinorElementsOutput(CITZAF.MINOR_ELEMENTS_CONCENTRATION_IN_PPM);
    }
 
    void jRadioButton_NearestHundreth_actionPerformed(ActionEvent e) {
-      if(jRadioButton_NearestHundreth.isSelected())
+      if (jRadioButton_NearestHundreth.isSelected())
          Citzaf.setMinorElementsOutput(CITZAF.MINOR_ELEMENTS_CONCENTRATION_IN_NEAREST_HUNDRETH);
    }
 
@@ -1589,7 +1575,7 @@ public class CITZAFDialog
       final JPanel jPanel_MACAbsorbers = new JPanel();
       jPanel_MACAbsorbers.add(TempSpacer, null);
 
-      for(final Element elm : masterElementSet) {
+      for (final Element elm : masterElementSet) {
          final JLabel ElementLabel = new JLabel(elm.toAbbrev());
          ElementLabel.setPreferredSize(new Dimension(40, 20));
          jPanel_MACAbsorbers.add(ElementLabel, null);
@@ -1598,7 +1584,7 @@ public class CITZAFDialog
 
       final MassAbsorptionCoefficient macTable = chooseMACTable();
 
-      for(final Element elm : masterElementSet) {
+      for (final Element elm : masterElementSet) {
 
          final JLabel ElementLabel = new JLabel(elm.toAbbrev());
 
@@ -1606,7 +1592,7 @@ public class CITZAFDialog
          PanelRow.setName(elm.toAbbrev());
          PanelRow.add(ElementLabel, null);
 
-         for(final Element absorber : masterElementSet) {
+         for (final Element absorber : masterElementSet) {
 
             final JTextField Box = new JTextField();
             Box.setPreferredSize(new Dimension(40, 20));
@@ -1635,10 +1621,10 @@ public class CITZAFDialog
    }
 
    private MassAbsorptionCoefficient chooseMACTable() {
-      if((Citzaf.getMACAlgorithm() == CITZAF.MassAbsorptionCoefficient.MASS_ABSORPTION_COEFFICIENTS_FROM_DATA_TABLES)
+      if ((Citzaf.getMACAlgorithm() == CITZAF.MassAbsorptionCoefficient.MASS_ABSORPTION_COEFFICIENTS_FROM_DATA_TABLES)
             || (Citzaf.getMACAlgorithm() == CITZAF.MassAbsorptionCoefficient.MASS_ABSORPTION_COEFFICIENTS_FROM_TABLES_AND_USER_ENTRY))
          return MassAbsorptionCoefficient.DTSA_CitZAF;
-      else if((Citzaf.getMACAlgorithm() == CITZAF.MassAbsorptionCoefficient.MASS_ABSORPTION_COEFFICIENTS_FROM_HEINRICH_ICXOM_11_EQN)
+      else if ((Citzaf.getMACAlgorithm() == CITZAF.MassAbsorptionCoefficient.MASS_ABSORPTION_COEFFICIENTS_FROM_HEINRICH_ICXOM_11_EQN)
             || (Citzaf.getMACAlgorithm() == CITZAF.MassAbsorptionCoefficient.MASS_ABSORPTION_COEFFICIENTS_FROM_HEINRICH_ICXOM_11_AND_USER_ENTRY))
          return MassAbsorptionCoefficient.HeinrichDtsa;
       else
@@ -1650,36 +1636,35 @@ public class CITZAFDialog
       try {
          XRayTransition xrt = null;
          String Line = null;
-         if(Citzaf.hasLine(elm))
+         if (Citzaf.hasLine(elm))
             Line = Citzaf.getLine(elm);
          else
             Line = chooseBestLine(elm);
-         if(Line != null) {
-            if(Line.startsWith("K"))
+         if (Line != null) {
+            if (Line.startsWith("K"))
                xrt = new XRayTransition(elm, XRayTransition.KA1);
-            else if(Line.startsWith("L"))
+            else if (Line.startsWith("L"))
                xrt = new XRayTransition(elm, XRayTransition.LA1);
-            else if(Line.startsWith("M"))
+            else if (Line.startsWith("M"))
                xrt = new XRayTransition(elm, XRayTransition.MA1);
-            if((xrt != null) && (!Citzaf.hasMAC(absorber, xrt)))
+            if ((xrt != null) && (!Citzaf.hasMAC(absorber, xrt)))
                return MassAbsorptionCoefficient.toCmSqrPerGram(macTable.compute(absorber, xrt));
-            else if(xrt != null)
+            else if (xrt != null)
                return Citzaf.getMAC(absorber, xrt);
          }
          return 0.0;
-      }
-      catch(final EPQException ex) {
+      } catch (final EPQException ex) {
          return 0.0;
       }
    }
 
    private Set<Element> getMasterElementSet() {
       final Set<Element> masterElementSet = new TreeSet<Element>();
-      if(Citzaf.getElementSet().size() > 0)
+      if (Citzaf.getElementSet().size() > 0)
          masterElementSet.addAll(Citzaf.getElementSet());
       final Set<Element> StandardsSet = new TreeSet<Element>();
-      for(final Element elm : masterElementSet)
-         if(Citzaf.hasStandard(elm))
+      for (final Element elm : masterElementSet)
+         if (Citzaf.hasStandard(elm))
             StandardsSet.addAll(Citzaf.getAStandard(elm).getElementSet());
       masterElementSet.addAll(StandardsSet);
       return masterElementSet;
@@ -1688,7 +1673,7 @@ public class CITZAFDialog
    void jButton_EditModels_actionPerformed(ActionEvent e) {
       pmd = new ParticleModelDialog(this, "Choose a particle model", true);
       pmd.setLocationRelativeTo(this);
-      if(Citzaf.getParticleModels().length > 0)
+      if (Citzaf.getParticleModels().length > 0)
          pmd.setParticleModels(Citzaf.getParticleModels());
       pmd.addWindowClosingListener(new java.awt.event.ActionListener() {
          @Override
@@ -1704,7 +1689,7 @@ public class CITZAFDialog
    }
 
    void jComboBox_Preselected_actionPerformed(ActionEvent e) {
-      if(jComboBox_Preselected.getSelectedIndex() == 0)
+      if (jComboBox_Preselected.getSelectedIndex() == 0)
          Citzaf.setComposition(new Composition());
       else {
          final String name = (String) jComboBox_Preselected.getSelectedItem();
@@ -1716,7 +1701,7 @@ public class CITZAFDialog
    void jButton_EditDiameters_actionPerformed(ActionEvent e) {
       pdd = new ParticleDiameterDialog(this, "Enter the particle(s) diameter(s)", true);
       pdd.setLocationRelativeTo(this);
-      if(Citzaf.getParticleDiameters().length > 0)
+      if (Citzaf.getParticleDiameters().length > 0)
          pdd.setParticleDiameters(Citzaf.getParticleDiameters());
       pdd.addWindowClosingListener(new java.awt.event.ActionListener() {
          @Override
@@ -1733,24 +1718,25 @@ public class CITZAFDialog
 
    protected void fireWindowClosingEvent(ActionEvent e) {
       commitToCitzaf();
-      if(WindowClosingListeners != null)
-         for(final ActionListener al : WindowClosingListeners)
+      if (WindowClosingListeners != null)
+         for (final ActionListener al : WindowClosingListeners)
             al.actionPerformed(e);
    }
 
    protected void fireBeginAnalysisEvent(ActionEvent e) {
-      if(BeginAnalysisListeners != null)
-         for(final ActionListener al : BeginAnalysisListeners)
+      if (BeginAnalysisListeners != null)
+         for (final ActionListener al : BeginAnalysisListeners)
             al.actionPerformed(e);
    }
 
    /**
     * removeWindowClosingListener - removes the window closing listener
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void removeWindowClosingListener(ActionListener l) {
-      if((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
+      if ((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(WindowClosingListeners);
          v.removeElement(l);
          WindowClosingListeners = v;
@@ -1760,10 +1746,11 @@ public class CITZAFDialog
    /**
     * removeWindowClosingListener - removes the window closing listener
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void removeBeginAnalysisButtonListener(ActionListener l) {
-      if((BeginAnalysisListeners != null) && BeginAnalysisListeners.contains(l)) {
+      if ((BeginAnalysisListeners != null) && BeginAnalysisListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(BeginAnalysisListeners);
          v.removeElement(l);
          BeginAnalysisListeners = v;
@@ -1775,12 +1762,14 @@ public class CITZAFDialog
     * closes, an event will be triggered so that all listening components can
     * respond appropriately.
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void addWindowClosingListener(ActionListener l) {
-      final Vector<ActionListener> v = WindowClosingListeners == null ? new Vector<ActionListener>(2)
+      final Vector<ActionListener> v = WindowClosingListeners == null
+            ? new Vector<ActionListener>(2)
             : new Vector<ActionListener>(WindowClosingListeners);
-      if(!v.contains(l)) {
+      if (!v.contains(l)) {
          v.addElement(l);
          WindowClosingListeners = v;
       }
@@ -1791,12 +1780,14 @@ public class CITZAFDialog
     * button. If clicked, the button will trigger this event and notify the
     * listening components so they can respond appropriately.
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void addBeginAnalysisButtonListener(ActionListener l) {
-      final Vector<ActionListener> v = BeginAnalysisListeners == null ? new Vector<ActionListener>(2)
+      final Vector<ActionListener> v = BeginAnalysisListeners == null
+            ? new Vector<ActionListener>(2)
             : new Vector<ActionListener>(BeginAnalysisListeners);
-      if(!v.contains(l)) {
+      if (!v.contains(l)) {
          v.addElement(l);
          BeginAnalysisListeners = v;
       }
@@ -1820,7 +1811,8 @@ public class CITZAFDialog
     * appearance and information displayed on the dialog will be made before the
     * method finishes.
     * 
-    * @param citzaf CITZAF
+    * @param citzaf
+    *           CITZAF
     */
    public void setCITZAF(CITZAF citzaf) {
       Citzaf = citzaf;
@@ -1830,7 +1822,7 @@ public class CITZAFDialog
    void jButton_KRatio_actionPerformed(ActionEvent e) {
       KRatioDialog = new KRatioCreator(this, "Enter the K-ratios of the sample", true);
       KRatioDialog.setLocationRelativeTo(this);
-      if(Citzaf.getKRatios().size() > 0)
+      if (Citzaf.getKRatios().size() > 0)
          KRatioDialog.setKRatios(Citzaf.getKRatios(), Citzaf.getElementToLineMap());
       KRatioDialog.addWindowClosingListener(new ActionListener() {
          @Override
@@ -1846,9 +1838,11 @@ public class CITZAFDialog
    }
 
    void jRadioButton_Composition_actionPerformed(ActionEvent e) {
-      if(!Citzaf.getUsingKRatios()) {
-         final int value = JOptionPane.showConfirmDialog(this.getGlassPane(), "Are you sure you want to switch to calculating composition?\nIf you do, you will lose all information about your standards.", "Continue anyway?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-         if(value == JOptionPane.YES_OPTION) {
+      if (!Citzaf.getUsingKRatios()) {
+         final int value = JOptionPane.showConfirmDialog(this.getGlassPane(),
+               "Are you sure you want to switch to calculating composition?\nIf you do, you will lose all information about your standards.",
+               "Continue anyway?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+         if (value == JOptionPane.YES_OPTION) {
             Citzaf.clearStandards();
 
             Citzaf.setUsingKRatios(true);
@@ -1874,11 +1868,11 @@ public class CITZAFDialog
       jLabel_SelectALine.setEnabled(!enabled);
       jScrollPane_Lines.setEnabled(!enabled);
       final Component[] temp = jPanel_LineInside.getComponents();
-      for(final Component element : temp)
-         if(element instanceof JPanel) {
+      for (final Component element : temp)
+         if (element instanceof JPanel) {
             final JPanel panel = (JPanel) element;
             final Component[] panelArray = panel.getComponents();
-            for(final Component element2 : panelArray)
+            for (final Component element2 : panelArray)
                element2.setEnabled(!enabled);
          }
       jLabel_StageCoordinates.setEnabled(enabled);
@@ -1887,16 +1881,18 @@ public class CITZAFDialog
       jLabel_XStageCoordinate.setEnabled(enabled);
       jLabel_YStageCoordinate.setEnabled(enabled);
 
-      if(enabled) {
+      if (enabled) {
          jTextField_XStageCoordinate.setEnabled(jRadioButton_StageCoordinatesYes.isSelected());
          jTextField_YStageCoordinate.setEnabled(jRadioButton_StageCoordinatesYes.isSelected());
       }
    }
 
    void jRadioButton_KRatios_actionPerformed(ActionEvent e) {
-      if(Citzaf.getUsingKRatios()) {
-         final int value = JOptionPane.showConfirmDialog(this.getGlassPane(), "Are you sure you want to switch to calculating k-ratios?\nIf you do, you will lose all information about your standards.", "Continue anyway?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-         if(value == JOptionPane.YES_OPTION) {
+      if (Citzaf.getUsingKRatios()) {
+         final int value = JOptionPane.showConfirmDialog(this.getGlassPane(),
+               "Are you sure you want to switch to calculating k-ratios?\nIf you do, you will lose all information about your standards.",
+               "Continue anyway?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+         if (value == JOptionPane.YES_OPTION) {
             Citzaf.clearStandards();
 
             Citzaf.setUsingKRatios(false);

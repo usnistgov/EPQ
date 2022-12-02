@@ -19,62 +19,50 @@ import gov.nist.microanalysis.EPQLibrary.Detector.EDSDetector;
 import gov.nist.microanalysis.Utility.DescriptiveStatistics;
 import junit.framework.TestCase;
 
-public class Armstrong1982ParticleTest
-   extends TestCase {
+public class Armstrong1982ParticleTest extends TestCase {
 
-   public void testBulk()
-         throws EPQException {
+   public void testBulk() throws EPQException {
       performTestOnShape(new SampleShape.Bulk());
    }
 
-   public void testSimpleBigRRP()
-         throws EPQException {
+   public void testSimpleBigRRP() throws EPQException {
       performTestOnShape(new SampleShape.RightRectangularPrism(10.0e-6, 10.0e-6, 10.0e-6));
    }
 
-   public void testRRP()
-         throws EPQException {
+   public void testRRP() throws EPQException {
       performTestOnShape(new SampleShape.RightRectangularPrism(1.0e-6, 1.0e-6, 1.0e-6));
    }
 
-   public void testTetragonalPrism()
-         throws EPQException {
+   public void testTetragonalPrism() throws EPQException {
       performTestOnShape(new SampleShape.TetragonalPrism(1.0e-6, 1.0e-6));
    }
 
-   public void testTriangularPrism()
-         throws EPQException {
+   public void testTriangularPrism() throws EPQException {
       performTestOnShape(new SampleShape.TriangularPrism(1.0e-6, 1.0e-6));
    }
 
-   public void testSquarePyramid()
-         throws EPQException {
+   public void testSquarePyramid() throws EPQException {
       performTestOnShape(new SampleShape.SquarePyramid(1.0e-6));
    }
 
-   public void testVerticalCylinder()
-         throws EPQException {
+   public void testVerticalCylinder() throws EPQException {
       performTestOnShape(new SampleShape.Cylinder(0.5e-6, 1.0e-6));
    }
 
-   public void testFiber()
-         throws EPQException {
+   public void testFiber() throws EPQException {
       performTestOnShape(new SampleShape.Fiber(0.5e-6, 1.0e-6));
    }
 
-   public void testSphere()
-         throws EPQException {
+   public void testSphere() throws EPQException {
       performTestOnShape(new SampleShape.Sphere(1.0e-6));
    }
 
-   public void testHemisphere()
-         throws EPQException {
+   public void testHemisphere() throws EPQException {
       performTestOnShape(new SampleShape.Hemisphere(1.0e-6));
 
    }
 
-   private double calculatePC(Composition mat, XRayTransition xrt, SampleShape ss)
-         throws EPQException {
+   private double calculatePC(Composition mat, XRayTransition xrt, SampleShape ss) throws EPQException {
       final Armstrong1982ParticleCorrection alg = new Armstrong1982ParticleCorrection();
       final SpectrumProperties sp = new SpectrumProperties();
       sp.setNumericProperty(SpectrumProperties.BeamEnergy, 20.0);
@@ -85,14 +73,12 @@ public class Armstrong1982ParticleTest
       return alg.particleAbsorptionCorrection(xrt);
    }
 
-   private double calculateRRP(Composition mat, XRayTransition xrt, double size)
-         throws EPQException {
+   private double calculateRRP(Composition mat, XRayTransition xrt, double size) throws EPQException {
       final SampleShape ss = new SampleShape.RightRectangularPrism(size, size, size);
       return calculatePC(mat, xrt, ss);
    }
 
-   public void testStorm()
-         throws EPQException {
+   public void testStorm() throws EPQException {
       final Composition mat = MaterialFactory.createCompound("NaAlSi3O8", 3.0);
       {
          final XRayTransition xrt = new XRayTransition(Element.Na, XRayTransition.KA1);
@@ -144,24 +130,19 @@ public class Armstrong1982ParticleTest
       }
    }
 
-   public void performTestOnShape(SampleShape sh)
-         throws EPQException {
+   public void performTestOnShape(SampleShape sh) throws EPQException {
       System.out.println(sh);
       final Material mat = (Material) MaterialFactory.createMaterial("K411");
       final double e0 = ToSI.keV(25.0);
       final EDSDetector det = EDSDetector.createSiLiDetector(2048, 10.0, 135.0);
-      final XRayTransition[] xrts = new XRayTransition[] {
-         new XRayTransition(Element.O, XRayTransition.KA1),
-         new XRayTransition(Element.Si, XRayTransition.KA1),
-         new XRayTransition(Element.Ca, XRayTransition.KA1),
-         new XRayTransition(Element.Mg, XRayTransition.KA1),
-         new XRayTransition(Element.Fe, XRayTransition.KA1),
-      };
+      final XRayTransition[] xrts = new XRayTransition[]{new XRayTransition(Element.O, XRayTransition.KA1),
+            new XRayTransition(Element.Si, XRayTransition.KA1), new XRayTransition(Element.Ca, XRayTransition.KA1),
+            new XRayTransition(Element.Mg, XRayTransition.KA1), new XRayTransition(Element.Fe, XRayTransition.KA1),};
       final Strategy strat = new Strategy();
       strat.addAlgorithm(MassAbsorptionCoefficient.class, MassAbsorptionCoefficient.Default);
       AlgorithmUser.applyGlobalOverride(strat);
 
-      for(final XRayTransition xrt : xrts) {
+      for (final XRayTransition xrt : xrts) {
          final SpectrumProperties sp = new SpectrumProperties();
          sp.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(e0));
          sp.setNumericProperty(SpectrumProperties.SpecimenDensity, 3.0);
@@ -171,11 +152,10 @@ public class Armstrong1982ParticleTest
       }
    }
 
-   private void testTransition(final Material mat, final XRayTransition xrt, final SpectrumProperties sp)
-         throws EPQException {
+   private void testTransition(final Material mat, final XRayTransition xrt, final SpectrumProperties sp) throws EPQException {
       final DescriptiveStatistics ds = new DescriptiveStatistics();
       final int N_TESTS = 10;
-      for(int i = 0; i < N_TESTS; ++i) {
+      for (int i = 0; i < N_TESTS; ++i) {
          final Armstrong1982ParticleMC c0 = new Armstrong1982ParticleMC();
          c0.initialize(mat, xrt.getDestination(), sp);
          ds.add(c0.computeZACorrection(xrt) / c0.computeZ(mat, xrt, sp));

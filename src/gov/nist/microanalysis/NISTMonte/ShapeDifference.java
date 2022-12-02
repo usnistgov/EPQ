@@ -23,8 +23,7 @@ import gov.nist.microanalysis.EPQLibrary.ITransform;
  * @version 1.0
  */
 
-public class ShapeDifference
-   implements MonteCarloSS.Shape, ITransform {
+public class ShapeDifference implements MonteCarloSS.Shape, ITransform {
 
    static final boolean DEBUG = false;
 
@@ -35,8 +34,10 @@ public class ShapeDifference
     * MCSS_ShapeDifference - Create a Shape that represents the the primary
     * Shape minus any overlapping regions in the delta Shape.
     * 
-    * @param primary Shape
-    * @param delta Shape
+    * @param primary
+    *           Shape
+    * @param delta
+    *           Shape
     */
    public ShapeDifference(MonteCarloSS.Shape primary, MonteCarloSS.Shape delta) {
       mPrimary = primary;
@@ -46,7 +47,8 @@ public class ShapeDifference
    /**
     * contains - See MonteCarloSS.contains
     * 
-    * @param pos double[]
+    * @param pos
+    *           double[]
     * @return boolean
     */
    @Override
@@ -56,14 +58,11 @@ public class ShapeDifference
 
    final double recurse(double s0, double[] pos0, double[] pos1) {
       assert s0 > 0.0;
-      if(s0 > 1.0)
+      if (s0 > 1.0)
          return Double.MAX_VALUE;
       final double s0p = s0 + MonteCarloSS.SMALL_DISP;
-      final double[] nextPt = new double[] {
-         pos0[0] + (s0p * (pos1[0] - pos0[0])),
-         pos0[1] + (s0p * (pos1[1] - pos0[1])),
-         pos0[2] + (s0p * (pos1[2] - pos0[2]))
-      };
+      final double[] nextPt = new double[]{pos0[0] + (s0p * (pos1[0] - pos0[0])), pos0[1] + (s0p * (pos1[1] - pos0[1])),
+            pos0[2] + (s0p * (pos1[2] - pos0[2]))};
       final double res = s0p + getFirstIntersection(nextPt, pos1);
       return res > 1.0 ? Double.MAX_VALUE : res;
    }
@@ -71,8 +70,10 @@ public class ShapeDifference
    /**
     * getFirstIntersection - See MonteCarloSS.getFirstIntersection.
     * 
-    * @param pos0 double[]
-    * @param pos1 double[]
+    * @param pos0
+    *           double[]
+    * @param pos1
+    *           double[]
     * @return double
     */
    @Override
@@ -83,29 +84,29 @@ public class ShapeDifference
       final double u2 = mDelta.getFirstIntersection(pos0, pos1) + 1.0e-10;
       assert u1 > 0.0 : "u1 = " + Double.toString(u1);
       assert u2 > 0.0 : "u2 = " + Double.toString(u2);
-      if(in1) {
-         if(!in2) {
+      if (in1) {
+         if (!in2) {
             // Starting inside: (inside a, outside b)
-            if(DEBUG) {
-               if(u1 < u2)
+            if (DEBUG) {
+               if (u1 < u2)
                   return u1; // Leaving shape: (exiting a, outside b)
                else
                   return u2; // Leaving shape: (inside a, entering b)
             } else
                return u1 < u2 ? u1 : u2;
          } else // Starting outside: (inside a, inside b)
-         if(DEBUG) {
-            if(u2 < u1)
+         if (DEBUG) {
+            if (u2 < u1)
                return u2; // Entering inside (inside a, exiting b)
             else
                // Exiting a: (exiting a, inside b)
                return recurse(u1, pos0, pos1);
          } else
             return u1 < u2 ? recurse(u1, pos0, pos1) : u2;
-      } else if(in2) {
+      } else if (in2) {
          // Outside a, inside b
-         if(DEBUG) {
-            if(u1 < u2)
+         if (DEBUG) {
+            if (u1 < u2)
                // Entering a (entering a, inside b)
                return recurse(u1, pos0, pos1);
             else
@@ -113,8 +114,8 @@ public class ShapeDifference
                return recurse(u2, pos0, pos1);
          } else
             return recurse(u1 < u2 ? u1 : u2, pos0, pos1);
-      } else if(DEBUG) {
-         if(u1 < u2)
+      } else if (DEBUG) {
+         if (u1 < u2)
             return u1; // Entering shape (entering a, outside b)
          else
             // Not entering shape (outside a, entering b)
@@ -123,11 +124,10 @@ public class ShapeDifference
          return u1 < u2 ? u1 : recurse(u2, pos0, pos1);
    }
 
-   private void checkTransform()
-         throws EPQFatalException {
-      if(!(mPrimary instanceof ITransform))
+   private void checkTransform() throws EPQFatalException {
+      if (!(mPrimary instanceof ITransform))
          throw new EPQFatalException(mPrimary.toString() + " does not support transformation.");
-      if(!(mDelta instanceof ITransform))
+      if (!(mDelta instanceof ITransform))
          throw new EPQFatalException(mDelta.toString() + " does not support transformation.");
    }
 

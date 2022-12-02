@@ -44,8 +44,7 @@ import javax.swing.event.DocumentListener;
  * @version 1.0
  */
 
-public class CITZAFResults
-   extends JFrame {
+public class CITZAFResults extends JFrame {
    static final long serialVersionUID = 0x1;
    BorderLayout borderLayout1 = new BorderLayout();
    JMenuBar jMenuBar_Main = new JMenuBar();
@@ -68,14 +67,12 @@ public class CITZAFResults
    public CITZAFResults() {
       try {
          jbInit();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
 
-   void jbInit()
-         throws Exception {
+   void jbInit() throws Exception {
       this.setJMenuBar(jMenuBar_Main);
       this.addWindowListener(new java.awt.event.WindowAdapter() {
          @Override
@@ -156,12 +153,14 @@ public class CITZAFResults
     * closes, an event will be triggered so that all listening components can
     * respond appropriately.
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void addWindowClosingListener(ActionListener l) {
-      final Vector<ActionListener> v = WindowClosingListeners == null ? new Vector<ActionListener>(2)
+      final Vector<ActionListener> v = WindowClosingListeners == null
+            ? new Vector<ActionListener>(2)
             : new Vector<ActionListener>(WindowClosingListeners);
-      if(!v.contains(l)) {
+      if (!v.contains(l)) {
          v.addElement(l);
          WindowClosingListeners = v;
       }
@@ -170,10 +169,11 @@ public class CITZAFResults
    /**
     * removeWindowClosingListener - removes the window closing listener
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void removeWindowClosingListener(ActionListener l) {
-      if((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
+      if ((WindowClosingListeners != null) && WindowClosingListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(WindowClosingListeners);
          v.removeElement(l);
          WindowClosingListeners = v;
@@ -181,8 +181,8 @@ public class CITZAFResults
    }
 
    protected void fireWindowClosingEvent(ActionEvent e) {
-      if(WindowClosingListeners != null)
-         for(final ActionListener al : WindowClosingListeners)
+      if (WindowClosingListeners != null)
+         for (final ActionListener al : WindowClosingListeners)
             al.actionPerformed(e);
    }
 
@@ -199,9 +199,9 @@ public class CITZAFResults
 
       System.out.println(jTextArea_Main.getText());
       final String PathName = userPref.get("CITZAF Saved Results File", "");
-      if(!PathName.matches(""))
+      if (!PathName.matches(""))
          fc.setCurrentDirectory(new File(PathName));
-      if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+      if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
          final File saveFile = fc.getSelectedFile();
          try {
             try (final OutputStream os = new FileOutputStream(saveFile)) {
@@ -211,8 +211,7 @@ public class CITZAFResults
                   }
                }
             }
-         }
-         catch(final IOException ioex) {
+         } catch (final IOException ioex) {
             JOptionPane.showMessageDialog(this, "Error writing file: " + ioex.getMessage(), "Error writing the file", JOptionPane.ERROR_MESSAGE);
          }
          hasSaved = true;
@@ -232,11 +231,11 @@ public class CITZAFResults
    void jMenuItem_RunAnother_actionPerformed(ActionEvent e) {
       final Window[] components = this.getOwnedWindows();
       int index = 0;
-      while((index < components.length) && (!(components[index] instanceof JDialog)))
+      while ((index < components.length) && (!(components[index] instanceof JDialog)))
          index++;
-      if(index != components.length) {
+      if (index != components.length) {
          final JDialog dialog = (JDialog) components[index];
-         if(!dialog.isVisible())
+         if (!dialog.isVisible())
             dialog.setVisible(true);
          dialog.requestFocus();
       }

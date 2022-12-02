@@ -30,8 +30,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author nritchie
  * @version 1.0
  */
-public class SpectrumToolBar
-   extends JPanel {
+public class SpectrumToolBar extends JPanel {
 
    private static final long serialVersionUID = 2281785269926301222L;
 
@@ -75,8 +74,7 @@ public class SpectrumToolBar
       return btn;
    }
 
-   private class ZoomButton
-      extends JButton {
+   private class ZoomButton extends JButton {
 
       private static final long serialVersionUID = -2413906973485907053L;
       private final int mUpper;
@@ -102,11 +100,13 @@ public class SpectrumToolBar
    }
 
    public void initialize() {
-      final PanelBuilder pb = new PanelBuilder(new FormLayout("pref", "pref:grow, 1dlu, pref:grow, 1dlu, pref:grow, 1dlu, pref:grow, 1dlu, pref:grow, 1dlu, pref:grow, 1dlu, pref:grow"), this);
+      final PanelBuilder pb = new PanelBuilder(
+            new FormLayout("pref", "pref:grow, 1dlu, pref:grow, 1dlu, pref:grow, 1dlu, pref:grow, 1dlu, pref:grow, 1dlu, pref:grow, 1dlu, pref:grow"),
+            this);
       final CellConstraints cc = new CellConstraints();
       removeAll();
       int pos = 1;
-      if((mMode & ZOOM_IN5) != 0) {
+      if ((mMode & ZOOM_IN5) != 0) {
          final JButton btn = createButton("up2_sm.png", "Zoom in by 5 \u00D7");
          btn.addActionListener(new ActionListener() {
             @Override
@@ -117,7 +117,7 @@ public class SpectrumToolBar
          pb.add(btn, cc.xy(1, pos));
          pos += 2;
       }
-      if((mMode & ZOOM_IN2) != 0) {
+      if ((mMode & ZOOM_IN2) != 0) {
          final JButton btn = createButton("up1_sm.png", "Zoom in by 2 \u00D7");
          btn.addActionListener(new ActionListener() {
             @Override
@@ -128,7 +128,7 @@ public class SpectrumToolBar
          pb.add(btn, cc.xy(1, pos));
          pos += 2;
       }
-      if((mMode & ZOOM_ALL) != 0) {
+      if ((mMode & ZOOM_ALL) != 0) {
          final JButton btn = createButton("all_sm.png", "Zoom to all");
          btn.addActionListener(new ActionListener() {
             @Override
@@ -139,7 +139,7 @@ public class SpectrumToolBar
          pb.add(btn, cc.xy(1, pos));
          pos += 2;
       }
-      if((mMode & ZOOM_OUT2) != 0) {
+      if ((mMode & ZOOM_OUT2) != 0) {
          final JButton btn = createButton("down1_sm.png", "Zoom out by 2 \u00D7");
          btn.addActionListener(new ActionListener() {
             @Override
@@ -150,7 +150,7 @@ public class SpectrumToolBar
          pb.add(btn, cc.xy(1, pos));
          pos += 2;
       }
-      if((mMode & ZOOM_OUT5) != 0) {
+      if ((mMode & ZOOM_OUT5) != 0) {
          final JButton btn = createButton("down2_sm.png", "Zoom out by 5 \u00D7");
          btn.addActionListener(new ActionListener() {
             @Override
@@ -161,7 +161,7 @@ public class SpectrumToolBar
          pb.add(btn, cc.xy(1, pos));
          pos += 2;
       }
-      if((mMode & ZOOM_REGION) != 0) {
+      if ((mMode & ZOOM_REGION) != 0) {
          final JButton btn = createButton("zoom_sm.png", "Zoom to ROI");
          btn.addActionListener(new ActionListener() {
             @Override
@@ -172,7 +172,7 @@ public class SpectrumToolBar
          pb.add(btn, cc.xy(1, pos));
          pos += 2;
       }
-      if((mMode & ZOOM_VALUES) != 0) {
+      if ((mMode & ZOOM_VALUES) != 0) {
          final PanelBuilder pb2 = new PanelBuilder(new FormLayout("pref, 1dlu, pref, 1dlu, pref", "pref, 1dlu, pref"));
          pb2.add(new ZoomButton(5), cc.xy(1, 1));
          pb2.add(new ZoomButton(15), cc.xy(3, 1));

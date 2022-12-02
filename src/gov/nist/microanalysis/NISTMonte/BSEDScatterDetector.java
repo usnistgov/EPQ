@@ -10,9 +10,7 @@ import gov.nist.microanalysis.EPQLibrary.FromSI;
 import gov.nist.microanalysis.NISTMonte.MultiPlaneShape.Plane;
 import gov.nist.microanalysis.Utility.Math2;
 
-public class BSEDScatterDetector
-   implements
-   ActionListener {
+public class BSEDScatterDetector implements ActionListener {
 
    private final Plane mPlane;
    private final double[] mAxis0;
@@ -32,18 +30,23 @@ public class BSEDScatterDetector
     * Each bin is of width 'width' (in both directions). There are 'nBins' bins
     * on each axis.
     *
-    * @param center The point around which the detector is centered.
-    * @param normal The orientation of the detector
-    * @param width Width of accumulator bins in meters (forced positive)
-    * @param nBins The number of bins in each dimension along the plane (forced
+    * @param center
+    *           The point around which the detector is centered.
+    * @param normal
+    *           The orientation of the detector
+    * @param width
+    *           Width of accumulator bins in meters (forced positive)
+    * @param nBins
+    *           The number of bins in each dimension along the plane (forced
     *           even)
-    * @param eFrac Minimum fractional energy electrons to record (say 0.9
-    *           records (0.9 * e0 to e0))
+    * @param eFrac
+    *           Minimum fractional energy electrons to record (say 0.9 records
+    *           (0.9 * e0 to e0))
     */
    public BSEDScatterDetector(final double[] center, final double[] normal, final double width, final int nBins, final double eFrac) {
       mPlane = new MultiPlaneShape.Plane(normal, center);
       double[] ax2 = Math2.cross(Math2.normalize(normal), Math2.Z_AXIS);
-      if(Math2.magnitude(ax2) < 1.0e-4)
+      if (Math2.magnitude(ax2) < 1.0e-4)
          ax2 = Math2.cross(Math2.normalize(normal), Math2.X_AXIS);
       // mAxis0 and mAxis1 are in the plane of mPlane
       mAxis1 = Math2.normalize(ax2);
@@ -65,32 +68,30 @@ public class BSEDScatterDetector
    @Override
    public void actionPerformed(final ActionEvent ae) {
       assert (ae.getSource() instanceof MonteCarloSS);
-      switch(ae.getID()) {
-         case MonteCarloSS.ScatterEvent:
-         case MonteCarloSS.NonScatterEvent:
-         case MonteCarloSS.BackscatterEvent: {
+      switch (ae.getID()) {
+         case MonteCarloSS.ScatterEvent :
+         case MonteCarloSS.NonScatterEvent :
+         case MonteCarloSS.BackscatterEvent : {
             final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
             final Electron el = mcss.getElectron();
             assert !Double.isNaN(mMinE);
-            if(el.getEnergy() < mMinE)
+            if (el.getEnergy() < mMinE)
                break;
             final double p = mPlane.getFirstIntersection(el.getPrevPosition(), el.getPosition());
-            if((p >= 0) && (p < 1.0)) {
+            if ((p >= 0) && (p < 1.0)) {
                final double[] delta = Math2.multiply(p, Math2.minus(el.getPosition(), el.getPrevPosition()));
-               if(Math2.dot(delta, mPlane.getNormal()) > 0.0) {
+               if (Math2.dot(delta, mPlane.getNormal()) > 0.0) {
                   final double[] pt = Math2.add(el.getPrevPosition(), delta);
-                  final int[] idx = {
-                     (int) (Math2.dot(pt, mAxis0) / mWidth) + (mBinCount / 2),
-                     (int) (Math2.dot(pt, mAxis1) / mWidth) + (mBinCount / 2)
-                  };
-                  if((idx[0] >= 0) && (idx[0] < mBinCount) && (idx[1] >= 0) && (idx[1] < mBinCount))
+                  final int[] idx = {(int) (Math2.dot(pt, mAxis0) / mWidth) + (mBinCount / 2),
+                        (int) (Math2.dot(pt, mAxis1) / mWidth) + (mBinCount / 2)};
+                  if ((idx[0] >= 0) && (idx[0] < mBinCount) && (idx[1] >= 0) && (idx[1] < mBinCount))
                      mAccumulator[idx[0]][idx[1]]++;
                }
             }
             break;
          }
-         case MonteCarloSS.TrajectoryStartEvent:
-            if(Double.isNaN(mMinE)) {
+         case MonteCarloSS.TrajectoryStartEvent :
+            if (Double.isNaN(mMinE)) {
                final MonteCarloSS mcss = (MonteCarloSS) ae.getSource();
                final Electron el = mcss.getElectron();
                mMinE = el.getEnergy() * mMinEFrac;
@@ -198,20 +199,20 @@ public class BSEDScatterDetector
     */
    public double[] minCoordinate(int[] bin) {
       assert bin.length == 2;
-      return Math2.add(mPlane.mPoint, Math2.add(Math2.multiply((bin[0] - mBinCount / 2)
-            * mWidth, mAxis0), Math2.multiply((bin[1] - mBinCount / 2) * mWidth, mAxis1)));
+      return Math2.add(mPlane.mPoint,
+            Math2.add(Math2.multiply((bin[0] - mBinCount / 2) * mWidth, mAxis0), Math2.multiply((bin[1] - mBinCount / 2) * mWidth, mAxis1)));
    }
 
    private boolean colIsZero(int c) {
-      for(int r = 0; r < mBinCount; ++r)
-         if(mAccumulator[r][c] != 0)
+      for (int r = 0; r < mBinCount; ++r)
+         if (mAccumulator[r][c] != 0)
             return false;
       return true;
    }
 
    private boolean rowIsZero(int r) {
-      for(int c = 0; c < mBinCount; ++c)
-         if(mAccumulator[r][c] != 0)
+      for (int c = 0; c < mBinCount; ++c)
+         if (mAccumulator[r][c] != 0)
             return false;
       return true;
    }
@@ -223,8 +224,7 @@ public class BSEDScatterDetector
     * @param wr
     * @throws IOException
     */
-   public void dump(Writer wr)
-         throws IOException {
+   public void dump(Writer wr) throws IOException {
       wr.write("BEGIN ======== BSED Scatter Map =========\n");
       wr.write("MIN_E       : " + FromSI.keV(mMinE) + " keV\n");
       wr.write("MIN_E_FRAC  : " + mMinEFrac + "\n");
@@ -236,46 +236,46 @@ public class BSEDScatterDetector
       wr.write("WIDTH       :  " + Double.toString(1.0e6 * mWidth * mBinCount) + " micrometers\n");
       wr.write("================= RESULTS ================= (normalized to incident electron count)\n");
       int firstCol = mBinCount / 2, lastCol = mBinCount / 2 + 1;
-      for(int c = 0; c < mBinCount / 2; ++c)
-         if(!colIsZero(c)) {
+      for (int c = 0; c < mBinCount / 2; ++c)
+         if (!colIsZero(c)) {
             firstCol = Math.max(0, c - 1);
             break;
          }
-      for(int c = mBinCount - 1; c >= mBinCount / 2; --c)
-         if(!colIsZero(c)) {
+      for (int c = mBinCount - 1; c >= mBinCount / 2; --c)
+         if (!colIsZero(c)) {
             lastCol = Math.min(c + 1, mBinCount - 1);
             break;
          }
       assert firstCol < lastCol;
       wr.write("\t");
-      for(int c = firstCol; c <= lastCol; ++c) {
+      for (int c = firstCol; c <= lastCol; ++c) {
          wr.write("\t");
          wr.write(Double.toString(minVal(c)));
       }
       wr.write("\n");
       wr.write("\t");
-      for(int c = firstCol; c <= lastCol; ++c) {
+      for (int c = firstCol; c <= lastCol; ++c) {
          wr.write("\t");
          wr.write(Double.toString(maxVal(c)));
       }
       wr.write("\n");
       int firstRow = mBinCount / 2, lastRow = mBinCount / 2 + 1;
-      for(int r = 0; r < mBinCount / 2; ++r)
-         if(!rowIsZero(r)) {
+      for (int r = 0; r < mBinCount / 2; ++r)
+         if (!rowIsZero(r)) {
             firstRow = Math.max(r - 1, 0);
             break;
          }
-      for(int r = mBinCount - 1; r >= mBinCount / 2; --r)
-         if(!rowIsZero(r)) {
+      for (int r = mBinCount - 1; r >= mBinCount / 2; --r)
+         if (!rowIsZero(r)) {
             lastRow = Math.min(r + 1, mBinCount - 1);
             break;
          }
       assert firstRow < lastRow;
-      for(int r = firstRow; r <= lastRow; ++r) {
+      for (int r = firstRow; r <= lastRow; ++r) {
          wr.write(Double.toString(minVal(r)));
          wr.write("\t");
          wr.write(Double.toString(maxVal(r)));
-         for(int c = firstCol; c <= lastCol; ++c) {
+         for (int c = firstCol; c <= lastCol; ++c) {
             wr.write("\t");
             wr.write(Double.toString((double) mAccumulator[r][c] / (double) mTotal));
          }

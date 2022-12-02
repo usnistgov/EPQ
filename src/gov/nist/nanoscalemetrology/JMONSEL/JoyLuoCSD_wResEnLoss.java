@@ -35,8 +35,7 @@ import gov.nist.microanalysis.NISTMonte.Electron;
  * @author John Villarrubia
  * @version 1.0
  */
-public class JoyLuoCSD_wResEnLoss
-   implements SlowingDownAlg {
+public class JoyLuoCSD_wResEnLoss implements SlowingDownAlg {
 
    private Material mat;
 
@@ -76,9 +75,12 @@ public class JoyLuoCSD_wResEnLoss
     * specified material. This form of the constructor obtains the residual
     * energy loss rate and work function from the second and third arguments.
     *
-    * @param mat - the material
-    * @param resel - the residual energy loss rate in Joules/m.
-    * @param wf - the work function in Joules.
+    * @param mat
+    *           - the material
+    * @param resel
+    *           - the residual energy loss rate in Joules/m.
+    * @param wf
+    *           - the work function in Joules.
     */
    public JoyLuoCSD_wResEnLoss(Material mat, double resel, double wf) {
       setMaterial(mat, resel, wf);
@@ -88,9 +90,12 @@ public class JoyLuoCSD_wResEnLoss
     * setMaterial - Sets the material, residual energy loss rate, work function
     * for which losses are to be computed.
     *
-    * @param mat - the material
-    * @param resel - the residual energy loss rate in Joules/m.
-    * @param wf - the work function in Joules.
+    * @param mat
+    *           - the material
+    * @param resel
+    *           - the residual energy loss rate in Joules/m.
+    * @param wf
+    *           - the work function in Joules.
     */
    public void setMaterial(Material mat, double resel, double wf) {
       this.mat = mat.clone();
@@ -104,7 +109,8 @@ public class JoyLuoCSD_wResEnLoss
     * for which losses are to be computed. The latter two are taken from the
     * properties of the supplied (SEmaterial) argument.
     *
-    * @param mat - the material
+    * @param mat
+    *           - the material
     */
    @Override
    public void setMaterial(SEmaterial mat) {
@@ -119,7 +125,7 @@ public class JoyLuoCSD_wResEnLoss
     */
    private void init() {
       nce = mat.getElementCount();
-      if(nce == 0)
+      if (nce == 0)
          return;
       recipJ = new double[nce];
       coef = new double[nce];
@@ -127,18 +133,18 @@ public class JoyLuoCSD_wResEnLoss
       wfplus1eV = wf + ToSI.eV(1.);
       final Object[] el = mat.getElementSet().toArray();
 
-      for(int i = 0; i < nce; i++) {
-         recipJ[i] = 1.166
-               / (((Element) el[i]).getAtomicNumber() < 13 ? MeanIonizationPotential.Wilson41.compute((Element) el[i])
-                     : MeanIonizationPotential.Sternheimer64.compute((Element) el[i]));
+      for (int i = 0; i < nce; i++) {
+         recipJ[i] = 1.166 / (((Element) el[i]).getAtomicNumber() < 13
+               ? MeanIonizationPotential.Wilson41.compute((Element) el[i])
+               : MeanIonizationPotential.Sternheimer64.compute((Element) el[i]));
          beta[i] = 1. - (recipJ[i] * wfplus1eV);
          /*
           * The constant in the following expression is in units of J^2 m^2/kg.
           * It is appropriate for density in kg/m^3, energy in Joules, and
           * resulting continuous energy loss in J/m. 2.0096E-28
           */
-         coef[i] = (2.01507E-28 * mat.getDensity() * mat.weightFraction((Element) el[i], true)
-               * ((Element) el[i]).getAtomicNumber()) / ((Element) el[i]).getAtomicWeight();
+         coef[i] = (2.01507E-28 * mat.getDensity() * mat.weightFraction((Element) el[i], true) * ((Element) el[i]).getAtomicNumber())
+               / ((Element) el[i]).getAtomicWeight();
       }
       /*
        * In the original MONSEL, the CSD routine knows the minEforTracking and
@@ -157,8 +163,10 @@ public class JoyLuoCSD_wResEnLoss
     * This routine computes the energy change for an electron that starts with
     * energy kE and moves a distance len.
     *
-    * @param len - the distance of travel for which to compute the loss.
-    * @param pe - the Electron object
+    * @param len
+    *           - the distance of travel for which to compute the loss.
+    * @param pe
+    *           - the Electron object
     * @return - returns the energy lost by the electron in this step.
     */
    @Override
@@ -169,14 +177,14 @@ public class JoyLuoCSD_wResEnLoss
        * No energy loss in vacuum, and don't waste time on any with energy
        * already low enough to be dropped.
        */
-      if((nce == 0) || (kE < minEforTracking) || (kE <= 0.))
+      if ((nce == 0) || (kE < minEforTracking) || (kE <= 0.))
          return 0.;
       /*
        * Joy/Luo energy loss formula reaches 0 at WF + 1 eV. Below that we
        * return the residual energy loss
        */
       double loss;
-      if(kE <= wfplus1eV) {
+      if (kE <= wfplus1eV) {
          loss = -resel * len;
          return loss > -kE ? loss : -kE;
       }
@@ -187,7 +195,7 @@ public class JoyLuoCSD_wResEnLoss
 
       // Evaluate Joy/Luo loss rate based upon incident energy
       double JLlossrate = 0.;
-      for(int i = 0; i < nce; i++)
+      for (int i = 0; i < nce; i++)
          JLlossrate += coef[i] * Math.log((recipJ[i] * kE) + beta[i]);
       JLlossrate /= kE;
 
@@ -205,7 +213,7 @@ public class JoyLuoCSD_wResEnLoss
        */
       double maxloss = maxlossfraction * kE;
 
-      if(loss < maxloss) // We can take the whole step
+      if (loss < maxloss) // We can take the whole step
          return loss > -kE ? -loss : -kE;
 
       /* Otherwise, take steps that results in loss = maxloss */
@@ -213,18 +221,18 @@ public class JoyLuoCSD_wResEnLoss
       double remaininglen = len;
       double steplen;
 
-      while(kEremaining >= minEforTracking) {
+      while (kEremaining >= minEforTracking) {
          final double centerE = kEremaining * (1. - (maxlossfraction / 2.));
-         if(centerE <= wfplus1eV) {
+         if (centerE <= wfplus1eV) {
             kEremaining -= resel * remaininglen;
-            if(kEremaining < 0.)
+            if (kEremaining < 0.)
                return -kE; // It lost it all
             else
                return kEremaining - kE;
          }
 
          JLlossrate = 0.;
-         for(int i = 0; i < nce; i++)
+         for (int i = 0; i < nce; i++)
             JLlossrate += coef[i] * Math.log((recipJ[i] * centerE) + beta[i]);
          JLlossrate /= centerE;
          final double totalLossRate = JLlossrate + resel;
@@ -233,7 +241,7 @@ public class JoyLuoCSD_wResEnLoss
          // Compute loss based on this rate
          steplen = maxloss / totalLossRate;
 
-         if((remaininglen <= steplen) || ((((1. / maxlossfraction) - 1.) * JLlossrate) <= resel)) {
+         if ((remaininglen <= steplen) || ((((1. / maxlossfraction) - 1.) * JLlossrate) <= resel)) {
             kEremaining -= remaininglen * totalLossRate;
             return (kEremaining > 0. ? kEremaining : 0.) - kE;
          }
@@ -267,7 +275,6 @@ public class JoyLuoCSD_wResEnLoss
     */
    @Override
    public String toString() {
-      return "JoyLuoCSD_wResEnLoss(" + mat.toString() + "," + Double.valueOf(resel).toString() + "," + Double.valueOf(wf).toString()
-            + ")";
+      return "JoyLuoCSD_wResEnLoss(" + mat.toString() + "," + Double.valueOf(resel).toString() + "," + Double.valueOf(wf).toString() + ")";
    }
 }

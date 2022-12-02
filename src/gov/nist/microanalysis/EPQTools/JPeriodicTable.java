@@ -40,8 +40,7 @@ import javax.swing.JPopupMenu;
  * @version 1.0
  */
 
-public class JPeriodicTable
-   extends JComponent {
+public class JPeriodicTable extends JComponent {
    private static final long serialVersionUID = 0x1;
    private Dimension mButtonDim;
    private static int END_OF_ELEMENTS = Element.elmLr + 1;
@@ -54,218 +53,12 @@ public class JPeriodicTable
    private int mDisplayedElement;
    private int mSelectedElement; // The last element selected
 
-   private static final int[] mRow = {
-      -1,
-      0,
-      0,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      1,
-      2,
-      2,
-      2,
-      2,
-      2,
-      2,
-      2,
-      2,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      3,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      4,
-      5,
-      5,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      7,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      5,
-      6,
-      6,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8,
-      8
-   };
-   private static final int[] mCol = {
-      -1,
-      0,
-      17,
-      0,
-      1,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      0,
-      1,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      0,
-      1,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      0,
-      1,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17
-   };
+   private static final int[] mRow = {-1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+         4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+         5, 5, 5, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8};
+   private static final int[] mCol = {-1, 0, 17, 0, 1, 12, 13, 14, 15, 16, 17, 0, 1, 12, 13, 14, 15, 16, 17, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+         13, 14, 15, 16, 17, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+         3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
 
    private transient Vector<ActionListener> actionListeners = new Vector<ActionListener>();
 
@@ -278,8 +71,8 @@ public class JPeriodicTable
    }
 
    private int whichElement(int x, int y) {
-      for(int e = Element.elmH; e < END_OF_ELEMENTS; ++e)
-         if(getButtonRect(e).contains(x, y))
+      for (int e = Element.elmH; e < END_OF_ELEMENTS; ++e)
+         if (getButtonRect(e).contains(x, y))
             return e;
       return Element.elmNone;
    }
@@ -327,11 +120,12 @@ public class JPeriodicTable
     * fireActionPerformed - This control fires an event each time an element is
     * selected or deselected.
     * 
-    * @param e ActionEvent
+    * @param e
+    *           ActionEvent
     */
    protected void fireActionPerformed(ActionEvent e) {
-      if(actionListeners.size() > 0)
-         for(final Object element : actionListeners)
+      if (actionListeners.size() > 0)
+         for (final Object element : actionListeners)
             ((ActionListener) element).actionPerformed(e);
    }
 
@@ -353,8 +147,7 @@ public class JPeriodicTable
       assert (mCol.length == END_OF_ELEMENTS);
       try {
          jbInit();
-      }
-      catch(final Exception ex) {
+      } catch (final Exception ex) {
          ex.printStackTrace();
       }
    }
@@ -362,7 +155,8 @@ public class JPeriodicTable
    /**
     * getSelection - Is the specified element selected in the table?
     * 
-    * @param element int - The atomic number of the element.
+    * @param element
+    *           int - The atomic number of the element.
     * @return boolean - True if selected, false otherwise.
     */
    public boolean getSelection(int element) {
@@ -372,11 +166,13 @@ public class JPeriodicTable
    /**
     * setSelection - Set the selection state of the specified element.
     * 
-    * @param z int - The atomic number of the element
-    * @param b boolean - True to select, false to unselect.
+    * @param z
+    *           int - The atomic number of the element
+    * @param b
+    *           boolean - True to select, false to unselect.
     */
    public void setSelection(int z, boolean b) {
-      if((z > Element.elmNone) && (z < END_OF_ELEMENTS) && (mState[z] != b)) {
+      if ((z > Element.elmNone) && (z < END_OF_ELEMENTS) && (mState[z] != b)) {
          mState[z] = b;
          repaint(mButtonDim.width * mCol[z], mButtonDim.height * mRow[z], mButtonDim.width, mButtonDim.height);
       }
@@ -385,15 +181,16 @@ public class JPeriodicTable
    /**
     * setSelection - Set the selection state of the specified element.
     * 
-    * @param elm Element - The element to select
-    * @param b boolean - True to select, false to unselect.
+    * @param elm
+    *           Element - The element to select
+    * @param b
+    *           boolean - True to select, false to unselect.
     */
    public void setSelection(Element elm, boolean b) {
       setSelection(elm.getAtomicNumber(), b);
    }
 
-   void jbInit()
-         throws Exception {
+   void jbInit() throws Exception {
       this.setOpaque(true);
       this.setSize(25 * COL_COUNT, 20 * ROW_COUNT);
       this.setPreferredSize(new Dimension(25 * COL_COUNT, 20 * ROW_COUNT));
@@ -410,25 +207,25 @@ public class JPeriodicTable
       addMouseListener(new MouseAdapter() {
          @Override
          public void mousePressed(MouseEvent me) {
-            if(me.isPopupTrigger())
+            if (me.isPopupTrigger())
                displayPopup(me.getX(), me.getY());
-            else if(me.getButton() == MouseEvent.BUTTON1) {
+            else if (me.getButton() == MouseEvent.BUTTON1) {
                int el = whichElement(me.getX(), me.getY());
-               if(mDisabled[el])
+               if (mDisabled[el])
                   el = Element.elmNone;
                mDepressedElement = el;
-               if(mDepressedElement != Element.elmNone)
+               if (mDepressedElement != Element.elmNone)
                   repaint(getButtonRect(mDepressedElement));
             }
          }
 
          @Override
          public void mouseReleased(MouseEvent me) {
-            if(me.isPopupTrigger())
+            if (me.isPopupTrigger())
                displayPopup(me.getX(), me.getY());
-            else if(me.getButton() == MouseEvent.BUTTON1)
-               if((mDepressedElement != Element.elmNone) && (!mDisabled[mDepressedElement])) {
-                  if(whichElement(me.getX(), me.getY()) == mDepressedElement) {
+            else if (me.getButton() == MouseEvent.BUTTON1)
+               if ((mDepressedElement != Element.elmNone) && (!mDisabled[mDepressedElement])) {
+                  if (whichElement(me.getX(), me.getY()) == mDepressedElement) {
                      mState[mDepressedElement] = !mState[mDepressedElement];
                      fireSelectionEvent(mDepressedElement);
                   }
@@ -442,7 +239,7 @@ public class JPeriodicTable
          @Override
          public void mouseMoved(MouseEvent me) {
             final int el = whichElement(me.getX(), me.getY());
-            if(el != mDisplayedElement) {
+            if (el != mDisplayedElement) {
                mDisplayedElement = el;
                repaint(getElementDisplayRect());
             }
@@ -454,26 +251,25 @@ public class JPeriodicTable
    public void paintComponent(Graphics gr) {
       super.paintComponent(gr);
       final Insets in = getInsets();
-      mButtonDim.setSize((getWidth() - (2 * (in.left + in.right))) / COL_COUNT, (getHeight() - (2 * (in.top + in.bottom)))
-            / ROW_COUNT);
+      mButtonDim.setSize((getWidth() - (2 * (in.left + in.right))) / COL_COUNT, (getHeight() - (2 * (in.top + in.bottom))) / ROW_COUNT);
       FontMetrics fm = gr.getFontMetrics();
       final int h = mButtonDim.height;
       final int w = mButtonDim.width;
       final int dh = (getHeight() - (ROW_COUNT * h)) / 2;
       final int dw = (getWidth() - (COL_COUNT * w)) / 2;
-      for(int e = Element.elmH; e < END_OF_ELEMENTS; ++e) {
+      for (int e = Element.elmH; e < END_OF_ELEMENTS; ++e) {
          int r = (h * mRow[e]) + dh;
          int c = (w * mCol[e]) + dw;
-         if(e == mDepressedElement) {
+         if (e == mDepressedElement) {
             ++r;
             ++c;
          }
-         if(mDisabled[e]) {
+         if (mDisabled[e]) {
             gr.setColor(SystemColor.control);
             gr.fillRoundRect(c, r, w - 2, h - 2, w / 10, w / 10);
             gr.setColor(SystemColor.controlShadow);
             gr.drawRoundRect(c, r, w - 2, h - 2, w / 10, w / 10);
-         } else if(mState[e]) {
+         } else if (mState[e]) {
             gr.setColor(Color.green);
             gr.fillRoundRect(c, r, w - 2, h - 2, w / 10, w / 10);
             gr.setColor(Color.black);
@@ -485,19 +281,19 @@ public class JPeriodicTable
             gr.drawRoundRect(c, r, w - 2, h - 2, w / 10, w / 10);
          }
          final String str = Element.toAbbrev(e);
-         if(mDisabled[e])
+         if (mDisabled[e])
             gr.setColor(SystemColor.controlShadow);
          gr.drawString(str, c + ((w - fm.stringWidth(str)) / 2), r + ((2 * h) / 3));
-         if(mDisabled[e])
+         if (mDisabled[e])
             gr.setColor(this.getForeground());
       }
 
       final Rectangle r = getElementDisplayRect();
       gr.setColor(SystemColor.control);
       gr.drawRect(r.x, r.y, r.width, r.height);
-      if(mDisplayedElement != Element.elmNone) {
+      if (mDisplayedElement != Element.elmNone) {
          gr.setColor(SystemColor.controlText);
-         if(mDisabled[mDisplayedElement])
+         if (mDisabled[mDisplayedElement])
             gr.drawString("disabled", (4 * mButtonDim.width) + 2, ((5 * mButtonDim.height) / 2) - 2);
          final Font oldFont = gr.getFont();
          gr.setFont(new Font(oldFont.getName(), oldFont.getStyle(), (3 * oldFont.getSize()) / 2));
@@ -517,8 +313,8 @@ public class JPeriodicTable
     */
    public TreeSet<Element> getSelected() {
       final TreeSet<Element> res = new TreeSet<Element>();
-      for(int el = Element.elmH; el < END_OF_ELEMENTS; ++el)
-         if(mState[el] && (!mDisabled[el]))
+      for (int el = Element.elmH; el < END_OF_ELEMENTS; ++el)
+         if (mState[el] && (!mDisabled[el]))
             res.add(Element.byAtomicNumber(el));
       return res;
    }
@@ -527,21 +323,24 @@ public class JPeriodicTable
     * setSelectedElements - Sets the elements that are selected on the periodic
     * table control from the list of Element objects in lst.
     * 
-    * @param lst A collection of Element objects.
-    * @param clear boolean - Determines whether to clear the table before
-    *           setting the specified elements.
+    * @param lst
+    *           A collection of Element objects.
+    * @param clear
+    *           boolean - Determines whether to clear the table before setting
+    *           the specified elements.
     */
    public void setSelected(Collection<Element> lst, boolean clear) {
-      if(clear)
+      if (clear)
          setAll(false);
-      for(final Element el : lst)
+      for (final Element el : lst)
          setSelection(el.getAtomicNumber(), true);
    }
 
    /**
     * setAll - Select or deselect all elements.
     * 
-    * @param set boolean - True to set and false to deselect.
+    * @param set
+    *           boolean - True to set and false to deselect.
     */
    public void setAll(boolean set) {
       setAllExcept(set, Element.elmNone);
@@ -550,13 +349,15 @@ public class JPeriodicTable
    /**
     * setAll - Select or deselect all elements.
     * 
-    * @param set boolean - True to set and false to deselect.
-    * @param element int - The atomic number of the element whose state to leave
+    * @param set
+    *           boolean - True to set and false to deselect.
+    * @param element
+    *           int - The atomic number of the element whose state to leave
     *           unchanged
     */
    public void setAllExcept(boolean set, int element) {
-      for(int el = Element.elmH; el < END_OF_ELEMENTS; ++el)
-         if((el != element) && (mState[el] != set) && (!mDisabled[el])) {
+      for (int el = Element.elmH; el < END_OF_ELEMENTS; ++el)
+         if ((el != element) && (mState[el] != set) && (!mDisabled[el])) {
             mState[el] = set;
             repaint(getButtonRect(el));
          }
@@ -566,10 +367,11 @@ public class JPeriodicTable
     * removeActionListener - This control fires an event each time an element is
     * selected or deselected.
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void removeActionListener(ActionListener l) {
-      if(actionListeners.contains(l)) {
+      if (actionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(actionListeners);
          v.removeElement(l);
          actionListeners = v;
@@ -580,10 +382,11 @@ public class JPeriodicTable
     * addActionListener - This control fires an event each time an element is
     * selected or deselected.
     * 
-    * @param l ActionListener
+    * @param l
+    *           ActionListener
     */
    public synchronized void addActionListener(ActionListener l) {
-      if(!actionListeners.contains(l)) {
+      if (!actionListeners.contains(l)) {
          final Vector<ActionListener> v = new Vector<ActionListener>(actionListeners);
          v.addElement(l);
          actionListeners = v;
@@ -594,18 +397,20 @@ public class JPeriodicTable
     * setEnabled - Set the enabled state for the button assocaited with the
     * specified element.
     * 
-    * @param element int
-    * @param enabled boolean
+    * @param element
+    *           int
+    * @param enabled
+    *           boolean
     */
    public void setEnabled(Element element, boolean enabled) {
       setEnabled(element.getAtomicNumber(), enabled);
    }
 
    private void setEnabled(final int z, boolean enabled) {
-      if((z > Element.elmNone) && (z < END_OF_ELEMENTS) && (mDisabled[z] == enabled)) {
+      if ((z > Element.elmNone) && (z < END_OF_ELEMENTS) && (mDisabled[z] == enabled)) {
          mDisabled[z] = !enabled;
          repaint(getButtonRect(z));
-         if(!enabled)
+         if (!enabled)
             mState[z] = false;
       }
    }
@@ -613,22 +418,25 @@ public class JPeriodicTable
    /**
     * enableAll - Enables (or disables) all buttons.
     * 
-    * @param enabled boolean
+    * @param enabled
+    *           boolean
     */
    public void enableAll(boolean enabled) {
-      for(int z = Element.elmH; z < END_OF_ELEMENTS; ++z)
+      for (int z = Element.elmH; z < END_OF_ELEMENTS; ++z)
          setEnabled(z, enabled);
    }
 
    /**
     * Enable/disable all elements from begin to end (excluding end)
     * 
-    * @param begin The beginning
-    * @param end One beyond the end
+    * @param begin
+    *           The beginning
+    * @param end
+    *           One beyond the end
     * @param enabled
     */
    public void enableRange(Element begin, Element end, boolean enabled) {
-      for(int z = begin.getAtomicNumber(); z < end.getAtomicNumber(); ++z)
+      for (int z = begin.getAtomicNumber(); z < end.getAtomicNumber(); ++z)
          setEnabled(z, enabled);
    }
 }

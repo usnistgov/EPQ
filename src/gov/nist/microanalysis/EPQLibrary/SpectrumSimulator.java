@@ -26,19 +26,15 @@ import gov.nist.microanalysis.Utility.Math2;
  * @author Nicholas
  * @version 1.0
  */
-abstract public class SpectrumSimulator
-   extends
-   AlgorithmClass {
+abstract public class SpectrumSimulator extends AlgorithmClass {
    private static final double DEFAULT_DET_DISTANCE = 0.05;
 
    protected SpectrumProperties mResultProperties;
 
-   private static final AlgorithmClass[] mAllImplementations = {
-      SpectrumSimulator.Basic
-   };
+   private static final AlgorithmClass[] mAllImplementations = {SpectrumSimulator.Basic};
 
    private boolean testSpectrum(ISpectrumData spec) {
-      for(int i = 0; i < spec.getChannelCount(); ++i) {
+      for (int i = 0; i < spec.getChannelCount(); ++i) {
          final double c = spec.getCounts(i);
          assert !Double.isNaN(c) : "getCounts(" + i + ") == NaN";
          assert !Double.isInfinite(c) : "getCounts(" + i + ") == Inf";
@@ -52,9 +48,7 @@ abstract public class SpectrumSimulator
     * A class that uses the ionization cross section and a transition
     * probability model to simulate x-ray emission.+
     */
-   static public class BasicSpectrumSimulator
-      extends
-      SpectrumSimulator {
+   static public class BasicSpectrumSimulator extends SpectrumSimulator {
 
       public BasicSpectrumSimulator() {
          super("Basic spectrum simulator", LitReference.NullReference);
@@ -81,16 +75,16 @@ abstract public class SpectrumSimulator
        * @throws EPQException
        */
       @Override
-      public TreeMap<XRayTransition, Double> computeIntensities(final Composition comp, final SpectrumProperties props, final Collection<AtomicShell> shells)
-            throws EPQException {
+      public TreeMap<XRayTransition, Double> computeIntensities(final Composition comp, final SpectrumProperties props,
+            final Collection<AtomicShell> shells) throws EPQException {
          mResultProperties = new SpectrumProperties();
          mResultProperties.addAll(props);
          final TreeMap<XRayTransition, Double> res = new TreeMap<XRayTransition, Double>();
          final TransitionProbabilities tp = (TransitionProbabilities) getAlgorithm(TransitionProbabilities.class);
          final double e0 = ToSI.keV(mResultProperties.getNumericWithDefault(SpectrumProperties.BeamEnergy, -1.0));
-         if(e0 == ToSI.keV(-1.0))
+         if (e0 == ToSI.keV(-1.0))
             throw new EPQException("You must specify the beam energy.");
-         if(e0 < ToSI.keV(0.1))
+         if (e0 < ToSI.keV(0.1))
             throw new EPQException("The beam energy is too low to simulate a spectrum.");
          double dose;
          {
@@ -102,19 +96,21 @@ abstract public class SpectrumSimulator
             mResultProperties.setNumericProperty(SpectrumProperties.LiveTime, lt);
             // Working distance in mm
             {
-               final double wd = props.getNumericWithDefault(SpectrumProperties.WorkingDistance, props.getNumericWithDefault(SpectrumProperties.DetectorOptWD, 0.0));
+               final double wd = props.getNumericWithDefault(SpectrumProperties.WorkingDistance,
+                     props.getNumericWithDefault(SpectrumProperties.DetectorOptWD, 0.0));
                mResultProperties.setNumericProperty(SpectrumProperties.WorkingDistance, wd);
             }
             // Dose in electrons ( 1 amp = (1/ElectronCharge) electrons /
             // second)
             dose = (lt * pc) / PhysicalConstants.ElectronCharge;
          }
-         final CorrectionAlgorithm.PhiRhoZAlgorithm ca = (CorrectionAlgorithm.PhiRhoZAlgorithm) getAlgorithm(CorrectionAlgorithm.PhiRhoZAlgorithm.class);
+         final CorrectionAlgorithm.PhiRhoZAlgorithm ca = (CorrectionAlgorithm.PhiRhoZAlgorithm) getAlgorithm(
+               CorrectionAlgorithm.PhiRhoZAlgorithm.class);
          final AbsoluteIonizationCrossSection ic = (AbsoluteIonizationCrossSection) getAlgorithm(AbsoluteIonizationCrossSection.class);
          // For each shell to be ionized...
          final double MIN_WEIGHT = 1.0e-5;
-         for(final AtomicShell shell : shells)
-            if(shell.exists() && (shell.getEnergy() < e0)) {
+         for (final AtomicShell shell : shells)
+            if (shell.exists() && (shell.getEnergy() < e0)) {
                ca.initialize(comp, shell, mResultProperties);
                /*
                 * (ionizations m^2 / (atomelectron)) electrons (atom/m^3) /
@@ -124,10 +120,10 @@ abstract public class SpectrumSimulator
                assert icx >= 0.0 : "ICX[" + shell.toString() + "]=" + Double.toString(icx);
                // For each transition resulting from the ionization
                final Set<Map.Entry<XRayTransition, Double>> es = tp.getTransitions(shell, 0.0).entrySet();
-               for(final Map.Entry<XRayTransition, Double> me : es) {
+               for (final Map.Entry<XRayTransition, Double> me : es) {
                   final XRayTransition xrt = me.getKey();
                   final double wgt = me.getValue().doubleValue();
-                  if(xrt.energyIsAvailable() && (wgt >= MIN_WEIGHT) && xrt.isWellKnown()) {
+                  if (xrt.energyIsAvailable() && (wgt >= MIN_WEIGHT) && xrt.isWellKnown()) {
                      final Double prev = res.get(xrt);
                      double s = (prev != null ? prev.doubleValue() : 0.0);
                      /*
@@ -137,7 +133,7 @@ abstract public class SpectrumSimulator
                       * (x-rays/ionization)(ionizations(m^2/kg))(kg/m^2)
                       */
                      s += wgt * icx * ca.computeZAFCorrection(xrt);
-                     if(!Double.isNaN(s)) {
+                     if (!Double.isNaN(s)) {
                         assert (s >= 0.0) : "I[" + xrt.toString() + "]=" + Double.toString(s);
                         res.put(xrt, Double.valueOf(s));
                      }
@@ -180,11 +176,11 @@ abstract public class SpectrumSimulator
       final EdgeEnergy ee = (EdgeEnergy) getAlgorithm(EdgeEnergy.class);
       final TreeSet<AtomicShell> shells = new TreeSet<AtomicShell>();
       final double e0 = ToSI.keV(props.getNumericWithDefault(SpectrumProperties.BeamEnergy, 1000.0));
-      for(final Element elm : comp.getElementSet())
-         if(comp.weightFraction(elm, false) > 0.0)
-            for(int sh = AtomicShell.K; sh <= AtomicShell.MV; ++sh) {
+      for (final Element elm : comp.getElementSet())
+         if (comp.weightFraction(elm, false) > 0.0)
+            for (int sh = AtomicShell.K; sh <= AtomicShell.MV; ++sh) {
                final AtomicShell as = new AtomicShell(elm, sh);
-               if(ee.isSupported(as) && (ee.compute(as) < e0))
+               if (ee.isSupported(as) && (ee.compute(as) < e0))
                   shells.add(as);
             }
       return shells;
@@ -203,8 +199,8 @@ abstract public class SpectrumSimulator
     * @return An ISpectrumData
     * @throws EPQException
     */
-   public ISpectrumData generateSpectrum(final Composition comp, final SpectrumProperties props, final Set<AtomicShell> shells, boolean withBremsstrahlung)
-         throws EPQException {
+   public ISpectrumData generateSpectrum(final Composition comp, final SpectrumProperties props, final Set<AtomicShell> shells,
+         boolean withBremsstrahlung) throws EPQException {
       final EDSDetector detector = (EDSDetector) props.getDetector();
       detector.reset();
       final SpectrumProperties inProps = new SpectrumProperties();
@@ -212,12 +208,12 @@ abstract public class SpectrumSimulator
       inProps.addAll(props);
       assert inProps.isDefined(SpectrumProperties.LiveTime);
       assert !Double.isNaN(SpectrumUtils.getAverageFaradayCurrent(inProps, Double.NaN));
-      if((!inProps.isDefined(SpectrumProperties.WorkingDistance)) && inProps.isDefined(SpectrumProperties.DetectorOptWD))
+      if ((!inProps.isDefined(SpectrumProperties.WorkingDistance)) && inProps.isDefined(SpectrumProperties.DetectorOptWD))
          inProps.setNumericProperty(SpectrumProperties.WorkingDistance, inProps.getNumericWithDefault(SpectrumProperties.DetectorOptWD, 0.0));
       assert inProps.isDefined(SpectrumProperties.WorkingDistance);
-      for(final Map.Entry<XRayTransition, Double> me : computeIntensities(comp, inProps, shells).entrySet())
+      for (final Map.Entry<XRayTransition, Double> me : computeIntensities(comp, inProps, shells).entrySet())
          detector.addEvent(me.getKey().getEnergy(), me.getValue().doubleValue());
-      if(withBremsstrahlung) {
+      if (withBremsstrahlung) {
          final BremsstrahlungAnalytic bs = (BremsstrahlungAnalytic) getAlgorithm(BremsstrahlungAnalytic.class);
          final double e0 = ToSI.keV(inProps.getNumericWithDefault(SpectrumProperties.BeamEnergy, Double.NaN));
          final double toa = SpectrumUtils.getTakeOffAngle(inProps);
@@ -244,12 +240,12 @@ abstract public class SpectrumSimulator
     * 
     * @param comp
     * @param props
-    * @param withBrem - Include the bremsstrahlung contribution.
+    * @param withBrem
+    *           - Include the bremsstrahlung contribution.
     * @return ISpectrumData
     * @throws EPQException
     */
-   public ISpectrumData generateSpectrum(final Composition comp, final SpectrumProperties props, boolean withBrem)
-         throws EPQException {
+   public ISpectrumData generateSpectrum(final Composition comp, final SpectrumProperties props, boolean withBrem) throws EPQException {
       final Composition posComp = Composition.positiveDefinite(comp);
       return generateSpectrum(posComp, props, shellSet(posComp, props), withBrem);
    }
@@ -279,15 +275,14 @@ abstract public class SpectrumSimulator
    public TreeMap<XRayTransition, Double> measuredIntensities(Composition comp, SpectrumProperties props, Collection<AtomicShell> shells)
          throws EPQException {
       final EDSDetector det = (EDSDetector) props.getDetector();
-      final double sc = 1.0
-            / (4.0 * Math.PI * Math2.sqr(SpectrumUtils.sampleToDetectorDistance(det.getProperties(), DEFAULT_DET_DISTANCE)));
+      final double sc = 1.0 / (4.0 * Math.PI * Math2.sqr(SpectrumUtils.sampleToDetectorDistance(det.getProperties(), DEFAULT_DET_DISTANCE)));
       final TreeMap<XRayTransition, Double> tmp = computeIntensities(comp, props, shells);
       final TreeMap<XRayTransition, Double> res = new TreeMap<XRayTransition, Double>();
       final double[] eff = det.getEfficiency();
-      for(final Map.Entry<XRayTransition, Double> me : tmp.entrySet()) {
+      for (final Map.Entry<XRayTransition, Double> me : tmp.entrySet()) {
          final XRayTransition xrt = me.getKey();
          final int ch = (int) ((xrt.getEnergy_eV() - det.getZeroOffset()) / det.getChannelWidth());
-         if((ch >= 0) && (ch < eff.length))
+         if ((ch >= 0) && (ch < eff.length))
             res.put(xrt, me.getValue().doubleValue() * sc * eff[ch]);
       }
       return res;

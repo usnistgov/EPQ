@@ -16,7 +16,7 @@ import gov.nist.microanalysis.JythonGUI.JythonApp;
  * Description: A simple GUI for running Jython scripts
  * </p>
  * <p>
- * Not copyright: In the public domain * 
+ * Not copyright: In the public domain *
  * </p>
  * 
  * @author Nicholas W. M. Ritchie
@@ -34,7 +34,7 @@ public class JythonApp {
       // Validate frames that have preset sizes
       // Pack frames that have useful preferred size info, e.g. from their
       // layout
-      if(packFrame) {
+      if (packFrame) {
          mFrame.pack();
       } else {
          mFrame.validate();
@@ -46,28 +46,28 @@ public class JythonApp {
    protected void executeFile(File file) {
       try {
          mFrame.executeFile(file);
-      }
-      catch(Exception ex) {
+      } catch (Exception ex) {
 
       }
    }
-   
+
    /*
     * Load stuff forces these libraries to be loaded before the Jython GUI gets
-    * started thus making them available in Python code. Wish it wasn't necessary...
+    * started thus making them available in Python code. Wish it wasn't
+    * necessary...
     */
    private static void loadStuff() {
-	   gov.nist.microanalysis.EPQDatabase.Session.loadMe();
-	   gov.nist.microanalysis.EPQImage.Blobber.loadMe();
-	   gov.nist.microanalysis.EPQLibrary.Element.parseElementString("Li");
-	   gov.nist.microanalysis.EPQLibrary.Detector.EDSDetector.createSDDDetector(10, 5.0, 128.0);
-	   gov.nist.microanalysis.EPQTools.SwingUtils.createDefaultBorder();
-	   gov.nist.microanalysis.NISTMonte.Electron.getlastIdent();
-	   gov.nist.microanalysis.NISTMonte.Gen3.XRayTransport3.getDefaultEdgeEnergy();
-	   gov.nist.microanalysis.Utility.Math2.bound(1, 10, 20);
-	   gov.nist.nanoscalemetrology.JMONSEL.TimeKeeper.getTimeKeeper();
-	   gov.nist.nanoscalemetrology.JMONSELutils.BiCubicSpline.zero(3, 3);
-	   gov.nist.nanoscalemetrology.MONSELtests.FunctionTiming.timetest(1);
+      gov.nist.microanalysis.EPQDatabase.Session.loadMe();
+      gov.nist.microanalysis.EPQImage.Blobber.loadMe();
+      gov.nist.microanalysis.EPQLibrary.Element.parseElementString("Li");
+      gov.nist.microanalysis.EPQLibrary.Detector.EDSDetector.createSDDDetector(10, 5.0, 128.0);
+      gov.nist.microanalysis.EPQTools.SwingUtils.createDefaultBorder();
+      gov.nist.microanalysis.NISTMonte.Electron.getlastIdent();
+      gov.nist.microanalysis.NISTMonte.Gen3.XRayTransport3.getDefaultEdgeEnergy();
+      gov.nist.microanalysis.Utility.Math2.bound(1, 10, 20);
+      gov.nist.nanoscalemetrology.JMONSEL.TimeKeeper.getTimeKeeper();
+      gov.nist.nanoscalemetrology.JMONSELutils.BiCubicSpline.zero(3, 3);
+      gov.nist.nanoscalemetrology.MONSELtests.FunctionTiming.timetest(1);
    }
 
    // Main method
@@ -80,39 +80,33 @@ public class JythonApp {
 
          String os = System.getProperty("os.name").toLowerCase();
          String laf = UIManager.getSystemLookAndFeelClassName();
-         if(os.equals("windows")) {
+         if (os.equals("windows")) {
             String name = System.getProperty("user.name");
-            if(name.equals("Nicholas") || name.equals("nritchie")) {
+            if (name.equals("Nicholas") || name.equals("nritchie")) {
                // Switch look-and-feels to expose bugs related to assumptions
-               // about L&F 
-               String[] lafs = {
-                  "net.java.plaf.windows.WindowsLookAndFeel",
-                  "com.jgoodies.looks.plastic.PlasticLookAndFeel",
-                  "com.jgoodies.looks.plastic.PlasticXPLookAndFeel",
-                  "com.jgoodies.looks.plastic.Plastic3DLookAndFeel",
-               };
+               // about L&F
+               String[] lafs = {"net.java.plaf.windows.WindowsLookAndFeel", "com.jgoodies.looks.plastic.PlasticLookAndFeel",
+                     "com.jgoodies.looks.plastic.PlasticXPLookAndFeel", "com.jgoodies.looks.plastic.Plastic3DLookAndFeel",};
                int idx = (new Random()).nextInt(lafs.length);
                laf = lafs[idx];
             } else
                laf = "net.java.plaf.windows.WindowsLookAndFeel";
-         } else if(os.equals("linux")) {
+         } else if (os.equals("linux")) {
             laf = "com.jgoodies.looks.plastic.Plastic3DLookAndFeel";
          }
          UIManager.setLookAndFeel(laf);
-      }
-      catch(Exception e) {
+      } catch (Exception e) {
          try {
             e.printStackTrace();
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-         }
-         catch(Exception e1) {
+         } catch (Exception e1) {
             e1.printStackTrace();
          }
       }
       JFrame.setDefaultLookAndFeelDecorated(false);
       loadStuff();
       JythonApp ja = new JythonApp();
-      for(int i = 0; i < args.length; ++i)
+      for (int i = 0; i < args.length; ++i)
          ja.executeFile(new File(args[i]));
    }
 }

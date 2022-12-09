@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -93,8 +92,6 @@ public class KLMTreePanel extends JPanel implements ActionListener {
 
    final private JTextField jTextField_Element = new JTextField();
    final private JScrollBar jScrollBar_Z = new JScrollBar();
-   private final JButton jButton_Minus = new JButton("-");
-   private final JButton jButton_Plus = new JButton("+");
    final private JButton jButton_Clear = new JButton("Clear");
    final private JButton jButton_ClearAll = new JButton("Clear All");
    final private JRadioButton jRadioButton_AtomicNumber = new JRadioButton("Z-order");

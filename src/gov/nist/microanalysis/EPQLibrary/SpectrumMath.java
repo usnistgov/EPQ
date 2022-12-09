@@ -76,7 +76,7 @@ public class SpectrumMath extends DerivedSpectrum {
             name = name + "+" + Double.toString(k) + "\u00D7" + src.toString();
       } else
          name = "Sum[" + Integer.toString(mNSpectra + 1) + " spectra]";
-      double pcb = Double.NaN, pce = Double.NaN;
+      double pcb = Double.NaN;
       if ((lt0 + lt1) > 0) {
          if (sp.isDefined(SpectrumProperties.ProbeCurrent) && ssp.isDefined(SpectrumProperties.ProbeCurrent)) {
             final double pc0 = sp.getNumericWithDefault(SpectrumProperties.ProbeCurrent, -Double.MAX_VALUE);

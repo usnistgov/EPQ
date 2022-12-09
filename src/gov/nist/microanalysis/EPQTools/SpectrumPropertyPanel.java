@@ -78,7 +78,7 @@ public class SpectrumPropertyPanel extends JPanel {
 
    private final JTabbedPane mTabs = new JTabbedPane(SwingConstants.TOP);
    private JPanel mConditionsPanel;
-   private JTextField mFaradayBegin;
+   private JTextField mProbeCurrent;
    private JTextField mLiveTime;
    private JTextField mBeamEnergy;
    private JTextField mWorkingDistance;
@@ -239,11 +239,10 @@ public class SpectrumPropertyPanel extends JPanel {
       mBeamEnergy = new JTextField();
       pb.add(mBeamEnergy, cc.xy(3, ip + 3));
       pb.addLabel("kV", cc.xy(5, ip + 3));
-      pb.addLabel("Probe current (before)", cc.xy(1, ip + 5));
-      mFaradayBegin = new JTextField();
-      pb.add(mFaradayBegin, cc.xy(3, ip + 5));
+      pb.addLabel("Probe current", cc.xy(1, ip + 5));
+      mProbeCurrent = new JTextField();
+      pb.add(mProbeCurrent, cc.xy(3, ip + 5));
       pb.addLabel("nA", cc.xy(5, ip + 5));
-      pb.addLabel("Probe current (after)", cc.xy(1, ip + 7));
       pb.addLabel("Live time", cc.xy(1, ip + 7));
       mLiveTime = new JTextField();
       pb.add(mLiveTime, cc.xy(3, ip + 7));
@@ -325,8 +324,8 @@ public class SpectrumPropertyPanel extends JPanel {
       mSpectrumIndex.setText(sp.getTextWithDefault(SpectrumProperties.SpectrumIndex, ""));
       mClientName.setText(sp.getTextWithDefault(SpectrumProperties.ClientName, ""));
       mClientName.selectAll();
-      mFaradayBegin.setText(sp.getTextWithDefault_NoUnit(SpectrumProperties.ProbeCurrent, ""));
-      mFaradayBegin.selectAll();
+      mProbeCurrent.setText(sp.getTextWithDefault_NoUnit(SpectrumProperties.ProbeCurrent, ""));
+      mProbeCurrent.selectAll();
       mLiveTime.setText(sp.getTextWithDefault_NoUnit(SpectrumProperties.LiveTime, ""));
       mLiveTime.selectAll();
       mBeamEnergy.setText(sp.getTextWithDefault_NoUnit(SpectrumProperties.BeamEnergy, ""));
@@ -413,7 +412,7 @@ public class SpectrumPropertyPanel extends JPanel {
       if ((mDetector.getSelectedItem() instanceof DetectorProperties) && (mCalibration.getSelectedItem() instanceof EDSCalibration))
          sp.setDetector(
                EDSDetector.createDetector((DetectorProperties) mDetector.getSelectedItem(), (EDSCalibration) mCalibration.getSelectedItem()));
-      addIfDifferentNumber(mFaradayBegin, SpectrumProperties.ProbeCurrent, sp);
+      addIfDifferentNumber(mProbeCurrent, SpectrumProperties.ProbeCurrent, sp);
       addIfDifferentNumber(mLiveTime, SpectrumProperties.LiveTime, sp);
       addIfDifferentNumber(mBeamEnergy, SpectrumProperties.BeamEnergy, sp);
       addIfDifferentNumber(mWorkingDistance, SpectrumProperties.WorkingDistance, sp);
@@ -493,7 +492,7 @@ public class SpectrumPropertyPanel extends JPanel {
       updateControl(mInstrumentOperator, SpectrumProperties.InstrumentOperator);
       updateControl(mSpectrumComment, SpectrumProperties.SpectrumComment);
       updateControl(mClientName, SpectrumProperties.ClientName);
-      updateControl(mFaradayBegin, SpectrumProperties.ProbeCurrent);
+      updateControl(mProbeCurrent, SpectrumProperties.ProbeCurrent);
       updateControl(mLiveTime, SpectrumProperties.LiveTime);
       updateControl(mBeamEnergy, SpectrumProperties.BeamEnergy);
       updateControl(mWorkingDistance, SpectrumProperties.WorkingDistance);

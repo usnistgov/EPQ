@@ -414,8 +414,14 @@ public class FilterFit extends LinearSpectrumFit {
       updateUnknown(unk);
       final KRatioSet res = new KRatioSet();
       for (final FilteredPacket raf : mFilteredPackets)
-         if (raf.mFiltered.getElement() != Element.None)
-            res.addKRatio(raf.mFiltered.getXRayTransitionSet(), raf.getKRatio());
+         if (raf.mFiltered.getElement() != Element.None) {
+            // Filter fit seems to consistently overestimate the k-ratio for O K
+            if(raf.mFiltered.getElement() == Element.O)
+               // Fenigilty's Fudge Factor
+               res.addKRatio(raf.mFiltered.getXRayTransitionSet(), UncertainValue2.multiply(0.95, raf.getKRatio()));
+            else
+               res.addKRatio(raf.mFiltered.getXRayTransitionSet(), raf.getKRatio());
+         }
       return res;
    }
 

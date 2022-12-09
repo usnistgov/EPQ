@@ -109,8 +109,11 @@ abstract public class CSVReader {
             String line = br.readLine().trim();
             final ArrayList<Double> resList = new ArrayList<Double>();
             while (line != null) {
-               while (line.startsWith("//") || line.startsWith("#"))
-                  line = br.readLine().trim();
+               while (line.startsWith("//") || line.startsWith("#")) {
+                  line = br.readLine();
+                  if (line != null)
+                     line = line.trim();
+               }
                int end = 0, last = -1, colCx = 0;
                resList.clear();
                for (int start = 0; end != -1; start = end + 1) {

@@ -2189,6 +2189,8 @@ public class Session {
       } catch (final SQLException e) {
          e.printStackTrace();
       }
+      mElectronProbes = null;
+      getElectronProbes();
    }
 
    static final TreeMap<Integer, QCProject> mQCProjects = new TreeMap<Integer, QCProject>();

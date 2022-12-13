@@ -122,7 +122,7 @@ public class WriteSpectrumAsEMSA1_0 {
                      + months[cal.get(Calendar.MONTH)] + "-" + Integer.toString(cal.get(Calendar.YEAR)));
                // The time of day at which the spectrum was recorded,in 24-hour
                // format: HH:MM.
-               writeln(pw, "TIME", (cal.get(Calendar.HOUR) < 10 ? "0" : "") + Integer.toString(cal.get(Calendar.HOUR)) + ":"
+               writeln(pw, "TIME", (cal.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "") + Integer.toString(cal.get(Calendar.HOUR_OF_DAY)) + ":"
                      + (cal.get(Calendar.MINUTE) < 10 ? "0" : "") + Integer.toString(cal.get(Calendar.MINUTE)));
             }
             // The name of the person who recorded the spectrum.

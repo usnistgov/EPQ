@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import gov.nist.microanalysis.Utility.Pair;
 import gov.nist.microanalysis.Utility.UncertainValue2;
@@ -11,28 +12,55 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
 /**
  * @author NWMR
  */
-public class STEMinSEMQuant {
+public class STEMinSEMCorrection {
 
-   private final HashMap<Element, Composition> standards;
-   private final SpectrumProperties properties;
+   private final HashMap<Element, Composition> mStandards;
+   private final SpectrumProperties mProperties;
 
-   public STEMinSEMQuant(SpectrumProperties properties, HashMap<Element, Composition> standards) {
+   public STEMinSEMCorrection(SpectrumProperties properties, Map<Element, Composition> standards) {
       assert properties.isDefined(SpectrumProperties.BeamEnergy);
       assert properties.isDefined(SpectrumProperties.TakeOffAngle);
-      this.properties = properties;
-      this.standards = new HashMap<>(standards);
+      this.mProperties = properties;
+      this.mStandards = new HashMap<>(standards);
    }
 
-   public STEMinSEMQuant(SpectrumProperties properties) {
+   public STEMinSEMCorrection(SpectrumProperties properties) {
       this(properties, new HashMap<Element, Composition>());
+   }
+   
+   public Set<Element> getElements(){
+      return mStandards.keySet();
+   }
+
+   /**
+    * Beam energy in SI
+    * 
+    * @return In SI
+    */
+   public final double getBeamEnergy() {
+      return FromSI.keV(this.mProperties.getNumericWithDefault(SpectrumProperties.BeamEnergy, -1.0));
+   }
+   
+   
+   /**
+    * Take off angle in radians
+    * 
+    * @return In radians
+    */
+   public final double getTakeOffAngle() {
+      return Math.toRadians(this.mProperties.getNumericWithDefault(SpectrumProperties.TakeOffAngle, -1.0));
+   }
+   
+   public SpectrumProperties getProperties() {
+      return this.mProperties;
    }
 
    public void addStandard(Element elm, Composition comp) {
-      this.standards.put(elm, comp);
+      this.mStandards.put(elm, comp);
    }
 
    public Pair<Composition, Double> oneLayer(KRatioSet krs) throws EPQException {
-      final double toa = Math.toRadians(properties.getNumericProperty(SpectrumProperties.TakeOffAngle));
+      final double toa = Math.toRadians(mProperties.getNumericProperty(SpectrumProperties.TakeOffAngle));
       CorrectionAlgorithm.PhiRhoZAlgorithm xpp = new XPP1991();
       HashMap<Element, UncertainValue2> crhoz = new HashMap<>();
       HashMap<XRayTransition, Double> iphirhoz = new HashMap<>();
@@ -45,10 +73,10 @@ public class STEMinSEMQuant {
          for (XRayTransitionSet trs : krs.keySet()) {
             Element elm = trs.getElement();
             XRayTransition xrt = trs.getWeighiestTransition();
-            Composition std = this.standards.getOrDefault(elm, new Composition(elm));
+            Composition std = this.mStandards.getOrDefault(elm, new Composition(elm));
             double iprz = iphirhoz.getOrDefault(xrt, -1.0);
             if (iprz == -1.0) {
-               xpp.initialize(std, xrt.getDestination(), this.properties);
+               xpp.initialize(std, xrt.getDestination(), this.mProperties);
                iprz = xpp.computeZAFCorrection(xrt);
                iphirhoz.put(xrt, iprz);
             }
@@ -79,7 +107,7 @@ public class STEMinSEMQuant {
 
    public Pair<Pair<Composition, Double>, Pair<Composition, Double>> twoLayer(KRatioSet krs, Collection<Element> layer1, Collection<Element> layer2)
          throws EPQException {
-      final double toa = Math.toRadians(properties.getNumericProperty(SpectrumProperties.TakeOffAngle));
+      final double toa = Math.toRadians(mProperties.getNumericProperty(SpectrumProperties.TakeOffAngle));
       CorrectionAlgorithm.PhiRhoZAlgorithm xpp = new XPP1991();
       HashMap<Element, UncertainValue2> crhoz_l1 = new HashMap<>(), crhoz_l2 = new HashMap<>();
       HashMap<XRayTransition, Double> iphirhoz = new HashMap<>();
@@ -92,10 +120,10 @@ public class STEMinSEMQuant {
          for (XRayTransitionSet trs : krs.keySet()) {
             Element elm = trs.getElement();
             XRayTransition xrt = trs.getWeighiestTransition();
-            Composition std = this.standards.getOrDefault(elm, new Composition(elm));
+            Composition std = this.mStandards.getOrDefault(elm, new Composition(elm));
             double iprz = iphirhoz.getOrDefault(xrt, -1.0);
             if (iprz == -1.0) {
-               xpp.initialize(std, xrt.getDestination(), this.properties);
+               xpp.initialize(std, xrt.getDestination(), this.mProperties);
                iprz = xpp.computeZAFCorrection(xrt);
                iphirhoz.put(xrt, iprz);
             }
@@ -170,7 +198,7 @@ public class STEMinSEMQuant {
          for (int i = 0; i < nLayers; ++i)
             assert filled[i] : "Layer " + i + " does not contain any elements.";
       }
-      final double toa = Math.toRadians(properties.getNumericProperty(SpectrumProperties.TakeOffAngle));
+      final double toa = Math.toRadians(mProperties.getNumericProperty(SpectrumProperties.TakeOffAngle));
       final MassAbsorptionCoefficient mac = MassAbsorptionCoefficient.Default;
       final HashMap<XRayTransition, Double> iphirhoz = new HashMap<>();
       final HashMap<Element, Double> stds = new HashMap<>();
@@ -179,9 +207,9 @@ public class STEMinSEMQuant {
          for (XRayTransitionSet trs : krs.keySet()) {
             final Element elm = trs.getElement();
             XRayTransition xrt = trs.getWeighiestTransition();
-            Composition std = this.standards.getOrDefault(elm, new Composition(elm));
+            Composition std = this.mStandards.getOrDefault(elm, new Composition(elm));
             stds.put(elm, std.weightFraction(elm, true));
-            xpp.initialize(std, xrt.getDestination(), this.properties);
+            xpp.initialize(std, xrt.getDestination(), this.mProperties);
             iphirhoz.put(xrt, xpp.computeZAFCorrection(xrt));
          }
       }

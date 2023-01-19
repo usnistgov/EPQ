@@ -349,7 +349,7 @@ public class SpecDisplay extends JComponent {
    // / Inter spectrum scaling
    public enum SCALING_MODE {
       COUNTS("Counts"), INTEGRAL("Fraction of integrate counts (%)"), MAX_PEAK("Fraction of highest peak (%)"), REGION_INTEGRAL(
-            "Fraction of region integral (%)"), COUNTS_PER_NA_S("Count/(nA·s)"), COUNTS_PER_NA_S_EV("Counts/(nA·s·eV)");
+            "Fraction of region integral (%)"), COUNTS_PER_NA_S("Count/(nAÂ·s)"), COUNTS_PER_NA_S_EV("Counts/(nAÂ·sÂ·eV)");
 
       private final String mUserString;
 

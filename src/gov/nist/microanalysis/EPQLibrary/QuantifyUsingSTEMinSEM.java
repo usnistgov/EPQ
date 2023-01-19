@@ -15,7 +15,6 @@ import gov.nist.microanalysis.EPQLibrary.FilterFit.CullingStrategy;
 import gov.nist.microanalysis.EPQLibrary.RegionOfInterestSet.RegionOfInterest;
 import gov.nist.microanalysis.Utility.Pair;
 import gov.nist.microanalysis.Utility.UncertainValue2;
-import gov.nist.microanalysis.EPQLibrary.Detector.DetectorCalibration;
 import gov.nist.microanalysis.EPQLibrary.Detector.EDSDetector;
 
 /**
@@ -45,19 +44,24 @@ public class QuantifyUsingSTEMinSEM {
    private final Map<RegionOfInterest, ISpectrumData> mStdSpectra = new HashMap<RegionOfInterest, ISpectrumData>();
 
    private final Set<Element> mStripped = new HashSet<>();
+   private HashMap<Integer, Oxidizer> mOxidizer;
    
    
    public class Result {
       final private ISpectrumData mSpectrum;
+      final private KRatioSet mAllKRatios;
+      final private KRatioSet mBestKRatios;
       final private ISpectrumData mResidual;
       final private List<Pair<Composition, Double>> mLayers;
 
-      private Result(ISpectrumData spec, ISpectrumData resid, List<Pair<Composition, Double>> layers) {
+      private Result(ISpectrumData spec, KRatioSet krs,  KRatioSet best, ISpectrumData resid, List<Pair<Composition, Double>> layers) {
          mSpectrum = spec;
+         mAllKRatios = krs;
+         mBestKRatios = best;
          mResidual = resid;
          mLayers = Collections.unmodifiableList(layers);
       }
-
+      
       public ISpectrumData getSpectrum() {
          return mSpectrum;
       }
@@ -69,7 +73,14 @@ public class QuantifyUsingSTEMinSEM {
       public List<Pair<Composition, Double>> getLayers() {
          return mLayers;
       }
+      
+      public KRatioSet getKRatios() {
+         return mAllKRatios;
+      }
 
+      public KRatioSet getBestKRatios() {
+         return mBestKRatios;
+      }
    };
 
    public QuantifyUsingSTEMinSEM(EDSDetector det, double beamEnergy) throws EPQException {
@@ -77,12 +88,17 @@ public class QuantifyUsingSTEMinSEM {
       mBeamEnergy = beamEnergy;
       mFit = new FilterFit(mDetector, mBeamEnergy);
       SpectrumProperties props = new SpectrumProperties();
-      props.setNumericProperty(SpectrumProperties.BeamEnergy, beamEnergy);
-      double takeOff = det.getDetectorProperties().getProperties().getNumericWithDefault(SpectrumProperties.TakeOffAngle, -1.0);
-      assert takeOff != -1.0;
-      props.setNumericProperty(SpectrumProperties.TakeOffAngle, takeOff);
+      props.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(beamEnergy));
+      double takeOff = SpectrumUtils.getTakeOffAngle(det.getDetectorProperties().getProperties());
+      assert !Double.isNaN(takeOff);
+      props.setNumericProperty(SpectrumProperties.TakeOffAngle, Math.toDegrees(takeOff));
       props.setObjectProperty(SpectrumProperties.Detector, det);
       mCorrection = new STEMinSEMCorrection(props);
+      mOxidizer = new HashMap<>();
+   }
+   
+   public void setOxidizer(int layer, Oxidizer oxidizer) {
+      this.mOxidizer.put(layer, oxidizer);
    }
 
    private ISpectrumData preProcessSpectrum(final ISpectrumData spec) {
@@ -100,7 +116,8 @@ public class QuantifyUsingSTEMinSEM {
 
    }
    
-   public void addStripped(Element elm) {
+   public void addStripped(Element elm, ISpectrumData spec) throws EPQException {
+      mFit.addReference(elm, spec);
       mStripped.add(elm);
    }
 
@@ -201,11 +218,11 @@ public class QuantifyUsingSTEMinSEM {
                   continue;
                }
             }
-         assert stdComps.getOrDefault(elm, null) == null : "No standard found for " + elm.toAbbrev();
+         assert stdComps.getOrDefault(elm, null) != null : "No standard found for " + elm.toAbbrev();
       }
-      ArrayList<Pair<Composition, Double>> layers = mCorrection.multiLayer(best, this.mLayers);
+      ArrayList<Pair<Composition, Double>> layers = mCorrection.multiLayer(best, this.mLayers, this.mOxidizer);
       final ISpectrumData residual = SpectrumUtils.applyEDSDetector(mDetector, mFit.getResidualSpectrum(spec, mStripped));
-      return new Result(unk, residual, layers);
+      return new Result(unk, krsAgainstRefs, best, residual, layers);
    }
 
 }

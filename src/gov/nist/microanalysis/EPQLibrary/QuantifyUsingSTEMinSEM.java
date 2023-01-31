@@ -1,6 +1,3 @@
-/**
- * 
- */
 package gov.nist.microanalysis.EPQLibrary;
 
 import java.util.ArrayList;
@@ -29,6 +26,8 @@ public class QuantifyUsingSTEMinSEM {
    // The correction algorithm...
    private STEMinSEMCorrection mCorrection;
    private Map<Element, Integer> mLayers = null;
+   private Map<Integer, Oxidizer> mOxidizers = new HashMap<Integer, Oxidizer>();
+   
    /**
     * A mechanism for removing elements with zero or near zero presence.
     */
@@ -44,24 +43,19 @@ public class QuantifyUsingSTEMinSEM {
    private final Map<RegionOfInterest, ISpectrumData> mStdSpectra = new HashMap<RegionOfInterest, ISpectrumData>();
 
    private final Set<Element> mStripped = new HashSet<>();
-   private HashMap<Integer, Oxidizer> mOxidizer;
    
    
    public class Result {
       final private ISpectrumData mSpectrum;
-      final private KRatioSet mAllKRatios;
-      final private KRatioSet mBestKRatios;
       final private ISpectrumData mResidual;
       final private List<Pair<Composition, Double>> mLayers;
 
-      private Result(ISpectrumData spec, KRatioSet krs,  KRatioSet best, ISpectrumData resid, List<Pair<Composition, Double>> layers) {
+      private Result(ISpectrumData spec, ISpectrumData resid, List<Pair<Composition, Double>> layers) {
          mSpectrum = spec;
-         mAllKRatios = krs;
-         mBestKRatios = best;
          mResidual = resid;
          mLayers = Collections.unmodifiableList(layers);
       }
-      
+
       public ISpectrumData getSpectrum() {
          return mSpectrum;
       }
@@ -73,14 +67,7 @@ public class QuantifyUsingSTEMinSEM {
       public List<Pair<Composition, Double>> getLayers() {
          return mLayers;
       }
-      
-      public KRatioSet getKRatios() {
-         return mAllKRatios;
-      }
 
-      public KRatioSet getBestKRatios() {
-         return mBestKRatios;
-      }
    };
 
    public QuantifyUsingSTEMinSEM(EDSDetector det, double beamEnergy) throws EPQException {
@@ -89,16 +76,11 @@ public class QuantifyUsingSTEMinSEM {
       mFit = new FilterFit(mDetector, mBeamEnergy);
       SpectrumProperties props = new SpectrumProperties();
       props.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(beamEnergy));
-      double takeOff = SpectrumUtils.getTakeOffAngle(det.getDetectorProperties().getProperties());
-      assert !Double.isNaN(takeOff);
-      props.setNumericProperty(SpectrumProperties.TakeOffAngle, Math.toDegrees(takeOff));
+      double takeOff = det.getDetectorProperties().getProperties().getNumericWithDefault(SpectrumProperties.TakeOffAngle, -1.0);
+      assert takeOff != -1.0;
+      props.setNumericProperty(SpectrumProperties.TakeOffAngle, takeOff);
       props.setObjectProperty(SpectrumProperties.Detector, det);
       mCorrection = new STEMinSEMCorrection(props);
-      mOxidizer = new HashMap<>();
-   }
-   
-   public void setOxidizer(int layer, Oxidizer oxidizer) {
-      this.mOxidizer.put(layer, oxidizer);
    }
 
    private ISpectrumData preProcessSpectrum(final ISpectrumData spec) {
@@ -144,6 +126,10 @@ public class QuantifyUsingSTEMinSEM {
    public void setPreferredROI(RegionOfInterest roi) {
       assert roi.getElementSet().size() == 1;
       mPreferred.put(roi.getElementSet().first(), roi);
+   }
+   
+   public void setOxidizer(int layer, Oxidizer oxid) {
+      mOxidizers.put(layer, oxid);
    }
 
    public KRatioSet pickBest(KRatioSet full) {
@@ -203,6 +189,9 @@ public class QuantifyUsingSTEMinSEM {
       mFit.setCullingStrategy(strat);
       mFit.setStripUnlikely(false);
       final KRatioSet krsAgainstRefs = mFit.getKRatios(spec);
+      for(XRayTransitionSet xrts : krsAgainstRefs.getTransitions())
+         if(mStripped.contains(xrts.getElement()))
+            krsAgainstRefs.remove(xrts);
       // Pick best krs
       KRatioSet best = pickBest(krsAgainstRefs);
       //
@@ -218,11 +207,12 @@ public class QuantifyUsingSTEMinSEM {
                   continue;
                }
             }
-         assert stdComps.getOrDefault(elm, null) != null : "No standard found for " + elm.toAbbrev();
+         assert stdComps.getOrDefault(elm, null) == null : "No standard found for " + elm.toAbbrev();
       }
-      ArrayList<Pair<Composition, Double>> layers = mCorrection.multiLayer(best, this.mLayers, this.mOxidizer);
+      ArrayList<Pair<Composition, Double>> layers = mCorrection.multiLayer(best, this.mLayers, this.mOxidizers);
       final ISpectrumData residual = SpectrumUtils.applyEDSDetector(mDetector, mFit.getResidualSpectrum(spec, mStripped));
-      return new Result(unk, krsAgainstRefs, best, residual, layers);
+      return new Result(unk, residual, layers);
    }
 
 }
+

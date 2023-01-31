@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import gov.nist.microanalysis.EPQLibrary.CompositionFromKRatios.UnmeasuredElementRule;
 import gov.nist.microanalysis.Utility.Pair;
 import gov.nist.microanalysis.Utility.UncertainValue2;
 
@@ -16,52 +15,30 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  */
 public class STEMinSEMCorrection {
 
-   private final HashMap<Element, Composition> mStandards;
-   private final SpectrumProperties mProperties;
+   private final HashMap<Element, Composition> standards;
+   private final SpectrumProperties properties;
 
-   public STEMinSEMCorrection(SpectrumProperties properties, Map<Element, Composition> standards) {
+   public STEMinSEMCorrection(SpectrumProperties properties, HashMap<Element, Composition> standards) {
       assert properties.isDefined(SpectrumProperties.BeamEnergy);
       assert properties.isDefined(SpectrumProperties.TakeOffAngle);
-      this.mProperties = properties;
-      this.mStandards = new HashMap<>(standards);
+      this.properties = new SpectrumProperties(properties);
+      this.standards = new HashMap<>(standards);
    }
 
    public STEMinSEMCorrection(SpectrumProperties properties) {
       this(properties, new HashMap<Element, Composition>());
    }
 
-   public Set<Element> getElements() {
-      return mStandards.keySet();
-   }
-
-   /**
-    * Beam energy in SI
-    *
-    * @return In SI
-    */
-   public final double getBeamEnergy() {
-      return FromSI.keV(this.mProperties.getNumericWithDefault(SpectrumProperties.BeamEnergy, -1.0));
-   }
-
-   /**
-    * Take off angle in radians
-    *
-    * @return In radians
-    */
-   public final double getTakeOffAngle() {
-      return Math.toRadians(this.mProperties.getNumericWithDefault(SpectrumProperties.TakeOffAngle, -1.0));
-   }
-
-   public SpectrumProperties getProperties() {
-      return this.mProperties;
-   }
-
    public void addStandard(Element elm, Composition comp) {
-      this.mStandards.put(elm, comp);
+      this.standards.put(elm, comp);
+   }
+
+   public Set<Element> getElements() {
+      return this.standards.keySet();
    }
 
    public Pair<Composition, Double> oneLayer(KRatioSet krs) throws EPQException {
-      final double toa = Math.toRadians(mProperties.getNumericProperty(SpectrumProperties.TakeOffAngle));
+      final double toa = Math.toRadians(properties.getNumericProperty(SpectrumProperties.TakeOffAngle));
       CorrectionAlgorithm.PhiRhoZAlgorithm xpp = new XPP1991();
       HashMap<Element, UncertainValue2> crhoz = new HashMap<>();
       HashMap<XRayTransition, Double> iphirhoz = new HashMap<>();
@@ -74,10 +51,10 @@ public class STEMinSEMCorrection {
          for (XRayTransitionSet trs : krs.keySet()) {
             Element elm = trs.getElement();
             XRayTransition xrt = trs.getWeighiestTransition();
-            Composition std = this.mStandards.getOrDefault(elm, new Composition(elm));
+            Composition std = this.standards.getOrDefault(elm, new Composition(elm));
             double iprz = iphirhoz.getOrDefault(xrt, -1.0);
             if (iprz == -1.0) {
-               xpp.initialize(std, xrt.getDestination(), this.mProperties);
+               xpp.initialize(std, xrt.getDestination(), this.properties);
                iprz = xpp.computeZAFCorrection(xrt);
                iphirhoz.put(xrt, iprz);
             }
@@ -108,7 +85,7 @@ public class STEMinSEMCorrection {
 
    public Pair<Pair<Composition, Double>, Pair<Composition, Double>> twoLayer(KRatioSet krs, Collection<Element> layer1, Collection<Element> layer2)
          throws EPQException {
-      final double toa = Math.toRadians(mProperties.getNumericProperty(SpectrumProperties.TakeOffAngle));
+      final double toa = Math.toRadians(properties.getNumericProperty(SpectrumProperties.TakeOffAngle));
       CorrectionAlgorithm.PhiRhoZAlgorithm xpp = new XPP1991();
       HashMap<Element, UncertainValue2> crhoz_l1 = new HashMap<>(), crhoz_l2 = new HashMap<>();
       HashMap<XRayTransition, Double> iphirhoz = new HashMap<>();
@@ -121,10 +98,10 @@ public class STEMinSEMCorrection {
          for (XRayTransitionSet trs : krs.keySet()) {
             Element elm = trs.getElement();
             XRayTransition xrt = trs.getWeighiestTransition();
-            Composition std = this.mStandards.getOrDefault(elm, new Composition(elm));
+            Composition std = this.standards.getOrDefault(elm, new Composition(elm));
             double iprz = iphirhoz.getOrDefault(xrt, -1.0);
             if (iprz == -1.0) {
-               xpp.initialize(std, xrt.getDestination(), this.mProperties);
+               xpp.initialize(std, xrt.getDestination(), this.properties);
                iprz = xpp.computeZAFCorrection(xrt);
                iphirhoz.put(xrt, iprz);
             }
@@ -186,8 +163,8 @@ public class STEMinSEMCorrection {
     *           Identifies which layer an element is present in (Layers are
     *           labeled 1, 2, 3 from front surface inward.)
     * @param oxidizers
-    *           An optional Map<Integer, Oxidizer> to compute O-by-stoichiometry
-    *           for the i-th layer
+    *           Optional Oxidizer to compute O-by-Stoichiometry for a specific
+    *           layer (Oxidizers are labeled 1, 2, 3 from front surface inward.)
     * @return An list of composition, mass-thickness pairs for each layer in
     *         from the front surface
     * @throws EPQException
@@ -199,7 +176,6 @@ public class STEMinSEMCorrection {
          boolean[] filled = new boolean[nLayers];
          for (Map.Entry<Element, Integer> me : layer.entrySet()) {
             final int lyr = me.getValue() - 1;
-            assert lyr >= 0 : "The layer index must be one or larger.";
             assert lyr < nLayers : "Element " + me.getKey().toAbbrev() + " is in layer " + me.getValue() + " which in more then nLayers = " + nLayers;
             filled[lyr] = true;
             assert krs.getElementSet().contains(me.getKey()) : me.getKey().toAbbrev() + " is not represented by a k-ratio.";
@@ -207,19 +183,19 @@ public class STEMinSEMCorrection {
          for (int i = 0; i < nLayers; ++i)
             assert filled[i] : "Layer " + i + " does not contain any elements.";
       }
-      final double toa = SpectrumUtils.getTakeOffAngle(mProperties);
-      assert (toa >= 0.0) && (toa < Math.PI);
+      final double toa = Math.toRadians(properties.getNumericProperty(SpectrumProperties.TakeOffAngle));
+      assert (toa >= 0.0) && (toa <= Math.PI);
       final MassAbsorptionCoefficient mac = MassAbsorptionCoefficient.Default;
       final HashMap<XRayTransition, Double> iphirhoz = new HashMap<>();
       final HashMap<Element, Double> stds = new HashMap<>();
       { // Pre-compute the bulk phi-rho-z correction
          final CorrectionAlgorithm.PhiRhoZAlgorithm xpp = new XPP1991();
-         for (XRayTransitionSet trs : krs.keySet()) {
+         for (final XRayTransitionSet trs : krs.keySet()) {
             final Element elm = trs.getElement();
             final XRayTransition xrt = trs.getWeighiestTransition();
-            final Composition std = this.mStandards.getOrDefault(elm, new Composition(elm));
+            final Composition std = this.standards.getOrDefault(elm, new Composition(elm));
             stds.put(elm, std.weightFraction(elm, true));
-            xpp.initialize(std, xrt.getDestination(), this.mProperties);
+            xpp.initialize(std, xrt.getDestination(), this.properties);
             iphirhoz.put(xrt, xpp.computeZAFCorrection(xrt));
          }
       }
@@ -232,10 +208,13 @@ public class STEMinSEMCorrection {
          crhoz.add(new HashMap<>());
       }
       // Iterate a few times until the rhoz converge...
-      boolean done = false;
-      for (int i = 0; (i < 10) && (!done); ++i) {
+      boolean breakout = false, firstIteration = true;
+      for (int i = 0; (i < 10) && (!breakout); ++i) {
          // Next estimate of mass-thickness and composition
          final double[] rhoz2 = new double[nLayers];
+         final Composition[] comp2 = new Composition[nLayers];
+         for (int j = 0; j < nLayers; ++j)
+            comp2[j] = new Composition();
          // Iterate the measured k-ratios
          for (final XRayTransitionSet xrts : krs.keySet()) {
             final Element elm = xrts.getElement();
@@ -243,31 +222,25 @@ public class STEMinSEMCorrection {
             final XRayTransition xrt = xrts.getWeighiestTransition();
             // Compute the absorption correction
             double f = 1.0;
-            if (i > 0) {
+            if (!firstIteration) {
                double chi_lyr = mac.compute(comp[lyr], xrt) / Math.sin(toa);
-               // The layer containing the element
+               // This layer
                f = (1.0 - Math.exp(-chi_lyr * rhoz[lyr])) / (chi_lyr * rhoz[lyr]);
-               // Layers above the element layer to the top surface
+               // Layers between this layer and the top surface
                for (int l = lyr - 1; l >= 0; --l) {
-                  final double chi_l = mac.compute(comp[l], xrt) / Math.sin(toa);
+                  double chi_l = mac.compute(comp[l], xrt) / Math.sin(toa);
                   f *= Math.exp(-chi_l * rhoz[l]);
                }
-               assert f <= 1.0;
-               assert f >= 0.0;
             }
             final UncertainValue2 tmp = UncertainValue2.multiply(stds.get(elm) * iphirhoz.get(xrt) / f, krs.getKRatioU(xrts));
-            assert !crhoz.get(lyr).containsKey(elm);
             crhoz.get(lyr).put(elm, tmp);
-            rhoz2[lyr] += tmp.doubleValue();
+            if (!(elm.equals(Element.O) && oxidizers.containsKey(lyr + 1)))
+               rhoz2[lyr] += tmp.doubleValue();
          }
-         // Accumulate the estimated compositions for each layer
-         final Composition[] comp2 = new Composition[nLayers];
-         for (int j = 0; j < nLayers; ++j)
-            comp2[j] = new Composition();
          for (int l = 0; l < nLayers; ++l) {
             final HashMap<Element, UncertainValue2> lyr = crhoz.get(l);
-            // Optionally compute oxygen-by-stoichiometry
             if (oxidizers.containsKey(l + 1)) {
+               // Compute oxygen and add it in...
                final Oxidizer oxidizer = oxidizers.get(l + 1);
                UncertainValue2 oxy = UncertainValue2.ZERO;
                for (Map.Entry<Element, UncertainValue2> me : lyr.entrySet()) {
@@ -275,10 +248,10 @@ public class STEMinSEMCorrection {
                   if (!elm.equals(Element.O)) {
                      final UncertainValue2 val = me.getValue();
                      final Composition oxide = oxidizer.getComposition(elm);
-                     final UncertainValue2 qty = UncertainValue2.multiply(oxide.weightFraction(Element.O, false) / oxide.weightFraction(elm, false),
-                           val.reduced(elm.toAbbrev()));
-                     oxy = UncertainValue2.add(oxy, qty);
+                     oxy = UncertainValue2.add(oxy, UncertainValue2
+                           .multiply(oxide.weightFraction(Element.O, false) / oxide.weightFraction(elm, false), val.reduced(elm.toAbbrev())));
                   }
+
                }
                lyr.put(Element.O, oxy);
                rhoz2[l] += oxy.doubleValue();
@@ -287,14 +260,19 @@ public class STEMinSEMCorrection {
                comp2[l].addElement(me.getKey(), UncertainValue2.divide(me.getValue(), rhoz2[l]));
          }
          // Break out early if rhoz converges
-         done = (i >= 1);
-         for (int l = nLayers - 1; (l >= 0) && done; --l)
-            if (Math.abs(rhoz[l] - rhoz2[l]) > 0.0001 * rhoz2[l])
-               done = false;
+         if (!firstIteration) {
+            breakout = true;
+            for (int l = nLayers - 1; l >= 0; --l)
+               if (Math.abs(rhoz[l] - rhoz2[l]) > 0.005 * rhoz[l]) {
+                  breakout = false;
+                  break;
+               }
+         }
          for (int l = 0; l < nLayers; ++l) {
             comp[l] = comp2[l];
             rhoz[l] = rhoz2[l];
          }
+         firstIteration = false;
       }
       final ArrayList<Pair<Composition, Double>> res = new ArrayList<>();
       for (int l = 0; l < nLayers; ++l)
@@ -305,4 +283,5 @@ public class STEMinSEMCorrection {
    public ArrayList<Pair<Composition, Double>> multiLayer(KRatioSet krs, Map<Element, Integer> layer) throws EPQException {
       return multiLayer(krs, layer, Collections.emptyMap());
    }
+
 }

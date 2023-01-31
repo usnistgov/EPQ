@@ -2,8 +2,10 @@ package gov.nist.microanalysis.EPQLibrary;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import gov.nist.microanalysis.Utility.Pair;
 import gov.nist.microanalysis.Utility.UncertainValue2;
@@ -11,24 +13,28 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
 /**
  * @author NWMR
  */
-public class STEMinSEMQuant {
+public class STEMinSEMCorrection {
 
    private final HashMap<Element, Composition> standards;
    private final SpectrumProperties properties;
 
-   public STEMinSEMQuant(SpectrumProperties properties, HashMap<Element, Composition> standards) {
+   public STEMinSEMCorrection(SpectrumProperties properties, HashMap<Element, Composition> standards) {
       assert properties.isDefined(SpectrumProperties.BeamEnergy);
       assert properties.isDefined(SpectrumProperties.TakeOffAngle);
-      this.properties = properties;
+      this.properties = new SpectrumProperties(properties);
       this.standards = new HashMap<>(standards);
    }
 
-   public STEMinSEMQuant(SpectrumProperties properties) {
+   public STEMinSEMCorrection(SpectrumProperties properties) {
       this(properties, new HashMap<Element, Composition>());
    }
 
    public void addStandard(Element elm, Composition comp) {
       this.standards.put(elm, comp);
+   }
+
+   public Set<Element> getElements() {
+      return this.standards.keySet();
    }
 
    public Pair<Composition, Double> oneLayer(KRatioSet krs) throws EPQException {
@@ -142,28 +148,35 @@ public class STEMinSEMQuant {
          if (breakout)
             break;
       }
-      return new Pair<>(new Pair<>(comp_l1, rhoz_l1),
-            new Pair<>(comp_l2, rhoz_l2));
+      return new Pair<>(new Pair<>(comp_l1, rhoz_l1), new Pair<>(comp_l2, rhoz_l2));
    }
 
    /**
-    * Computes a the composition and mass-thickness of a N-layer unsupported thin film from a set of measured k-ratios.
-    * The model is limited to samples in which each element is at most present in one layer.  The k-ratio set must contain 
-    * one k-ratio per element.
-    *  
-    * @param krs The set of k-ratios (one per element)
-    * @param layer Identifies which layer an element is present in (Layers are labeled 1, 2, 3 from front surface inward.)
-    * @return An list of composition, mass-thickness pairs for each layer in from the front surface
+    * Computes a the composition and mass-thickness of a N-layer unsupported
+    * thin film from a set of measured k-ratios. The model is limited to samples
+    * in which each element is at most present in one layer. The k-ratio set
+    * must contain one k-ratio per element.
+    *
+    * @param krs
+    *           The set of k-ratios (one per element)
+    * @param layer
+    *           Identifies which layer an element is present in (Layers are
+    *           labeled 1, 2, 3 from front surface inward.)
+    * @param oxidizers
+    *           Optional Oxidizer to compute O-by-Stoichiometry for a specific
+    *           layer (Oxidizers are labeled 1, 2, 3 from front surface inward.)
+    * @return An list of composition, mass-thickness pairs for each layer in
+    *         from the front surface
     * @throws EPQException
     */
-   public ArrayList<Pair<Composition, Double>> multiLayer(KRatioSet krs, Map<Element, Integer> layer) throws EPQException {
-      final int nLayers = layer.values().stream().max((a,b)->Integer.compare(a,b)).get();
+   public ArrayList<Pair<Composition, Double>> multiLayer(KRatioSet krs, Map<Element, Integer> layer, Map<Integer, Oxidizer> oxidizers)
+         throws EPQException {
+      final int nLayers = layer.values().stream().max((a, b) -> Integer.compare(a, b)).get();
       { // Validate the inputs
          boolean[] filled = new boolean[nLayers];
          for (Map.Entry<Element, Integer> me : layer.entrySet()) {
-            final int lyr = me.getValue()-1;
-            assert lyr < nLayers
-                  : "Element " + me.getKey().toAbbrev() + " is in layer " + me.getValue() + " which in more then nLayers = " + nLayers;
+            final int lyr = me.getValue() - 1;
+            assert lyr < nLayers : "Element " + me.getKey().toAbbrev() + " is in layer " + me.getValue() + " which in more then nLayers = " + nLayers;
             filled[lyr] = true;
             assert krs.getElementSet().contains(me.getKey()) : me.getKey().toAbbrev() + " is not represented by a k-ratio.";
          }
@@ -171,15 +184,16 @@ public class STEMinSEMQuant {
             assert filled[i] : "Layer " + i + " does not contain any elements.";
       }
       final double toa = Math.toRadians(properties.getNumericProperty(SpectrumProperties.TakeOffAngle));
+      assert (toa >= 0.0) && (toa <= Math.PI);
       final MassAbsorptionCoefficient mac = MassAbsorptionCoefficient.Default;
       final HashMap<XRayTransition, Double> iphirhoz = new HashMap<>();
       final HashMap<Element, Double> stds = new HashMap<>();
-      {  // Pre-compute the bulk phi-rho-z correction
+      { // Pre-compute the bulk phi-rho-z correction
          final CorrectionAlgorithm.PhiRhoZAlgorithm xpp = new XPP1991();
-         for (XRayTransitionSet trs : krs.keySet()) {
+         for (final XRayTransitionSet trs : krs.keySet()) {
             final Element elm = trs.getElement();
-            XRayTransition xrt = trs.getWeighiestTransition();
-            Composition std = this.standards.getOrDefault(elm, new Composition(elm));
+            final XRayTransition xrt = trs.getWeighiestTransition();
+            final Composition std = this.standards.getOrDefault(elm, new Composition(elm));
             stds.put(elm, std.weightFraction(elm, true));
             xpp.initialize(std, xrt.getDestination(), this.properties);
             iphirhoz.put(xrt, xpp.computeZAFCorrection(xrt));
@@ -220,9 +234,30 @@ public class STEMinSEMQuant {
             }
             final UncertainValue2 tmp = UncertainValue2.multiply(stds.get(elm) * iphirhoz.get(xrt) / f, krs.getKRatioU(xrts));
             crhoz.get(lyr).put(elm, tmp);
-            rhoz2[lyr] += tmp.doubleValue();
-            for (Map.Entry<Element, UncertainValue2> me : crhoz.get(lyr).entrySet())
-               comp2[lyr].addElement(me.getKey(), UncertainValue2.divide(me.getValue(), rhoz2[lyr]));
+            if (!(elm.equals(Element.O) && oxidizers.containsKey(lyr + 1)))
+               rhoz2[lyr] += tmp.doubleValue();
+         }
+         for (int l = 0; l < nLayers; ++l) {
+            final HashMap<Element, UncertainValue2> lyr = crhoz.get(l);
+            if (oxidizers.containsKey(l + 1)) {
+               // Compute oxygen and add it in...
+               final Oxidizer oxidizer = oxidizers.get(l + 1);
+               UncertainValue2 oxy = UncertainValue2.ZERO;
+               for (Map.Entry<Element, UncertainValue2> me : lyr.entrySet()) {
+                  final Element elm = me.getKey();
+                  if (!elm.equals(Element.O)) {
+                     final UncertainValue2 val = me.getValue();
+                     final Composition oxide = oxidizer.getComposition(elm);
+                     oxy = UncertainValue2.add(oxy, UncertainValue2
+                           .multiply(oxide.weightFraction(Element.O, false) / oxide.weightFraction(elm, false), val.reduced(elm.toAbbrev())));
+                  }
+
+               }
+               lyr.put(Element.O, oxy);
+               rhoz2[l] += oxy.doubleValue();
+            }
+            for (Map.Entry<Element, UncertainValue2> me : lyr.entrySet())
+               comp2[l].addElement(me.getKey(), UncertainValue2.divide(me.getValue(), rhoz2[l]));
          }
          // Break out early if rhoz converges
          if (!firstIteration) {
@@ -243,6 +278,10 @@ public class STEMinSEMQuant {
       for (int l = 0; l < nLayers; ++l)
          res.add(new Pair<>(comp[l], rhoz[l]));
       return res;
+   }
+
+   public ArrayList<Pair<Composition, Double>> multiLayer(KRatioSet krs, Map<Element, Integer> layer) throws EPQException {
+      return multiLayer(krs, layer, Collections.emptyMap());
    }
 
 }

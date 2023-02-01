@@ -310,6 +310,36 @@ public class KRatioSet implements Cloneable {
    public boolean isAvailable(XRayTransitionSet xrts) {
       return find(xrts) != null;
    }
+   
+   
+   /**
+    * Returns a new KRatioSet containing all elements in this except those in elms.
+    * 
+    * @param elms The elements to remove
+    * @return A new KRatioSet
+    */
+   public KRatioSet strip(Collection<Element> elms) {
+      final KRatioSet krs = new KRatioSet();
+      for(Map.Entry<XRayTransitionSet, UncertainValue2> me : mData.entrySet())
+         if(!elms.contains(me.getKey().getElement()))
+            krs.mData.put(me.getKey(), me.getValue());
+      return krs;
+   }
+   
+   /**
+    * Retain the specified {@link XRayTransitionSet} items.
+    * 
+    * @param xrtss 
+    * @return A new KRatioSet containing only those {@link XRayTransitionSet}s in `xrtss`
+    */
+   
+   public KRatioSet retain(Collection<XRayTransitionSet> xrtss) {
+      final KRatioSet krs = new KRatioSet();
+      for(Map.Entry<XRayTransitionSet, UncertainValue2> me : mData.entrySet())
+         if(xrtss.contains(me.getKey()))
+            krs.mData.put(me.getKey(), me.getValue());
+      return krs;
+   }
 
    /**
     * Is one or more k-ratio available for the specified element.

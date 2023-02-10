@@ -195,8 +195,7 @@ public class QuantifyUsingSTEMinSEM {
       mFit.setCullingStrategy(strat);
       mFit.setStripUnlikely(false);
       final KRatioSet best = pickBest(mFit.getKRatios(spec).strip(mStripped));
-      final ArrayList<Pair<Composition, Double>> layers = //
-            mCorrection.multiLayer(best, this.mLayers, this.mOxidizers);
+      final ArrayList<Pair<Composition, Double>> layers = mCorrection.multiLayer(best, this.mLayers, this.mOxidizers);
       final ISpectrumData residual = SpectrumUtils.applyEDSDetector(mDetector, mFit.getResidualSpectrum(spec, mStripped));
       return new Result(unk, residual, layers, best);
    }

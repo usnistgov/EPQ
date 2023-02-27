@@ -27,7 +27,7 @@ public class QuantifyUsingSTEMinSEM {
    private STEMinSEMCorrection mCorrection;
    private Map<Element, Integer> mLayers = null;
    private Map<Integer, Oxidizer> mOxidizers = new HashMap<Integer, Oxidizer>();
-   
+
    /**
     * A mechanism for removing elements with zero or near zero presence.
     */
@@ -37,23 +37,20 @@ public class QuantifyUsingSTEMinSEM {
     * Preferred RoI for quantification
     */
    private Map<Element, RegionOfInterest> mPreferred = new HashMap<>();
-   /**
-    * Maps ROIs into the spectra that are used as a reference for the ROI
-    */
-   private final Map<RegionOfInterest, ISpectrumData> mStdSpectra = new HashMap<RegionOfInterest, ISpectrumData>();
 
    private final Set<Element> mStripped = new HashSet<>();
-   
-   
+
    public class Result {
       final private ISpectrumData mSpectrum;
       final private ISpectrumData mResidual;
       final private List<Pair<Composition, Double>> mLayers;
+      final private KRatioSet mKRatios;
 
-      private Result(ISpectrumData spec, ISpectrumData resid, List<Pair<Composition, Double>> layers) {
+      private Result(ISpectrumData spec, ISpectrumData resid, List<Pair<Composition, Double>> layers, KRatioSet krs) {
          mSpectrum = spec;
          mResidual = resid;
          mLayers = Collections.unmodifiableList(layers);
+         mKRatios = krs;
       }
 
       public ISpectrumData getSpectrum() {
@@ -68,6 +65,10 @@ public class QuantifyUsingSTEMinSEM {
          return mLayers;
       }
 
+      public KRatioSet getKRatios() {
+         return mKRatios;
+      }
+
    };
 
    public QuantifyUsingSTEMinSEM(EDSDetector det, double beamEnergy) throws EPQException {
@@ -76,7 +77,7 @@ public class QuantifyUsingSTEMinSEM {
       mFit = new FilterFit(mDetector, mBeamEnergy);
       SpectrumProperties props = new SpectrumProperties();
       props.setNumericProperty(SpectrumProperties.BeamEnergy, FromSI.keV(beamEnergy));
-      double takeOff = det.getDetectorProperties().getProperties().getNumericWithDefault(SpectrumProperties.TakeOffAngle, -1.0);
+      double takeOff = det.getDetectorProperties().getProperties().getNumericWithDefault(SpectrumProperties.Elevation, -1.0);
       assert takeOff != -1.0;
       props.setNumericProperty(SpectrumProperties.TakeOffAngle, takeOff);
       props.setObjectProperty(SpectrumProperties.Detector, det);
@@ -97,7 +98,7 @@ public class QuantifyUsingSTEMinSEM {
       mCorrection.addStandard(elm, comp);
 
    }
-   
+
    public void addStripped(Element elm, ISpectrumData spec) throws EPQException {
       mFit.addReference(elm, spec);
       mStripped.add(elm);
@@ -110,16 +111,16 @@ public class QuantifyUsingSTEMinSEM {
    public RegionOfInterest getPreferredROI(Element elm) {
       return mPreferred.get(elm);
    }
-   
+
    public double getBeamEnergy() {
       return mBeamEnergy;
    }
-   
+
    public EDSDetector getDetector() {
       return mDetector;
    }
-   
-   public void setLayers(Map<Element,Integer> layers) {
+
+   public void setLayers(Map<Element, Integer> layers) {
       mLayers = Collections.unmodifiableMap(layers);
    }
 
@@ -127,42 +128,47 @@ public class QuantifyUsingSTEMinSEM {
       assert roi.getElementSet().size() == 1;
       mPreferred.put(roi.getElementSet().first(), roi);
    }
-   
+
    public void setOxidizer(int layer, Oxidizer oxid) {
       mOxidizers.put(layer, oxid);
    }
 
-   public KRatioSet pickBest(KRatioSet full) {
+   public void setOxidizers(Map<Integer, Oxidizer> oxids) {
+      mOxidizers.clear();
+      mOxidizers.putAll(oxids);
+   }
+
+   public KRatioSet pickBest(KRatioSet full, double overvoltage) {
       KRatioSet result = new KRatioSet();
       for (Element elm : mCorrection.getElements()) {
          XRayTransitionSet best = null;
-         RegionOfInterest roi = mPreferred.getOrDefault(elm, null);
-         if (roi != null) {
-            XRayTransitionSet xrts = roi.getAllTransitions();
+         if (mPreferred.containsKey(elm)) {
+            final XRayTransitionSet xrts = mPreferred.getOrDefault(elm, null).getAllTransitions();
             if (full.getKRatioU(xrts) != UncertainValue2.ZERO)
                best = xrts;
          }
          if (best == null) {
-            double bestE = -1.0;
+            double bestSc = -1.0;
             for (XRayTransitionSet xrts : full.getTransitions(elm)) {
-               final XRayTransition w = xrts.getWeighiestTransition();
-               try {
-                  final double ew = w.getEnergy();
-                  if ((best == null) || //
-                        ((ew > bestE) && (ew < 0.5 * mBeamEnergy)) || //
-                        ((bestE > 0.5 * mBeamEnergy) && (ew < bestE))) {
-                     best = xrts;
-                     bestE = ew;
-                  }
-               } catch (EPQException e) {
-                  e.printStackTrace();
+               final XRayTransition xrt = xrts.getWeighiestTransition();
+               final double ee = xrt.getEdgeEnergy(), w = xrt.getWeight(XRayTransition.NormalizeFamily);
+               // Favor K over L, intense over less intense and overvoltages
+               // less than overvoltage
+               final double sc = w * ((AtomicShell.MFamily - xrt.getFamily()) + (ee <= overvoltage * mBeamEnergy ? 1.0 : -2.0));
+               if (((best == null) || (sc > bestSc)) && (ee < 0.8*mBeamEnergy)) {
+                  best = xrts;
+                  bestSc = sc;
                }
             }
          }
-         if(best!=null)
+         if (best != null)
             result.addKRatio(best, full.getKRatioU(best));
       }
       return result;
+   }
+
+   public KRatioSet pickBest(KRatioSet full) {
+      return pickBest(full, 0.5);
    }
 
    /**
@@ -188,31 +194,10 @@ public class QuantifyUsingSTEMinSEM {
          strat = new FilterFit.DontCull(strat, user);
       mFit.setCullingStrategy(strat);
       mFit.setStripUnlikely(false);
-      final KRatioSet krsAgainstRefs = mFit.getKRatios(spec);
-      for(XRayTransitionSet xrts : krsAgainstRefs.getTransitions())
-         if(mStripped.contains(xrts.getElement()))
-            krsAgainstRefs.remove(xrts);
-      // Pick best krs
-      KRatioSet best = pickBest(krsAgainstRefs);
-      //
-      Map<Element, Composition> stdComps = new HashMap<Element, Composition>();
-      for (XRayTransitionSet xrts : best.keySet()) {
-         Element elm = xrts.getElement();
-         for (Map.Entry<RegionOfInterest, ISpectrumData> me : mStdSpectra.entrySet())
-            if (me.getKey().getXRayTransitionSet(elm).equals(xrts)) {
-               ISpectrumData isp = me.getValue();
-               Composition stdComp = isp.getProperties().getCompositionWithDefault(SpectrumProperties.StandardComposition, null);
-               if (stdComp != null) {
-                  stdComps.put(elm, stdComp);
-                  continue;
-               }
-            }
-         assert stdComps.getOrDefault(elm, null) == null : "No standard found for " + elm.toAbbrev();
-      }
-      ArrayList<Pair<Composition, Double>> layers = mCorrection.multiLayer(best, this.mLayers, this.mOxidizers);
+      final KRatioSet best = pickBest(mFit.getKRatios(spec).strip(mStripped));
+      final ArrayList<Pair<Composition, Double>> layers = mCorrection.multiLayer(best, this.mLayers, this.mOxidizers);
       final ISpectrumData residual = SpectrumUtils.applyEDSDetector(mDetector, mFit.getResidualSpectrum(spec, mStripped));
-      return new Result(unk, residual, layers);
+      return new Result(unk, residual, layers, best);
    }
 
 }
-

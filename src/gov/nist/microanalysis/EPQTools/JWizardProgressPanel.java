@@ -63,7 +63,7 @@ public class JWizardProgressPanel<T> extends JWizardPanel {
     *           'enableFinish(true)'.
     */
    public JWizardProgressPanel(JWizardDialog wiz, String message, SwingWorker<T, Integer> thread) {
-      super(wiz);
+      super(wiz, message);
       mMessage = message;
       mThread = thread;
       jLabel_Progress.setHorizontalAlignment(JLabel.CENTER);

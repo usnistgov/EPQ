@@ -33,6 +33,12 @@ public abstract class LazyEvaluate<H> {
    public boolean evaluated() {
       return mValue != null;
    }
+   
+   @Override
+   public boolean equals(Object val) {
+      return evaluated() && (mValue==val);
+      
+   }
 
    /**
     * get() will return the cached value when one exists or call compute to

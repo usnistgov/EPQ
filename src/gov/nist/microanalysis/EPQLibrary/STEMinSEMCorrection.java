@@ -18,7 +18,7 @@ public class STEMinSEMCorrection {
    private final HashMap<Element, Composition> standards;
    private final SpectrumProperties properties;
 
-   public STEMinSEMCorrection(SpectrumProperties properties, HashMap<Element, Composition> standards) {
+   public STEMinSEMCorrection(SpectrumProperties properties, Map<Element, Composition> standards) {
       assert properties.isDefined(SpectrumProperties.BeamEnergy);
       assert properties.isDefined(SpectrumProperties.TakeOffAngle);
       this.properties = new SpectrumProperties(properties);

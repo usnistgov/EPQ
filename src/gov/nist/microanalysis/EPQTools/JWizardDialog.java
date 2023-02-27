@@ -8,7 +8,6 @@ import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.LayoutManager;
-import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -89,7 +88,9 @@ public class JWizardDialog extends JDialog {
    private boolean mCancelled = false;
    private String mDialogMsg = "";
    private final ArrayList<String> mLongErrorMsg = new ArrayList<String>();
-
+   private Color mForeground;
+   
+   
    public static final int FINISHED = 1;
    public static final int CANCELLED = 2;
    // Results
@@ -177,11 +178,9 @@ public class JWizardDialog extends JDialog {
             assert (mPreviousPanels.size() == mPreviousBanners.size());
             if (jWizardPanel_Active != null) {
                jPanel_Contents.remove(jWizardPanel_Active);
-               setNextPanel(jWizardPanel_Active, jLabel_Banner.getText());
+               setNextPanel(jWizardPanel_Active);
             }
-            final JWizardPanel panel = mPreviousPanels.remove(mPreviousPanels.size() - 1);
-            final String banner = mPreviousBanners.remove(mPreviousBanners.size() - 1);
-            setActivePanel(panel, banner);
+            setActivePanel(mPreviousPanels.remove(mPreviousPanels.size() - 1));
             jButton_Back.setEnabled(mPreviousPanels.size() > 0);
          }
       });
@@ -196,9 +195,8 @@ public class JWizardDialog extends JDialog {
                mPreviousBanners.add(jLabel_Banner.getText());
                jPanel_Contents.remove(jWizardPanel_Active);
                final JWizardPanel next = jWizardPanel_Next;
-               final String banner = mNextBanner;
-               setNextPanel(null, null);
-               setActivePanel(next, banner);
+               setNextPanel(null);
+               setActivePanel(next);
                jButton_Back.setEnabled(mPreviousPanels.size() > 0);
             } else
                Toolkit.getDefaultToolkit().beep();
@@ -240,8 +238,8 @@ public class JWizardDialog extends JDialog {
       setContentPane(jPanel_Main);
       setResizable(false);
       addCancelByEscapeKey();
-      setForeground(SystemColor.controlText);
-      setBackground(SystemColor.control);
+      //setForeground(SystemColor.controlText);
+      //setBackground(SystemColor.control);
    }
 
    private void addCancelByEscapeKey() {
@@ -284,7 +282,7 @@ public class JWizardDialog extends JDialog {
 
    public void setMessageText(String msg) {
       if (mLongErrorMsg.size() == 0) {
-         jLabel_ErrorLabel.setForeground(SystemColor.textText);
+         jLabel_ErrorLabel.setForeground(mForeground);
          jLabel_ErrorLabel.setText(msg);
          jButton_ErrorBtn.setEnabled(false);
       }
@@ -396,7 +394,7 @@ public class JWizardDialog extends JDialog {
       jButton_Finish.setEnabled(true);
    }
 
-   public void setActivePanel(JWizardPanel panel, String banner) {
+   public void setActivePanel(JWizardPanel panel) {
       jLabel_ErrorLabel.setText("");
       if (jWizardPanel_Active != null) {
          jWizardPanel_Active.onHide();
@@ -410,7 +408,7 @@ public class JWizardDialog extends JDialog {
          jPanel_Contents.repaint();
       }
       jWizardPanel_Active = panel;
-      jLabel_Banner.setText(banner != null ? banner : "None");
+      jLabel_Banner.setText(jWizardPanel_Active.getLabel() != null ? jWizardPanel_Active.getLabel(): "None");
       if (jWizardPanel_Next != null)
          jLabel_NextLabel.setText("<html>Next: <em>" + mNextBanner + "</em>");
       if (mPreviousBanners.size() > 0) {
@@ -421,10 +419,18 @@ public class JWizardDialog extends JDialog {
       jButton_Back.setEnabled(mPreviousPanels.size() > 0);
       jButton_Next.setEnabled(jWizardPanel_Next != null);
    }
+   
+   public JWizardPanel getCurrentPanel() {
+      return jWizardPanel_Active;
+   }
+   
+   public JWizardPanel getNextPanel() {
+      return jWizardPanel_Next;
+   }
 
-   public void setNextPanel(JWizardPanel panel, String banner) {
+   public void setNextPanel(JWizardPanel panel) {
       jWizardPanel_Next = panel;
-      mNextBanner = banner;
+      mNextBanner = panel!=null ? panel.getLabel() : null;
       if (jWizardPanel_Next != null)
          jLabel_NextLabel.setText("<html>Next: <em>" + mNextBanner + "</em>");
       else
@@ -495,6 +501,7 @@ public class JWizardDialog extends JDialog {
       jPanel_Main.add(jPanel_Contents, CC.xy(2, 4));
       header.setBorder(createPanelBorder());
       jPanel_Main.add(header, CC.xy(2, 2));
+      mForeground = jLabel_ErrorLabel.getForeground();
       {
          final JPanel msgPanel = new JPanel(new FormLayout("5dlu, right:40dlu, 5dlu, 260dlu, 5dlu, pref, 5dlu", "pref"));
          msgPanel.setBorder(createPanelBorder());
@@ -544,16 +551,18 @@ public class JWizardDialog extends JDialog {
 
       protected static final long serialVersionUID = 0x42;
       private final JWizardDialog mWizard;
+      private final String mLabel;
 
       /**
        * Constructs a JWizardPanel associated with the specified WizardDialog
        * 
        * @param wiz
        */
-      public JWizardPanel(JWizardDialog wiz) {
+      public JWizardPanel(JWizardDialog wiz, String label) {
          super();
          assert (wiz != null);
          mWizard = wiz;
+         mLabel = label;
       }
 
       /**
@@ -563,10 +572,11 @@ public class JWizardDialog extends JDialog {
        * @param lo
        * @param wiz
        */
-      public JWizardPanel(JWizardDialog wiz, LayoutManager lo) {
+      public JWizardPanel(JWizardDialog wiz, String label, LayoutManager lo) {
          super(lo);
          assert (wiz != null);
          mWizard = wiz;
+         mLabel = label;
       }
 
       /**
@@ -578,6 +588,10 @@ public class JWizardDialog extends JDialog {
       public JWizardDialog getWizard() {
          assert (mWizard != null);
          return mWizard;
+      }
+      
+      public String getLabel() {
+         return mLabel;
       }
 
       /**
@@ -655,7 +669,21 @@ public class JWizardDialog extends JDialog {
        * @param wiz
        */
       public JProgressPanel(JWizardDialog wiz) {
-         super(wiz);
+         super(wiz,"Progress...");
+         try {
+            initialize();
+         } catch (final Exception ex) {
+            ex.printStackTrace();
+         }
+      }
+      
+      /**
+       * Constructs a ProgressDialog
+       * 
+       * @param wiz
+       */
+      public JProgressPanel(JWizardDialog wiz, String label) {
+         super(wiz,label);
          try {
             initialize();
          } catch (final Exception ex) {
@@ -679,5 +707,24 @@ public class JWizardDialog extends JDialog {
       public void setProgress(int prog) {
          mProgressBar.getModel().setValue(prog);
       }
+   }
+   
+   public abstract class JWizardPath {
+      
+      /**
+       * Returns the first {@link JWizardPanel} in this path.
+       * 
+       * @return {@link JWizardPanel}
+       */
+      abstract public JWizardPanel firstPanel();
+      
+      /**
+       * Descriptive HTML to use in the report for the operation described by
+       * this JWizardPath.
+       * 
+       * @return String
+       */
+      abstract public String toHTML();
+      
    }
 }

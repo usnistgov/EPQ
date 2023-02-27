@@ -215,10 +215,10 @@ public class SpectrumFile {
                return wrapResult(res, file);
             }
          }
-         throw new EPQException("The file " + file.getName() + " does not seem to be in one of the known file formats.");
       } catch (final Exception e) {
          throw new EPQException(e);
       }
+      throw new EPQException("The file " + file.getName() + " does not seem to be in one of the known file formats.");
    }
 
    private static ISpectrumData[] wrapResult(final ISpectrumData[] res, final File file) {

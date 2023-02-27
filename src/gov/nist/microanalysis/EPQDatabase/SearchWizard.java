@@ -252,7 +252,7 @@ public class SearchWizard extends JWizardDialog {
       }
 
       public StartPanel(final JWizardDialog wiz) {
-         super(wiz, new FormLayout("right:pref, 5dlu, 100dlu, 3dlu, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
+         super(wiz, "Select a search mode", new FormLayout("right:pref, 5dlu, 100dlu, 3dlu, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
          try {
             initialize();
          } catch (final Exception ex) {
@@ -290,7 +290,7 @@ public class SearchWizard extends JWizardDialog {
             }
             mFirstShow = false;
          }
-         getWizard().setNextPanel(jWizardPanel_Mode, "Select the search mode");
+         getWizard().setNextPanel(jWizardPanel_Mode);
          enableFinish(false);
          setBackEnabled(true);
          setMessageText("Provide this basic information about the requested spectrum.");
@@ -360,29 +360,21 @@ public class SearchWizard extends JWizardDialog {
       }
 
       private void updateSelection() {
-         JWizardPanel next = null;
-         String msg = "?";
          if (jRadioButton_Measured.isSelected()) {
-            next = jWizardPanel_Composition;
-            msg = "Specify measured composition";
+            getWizard().setNextPanel(jWizardPanel_Composition);
          } else if (jRadioButton_Standard.isSelected()) {
-            next = jWizardPanel_Standard;
-            msg = "Select the standard by name";
+            getWizard().setNextPanel(jWizardPanel_Standard);
          } else if (jRadioButton_Particle.isSelected()) {
-            next = jWizardPanel_Result;
-            msg = "Specify particle signature";
+            getWizard().setNextPanel(jWizardPanel_Result);
          } else if (jRadioButton_Advanced.isSelected()) {
-            next = jWizardPanel_Advanced;
-            msg = "Specify advanced search string";
+            getWizard().setNextPanel(jWizardPanel_Advanced);
          } else if (jRadioButton_Project.isSelected()) {
-            next = jWizardPanel_Project;
-            msg = "Specify a project";
+            getWizard().setNextPanel(jWizardPanel_Project);
          }
-         getWizard().setNextPanel(next, msg);
       }
 
       public ModePanel(JWizardDialog wiz) {
-         super(wiz, new FormLayout("pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
+         super(wiz, "Select the search mode", new FormLayout("pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
          try {
             initialize();
          } catch (final Exception ex) {
@@ -392,7 +384,7 @@ public class SearchWizard extends JWizardDialog {
 
       @Override
       public void onShow() {
-         getWizard().setNextPanel(jWizardPanel_Mode, "Select the search mode");
+         getWizard().setNextPanel(jWizardPanel_Mode);
          enableFinish(false);
          setBackEnabled(true);
          setMessageText("Select the way in which the search will be performed.");
@@ -410,7 +402,7 @@ public class SearchWizard extends JWizardDialog {
       private final JTextField jTextField_Search = new JTextField();
 
       public AdvancedPanel(JWizardDialog wiz) {
-         super(wiz, new FormLayout("10dlu, 250dlu", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
+         super(wiz, "Specify advanced search string", new FormLayout("10dlu, 250dlu", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
          try {
             initialize();
          } catch (final Exception ex) {
@@ -437,7 +429,7 @@ public class SearchWizard extends JWizardDialog {
 
       @Override
       public void onShow() {
-         getWizard().setNextPanel(jWizardPanel_Result, "Preview the results");
+         getWizard().setNextPanel(jWizardPanel_Result);
          enableFinish(false);
          setBackEnabled(true);
          setMessageText("Specify a SQL search string");
@@ -475,7 +467,7 @@ public class SearchWizard extends JWizardDialog {
       private boolean mFirstShow = true;
 
       public ProjectPanel(JWizardDialog wiz) {
-         super(wiz, new FormLayout("pref, 5dlu, 100dlu", "pref"));
+         super(wiz, "Specify a project", new FormLayout("pref, 5dlu, 100dlu", "pref"));
          try {
             initialize();
          } catch (final Exception ex) {
@@ -496,7 +488,7 @@ public class SearchWizard extends JWizardDialog {
                jComboBox_Project.addItem(str);
             mFirstShow = false;
          }
-         getWizard().setNextPanel(jWizardPanel_Result, "Preview the results");
+         getWizard().setNextPanel(jWizardPanel_Result);
          enableFinish(false);
          setBackEnabled(true);
          setMessageText("Select a project to open");
@@ -524,7 +516,7 @@ public class SearchWizard extends JWizardDialog {
       private Composition mComposition = Material.Null;
 
       public CompositionPanel(JWizardDialog wiz) {
-         super(wiz, new FormLayout("10dlu, 150dlu, 5dlu, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
+         super(wiz, "Specify measured composition", new FormLayout("10dlu, 150dlu, 5dlu, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
          try {
             initialize();
          } catch (final Exception ex) {
@@ -570,7 +562,7 @@ public class SearchWizard extends JWizardDialog {
             jSlider_Tolerance.setValue(mPreferences.getInt("CompTol", 50));
             mFirstShow = false;
          }
-         getWizard().setNextPanel(jWizardPanel_Result, "Preview the results");
+         getWizard().setNextPanel(jWizardPanel_Result);
          enableFinish(false);
          setBackEnabled(true);
          setMessageText("Specify a composition and search tolerance.");
@@ -593,7 +585,7 @@ public class SearchWizard extends JWizardDialog {
       private boolean mFirstShow = true;
 
       public StandardPanel(JWizardDialog wiz) {
-         super(wiz, new FormLayout("200dlu", "150dlu"));
+         super(wiz, "Select the standard by name", new FormLayout("200dlu", "150dlu"));
          try {
             initialize();
          } catch (final Exception ex) {
@@ -620,7 +612,7 @@ public class SearchWizard extends JWizardDialog {
             }
             mFirstShow = false;
          }
-         getWizard().setNextPanel(jWizardPanel_Result, "Preview the results");
+         getWizard().setNextPanel(jWizardPanel_Result);
          enableFinish(false);
          setBackEnabled(true);
          setMessageText("Select one or more standards for which to search.");
@@ -654,7 +646,7 @@ public class SearchWizard extends JWizardDialog {
       private final SpecDisplay jSpecDisplay_Preview = new SpecDisplay();
 
       public ResultPanel(JWizardDialog wiz) {
-         super(wiz, new FormLayout("320dlu", "70dlu, 70dlu"));
+         super(wiz, "Specify particle signature", new FormLayout("320dlu", "70dlu, 70dlu"));
          try {
             initialize();
          } catch (final Exception ex) {
@@ -689,7 +681,7 @@ public class SearchWizard extends JWizardDialog {
 
       @Override
       public void onShow() {
-         getWizard().setNextPanel(null, "Import spectra");
+         getWizard().setNextPanel(null);
          enableFinish(true);
          setBackEnabled(true);
       }
@@ -717,7 +709,7 @@ public class SearchWizard extends JWizardDialog {
    }
 
    private void initialize() {
-      setActivePanel(jWizardPanel_Start, "Select a search mode");
+      setActivePanel(jWizardPanel_Start);
    }
 
    /**

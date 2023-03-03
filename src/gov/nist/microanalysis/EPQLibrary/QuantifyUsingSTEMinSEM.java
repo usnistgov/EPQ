@@ -114,7 +114,8 @@ public class QuantifyUsingSTEMinSEM {
          sb.append("<p>");
          return sb.toString();
       }
-      
+
+      @Override
       public String toString() {
          StringBuilder sb = new StringBuilder();
          DecimalFormat df1 = new DecimalFormat("0.0");
@@ -129,11 +130,8 @@ public class QuantifyUsingSTEMinSEM {
          }
          return sb.toString();
       }
-      
-      
    }
-   
-   
+
 
    public QuantifyUsingSTEMinSEM(EDSDetector det, double beamEnergy) throws EPQException {
       mDetector = det;
@@ -314,7 +312,7 @@ public class QuantifyUsingSTEMinSEM {
       final ISpectrumData residual = SpectrumUtils.applyEDSDetector(mDetector, ff.getResidualSpectrum(spec, ff.getElements()));
       return new Result(unk, residual, layers, best);
    }
-   
+
    public String toHTML() {
       StringBuilder sb = new StringBuilder();
       sb.append("<h2>Quantify STEM-in-SEM Thin Film Spectra</h2>\n");
@@ -327,7 +325,7 @@ public class QuantifyUsingSTEMinSEM {
       sb.append("  <td>Instrument</td><td>"+mDetector+"</td></tr>\n");
       sb.append("  <td>Beam Energy</td><td>"+FromSI.keV(mBeamEnergy)+" keV</td></tr>\n");
       sb.append("</table>\n");
-      
+
       sb.append("<h3>Standards</h3>\n");
       sb.append("<table>");
       sb.append("  <tr><th>Element</th><th>Spectrum</th><th>Layer</th><th>Quantified Line</th></tr>\n");

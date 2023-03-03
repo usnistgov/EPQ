@@ -636,7 +636,7 @@ public class SpectrumProperties implements Cloneable, Serializable {
     * MassThickness - The mass thickness of a thin-film sample in &mu;g/cm
     * <sup>2</sup>
     */
-   public static final PropertyId MassThickness = new PropertyId("Mass-thickness", " µg/cm²", "#,##0.0");
+   public static final PropertyId MassThickness = new PropertyId("Mass-thickness", "Âµg/cmÂ²", "#,##0.0");
 
    /**
     * XPosition - The x stage coordinate in millimeters.
@@ -802,6 +802,13 @@ public class SpectrumProperties implements Cloneable, Serializable {
     */
    public static final PropertyId ParticleSignature = new PropertyId("Particle Signature", ParticleSignature.class);
    public static final PropertyId ParticleSignature2 = new PropertyId("Particle Signature2", TreeMap.class);
+   
+   
+   /**
+    * The result of a measurement of a multi-layer thin film.
+    * 
+    */
+   public static final PropertyId MultiLayerMeasurement = new PropertyId("Multi-layer Result", QuantifyUsingSTEMinSEM.Result.class);
 
    /**
     * SampleShape - A SampleShape object containing a description of the

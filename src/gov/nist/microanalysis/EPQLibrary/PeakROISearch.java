@@ -131,7 +131,7 @@ abstract public class PeakROISearch extends AlgorithmClass {
       final TreeSet<Element> res = new TreeSet<Element>();
       final Set<int[]> rois = peakROIs(spec, thresh);
       final int[] shells = new int[]{AtomicShell.K, AtomicShell.LIII, AtomicShell.MV};
-      for (int z = Element.elmBe; z < 93; ++z)
+      for (int z = Element.elmBe; z <= Element.elmPu; ++z)
          try {
             final Element elm = Element.byAtomicNumber(z);
             XRayTransition bestXrt = null;

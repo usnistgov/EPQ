@@ -30,6 +30,9 @@ public class STEMinSEMCorrection {
    }
 
    public void addStandard(Element elm, Composition comp) {
+      assert elm != null;
+      assert comp != null;
+      assert comp.containsElement(elm);
       this.standards.put(elm, comp);
    }
 
@@ -176,9 +179,11 @@ public class STEMinSEMCorrection {
          boolean[] filled = new boolean[nLayers];
          for (Map.Entry<Element, Integer> me : layer.entrySet()) {
             final int lyr = me.getValue() - 1;
-            assert lyr < nLayers : "Element " + me.getKey().toAbbrev() + " is in layer " + me.getValue() + " which in more then nLayers = " + nLayers;
-            filled[lyr] = true;
-            assert krs.getElementSet().contains(me.getKey()) : me.getKey().toAbbrev() + " is not represented by a k-ratio.";
+            if(lyr >= 0) {
+               assert lyr < nLayers : "Element " + me.getKey().toAbbrev() + " is in layer " + me.getValue() + " which in more then nLayers = " + nLayers;
+               filled[lyr] = true;
+               assert krs.getElementSet().contains(me.getKey()) : me.getKey().toAbbrev() + " is not represented by a k-ratio.";
+            }
          }
          for (int i = 0; i < nLayers; ++i)
             assert filled[i] : "Layer " + i + " does not contain any elements.";
@@ -218,24 +223,26 @@ public class STEMinSEMCorrection {
          // Iterate the measured k-ratios
          for (final XRayTransitionSet xrts : krs.keySet()) {
             final Element elm = xrts.getElement();
-            final int lyr = layer.get(elm) - 1; // 1, 2, 3,.... minus 1
-            final XRayTransition xrt = xrts.getWeighiestTransition();
-            // Compute the absorption correction
-            double f = 1.0;
-            if (!firstIteration) {
-               double chi_lyr = mac.compute(comp[lyr], xrt) / Math.sin(toa);
-               // This layer
-               f = (1.0 - Math.exp(-chi_lyr * rhoz[lyr])) / (chi_lyr * rhoz[lyr]);
-               // Layers between this layer and the top surface
-               for (int l = lyr - 1; l >= 0; --l) {
-                  double chi_l = mac.compute(comp[l], xrt) / Math.sin(toa);
-                  f *= Math.exp(-chi_l * rhoz[l]);
+            if (layer.getOrDefault(elm, 0).intValue() >= 1) {
+               final int lyr = layer.get(elm) - 1; // 1, 2, 3,.... minus 1
+               final XRayTransition xrt = xrts.getWeighiestTransition();
+               // Compute the absorption correction
+               double f = 1.0;
+               if (!firstIteration) {
+                  double chi_lyr = mac.compute(comp[lyr], xrt) / Math.sin(toa);
+                  // This layer
+                  f = (1.0 - Math.exp(-chi_lyr * rhoz[lyr])) / (chi_lyr * rhoz[lyr]);
+                  // Layers between this layer and the top surface
+                  for (int l = lyr - 1; l >= 0; --l) {
+                     double chi_l = mac.compute(comp[l], xrt) / Math.sin(toa);
+                     f *= Math.exp(-chi_l * rhoz[l]);
+                  }
                }
+               final UncertainValue2 tmp = UncertainValue2.multiply(stds.get(elm) * iphirhoz.get(xrt) / f, krs.getKRatioU(xrts));
+               crhoz.get(lyr).put(elm, tmp);
+               if (!(elm.equals(Element.O) && oxidizers.containsKey(lyr + 1)))
+                  rhoz2[lyr] += tmp.doubleValue();
             }
-            final UncertainValue2 tmp = UncertainValue2.multiply(stds.get(elm) * iphirhoz.get(xrt) / f, krs.getKRatioU(xrts));
-            crhoz.get(lyr).put(elm, tmp);
-            if (!(elm.equals(Element.O) && oxidizers.containsKey(lyr + 1)))
-               rhoz2[lyr] += tmp.doubleValue();
          }
          for (int l = 0; l < nLayers; ++l) {
             final HashMap<Element, UncertainValue2> lyr = crhoz.get(l);

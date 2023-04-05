@@ -119,19 +119,18 @@ public class QuantifyUsingSTEMinSEM {
       public String toString() {
          StringBuilder sb = new StringBuilder();
          DecimalFormat df1 = new DecimalFormat("0.0");
-         int layer=1;
+         int layer = 1;
          for (Pair<Composition, Double> lyr : mLayers) {
-            if(layer>1)
+            if (layer > 1)
                sb.append(", ");
-            sb.append("Layer("+layer+", ");
+            sb.append("Layer(" + layer + ", ");
             sb.append(lyr.first.descriptiveString(false));
-            sb.append(", ρt="+df1.format(lyr.second * 1.0e5)+" µg/cm²)");
+            sb.append(", ρt=" + df1.format(lyr.second * 1.0e5) + " µg/cm²)");
             ++layer;
          }
          return sb.toString();
       }
    }
-
 
    public QuantifyUsingSTEMinSEM(EDSDetector det, double beamEnergy) throws EPQException {
       mDetector = det;
@@ -167,6 +166,10 @@ public class QuantifyUsingSTEMinSEM {
    }
 
    public void addStandard(Element elm, Composition comp, ISpectrumData spec) throws EPQException {
+      assert elm != null;
+      assert comp != null;
+      assert comp.containsElement(elm);
+      assert spec != null;
       spec.getProperties().setCompositionProperty(SpectrumProperties.StandardComposition, comp);
       mFitSpectra.put(elm, spec);
       assert comp.containsElement(elm);
@@ -233,7 +236,6 @@ public class QuantifyUsingSTEMinSEM {
             res.add(me.getKey());
       return res;
    }
-
 
    public void setPreferredROI(RegionOfInterest roi) {
       assert roi.getElementSet().size() == 1;
@@ -321,21 +323,21 @@ public class QuantifyUsingSTEMinSEM {
       sb.append("<h3>Instrument and Detector</h3>\n");
       // Instrument parameters
       sb.append("<table>\n");
-      sb.append("  <td>Instrument</td><td>"+mDetector.getOwner()+"</td></tr>\n");
-      sb.append("  <td>Instrument</td><td>"+mDetector+"</td></tr>\n");
-      sb.append("  <td>Beam Energy</td><td>"+FromSI.keV(mBeamEnergy)+" keV</td></tr>\n");
+      sb.append("  <td>Instrument</td><td>" + mDetector.getOwner() + "</td></tr>\n");
+      sb.append("  <td>Instrument</td><td>" + mDetector + "</td></tr>\n");
+      sb.append("  <td>Beam Energy</td><td>" + FromSI.keV(mBeamEnergy) + " keV</td></tr>\n");
       sb.append("</table>\n");
 
       sb.append("<h3>Standards</h3>\n");
       sb.append("<table>");
       sb.append("  <tr><th>Element</th><th>Spectrum</th><th>Layer</th><th>Quantified Line</th></tr>\n");
-      for(Element elm : mFitSpectra.keySet()) {
+      for (Element elm : mFitSpectra.keySet()) {
          sb.append("  <tr>");
-         sb.append("<td>"+elm.toAbbrev()+"</td>");
-         sb.append("<td>"+mFitSpectra.get(elm)+"</td>");
-         sb.append("<td>"+(mLayers.get(elm)==0?"Strip": Integer.toString(mLayers.get(elm)))+ "</td>");
-         if(mPreferred.containsKey(elm))
-            sb.append("<td>"+mPreferred.get(elm)+" (User)</td>");
+         sb.append("<td>" + elm.toAbbrev() + "</td>");
+         sb.append("<td>" + mFitSpectra.get(elm) + "</td>");
+         sb.append("<td>" + (mLayers.get(elm) == 0 ? "Strip" : Integer.toString(mLayers.get(elm))) + "</td>");
+         if (mPreferred.containsKey(elm))
+            sb.append("<td>" + mPreferred.get(elm) + " (User)</td>");
          else
             sb.append("<td>Default</td>");
          sb.append("</tr>\n");

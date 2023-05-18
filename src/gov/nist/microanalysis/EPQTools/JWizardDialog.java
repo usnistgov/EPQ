@@ -321,7 +321,7 @@ public class JWizardDialog extends JDialog {
    public void setExtendedErrors(String shortMsg, String dialogMsg, ArrayList<String> errMsgs) {
       mDialogMsg = dialogMsg != null ? dialogMsg : "Click details for more information";
       mLongErrorMsg.addAll(errMsgs);
-      setErrorText(mDialogMsg);
+      setErrorText(shortMsg);
       jButton_ErrorBtn.setEnabled(true);
       // If this method is called more than once, we must ensure that the Error
       // Button will not be called more than once with older error messages
@@ -334,7 +334,7 @@ public class JWizardDialog extends JDialog {
             final StringBuffer sb = new StringBuffer();
             sb.append(mLongErrorMsg.size() + " errors:");
             for (int i = 0; i < mLongErrorMsg.size(); ++i) {
-               sb.append("\nError " + (i + 1) + "\n");
+               sb.append("\nError " + (i + 1) + ": ");
                sb.append(mLongErrorMsg.get(i));
             }
             ErrorDialog.createErrorMessage(JWizardDialog.this, "Extended error message", mDialogMsg, sb.toString());

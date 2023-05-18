@@ -2,7 +2,7 @@
 // Computed using RELAX from ENDLIB-97 by Dermott E. Cullen at Lawrence Livermore National Laboratory
 // I've added a row for B (5,0,0,3) and Be (4,0,0,1) with WAGS
 4,0,0,1,0.00005
-5,0,0,3,0.0002
+5,0,0,2,0.0002
 6,0,0,2,0.00056149
 6,0,0,3,0.0011206
 7,0,0,2,0.0010942

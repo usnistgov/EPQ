@@ -1076,9 +1076,13 @@ public class FilterFit extends LinearSpectrumFit {
          mMapOfXRTS = new TreeMap<Element, XRayTransition>();
          for (XRayTransitionSet xrts : sxrts) {
             Element el = xrts.getElement();
-            if(el == Element.Yb)
+            final XRayTransition wt = xrts.getWeighiestTransition();
+            if((el.getAtomicNumber() >= Element.Ge.getAtomicNumber()) && (wt.getFamily()==AtomicShell.KFamily))
+               // Addresses issue when Sr K is not seen
+               mMapOfXRTS.put(el, new XRayTransition(el, 3, 7));
+            else if((el.getAtomicNumber() == Element.Ho.getAtomicNumber()) && (wt.getFamily()==AtomicShell.LFamily))
                // Addresses issue when W L3-M1 is mistaken for Yb L3-M5
-               mMapOfXRTS.put(el, new XRayTransition(el, 7, 14)); 
+               mMapOfXRTS.put(el, new XRayTransition(el, 7, 14));
             else
                mMapOfXRTS.put(el, xrts.getWeighiestTransition());
          }

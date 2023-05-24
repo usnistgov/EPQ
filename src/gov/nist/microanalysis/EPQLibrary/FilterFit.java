@@ -1080,7 +1080,7 @@ public class FilterFit extends LinearSpectrumFit {
             if((el.getAtomicNumber() >= Element.Ge.getAtomicNumber()) && (wt.getFamily()==AtomicShell.KFamily))
                // Addresses issue when Sr K is not seen
                mMapOfXRTS.put(el, new XRayTransition(el, 3, 7));
-            else if((el.getAtomicNumber() == Element.Ho.getAtomicNumber()) && (wt.getFamily()==AtomicShell.LFamily))
+            else if((el.getAtomicNumber() >= Element.Ho.getAtomicNumber()) && (wt.getFamily()==AtomicShell.LFamily))
                // Addresses issue when W L3-M1 is mistaken for Yb L3-M5
                mMapOfXRTS.put(el, new XRayTransition(el, 7, 14));
             else

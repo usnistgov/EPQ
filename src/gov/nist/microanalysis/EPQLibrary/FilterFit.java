@@ -1074,8 +1074,14 @@ public class FilterFit extends LinearSpectrumFit {
       public CullByOptimal(double sigma, Collection<XRayTransitionSet> sxrts) {
          mSigma = sigma;
          mMapOfXRTS = new TreeMap<Element, XRayTransition>();
-         for (XRayTransitionSet xrts : sxrts)
-            mMapOfXRTS.put(xrts.getElement(), xrts.getWeighiestTransition());
+         for (XRayTransitionSet xrts : sxrts) {
+            Element el = xrts.getElement();
+            if(el == Element.Yb)
+               // Addresses issue when W L3-M1 is mistaken for Yb L3-M5
+               mMapOfXRTS.put(el, new XRayTransition(el, 7, 14)); 
+            else
+               mMapOfXRTS.put(el, xrts.getWeighiestTransition());
+         }
       }
 
       private CullByOptimal(double sigma, Map<Element, XRayTransition> mxrt) {

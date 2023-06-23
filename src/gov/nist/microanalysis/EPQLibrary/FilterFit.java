@@ -416,7 +416,7 @@ public class FilterFit extends LinearSpectrumFit {
       for (final FilteredPacket raf : mFilteredPackets)
          if (raf.mFiltered.getElement() != Element.None) {
             // Filter fit seems to consistently overestimate the k-ratio for O K
-            if(raf.mFiltered.getElement() == Element.O)
+            if (raf.mFiltered.getElement() == Element.O)
                // Fenigilty's Fudge Factor
                res.addKRatio(raf.mFiltered.getXRayTransitionSet(), UncertainValue2.multiply(0.95, raf.getKRatio()));
             else
@@ -1077,14 +1077,20 @@ public class FilterFit extends LinearSpectrumFit {
          for (XRayTransitionSet xrts : sxrts) {
             Element el = xrts.getElement();
             final XRayTransition wt = xrts.getWeighiestTransition();
-            if((el.getAtomicNumber() >= Element.Ge.getAtomicNumber()) && (wt.getFamily()==AtomicShell.KFamily))
-               // Addresses issue when Sr K is not seen
-               mMapOfXRTS.put(el, new XRayTransition(el, 3, 7));
-            else if((el.getAtomicNumber() >= Element.Ho.getAtomicNumber()) && (wt.getFamily()==AtomicShell.LFamily))
+            if (el.getAtomicNumber() >= Element.Ge.getAtomicNumber()) {
+               // Addresses issue when Sr K is not seen (this also addresses low
+               // over-voltage due to charging)
+               if (wt.getFamily() < AtomicShell.LFamily) {
+                  XRayTransitionSet xrts2 = new XRayTransitionSet(new AtomicShell(el, AtomicShell.LIII));
+                  mMapOfXRTS.put(el, xrts2.getWeighiestTransition());
+               }
+            } else if (el.getAtomicNumber() == Element.Yb.getAtomicNumber()) {
                // Addresses issue when W L3-M1 is mistaken for Yb L3-M5
-               mMapOfXRTS.put(el, new XRayTransition(el, 7, 14));
-            else
-               mMapOfXRTS.put(el, xrts.getWeighiestTransition());
+               if (wt.getFamily() < AtomicShell.MFamily)
+                  mMapOfXRTS.put(el, new XRayTransition(el, 7, 14));
+            }
+            if (!mMapOfXRTS.containsKey(el))
+               mMapOfXRTS.put(el, wt);
          }
       }
 
@@ -1105,6 +1111,7 @@ public class FilterFit extends LinearSpectrumFit {
          final List<FilteredPacket> fps = ff.getFilteredPackets();
          for (final Element elm : elms) {
             final XRayTransition opt = mMapOfXRTS.get(elm);
+            assert opt != null : "Optimal transition is null for " + elm;
             boolean keep = false;
             for (int j = 0; (j < fps.size()) && (!keep); ++j) {
                final FilteredPacket fp = fps.get(j);

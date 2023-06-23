@@ -211,7 +211,7 @@ public class MLLSQSignature implements Cloneable {
             final RegionOfInterestSet.RegionOfInterest roi = fs.getRegionOfInterest();
             final XRayTransition weightiest = fs.getXRayTransitionSet().getWeighiestTransition();
             final int fam = weightiest.getFamily();
-            if ((bestFam == -1) && (weightiest.getEnergy() < 0.8 * e0)) {
+            if ((bestFam == -1) && (weightiest.getEdgeEnergy() < 0.8 * e0)) {
                bestRoi = roi;
                bestFam = fam;
                bestXrt = weightiest;

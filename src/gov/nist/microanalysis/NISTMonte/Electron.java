@@ -354,6 +354,10 @@ public class Electron {
    public void setScatteringElement(Element scatteringElement) {
       mScatteringElement = scatteringElement;
    }
+   
+   public double getScatteringAngle() {
+      return Math2.angleBetween(mPosition, mPrevPosition);
+   }
 
    /**
     * Returns the angle phi as defined in the class documentation.

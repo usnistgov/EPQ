@@ -622,9 +622,8 @@ public class Math2 {
     * @return The angle 0.0 (parallel) to Pi (antiparallel)
     */
    static final public double angleBetween(double[] a, double[] b) {
-      assert magnitude(a) > 0.0 : Arrays.toString(a);
-      assert magnitude(b) > 0.0 : Arrays.toString(b);
-      return Math.acos(dot(a, b) / (magnitude(a) * magnitude(b)));
+      final double ac = Math.max(-1.0, Math.min(1.0, dot(a, b) / (magnitude(a) * magnitude(b))));
+      return !Double.isNaN(ac) ? Math.acos(ac) : 0.0;
    }
 
    /**

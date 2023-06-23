@@ -77,8 +77,8 @@ public class DescriptiveStatistics implements Comparable<DescriptiveStatistics> 
       mSumOfCubes = 0.0;
       mSumOfQuarts = 0.0;
       mNPoints = 0;
-      mMin = Double.NaN;
-      mMax = Double.NaN;
+      mMin = Double.MAX_VALUE;
+      mMax = -Double.MAX_VALUE;
    }
 
    /**

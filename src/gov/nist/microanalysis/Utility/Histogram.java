@@ -91,6 +91,15 @@ public class Histogram {
       Arrays.sort(mBinMin);
    }
 
+   public boolean merge(Histogram h1) {
+      for (int i = 0; i < mBinMin.length; ++i)
+         if (mBinMin[i] != h1.mBinMin[i])
+            return false;
+      for (int i = 0; i < mCounts.length; ++i)
+         mCounts[i] += h1.mCounts[i];
+      return true;
+   }
+
    /**
     * Constructs a Histogram object to represent bins between min (inclusive)
     * and max (excluded)

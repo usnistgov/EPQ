@@ -159,8 +159,6 @@ public class MLLSQSignature implements Cloneable {
          mFilterFit.setResidualModelThreshold(0.0);
          for (Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())
             mFilterFit.addReference(me.getKey(), me.getValue());
-         assert mOptimal == null;
-         mOptimal = computeOptimal(mFilterFit, mBeamEnergy);
          // Special rules for one element masquerading as another
          final FilterFit.CompoundCullingStrategy cs = new FilterFit.CompoundCullingStrategy();
          // Special rules for one element masquerading as another
@@ -186,6 +184,8 @@ public class MLLSQSignature implements Cloneable {
             sc.add(Element.Pb, Element.Mo);
          }
          cs.append(sc);
+         assert mOptimal == null;
+         mOptimal = computeOptimal(mFilterFit, mBeamEnergy);
          cs.append(new FilterFit.CullByOptimal(mThreshold, mOptimal.keySet()));
          mFilterFit.setCullingStrategy(cs);
       }

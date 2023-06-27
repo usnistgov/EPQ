@@ -1112,17 +1112,17 @@ public class FilterFit extends LinearSpectrumFit {
          for (final Element elm : elms) {
             final XRayTransition opt = mMapOfXRTS.get(elm);
             assert opt != null : "Optimal transition is null for " + elm;
-            boolean keep = false;
-            for (int j = 0; (j < fps.size()) && (!keep); ++j) {
+            for (int j = 0; j < fps.size(); ++j) {
                final FilteredPacket fp = fps.get(j);
                if (fp.getElement().equals(elm) && fp.getXRayTransitionSet().contains(opt)) {
                   final UncertainValue2 kr = fp.mKRatio;
-                  if (kr.uncertainty() > 0.0)
-                     keep = (Math.max(0.0, kr.doubleValue()) / kr.uncertainty() > mSigma);
+                  final boolean keep = ((kr.doubleValue() > 0.0) && (kr.uncertainty() <= 0.0))
+                        || (Math.max(0.0, kr.doubleValue()) / kr.uncertainty() > mSigma);
+                  if (!keep)
+                     removeThese.add(elm);
+                  break;
                }
             }
-            if (!keep)
-               removeThese.add(elm);
          }
          return removeThese;
       }

@@ -713,6 +713,38 @@ public class Math2 {
       }
    }
 
+   public static double[] cubicSolver2(double a, double b, double c, double d) {
+      b /= a;
+      c /= a;
+      d /= a;
+      final double q = (3.0 * c - (b * b)) / 9.0;
+      final double r = (-(27.0 * d) + b * (9.0 * c - 2.0 * (b * b))) / 54.0;
+      final double discrim = q * q * q + r * r;
+      final double term1 = b / 3.0;
+      if (discrim > 0) {
+         // one root real, two are complex
+         final double temp = 1.0 / 3.0;
+         double s = r + Math.sqrt(discrim);
+         s = ((s < 0) ? -Math.pow(-s, temp) : Math.pow(s, temp));
+         double t = r - Math.sqrt(discrim);
+         t = ((t < 0) ? -Math.pow(-t, temp) : Math.pow(t, temp));
+         return new double[]{-term1 + s + t};
+      } else if (discrim == 0.0) {
+         // The remaining options are all real
+         // All roots real, at least two are equal.
+         final double r13 = r < 0 ? -Math.pow(-r, (1.0 / 3.0)) : Math.pow(r, (1.0 / 3.0));
+         return new double[]{-term1 + 2.0 * r13, -(r13 + term1), -(r13 + term1)};
+      } else {
+         // Only option left is that all roots are real and unequal (to get
+         // here, q
+         // < 0)
+         final double dum1 = Math.acos(r / Math.sqrt(-q * -q * -q));
+         final double temp = -term1 + 2.0 * Math.sqrt(-q);
+         return new double[]{temp * Math.cos(dum1 / 3.0), temp * Math.cos((dum1 + 2.0 * Math.PI) / 3.0),
+               temp * Math.cos((dum1 + 4.0 * Math.PI) / 3.0)};
+      }
+   }
+
    /**
     * Compute the polynomial <code>coeff[0]+coeff[1]*x+coeff[2]*x^2+...</code>
     * 
@@ -745,13 +777,19 @@ public class Math2 {
     * @throws EPQException
     */
    static final public double[] solvePoly(double[] coeff) throws EPQException {
-      switch (coeff.length) {
+      int cl = 0;
+      for (int i = coeff.length; i >= 0; --i)
+         if (coeff[i - 1] != 0.0) {
+            cl = i;
+            break;
+         }
+      switch (cl) {
          case 2 :
             return new double[]{-coeff[0] / coeff[1]};
          case 3 :
             return quadraticSolver(coeff[2], coeff[1], coeff[0]);
          case 4 :
-            return cubicSolver(coeff[3], coeff[2], coeff[1], coeff[0]);
+            return cubicSolver2(coeff[3], coeff[2], coeff[1], coeff[0]);
          default :
             throw new EPQException("Analytical solution not available");
       }

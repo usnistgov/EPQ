@@ -2309,7 +2309,7 @@ final public class SpectrumUtils {
 
    /**
     * Constructs a LinearizeSpectrum by assuming the energy scale for the 'spec'
-    * is specified by the polynomial coefficients in 'poly'. The channel width
+    * is specified by the polynomial coefficients in 'scale'. The channel width
     * in the new spectrum is specified by chWidth.
     * 
     * @param spec
@@ -2322,17 +2322,26 @@ final public class SpectrumUtils {
     */
    public final static ISpectrumData linearizeSpectrum2(ISpectrumData spec, double[] scale, double chWidth) throws EPQException {
       final double minE = Math2.polynomial(scale, 0.0);
-      final double maxE = Math2.polynomial(scale, spec.getChannelCount());
-      final int nCh = (int) Math.ceil((maxE - minE) / chWidth);
+      final double maxE = SpectrumUtils.minEnergyForChannel(spec, spec.getChannelCount());
+      final int nCh = (int) Math.floor((maxE - minE) / chWidth);
       final EditableSpectrum res = new EditableSpectrum(nCh, chWidth, minE);
-      final double[] xx = Math2.solvePoly(scale, SpectrumUtils.minEnergyForChannel(res, 0));
-      double oldLowCh = xx != null ? Math2.closestTo(xx, 0.0) : 0.0;
+      double prevCh = 0;
       for (int ch = 0; ch < nCh; ++ch) {
-         final double oldHighCh = Math2.closestTo(Math2.solvePoly(scale, SpectrumUtils.maxEnergyForChannel(res, ch)), oldLowCh);
-         final double oldLowE = spec.getZeroOffset() + (spec.getChannelWidth() * oldLowCh);
-         final double oldHighE = spec.getZeroOffset() + (spec.getChannelWidth() * oldHighCh);
-         res.setCounts(ch, SpectrumUtils.integrate(spec, oldLowE, oldHighE));
-         oldLowCh = oldHighCh;
+         // Bin range
+         final double newLowE = scale[0] + ch * chWidth;
+         final double newHighE = scale[0] + (ch + 1) * chWidth;
+         // Old channel range in transformed coordinates
+         final double[] lowOpts =Math2.solvePoly(scale, newLowE);
+         final double[] highOpts =Math2.solvePoly(scale, newHighE);
+         final double trLowCh = Math2.closestTo(lowOpts, prevCh);
+         final double trHighCh = Math2.closestTo(highOpts, prevCh + 1);
+         // Old channel range in energy
+         final double trLowE = spec.getZeroOffset() + trLowCh * spec.getChannelWidth();
+         final double trHighE = spec.getZeroOffset() + trHighCh * spec.getChannelWidth();
+         assert trLowE < trHighE : //
+               "Not " + trLowE + " < " + trHighE+"!";
+         prevCh = trHighCh;
+         res.setCounts(ch, SpectrumUtils.integrate(spec, trLowE, trHighE));
       }
       SpectrumUtils.rename(res, "Linearized2[" + spec.toString() + "," + Arrays.toString(scale) + "]");
       return SpectrumUtils.copy(res);

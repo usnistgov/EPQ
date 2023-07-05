@@ -1,9 +1,11 @@
 package gov.nist.microanalysis.NISTMonte;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -247,17 +249,23 @@ final public class TrajectoryImage extends BufferedImage implements ActionListen
       final Color baseColor = assignColor(mat);
       final Color drawColor = new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), 96);
       mGraphics.setColor(drawColor);
+      Stroke old=mGraphics.getStroke();
+      mGraphics.setStroke(new BasicStroke(3.0f));
       mGraphics.drawOval((int) Math.round(mXScale * (center[0] - mXMin)), (int) Math.round(mYScale * (center[2] - mYMin)),
             (int) Math.round(mXScale * radius), (int) Math.round(mYScale * radius));
+      mGraphics.setStroke(old);
    }
 
    public void drawBlock(double[] dims, double[] center, Material mat) {
       final Color baseColor = assignColor(mat);
       final Color drawColor = new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), 96);
       mGraphics.setColor(drawColor);
+      Stroke old=mGraphics.getStroke();
+      mGraphics.setStroke(new BasicStroke(3.0f));
       final int x0 = (int) Math.round(mXScale * (center[0] - (0.5 * dims[0])));
       final int y0 = (int) Math.round(mXScale * (center[2] - (0.5 * dims[2])));
       mGraphics.drawRect(x0, y0, (int) Math.round(mXScale * dims[0]), (int) Math.round(mYScale * dims[2]));
+      mGraphics.setStroke(old);
    }
 
    /**

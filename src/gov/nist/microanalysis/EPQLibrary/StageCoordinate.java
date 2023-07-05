@@ -44,7 +44,16 @@ public class StageCoordinate implements Cloneable {
       }
 
       public String format(double d) {
-         return mFormat.format(d);
+         if(mUnit=="\u00B0") {
+            if(d>180.0)
+               d-=360.0; // Place angles on range (-180.0, 180.0) rather than [0.0, 360.0]
+            String res = mFormat.format(d);
+            if(res==mFormat.format(-180.0)) // Make sure that -179.9999 doesn't round to -180 but to 180
+               res = mFormat.format(180.0);
+            return res;
+         } else
+            return mFormat.format(d);
+
       }
    }
 

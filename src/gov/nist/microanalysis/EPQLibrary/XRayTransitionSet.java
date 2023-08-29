@@ -268,8 +268,7 @@ public class XRayTransitionSet implements Comparable<XRayTransitionSet>, Cloneab
     * Returns true otherwise (transition doesn't exist or is in set).
     * 
     * @param xrt
-    *           An integer in the range [XRayTransitonSet.KA1,
-    *           XRayTransitionSet.Last)
+    *           An integer in the range [XRayTransiton.KA1, XRayTransition.Last)
     * @return boolean
     */
    public boolean containsExisting(int xrt) {

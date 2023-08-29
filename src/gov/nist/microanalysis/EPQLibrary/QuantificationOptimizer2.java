@@ -28,8 +28,10 @@ public class QuantificationOptimizer2 extends QuantificationOptimizer {
    private final double mUnknownFactor = 2;
    private double mMinDose = 10.0;
 
-   private final double PROBE_DOSE = 1.0e6;
-   private final double NOMINAL_DOSE = 60.0;
+   static private final double PROBE_DOSE = 1.0e6;
+   static private final double NOMINAL_DOSE = 60.0;
+   static private final boolean VARIABLE_FF = true;
+
 
    public QuantificationOptimizer2(final QuantificationOutline qo, final SpectrumSimulator ss) {
       super(qo);
@@ -133,7 +135,7 @@ public class QuantificationOptimizer2 extends QuantificationOptimizer {
       mOutline.validate(unkElms);
       // Add in the measurements of the standard materials
       final SpectrumProperties props = makeSpectrumProperties();
-      final FilterFit ffUnk = new FilterFit(mOutline.getDetector(), mOutline.getBeamEnergy());
+      final FilterFit ffUnk = new FilterFit(mOutline.getDetector(), mOutline.getBeamEnergy(), VARIABLE_FF);
       // Map<Element, Set<RegionOfInterest>> refRoiStds = new TreeMap<Element,
       // Set<RegionOfInterest>>();
       // 1a. Fit the unknown with the requisite references...
@@ -172,14 +174,14 @@ public class QuantificationOptimizer2 extends QuantificationOptimizer {
             final UncertainValue2 krUnk = krsUnk.getKRatioU(elmRoi.getXRayTransitionSet(elm));
             final double dose = computeDose(krUnk, mOutline.getDesiredPrecision(elm));
             res.add(unk, roundUp(mUnknownFactor * dose), mOutline.getBeamEnergy());
-            System.out.println(unk + " at " + FromSI.keV(mOutline.getBeamEnergy()) + " for " + (mUnknownFactor * dose) + " n新 at " + elmRoi);
+            System.out.println(unk + " at " + FromSI.keV(mOutline.getBeamEnergy()) + " for " + (mUnknownFactor * dose) + " n嚙編 at " + elmRoi);
             // Check if a reference was required.
             if (!mOutline.standardCanBeUsedAsReference(elmRoi)) {
                // Calculate reference dose
                final Composition refComp = mOutline.getReference(elmRoi).getComposition();
                res.add(refComp, roundUp(mReferenceFactor * dose * krUnk.doubleValue()), mOutline.getBeamEnergy(), elmRoi);
                System.out.println(refComp + " at " + FromSI.keV(mOutline.getBeamEnergy()) + " for " + (mReferenceFactor * dose * krUnk.doubleValue())
-                     + " n新 at " + elmRoi + " for Unknown");
+                     + " n嚙編 at " + elmRoi + " for Unknown");
             }
          }
       // 1c. Check for references associated with unmeasured elements.
@@ -191,7 +193,7 @@ public class QuantificationOptimizer2 extends QuantificationOptimizer {
             Acquisition unkAcq = res.find(unk);
             final double dose = krsUnk.getKRatio(refRoi.getAllTransitions()) * unkAcq.getDose() / mUnknownFactor;
             res.add(refComp, roundUp(mReferenceFactor * dose), mOutline.getBeamEnergy(), refRoi);
-            System.out.println(refComp + " at " + FromSI.keV(mOutline.getBeamEnergy()) + " for " + dose + " n新 at " + refRoi);
+            System.out.println(refComp + " at " + FromSI.keV(mOutline.getBeamEnergy()) + " for " + dose + " n嚙編 at " + refRoi);
          }
       }
 
@@ -199,7 +201,7 @@ public class QuantificationOptimizer2 extends QuantificationOptimizer {
       final Map<Element, KRatioSet> krsStds = new TreeMap<Element, KRatioSet>();
       for (final Element elm : unkElms)
          if (!mOutline.isUnmeasuredElementRule(elm)) {
-            final FilterFit ffStd = new FilterFit(mOutline.getDetector(), mOutline.getBeamEnergy());
+            final FilterFit ffStd = new FilterFit(mOutline.getDetector(), mOutline.getBeamEnergy(), VARIABLE_FF);
             final Composition std = mOutline.getStandard(elm);
             if (std == null)
                throw new EPQException("No standard has been assigned for the element " + elm + ".");
@@ -220,7 +222,7 @@ public class QuantificationOptimizer2 extends QuantificationOptimizer {
             final double dose = computeDose(krs.getKRatioU(elmRoi.getXRayTransitionSet(elm)), mOutline.getDesiredPrecision(elm));
             res.add(mOutline.getStandard(elm), roundUp(mStandardFactor * dose), mOutline.getBeamEnergy(), elm);
             System.out.println(mOutline.getStandard(elm) + " at " + FromSI.keV(mOutline.getBeamEnergy()) + " for " + (mStandardFactor * dose)
-                  + " n新 at " + elmRoi);
+                  + " nA繚s at " + elmRoi);
             if (!mOutline.standardCanBeUsedAsReference(elmRoi)) {
                final Set<RegionOfInterest> refReq = mOutline.getReferenceRequirements(elm, elmRoi);
                // For each reference required by this standard determine the
@@ -231,7 +233,7 @@ public class QuantificationOptimizer2 extends QuantificationOptimizer {
                   final Composition refComp = mOutline.getReference(refRoi).getComposition();
                   res.add(refComp, roundUp(mReferenceFactor * dose * krRef.doubleValue()), mOutline.getBeamEnergy(), refRoi);
                   System.out.println(refComp + " at " + FromSI.keV(mOutline.getBeamEnergy()) + " for "
-                        + (mReferenceFactor * dose * krRef.doubleValue()) + " n新 at " + refRoi + " for " + elmRoi);
+                        + (mReferenceFactor * dose * krRef.doubleValue()) + " nA繚s at " + refRoi + " for " + elmRoi);
                }
             }
          }

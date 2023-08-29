@@ -59,7 +59,8 @@ public class FilterFit extends LinearSpectrumFit {
 
    // Don't consider any edges about maxU*beamEnergy
    private FilteredSpectrum mFilteredUnknown;
-   private final FittingFilter mFilter;
+   private final VariableWidthFittingFilter mVarFF;
+   private final FittingFilter mConstFF;
    private CullingStrategy mCullingStrategy = null;
 
    // Determines the widths of ROIsets
@@ -163,15 +164,20 @@ public class FilterFit extends LinearSpectrumFit {
     * FilterFit - Create an object to perform a filter fit on the argument
     * spectrum.
     *
-    * @param det
-    *           An EDSDetector implementation
-    * @param beamEnergy
-    *           In Joules
+    * @param det An EDSDetector implementation
+    * @param beamEnergy In Joules
+    * @param variableWidth true to use the variable width fitting filter model
     */
-   public FilterFit(final EDSDetector det, final double beamEnergy) throws EPQException {
+   public FilterFit(final EDSDetector det, final double beamEnergy, final boolean variableWidth) throws EPQException {
       super(det, beamEnergy);
-      final double filterWidth = det.getDetectorLineshapeModel().getFWHMatMnKa();
-      mFilter = new FittingFilter.TopHatFilter(filterWidth, det.getChannelWidth());
+      if (variableWidth) {
+         mVarFF = new VariableWidthFittingFilter.G2VariableWidthFittingFilter(det.getCalibration(), det.getChannelCount(), 1.0, 4.0);
+         mConstFF = null;
+      } else {
+         double filterWidth = det.getDetectorLineshapeModel().getFWHMatMnKa();
+         mConstFF = new FittingFilter.TopHatFilter(filterWidth, det.getChannelWidth());
+         mVarFF = null;
+      }
       assert (beamEnergy > ToSI.keV(1.0)) && (beamEnergy < ToSI.keV(450.0)) : Double.toString(FromSI.keV(beamEnergy));
    }
 
@@ -269,7 +275,7 @@ public class FilterFit extends LinearSpectrumFit {
             // See Schamber in
             // "X-Ray Fluorescence Analysis of Environmental Samples" edited
             // by Thomas Dzubay
-            final double vcf = mFilter.varianceCorrectionFactor();
+            final double vcf = mVarFF.varianceCorrectionFactor();
             for (int j = 0; j < mFilteredPackets.size(); ++j) {
                if (!isZeroFitCoefficient(j)) {
                   final UncertainValue2 uv = fitParams[j];
@@ -316,7 +322,10 @@ public class FilterFit extends LinearSpectrumFit {
       for (final RegionOfInterestSet.RegionOfInterest roi : rois) {
          final double[] bci = SpectrumUtils.backgroundCorrectedIntegral(ref, FromSI.eV(roi.lowEnergy()), FromSI.eV(roi.highEnergy()));
          if ((bci[0] / bci[1]) > 3.0)
-            res.add(new FilteredSpectrum(ref, elm, roi, mFilter));
+            if (mVarFF != null)
+               res.add(new FilteredSpectrum(ref, elm, roi, mVarFF));
+            else
+               res.add(new FilteredSpectrum(ref, elm, roi, mConstFF));
       }
       return res;
    }
@@ -416,11 +425,12 @@ public class FilterFit extends LinearSpectrumFit {
       for (final FilteredPacket raf : mFilteredPackets)
          if (raf.mFiltered.getElement() != Element.None) {
             // Filter fit seems to consistently overestimate the k-ratio for O K
-            if (raf.mFiltered.getElement() == Element.O)
-               // Fenigilty's Fudge Factor
-               res.addKRatio(raf.mFiltered.getXRayTransitionSet(), UncertainValue2.multiply(0.95, raf.getKRatio()));
-            else
-               res.addKRatio(raf.mFiltered.getXRayTransitionSet(), raf.getKRatio());
+            // if (raf.mFiltered.getElement() == Element.O)
+            // Fenigilty's Fudge Factor
+            // res.addKRatio(raf.mFiltered.getXRayTransitionSet(),
+            // UncertainValue2.multiply(0.95, raf.getKRatio()));
+            // else
+            res.addKRatio(raf.mFiltered.getXRayTransitionSet(), raf.getKRatio());
          }
       return res;
    }
@@ -497,7 +507,7 @@ public class FilterFit extends LinearSpectrumFit {
          props.setNumericProperty(SpectrumProperties.RealTime, unkProps.getNumericWithDefault(SpectrumProperties.RealTime, Double.NaN));
       if (unkProps.isDefined(SpectrumProperties.ProbeCurrent))
          props.setNumericProperty(SpectrumProperties.ProbeCurrent, unkProps.getNumericWithDefault(SpectrumProperties.ProbeCurrent, Double.NaN));
-      props.setTextProperty(SpectrumProperties.SpectrumComment, "Filter = " + mFilter.toString());
+      props.setTextProperty(SpectrumProperties.SpectrumComment, "Filter = " + (mVarFF != null ? mVarFF : mConstFF).toString());
       SpectrumUtils.rename(res, "Residual[" + mFilteredUnknown.getBaseSpectrum().toString() + "]");
       return res;
    }
@@ -533,7 +543,10 @@ public class FilterFit extends LinearSpectrumFit {
          props.setNumericProperty(SpectrumProperties.RealTime, unkProps.getNumericWithDefault(SpectrumProperties.RealTime, Double.NaN));
       if (unkProps.isDefined(SpectrumProperties.ProbeCurrent))
          props.setNumericProperty(SpectrumProperties.ProbeCurrent, unkProps.getNumericWithDefault(SpectrumProperties.ProbeCurrent, Double.NaN));
-      props.setTextProperty(SpectrumProperties.SpectrumComment, "Filter = " + mFilter.toString());
+      if(mVarFF!=null)
+         props.setTextProperty(SpectrumProperties.SpectrumComment, "Filter = " + mVarFF.toString());
+      else
+         props.setTextProperty(SpectrumProperties.SpectrumComment, "Filter = " + mConstFF.toString());
       SpectrumUtils.rename(res, "Residual[" + mFilteredUnknown.getBaseSpectrum().toString() + "]");
       return res;
    }
@@ -563,7 +576,10 @@ public class FilterFit extends LinearSpectrumFit {
 
    private void updateUnknown(final ISpectrumData unk) throws EPQException {
       if ((mFilteredUnknown == null) || (unk != mFilteredUnknown.getBaseSpectrum())) {
-         mFilteredUnknown = new FilteredSpectrum(unk, mFilter);
+         if(mVarFF!=null)
+            mFilteredUnknown = new FilteredSpectrum(unk, mVarFF);
+         else
+            mFilteredUnknown = new FilteredSpectrum(unk, mConstFF);
          markDirty();
       }
       perform();

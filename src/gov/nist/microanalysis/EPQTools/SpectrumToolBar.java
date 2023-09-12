@@ -1,11 +1,11 @@
 package gov.nist.microanalysis.EPQTools;
 
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -81,10 +81,11 @@ public class SpectrumToolBar extends JPanel {
 
       ZoomButton(int r) {
          super(Integer.toString(r));
-         setContentAreaFilled(false);
+         setContentAreaFilled(true);
          setBorderPainted(false);
          setFocusable(false);
-         setMargin(new Insets(0, 2, 0, 2));
+         setBorder(BorderFactory.createLineBorder(getForeground()));
+         // setMargin(null);
          setToolTipText("Zoom to [0," + Integer.toString(r) + " keV]");
          mUpper = r;
          addActionListener(new ActionListener() {
@@ -173,7 +174,7 @@ public class SpectrumToolBar extends JPanel {
          pos += 2;
       }
       if ((mMode & ZOOM_VALUES) != 0) {
-         final PanelBuilder pb2 = new PanelBuilder(new FormLayout("pref, 1dlu, pref, 1dlu, pref", "pref, 1dlu, pref"));
+         final PanelBuilder pb2 = new PanelBuilder(new FormLayout("pref, 3dlu, pref, 3dlu, pref", "pref, 3dlu, pref"));
          pb2.add(new ZoomButton(5), cc.xy(1, 1));
          pb2.add(new ZoomButton(15), cc.xy(3, 1));
          pb2.add(new ZoomButton(30), cc.xy(5, 1));

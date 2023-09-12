@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -62,7 +63,10 @@ abstract public class CSVReader {
       public double[][] getResource(Class<?> clss) {
          if (mData == null)
             try {
-               final Reader isr = new InputStreamReader(clss.getResourceAsStream(mFileName), "US-ASCII");
+               final InputStream res = clss.getResourceAsStream(mFileName);
+               if(res==null)
+                  throw new EPQFatalException("Unable to find the resource "+mFileName);
+               final Reader isr = new InputStreamReader(res, "US-ASCII");
                mData = loadTable(isr);
             } catch (final Exception e) {
                throw new EPQFatalException(e);

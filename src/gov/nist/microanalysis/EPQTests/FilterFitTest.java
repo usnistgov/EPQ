@@ -67,13 +67,28 @@ public class FilterFitTest extends TestCase {
       mAgSpec = null;
    }
 
-   public void testOne() throws EPQException {
+   public void testOneA() throws EPQException {
       // Load the reference spectra...
       // Construct an unknown from the references...
       final SpectrumMath unk = new SpectrumMath(mAuSpec);
       unk.add(mAgSpec, 1.0);
       final EDSDetector det = EDSDetector.createSDDDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
-      final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)));
+      final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)), false);
+      ff.addReference(Element.Au, mAuSpec);
+      ff.addReference(Element.Ag, mAgSpec);
+      final KRatioSet krs = ff.getKRatios(unk);
+      System.out.println(krs.toString());
+      assertEquals(krs.getKRatio(krs.optimalDatum(Element.Au)), 0.5, 0.01);
+      assertEquals(krs.getKRatio(krs.optimalDatum(Element.Ag)), 0.5, 0.01);
+   }
+   
+   public void testOneB() throws EPQException {
+      // Load the reference spectra...
+      // Construct an unknown from the references...
+      final SpectrumMath unk = new SpectrumMath(mAuSpec);
+      unk.add(mAgSpec, 1.0);
+      final EDSDetector det = EDSDetector.createSDDDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
+      final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)), true);
       ff.addReference(Element.Au, mAuSpec);
       ff.addReference(Element.Ag, mAgSpec);
       final KRatioSet krs = ff.getKRatios(unk);
@@ -82,11 +97,12 @@ public class FilterFitTest extends TestCase {
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Ag)), 0.5, 0.01);
    }
 
-   public void testTwo() throws EPQException {
+
+   public void testTwoA() throws EPQException {
       final SpectrumMath unk = new SpectrumMath(mAuSpec);
       unk.add(mAgSpec, 0.5);
       final EDSDetector det = EDSDetector.createSiLiDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
-      final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)));
+      final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)), false);
       ff.addReference(Element.Au, mAuSpec);
       ff.addReference(Element.Ag, mAgSpec);
       final KRatioSet krs = ff.getKRatios(unk);
@@ -94,12 +110,26 @@ public class FilterFitTest extends TestCase {
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Au)), 0.666, 0.01);
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Ag)), 0.333, 0.01);
    }
+   
+   public void testTwoB() throws EPQException {
+      final SpectrumMath unk = new SpectrumMath(mAuSpec);
+      unk.add(mAgSpec, 0.5);
+      final EDSDetector det = EDSDetector.createSiLiDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
+      final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)), true);
+      ff.addReference(Element.Au, mAuSpec);
+      ff.addReference(Element.Ag, mAgSpec);
+      final KRatioSet krs = ff.getKRatios(unk);
+      System.out.println(krs.toString());
+      assertEquals(krs.getKRatio(krs.optimalDatum(Element.Au)), 0.666, 0.01);
+      assertEquals(krs.getKRatio(krs.optimalDatum(Element.Ag)), 0.333, 0.01);
+   }
+   
 
-   public void testThree() throws EPQException {
+   public void testThreeA() throws EPQException {
       final SpectrumMath unk = new SpectrumMath(mAgSpec);
       unk.add(mAuSpec, 0.5);
       final EDSDetector det = EDSDetector.createSiLiDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
-      final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)));
+      final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)), false);
       ff.addReference(Element.Au, mAuSpec);
       ff.addReference(Element.Ag, mAgSpec);
       final KRatioSet krs = ff.getKRatios(unk);
@@ -107,6 +137,20 @@ public class FilterFitTest extends TestCase {
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Au)), 0.333, 0.01);
       assertEquals(krs.getKRatio(krs.optimalDatum(Element.Ag)), 0.666, 0.01);
    }
+   
+   public void testThreeB() throws EPQException {
+      final SpectrumMath unk = new SpectrumMath(mAgSpec);
+      unk.add(mAuSpec, 0.5);
+      final EDSDetector det = EDSDetector.createSiLiDetector(unk.getChannelCount(), unk.getChannelWidth(), SpectrumUtils.getFWHMAtMnKA(unk, 135.0));
+      final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)), true);
+      ff.addReference(Element.Au, mAuSpec);
+      ff.addReference(Element.Ag, mAgSpec);
+      final KRatioSet krs = ff.getKRatios(unk);
+      System.out.println(krs.toString());
+      assertEquals(krs.getKRatio(krs.optimalDatum(Element.Au)), 0.333, 0.01);
+      assertEquals(krs.getKRatio(krs.optimalDatum(Element.Ag)), 0.666, 0.01);
+   }
+
 
    public void testFour() throws EPQException, IOException {
       // 'Unknown' spectrum
@@ -141,7 +185,7 @@ public class FilterFitTest extends TestCase {
             SpectrumUtils.getFWHMAtMnKA(k3189, 135.0));
       for (int j = 0; j < 10; ++j) {
          final ISpectrumData unk = new NoisySpectrum(k3189, 1.0, (int) (Integer.MAX_VALUE * Math.random()));
-         final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)));
+         final FilterFit ff = new FilterFit(det, ToSI.eV(SpectrumUtils.getBeamEnergy(unk)), false);
          for (final Object[] ref2 : refs) {
             final ISpectrumData ref = SpectrumUtils.copy((ISpectrumData) ref2[3]);
             ref.getProperties().setCompositionProperty(SpectrumProperties.StandardComposition, (Material) ref2[2]);

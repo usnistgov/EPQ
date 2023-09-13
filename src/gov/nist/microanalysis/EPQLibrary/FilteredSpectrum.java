@@ -31,6 +31,7 @@ public class FilteredSpectrum extends DerivedSpectrum {
    private final RegionOfInterestSet.RegionOfInterest mROI;
    private final Element mElement;
    private final FittingFilter mFilter;
+   private final VariableWidthFittingFilter mVarFilter;
    private final double mNormalization;
 
    private void compute(ISpectrumData spec, RegionOfInterest roi) {
@@ -66,31 +67,43 @@ public class FilteredSpectrum extends DerivedSpectrum {
    private void compute(double[] roiData, int lowCh, int chCount) {
       final double[] tmp = new double[chCount];
       final double[] err = new double[chCount];
-      Arrays.fill(err, 0.0);
-      assert mFilter.zeroSum();
-      final double[] filter = mFilter.getFilter();
-      // Perform filter
-      final int hl = filter.length / 2, ol = filter.length - hl;
-      for (int si = -hl; si < (roiData.length + ol); ++si) {
-         final int ch = si + lowCh;
-         if ((ch >= 0) && (ch < chCount)) {
-            double sum = 0.0, errs = 0.0;
-            for (int fi = 0; fi < filter.length; ++fi) {
-               final double fr = filter[fi] * roiData[Math2.bound((si - hl) + fi, 0, roiData.length)];
-               sum += fr;
-               errs += filter[fi] * fr;
+      if (mFilter != null) {
+         assert mFilter.zeroSum();
+         final double[] filter = mFilter.getFilter();
+         // Perform filter
+         final int hl = filter.length / 2, ol = filter.length - hl;
+         for (int si = -hl; si < (roiData.length + ol); ++si) {
+            final int ch = si + lowCh;
+            if ((ch >= 0) && (ch < chCount)) {
+               double sum = 0.0, errs = 0.0;
+               for (int fi = 0; fi < filter.length; ++fi) {
+                  final double fr = filter[fi] * roiData[Math2.bound((si - hl) + fi, 0, roiData.length)];
+                  sum += fr;
+                  errs += filter[fi] * fr;
+               }
+               tmp[ch] = mNormalization * sum;
+               err[ch] = errs > 0.0 ? mNormalization * Math.sqrt(errs) : Double.MAX_VALUE;
             }
-            tmp[ch] = mNormalization * sum;
-            err[ch] = errs > 0.0 ? mNormalization * Math.sqrt(errs) : Double.MAX_VALUE;
          }
+         mFilteredData = tmp;
+         mErrors = err;
+      } else {
+         assert mVarFilter != null;
+         final double[] chdata = new double[chCount];
+         System.arraycopy(roiData, 0, chdata, lowCh, roiData.length);
+         final double[][] filtvar = mVarFilter.compute(chdata);
+         for (int ch = 0; ch < chCount; ++ch) {
+            filtvar[0][ch] *= mNormalization;
+            filtvar[1][ch] = filtvar[1][ch] > 0.0 ? mNormalization * Math.sqrt(filtvar[1][ch]) : Double.MAX_VALUE;
+         }
+         mFilteredData = filtvar[0];
+         mErrors = filtvar[1];
       }
-      mFilteredData = tmp;
-      mErrors = err;
       mNonZero = Interval.nonZeroInterval(mFilteredData);
    }
 
    private void computeFilteredSpectrum() {
-      assert mFilter.zeroSum();
+      // assert mFilter.zeroSum();
       final ISpectrumData src = getBaseSpectrum();
       String specDesc;
       if (mROI != null) {
@@ -121,6 +134,18 @@ public class FilteredSpectrum extends DerivedSpectrum {
       super(src);
       mNormalization = 1.0 / SpectrumUtils.getDose(mSource.getProperties());
       mFilter = ff;
+      mVarFilter = null;
+      mROI = roi;
+      mElement = elm;
+      assert (roi == null) || roi.getElementSet().contains(elm);
+   }
+
+   public FilteredSpectrum(ISpectrumData src, Element elm, RegionOfInterestSet.RegionOfInterest roi, VariableWidthFittingFilter varff)
+         throws EPQException {
+      super(src);
+      mNormalization = 1.0 / SpectrumUtils.getDose(mSource.getProperties());
+      mFilter = null;
+      mVarFilter = varff;
       mROI = roi;
       mElement = elm;
       assert (roi == null) || roi.getElementSet().contains(elm);
@@ -136,6 +161,10 @@ public class FilteredSpectrum extends DerivedSpectrum {
     */
    public FilteredSpectrum(ISpectrumData src, FittingFilter ff) throws EPQException {
       this(src, null, null, ff);
+   }
+
+   public FilteredSpectrum(ISpectrumData src, VariableWidthFittingFilter varff) throws EPQException {
+      this(src, null, null, varff);
    }
 
    /**

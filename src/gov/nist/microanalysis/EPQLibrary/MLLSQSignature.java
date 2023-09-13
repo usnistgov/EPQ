@@ -154,7 +154,7 @@ public class MLLSQSignature implements Cloneable {
       }
       // assert mBeamEnergy == ToSI.eV(SpectrumUtils.getBeamEnergy(spec));
       if (mFilterFit == null) {
-         mFilterFit = new FilterFit(mDetector, mBeamEnergy);
+         mFilterFit = new FilterFit(mDetector, mBeamEnergy, false);
          mFilterFit.setStripUnlikely(mStripUnlikely);
          mFilterFit.setResidualModelThreshold(0.0);
          for (Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())

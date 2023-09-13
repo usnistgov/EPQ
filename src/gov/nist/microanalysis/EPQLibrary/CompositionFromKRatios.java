@@ -585,7 +585,7 @@ public class CompositionFromKRatios extends AlgorithmClass {
                msg.append("Best Calculated = " + calcKrs.toString() + "\n");
                msg.append("Best = " + bestComp.descriptiveString(false) + "\n");
                msg.append("Best delta = " + Double.toString(bestDelta.doubleValue()) + " = " + Double.toString(bestDelta.doubleValue() / mEpsilon)
-                     + " × tolerance\n");
+                     + "Â·tolerance\n");
                mWarningMessage = msg.toString();
                System.err.print(msg);
                break;
@@ -611,15 +611,6 @@ public class CompositionFromKRatios extends AlgorithmClass {
       Composition prev = new Composition();
       for (final XRayTransitionSet xrts : krs.getTransitions()) {
          TransitionData sd = mStandardData.get(xrts);
-         /*
-          * try { XRayTransition xrt = xrts.getWeighiestTransition(); final
-          * CorrectionAlgorithm ca = getCorrectionAlgorithm(); ca.initialize(new
-          * Material(xrts.getElement(), 1.0), xrt.getDestination(),
-          * sd.mProperties); final double zafp = ca.computeZAFCorrection(xrt);
-          * ca.initialize(sd.mComposition, xrt.getDestination(),
-          * sd.mProperties); final double zafs = ca.computeZAFCorrection(xrt);
-          * wf *= zafs / zafp; } catch (EPQException e) { e.printStackTrace(); }
-          */
          final UncertainValue2 c = UncertainValue2.multiply(sd.mComposition.weightFraction(xrts.getElement(), true), krs.getKRatioU(xrts));
          prev.addElement(xrts.getElement(), c);
       }

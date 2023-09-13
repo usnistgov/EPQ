@@ -37,6 +37,9 @@ public class QuantifyUsingZetaFactors {
    private final Map<Element, ISpectrumData> mStandards = new TreeMap<Element, ISpectrumData>();
    private final Map<Element, ISpectrumData> mStrip = new TreeMap<Element, ISpectrumData>();
    private final ZetaFactor mAlg = new ZetaFactor();
+   
+   static private final boolean VARIABLE_FF = true;
+
 
    /**
     * Constructs a QuantifyUsingZetaFactors
@@ -145,7 +148,7 @@ public class QuantifyUsingZetaFactors {
     */
    public Result compute(final ISpectrumData unk, boolean withAbsorption) throws EPQException {
       final ISpectrumData dup = preProcessSpectrum(unk);
-      final FilterFit ff = new FilterFit(mDetector, mBeamEnergy);
+      final FilterFit ff = new FilterFit(mDetector, mBeamEnergy, VARIABLE_FF);
       for (final Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())
          ff.addReference(me.getKey(), me.getValue());
       for (final Map.Entry<Element, ISpectrumData> me : mStrip.entrySet())

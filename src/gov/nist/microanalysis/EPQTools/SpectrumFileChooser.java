@@ -198,7 +198,7 @@ public class SpectrumFileChooser extends JDialog {
          mFileChooser.addChoosableFileFilter(
                new SimpleFileFilter(new String[]{"ser", "msa", "emsa", "dat", "sp0", "mca", "spd", "spx", "pdz"}, "Spectrum file"));
          mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"ser", "msa"}, "EMISPEC file"));
-         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"emsa", "msa", "ems"}, "MSA standard file"));
+         mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"emsa", "msa", "ems", "txt" }, "MSA standard file"));
          mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"psmsa", "lsmsa"}, "Noran MSA files"));
          mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"dat"}, "DTSA file"));
          mFileChooser.addChoosableFileFilter(new SimpleFileFilter(new String[]{"tif"}, "TIFF-style spectrum file"));

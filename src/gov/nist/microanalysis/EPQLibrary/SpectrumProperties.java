@@ -1043,7 +1043,7 @@ public class SpectrumProperties implements Cloneable, Serializable {
             OperatingMode, SpecimenThickness, SpecimenDensity, StandardComposition, ElementList, StandardizedElements, KRatios, OptimalKRatios,
             ChiSquare, ReducedChiSquare, MacroImage, MicroImage, MicroImage2, AFA_DAvg, BeamSpotX, BeamSpotY, DuaneHunt, SourceFileId, Instrument,
             Detector, FanoFactor, DetectorDescription, ParticleSignature, SampleShape, SpectrumDB, WindowOpenArea, SupportGridThickness,
-            CalibrationGUID, DetectorGUID, OutputCountRate, XRFAtmosphere, XRFFilter, XRFSourceVoltage, XRFTubeCurrent, DetectorMode
+            CalibrationGUID, DetectorGUID, OutputCountRate, XRFAtmosphere, XRFFilter, XRFSourceVoltage, XRFTubeCurrent, DetectorMode, ImageRef
 
       };
       for (final PropertyId pid : contents)

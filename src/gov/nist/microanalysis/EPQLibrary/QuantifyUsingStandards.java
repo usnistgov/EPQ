@@ -90,6 +90,8 @@ public class QuantifyUsingStandards extends QuantificationOutline {
    transient private final TreeMap<RegionOfInterest, UncertainValue2> mReferenceScale = new TreeMap<RegionOfInterestSet.RegionOfInterest, UncertainValue2>();
 
    static private final boolean INCLUDE_REF_U = false;
+   static private final boolean VARIABLE_FF = true;
+   
 
    private final boolean mKRatiosOnly;
 
@@ -452,7 +454,7 @@ public class QuantifyUsingStandards extends QuantificationOutline {
             final double sToN = SpectrumUtils.computeSignalToNoise(roi, getStandardSpectrum(elm));
             mReferenceScale.put(roi, new UncertainValue2(1.0, "I[std," + elm.toAbbrev() + "]", sToN > 0.0 ? 1.0 / sToN : 0.0));
          } else {
-            final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy());
+            final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy(), VARIABLE_FF);
             ff.setStripUnlikely(false);
             for (final RegionOfInterest roi2 : refReq) {
                final ISpectrumData ref = getReferenceSpectrum(roi2);
@@ -492,7 +494,7 @@ public class QuantifyUsingStandards extends QuantificationOutline {
       final Result res = new Result(unk);
       // Fit the unknown using the reference spectra
       final Map<RegionOfInterestSet.RegionOfInterest, ISpectrumData> refs = getReferenceSpectra();
-      final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy());
+      final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy(), VARIABLE_FF);
       FilterFit.setNaiveBackground(false);
       final Set<Element> measured = getMeasuredElements();
       for (final Map.Entry<RegionOfInterestSet.RegionOfInterest, ISpectrumData> me : refs.entrySet()) {

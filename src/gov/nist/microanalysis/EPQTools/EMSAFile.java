@@ -501,7 +501,7 @@ public class EMSAFile extends BaseSpectrum {
                // TESCAN also uses the ##SAMPLE tag but it just contains a
                // specimen description.
                mProperties.setTextProperty(SpectrumProperties.SpecimenDesc, value);
-
+               
             }
             // ignored special custom tag (ignore)
          } else if (prefix.startsWith("##MASSTHICK")) {

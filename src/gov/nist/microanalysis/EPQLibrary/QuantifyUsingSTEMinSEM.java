@@ -32,6 +32,8 @@ public class QuantifyUsingSTEMinSEM {
    private STEMinSEMCorrection mCorrection;
    private final Map<Element, Integer> mLayers;
    private Map<Integer, Oxidizer> mOxidizers = new HashMap<>();
+   
+   static private final boolean VARIABLE_FF = true;
 
    /**
     * A mechanism for removing elements with zero or near zero presence.
@@ -178,7 +180,7 @@ public class QuantifyUsingSTEMinSEM {
    }
 
    protected FilterFit buildFF() throws EPQException {
-      final FilterFit res = new FilterFit(mDetector, mBeamEnergy);
+      final FilterFit res = new FilterFit(mDetector, mBeamEnergy, VARIABLE_FF);
       for (Map.Entry<Element, ISpectrumData> me : mFitSpectra.entrySet())
          res.addReference(me.getKey(), me.getValue());
       return res;

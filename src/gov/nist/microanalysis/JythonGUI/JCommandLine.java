@@ -1,8 +1,6 @@
 package gov.nist.microanalysis.JythonGUI;
 
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -46,9 +44,6 @@ public class JCommandLine extends JTextPane {
    private ArrayList<String> mCmdBuffer = new ArrayList<>();
    private int mCmdIndex = -1;
    private StyleWriter mErrorWriter;
-   private TimingDialog mTimingDialog;
-   private transient Frame mFrame;
-
    static private final String COMMAND = "Command";
    static private final String PROMPT = "Prompt";
    static private final String INNER_ERROR = "InternalError";
@@ -217,17 +212,6 @@ public class JCommandLine extends JTextPane {
       }
    }
 
-   private Frame getFrame() {
-      if (mFrame == null) {
-         for (Container c = getParent(); c != null; c = c.getParent())
-            if (c instanceof Frame) {
-               mFrame = (Frame) c;
-               break;
-            }
-      }
-      return mFrame;
-   }
-
    public void execute(InputStream is) {
       class CmdProcessStream implements Runnable {
          InputStream mStream;
@@ -246,17 +230,8 @@ public class JCommandLine extends JTextPane {
       }
 
       mCmdOffset = Integer.MAX_VALUE;
-      if (mCmdProcessor != null) {
-         Frame frame = getFrame();
-         mTimingDialog = new TimingDialog(frame, "Executing a script", true);
-         mTimingDialog.setOperation(new CmdProcessStream(is));
-         mTimingDialog.setLocationRelativeTo(frame);
-         mTimingDialog.setLocation(frame.getX() + (frame.getWidth() - mTimingDialog.getWidth()) / 2,
-               frame.getY() + (frame.getHeight() - mTimingDialog.getHeight()) / 2);
-         mTimingDialog.setVisible(true);
-         // model wait...
-         mTimingDialog = null;
-      }
+      if (mCmdProcessor != null) 
+         (new CmdProcessStream(is)).run();
       createCmdLine("");
    }
 

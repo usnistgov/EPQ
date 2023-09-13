@@ -144,7 +144,7 @@ public class IXRFSpectrum extends BaseSpectrum {
       final Reader rd = new InputStreamReader(is, Charset.forName("US-ASCII"));
       final BufferedReader br = new BufferedReader(rd);
       // Number always use '.' as decimal separator
-      mDefaultFormat = NumberFormat.getInstance(new Locale("en"));
+      mDefaultFormat = NumberFormat.getInstance(Locale.ENGLISH);
       {
          String line = br.readLine().trim();
          if (!line.toLowerCase().startsWith("iridium"))

@@ -28,6 +28,7 @@ public class BrukerSPX extends BaseSpectrum {
 
    private final SpectrumProperties mProperties = new SpectrumProperties();
    private double[] mData;
+   private transient InputStream mInputStream;
 
    static abstract private class BaseParser<T> {
       private final SpectrumProperties.PropertyId mPid;
@@ -129,8 +130,6 @@ public class BrukerSPX extends BaseSpectrum {
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/PrimaryEnergy", new Parser(SpectrumProperties.BeamEnergy, 1.0));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/ElevationAngle", new Parser(SpectrumProperties.Elevation, 1.0));
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/CalibAbs", new Parser(SpectrumProperties.EnergyOffset, 1000.0));
-      // res.put("/TRTSpectrum/ClassInstance/ClassInstance/SigmaAbs", new
-      // Parser(SpectrumProperties.EnergyOffset, 1000.0));
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/CalibLin", new Parser(SpectrumProperties.EnergyScale, 1000.0));
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/Date", new DateParser(SpectrumProperties.AcquisitionTime));
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/Time", new TimeParser(SpectrumProperties.AcquisitionTime));
@@ -168,9 +167,11 @@ public class BrukerSPX extends BaseSpectrum {
 
    public BrukerSPX(String filename) throws FileNotFoundException, XmlPullParserException, IOException, EPQException {
       this(new FileInputStream(filename));
+      mInputStream.close();
    }
 
    public BrukerSPX(InputStream is) throws XmlPullParserException, IOException, EPQException {
+      mInputStream = is;
       SpectrumProperties props = getProperties();
       props.setNumericProperty(SpectrumProperties.EnergyOffset, 0.0);
       props.setNumericProperty(SpectrumProperties.EnergyScale, 10.0);

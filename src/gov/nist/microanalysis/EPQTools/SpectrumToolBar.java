@@ -81,7 +81,7 @@ public class SpectrumToolBar extends JPanel {
 
       ZoomButton(int r) {
          super(Integer.toString(r));
-         setContentAreaFilled(true);
+         setContentAreaFilled(false);
          setBorderPainted(false);
          setFocusable(false);
          setBorder(BorderFactory.createLineBorder(getForeground()));

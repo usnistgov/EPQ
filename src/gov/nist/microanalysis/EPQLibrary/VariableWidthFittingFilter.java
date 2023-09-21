@@ -107,14 +107,12 @@ public class VariableWidthFittingFilter {
                // Range of channels over which to save the filter
                final int smin = Math.max(0, chmin), smax = Math.min(chmax + 1, nch);
                final double[] filt = new double[smax - smin];
-               double sum = 0.0;
                for (int i = chmin; i <= chmax; ++i) {
                   final double ei = calib.getZeroOffset() + i * calib.getChannelWidth();
                   final double f = func(ei, e, w);
                   filt[Math2.bound(i, smin, smax) - smin] += f;
-                  sum += f;
                }
-               double off = sum / (chmax - chmin + 1);
+               final double off = Arrays.stream(filt).sum() / (chmax - chmin + 1);
                for (int i = chmin; i <= chmax; ++i)
                   filt[Math2.bound(i, smin, smax) - smin] -= off;
                assert Math.abs(Arrays.stream(filt).sum()) <= 1.0e-8 : "At " + ch;

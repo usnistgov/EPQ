@@ -275,7 +275,7 @@ public class FilterFit extends LinearSpectrumFit {
             // See Schamber in
             // "X-Ray Fluorescence Analysis of Environmental Samples" edited
             // by Thomas Dzubay
-            final double vcf = mVarFF.varianceCorrectionFactor();
+            final double vcf = mVarFF!=null ? mVarFF.varianceCorrectionFactor() : mConstFF.mVarCorrection;
             for (int j = 0; j < mFilteredPackets.size(); ++j) {
                if (!isZeroFitCoefficient(j)) {
                   final UncertainValue2 uv = fitParams[j];

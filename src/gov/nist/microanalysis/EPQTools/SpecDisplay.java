@@ -1196,9 +1196,11 @@ public class SpecDisplay extends JComponent {
          for (int j = data.size() - 1; j >= 0; --j) {
             final ISpectrumData spec = data.get(j);
             final DisplayProperties dp = mProperties.get(spec);
-            dup.setColor(mDataColor[dp.mColorIndex]);
-            drawSpectrum(dup, spec, dp.mScale, idx, forPng);
-            --idx;
+            if (dp != null) {
+               dup.setColor(mDataColor[dp.mColorIndex]);
+               drawSpectrum(dup, spec, dp.mScale, idx, forPng);
+               --idx;
+            }
          }
       }
       drawKLMs(dup, true, forPng);
@@ -2713,8 +2715,8 @@ public class SpecDisplay extends JComponent {
     *           double
     */
    public synchronized void addSpectrum(ISpectrumData sd, int colorIndex, double scaling) {
-      mData.add(sd);
       mProperties.put(sd, new DisplayProperties(scaling, colorIndex % mDataColor.length));
+      mData.add(sd);
       repaint();
    }
 

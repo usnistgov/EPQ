@@ -2572,9 +2572,9 @@ public class SpecDisplay extends JComponent {
          // Restore previous preferences
          final Preferences userPref = Preferences.userNodeForPackage(SpecDisplay.class);
          try {
-            mLabelType = LabelType.valueOf(userPref.get(LabelType.class.getName(), LabelType.IUPAC.name()));
+            mLabelType = LabelType.valueOf(userPref.get(LabelType.class.getName(), LabelType.ELEMENT_ABBREV.name()));
          } catch (final IllegalArgumentException e2) {
-            mLabelType = LabelType.IUPAC;
+            mLabelType = LabelType.ELEMENT_ABBREV;
          }
          setStaggerOffset(userPref.getInt("Stagger", 0));
          try {

@@ -314,7 +314,7 @@ public class Element implements Comparable<Element>, Serializable {
             }
          }
       } catch (final Exception ex) {
-         throw new EPQFatalException("Fatal error while attempting to load the atomic weights data file.");
+         throw new EPQFatalException("Fatal error while attempting to load the atomic weights data file.", ex);
       }
    }
 

@@ -34,6 +34,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -396,8 +397,6 @@ public class SpecDisplay extends JComponent {
    private int mStaggerOffset = 0;
 
    private KLMLine.LabelType mLabelType = KLMLine.LabelType.ELEMENT_ABBREV;
-   private final NumberFormat mAxisLabelFormat = new HalfUpFormat("#,##0", true);
-   private final NumberFormat mFractionalAxisLabelFormat = new HalfUpFormat("0.0##", true);
 
    private String mScaleText = mCurrentScalingMode.toString();
 
@@ -859,7 +858,7 @@ public class SpecDisplay extends JComponent {
       if (nLabels < 2)
          nLabels = 2;
       final double nominalStep = 1000.0 * (max - min) / nLabels;
-      double trialStep = Math.pow(10.0, (int) (Math.log10(nominalStep))); // log10
+      long trialStep = Math.round(Math.pow(10.0, (int) (Math.log10(nominalStep)))); // log10
       if ((5 * trialStep) < nominalStep)
          trialStep *= 5;
       else if ((2 * trialStep) < nominalStep)
@@ -902,9 +901,12 @@ public class SpecDisplay extends JComponent {
       switch (mCurrentScalingMode) {
          case INTEGRAL :
          case REGION_INTEGRAL :
-            return mFractionalAxisLabelFormat.format(nn);
+            return new HalfUpFormat("0.0##", true).format(nn);
          default :
-            return mAxisLabelFormat.format(nn);
+            if(nn<1.0)
+               return new HalfUpFormat("0.0", true).format(nn);
+            else
+               return new HalfUpFormat("#,##0", true).format(nn);
       }
    }
 
@@ -962,9 +964,8 @@ public class SpecDisplay extends JComponent {
             final double step = optimalStepSize(mEMin, mEMax, fm.stringWidth("XXX"), mPlotRect.width) / MIN_GRID_SCALE;
             final double min = ((int) ((mEMin / step) + 0.999)) * step;
             final double max = ((int) (mEMax / step)) * step;
-            final NumberFormat fmt = step <= MIN_GRID_SCALE * 4.0
-                  ? new HalfUpFormat("0.00")
-                  : (step <= MIN_GRID_SCALE * 40.0 ? new HalfUpFormat("0.0") : new HalfUpFormat("0"));
+            final int digits = Math.min(4, Math.max(0, 3 - Math.min(3, (int)Math.floor(Math.log10(step)))));
+            final NumberFormat fmt =  new DecimalFormat(digits==0 ? "0" : "0.0000".substring(0, digits + 2));
             for (double m = min; m <= (max + 0.001); m += MIN_GRID_SCALE * step) {
                final String str = fmt.format(0.001 * m);
                final int pos = (int) (l0 + ((w0 * (m - mEMin)) / (mEMax - mEMin)));
@@ -990,7 +991,7 @@ public class SpecDisplay extends JComponent {
       // Draw the cross lines
       switch (mVAxisType) {
          case LINEAR : { // Draw the labels
-            final double step = optimalStepSize(mVMin, mVMax, fm.getHeight(), mPlotRect.height) / MIN_GRID_SCALE;
+            final double step = optimalStepSize(mVMin, mVMax, fm.getHeight(), mPlotRect.height) / MIN_GRID_SCALE; 
             final double min = ((int) (mVMin / step)) * step;
             final double max = ((int) (mVMax / step)) * step;
             dup.setColor(mMinorGridColor);
@@ -1618,6 +1619,8 @@ public class SpecDisplay extends JComponent {
       mZoom /= d;
       Preferences.userNodeForPackage(SpecDisplay.class).putDouble("Zoom", mZoom);
       mVMax = ((mVMax - mVMin) / d) + mVMin;
+      if((getSpectrumScalingMode()==SCALING_MODE.COUNTS) &&(mVMax<8.0))
+         mVMax=8.0;
       repaint();
    }
 

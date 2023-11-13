@@ -87,8 +87,8 @@ public class ScaledImage extends BufferedImage implements Cloneable {
 
    @Override
    public String toString() {
-      final NumberFormat nf = new DecimalFormat("#,##0.0");
-      return "ScaledImage[fov=" + nf.format(getHorizontalFieldOfView()) + " µm, " + getStagePoint().toString() + "]";
+      final NumberFormat nf = new DecimalFormat("#,##0.00");
+      return "ScaledImage[fov=" + nf.format(getHorizontalFieldOfView()*1.0e6) + "Âµm, " + getStagePoint().toString() + "]";
    }
 
    @Override

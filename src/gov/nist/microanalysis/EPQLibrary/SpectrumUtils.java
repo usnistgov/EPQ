@@ -2405,11 +2405,13 @@ final public class SpectrumUtils {
       double k1 = 1.0 / SpectrumUtils.getDose(spec1.getProperties());
       double k2 = 1.0 / SpectrumUtils.getDose(spec2.getProperties());
       double d = 0.0, su = 0.0;
+      int nch = Math.min(spec1.getChannelCount(), spec2.getChannelCount());
       for (Interval ii : intervals)
-         for (int i = ii.min(); i < ii.max(); ++i) {
-            d += Math2.sqr(k1 * spec1.getCounts(i) - k2 * spec2.getCounts(i));
-            su += k1 * k1 * Math.max(1.0, spec1.getCounts(i)) + k2 * k2 * Math.max(1.0, spec2.getCounts(i));
-         }
+         if(ii.min()<nch)
+            for (int i = ii.min(); i < Math.min(nch, ii.max()); ++i) {
+               d += Math2.sqr(k1 * spec1.getCounts(i) - k2 * spec2.getCounts(i));
+               su += k1 * k1 * Math.max(1.0, spec1.getCounts(i)) + k2 * k2 * Math.max(1.0, spec2.getCounts(i));
+            }
       return (d / su);
    }
 

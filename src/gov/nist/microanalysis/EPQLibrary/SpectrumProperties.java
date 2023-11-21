@@ -802,8 +802,7 @@ public class SpectrumProperties implements Cloneable, Serializable {
     */
    public static final PropertyId ParticleSignature = new PropertyId("Particle Signature", ParticleSignature.class);
    public static final PropertyId ParticleSignature2 = new PropertyId("Particle Signature2", TreeMap.class);
-   
-   
+
    /**
     * The result of a measurement of a multi-layer thin film.
     * 
@@ -1043,7 +1042,8 @@ public class SpectrumProperties implements Cloneable, Serializable {
             OperatingMode, SpecimenThickness, SpecimenDensity, StandardComposition, ElementList, StandardizedElements, KRatios, OptimalKRatios,
             ChiSquare, ReducedChiSquare, MacroImage, MicroImage, MicroImage2, AFA_DAvg, BeamSpotX, BeamSpotY, DuaneHunt, SourceFileId, Instrument,
             Detector, FanoFactor, DetectorDescription, ParticleSignature, SampleShape, SpectrumDB, WindowOpenArea, SupportGridThickness,
-            CalibrationGUID, DetectorGUID, OutputCountRate, XRFAtmosphere, XRFFilter, XRFSourceVoltage, XRFTubeCurrent, DetectorMode, ImageRef
+            CalibrationGUID, DetectorGUID, OutputCountRate, XRFAtmosphere, XRFFilter, XRFSourceVoltage, XRFTubeCurrent, DetectorMode, ImageRef,
+            MultiSpectrumMetric
 
       };
       for (final PropertyId pid : contents)

@@ -237,7 +237,7 @@ public class QuantificationOptimizer2 extends QuantificationOptimizer {
                }
             }
          }
-      final QuantifyUsingStandards qus = new QuantifyUsingStandards(mOutline.getDetector(), mOutline.getBeamEnergy());
+      final QuantifyUsingStandards qus = new QuantifyUsingStandards(mOutline.getDetector(), mOutline.getBeamEnergy(), false, true);
       for (final Element elm : mOutline.getMeasuredElements()) {
          final Composition std = mOutline.getStandard(elm);
          assert std != null;

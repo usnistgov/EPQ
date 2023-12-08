@@ -347,7 +347,7 @@ public class QuantificationPlan {
     * @throws EPQException
     */
    public QuantifyUsingStandards buildQuantifyUsingStandards(Map<QuantificationPlan.Acquisition, ISpectrumData> specs) throws EPQException {
-      final QuantifyUsingStandards qus = new QuantifyUsingStandards(mOutline.getDetector(), mOutline.getBeamEnergy());
+      final QuantifyUsingStandards qus = new QuantifyUsingStandards(mOutline.getDetector(), mOutline.getBeamEnergy(), false, true);
       for (final Map.Entry<QuantificationPlan.Acquisition, ISpectrumData> me : specs.entrySet()) {
          final QuantificationPlan.Acquisition acq = me.getKey();
          for (final Element elm : acq.mStandardFor)

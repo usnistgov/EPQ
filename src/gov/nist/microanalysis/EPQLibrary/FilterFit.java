@@ -67,6 +67,8 @@ public class FilterFit extends LinearSpectrumFit {
    private boolean mStripUnlikely = true;
    private boolean mDirty = true;
 
+   private boolean mOFudge = false;
+   
    private void markDirty() {
       reevaluateAll();
       mDirty = true;
@@ -169,7 +171,22 @@ public class FilterFit extends LinearSpectrumFit {
     * @param variableWidth true to use the variable width fitting filter model
     */
    public FilterFit(final EDSDetector det, final double beamEnergy, final boolean variableWidth) throws EPQException {
+      this(det, beamEnergy, variableWidth, false);
+   }
+
+   
+   /**
+    * FilterFit - Create an object to perform a filter fit on the argument
+    * spectrum.
+    *
+    * @param det An EDSDetector implementation
+    * @param beamEnergy In Joules
+    * @param variableWidth true to use the variable width fitting filter model
+    * @param oFudge Don't do this....
+    */
+   public FilterFit(final EDSDetector det, final double beamEnergy, final boolean variableWidth, boolean oFudge) throws EPQException {
       super(det, beamEnergy);
+      mOFudge = oFudge;
       if (variableWidth) {
          mVarFF = new VariableWidthFittingFilter.G2VariableWidthFittingFilter(det.getCalibration(), det.getChannelCount(), 1.0, 4.0);
          mConstFF = null;
@@ -425,12 +442,11 @@ public class FilterFit extends LinearSpectrumFit {
       for (final FilteredPacket raf : mFilteredPackets)
          if (raf.mFiltered.getElement() != Element.None) {
             // Filter fit seems to consistently overestimate the k-ratio for O K
-            // if (raf.mFiltered.getElement() == Element.O)
+            if ((raf.mFiltered.getElement() == Element.O) && mOFudge)
             // Fenigilty's Fudge Factor
-            // res.addKRatio(raf.mFiltered.getXRayTransitionSet(),
-            // UncertainValue2.multiply(0.95, raf.getKRatio()));
-            // else
-            res.addKRatio(raf.mFiltered.getXRayTransitionSet(), raf.getKRatio());
+               res.addKRatio(raf.mFiltered.getXRayTransitionSet(), UncertainValue2.multiply(0.95, raf.getKRatio()));
+            else
+               res.addKRatio(raf.mFiltered.getXRayTransitionSet(), raf.getKRatio());
          }
       return res;
    }

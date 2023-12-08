@@ -48,6 +48,8 @@ public class MLLSQSignature implements Cloneable {
 
    private boolean mStripUnlikely;
    private FilterFit mFilterFit;
+   
+   static private final boolean VARIABLE_FF = false; // Don't upset the Graf applecart!
 
    /**
     * Constructs a MLLSQSignature object to process spectra from the specified
@@ -154,7 +156,7 @@ public class MLLSQSignature implements Cloneable {
       }
       // assert mBeamEnergy == ToSI.eV(SpectrumUtils.getBeamEnergy(spec));
       if (mFilterFit == null) {
-         mFilterFit = new FilterFit(mDetector, mBeamEnergy, false);
+         mFilterFit = new FilterFit(mDetector, mBeamEnergy, VARIABLE_FF);
          mFilterFit.setStripUnlikely(mStripUnlikely);
          mFilterFit.setResidualModelThreshold(0.0);
          for (Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())

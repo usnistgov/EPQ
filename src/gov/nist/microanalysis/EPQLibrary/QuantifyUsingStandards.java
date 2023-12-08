@@ -90,10 +90,12 @@ public class QuantifyUsingStandards extends QuantificationOutline {
    transient private final TreeMap<RegionOfInterest, UncertainValue2> mReferenceScale = new TreeMap<RegionOfInterestSet.RegionOfInterest, UncertainValue2>();
 
    static private final boolean INCLUDE_REF_U = false;
-   static private final boolean VARIABLE_FF = true;
    
 
    private final boolean mKRatiosOnly;
+   private boolean mVariableFF = true;
+   private boolean mOFudge = false;
+   
 
    /**
     * Sometimes it is nice to be able to add additional k-ratios derived from
@@ -177,19 +179,10 @@ public class QuantifyUsingStandards extends QuantificationOutline {
     * @param beamEnergy
     *           in Joules
     */
-   public QuantifyUsingStandards(final EDSDetector det, final double beamEnergy) {
-      this(det, beamEnergy, false);
-   }
-
-   /**
-    * @param det
-    *           The detector on which the unknown and standards were collected.
-    * @param beamEnergy
-    *           in Joules
-    */
-   public QuantifyUsingStandards(final EDSDetector det, final double beamEnergy, final boolean kRatiosOnly) {
+   public QuantifyUsingStandards(final EDSDetector det, final double beamEnergy, final boolean kRatiosOnly, final boolean variableFF) {
       super(det, beamEnergy);
       mKRatiosOnly = kRatiosOnly;
+      mVariableFF = variableFF;
    }
 
    /**
@@ -429,6 +422,10 @@ public class QuantifyUsingStandards extends QuantificationOutline {
    public ISpectrumData getStandardSpectrum(final Element elm) {
       return mStdSpectra.get(elm);
    }
+   
+   public void setOFudge(boolean b) {
+      mOFudge = b;
+   }
 
    /**
     * Calibrates the reference relative to the standard by fitting the standard
@@ -454,7 +451,7 @@ public class QuantifyUsingStandards extends QuantificationOutline {
             final double sToN = SpectrumUtils.computeSignalToNoise(roi, getStandardSpectrum(elm));
             mReferenceScale.put(roi, new UncertainValue2(1.0, "I[std," + elm.toAbbrev() + "]", sToN > 0.0 ? 1.0 / sToN : 0.0));
          } else {
-            final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy(), VARIABLE_FF);
+            final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy(), mVariableFF);
             ff.setStripUnlikely(false);
             for (final RegionOfInterest roi2 : refReq) {
                final ISpectrumData ref = getReferenceSpectrum(roi2);
@@ -494,7 +491,7 @@ public class QuantifyUsingStandards extends QuantificationOutline {
       final Result res = new Result(unk);
       // Fit the unknown using the reference spectra
       final Map<RegionOfInterestSet.RegionOfInterest, ISpectrumData> refs = getReferenceSpectra();
-      final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy(), VARIABLE_FF);
+      final FilterFit ff = new FilterFit(getDetector(), getBeamEnergy(), mVariableFF, mOFudge);
       FilterFit.setNaiveBackground(false);
       final Set<Element> measured = getMeasuredElements();
       for (final Map.Entry<RegionOfInterestSet.RegionOfInterest, ISpectrumData> me : refs.entrySet()) {
@@ -691,7 +688,7 @@ public class QuantifyUsingStandards extends QuantificationOutline {
 
    @Override
    public QuantifyUsingStandards clone() {
-      final QuantifyUsingStandards res = new QuantifyUsingStandards(getDetector(), getBeamEnergy());
+      final QuantifyUsingStandards res = new QuantifyUsingStandards(getDetector(), getBeamEnergy(), mKRatiosOnly, mVariableFF);
       super.copyTo(res);
       // res.mCfKR = mCfKR;
       res.mReferenceScale.putAll(mReferenceScale);

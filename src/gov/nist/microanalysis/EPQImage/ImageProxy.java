@@ -36,9 +36,25 @@ public class ImageProxy {
     * @version 1.0
     */
    public interface Threshold {
-
       public boolean meets(int i);
+   }
+   
+   
+   private static class SimpleThreshold implements Threshold {
+      
+      private final int min;
+      private final int max;
 
+      private SimpleThreshold(int min, int max) {
+         this.min=min;
+         this.max=max;
+      }
+      
+      @Override
+      public boolean meets(int i) {
+         return (i>=this.min) && (i<=this.max);
+      }
+      
    }
 
    final private int[][] mBuffer; // [HEIGHT][WIDTH]
@@ -118,6 +134,19 @@ public class ImageProxy {
    public void threshold(final int min, final int max, final int iOut) {
       remap((i) -> (i >= min) && (i < max) ? iOut : 0);
    }
+   
+   public static Threshold buildThreshold(int min, int max) {
+      return new SimpleThreshold(min, max);
+   }
+
+   public ImageProxy threshold(Threshold thresh) {
+      ImageProxy res = new ImageProxy(this);
+      for (int x = 0; x < res.getWidth(); ++x)
+         for (int y = 0; y < res.getHeight(); ++y)
+            if (!thresh.meets(res.get(x, y)))
+               res.set(x, y, 0);
+      return res;
+   }
 
    public Rectangle validate(Rectangle rect) {
       final int x = Math.max(0, rect.x);
@@ -125,7 +154,19 @@ public class ImageProxy {
       final int xm = Math.min(getWidth(), rect.x + rect.width);
       final int ym = Math.min(getHeight(), rect.y + rect.height);
       return (x != rect.x) || (y != rect.y) || (xm - x != rect.width) || (ym - y != rect.height) ? new Rectangle(x, y, xm - x, ym - y) : rect;
+   }
 
+   public ImageProxy resize(final int binsize) {
+      final ImageProxy res = new ImageProxy(getWidth() / binsize, getHeight() / binsize);
+      for (int x = 0; x < res.getWidth(); ++x)
+         for (int y = 0; y < res.getHeight(); ++y) {
+            int sum = 0;
+            for (int dx = x * binsize; dx < Math.min(getWidth(), (x + 1) * binsize); ++dx)
+               for (int dy = y * binsize; dy < Math.min(getHeight(), (y + 1) * binsize); ++dy)
+                  sum += get(x, y);
+            res.set(x, y, sum / (binsize * binsize));
+         }
+      return res;
    }
 
    /**
@@ -187,6 +228,15 @@ public class ImageProxy {
          for (int y = 0; y < rect.height; ++y)
             if (mask.get(x, y) != 0)
                res.set(x, y, get(x + rect.x, y + rect.y));
+      return res;
+   }
+
+   public ImageProxy fullSizeMask(Rectangle rect, ImageProxy mask) {
+      ImageProxy res = new ImageProxy(getWidth(), getHeight());
+      for (int xo = 0; xo < rect.width; ++xo)
+         for (int yo = 0; yo < rect.height; ++yo)
+            if (mask.get(xo, yo) != 0)
+               res.set(xo + rect.x, yo + rect.y, get(xo + rect.x, yo + rect.y));
       return res;
    }
 
@@ -314,5 +364,58 @@ public class ImageProxy {
                den += 1;
             }
       return new Point((int) (nx / den), (int) (ny / den));
+   }
+
+   /**
+    * Creates an image which represents only those pixels that match *ALL* the
+    * thresholds on their respective images. Useful for looking for particles in
+    * the secondary image that have a range of backscatter signal.
+    * 
+    * @param imgs
+    * @param threshs
+    * @return ImageProxy
+    */
+
+   public static ImageProxy multi_treshold(ImageProxy[] imgs, Threshold[] threshs, boolean asMask) {
+      int w = imgs[0].getWidth(), h = imgs[0].getHeight();
+      assert imgs.length == threshs.length : "Image and threshold lengths need to be the same.";
+      final ImageProxy res = new ImageProxy(w, h);
+      for (int i = 0; i < imgs.length; ++i) {
+         final ImageProxy ip = imgs[i];
+         assert ip.getWidth() == w;
+         assert ip.getHeight() == h;
+         final Threshold th = threshs[i];
+         for (int x = 0; x < res.getWidth(); ++x)
+            for (int y = 0; y < res.getHeight(); ++y)
+               if (!th.meets(ip.get(x, y)))
+                  res.set(x, y, 0);
+      }
+      if (asMask)
+         for (int x = 0; x < res.getWidth(); ++x)
+            for (int y = 0; y < res.getHeight(); ++y)
+               if (res.get(x, y) != 0)
+                  res.set(x, y, 255);
+      return res;
+   }
+
+   public ImageProxy dilate(int n) {
+      if (n >= 1) {
+         final ImageProxy res = new ImageProxy(this);
+         for (int x = 0; x < getWidth(); ++x)
+            for (int y = 0; y < getHeight(); ++y)
+               if (get(x, y) != 0) {
+                  res.set(x, y, 255);
+                  if (x > 0)
+                     res.set(x - 1, y, 255);
+                  if (x + 1 < getWidth())
+                     res.set(x + 1, y, 255);
+                  if (y > 0)
+                     res.set(x, y - 1, 255);
+                  if (y + 1 < getHeight())
+                     res.set(x, y + 1, 255);
+               }
+         return res.dilate(n - 1);
+      } else
+         return this;
    }
 }

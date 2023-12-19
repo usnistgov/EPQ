@@ -6,6 +6,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.Raster;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.imageio.ImageIO;
 
 import gov.nist.microanalysis.Utility.DescriptiveStatistics;
 
@@ -27,6 +32,18 @@ import gov.nist.microanalysis.Utility.DescriptiveStatistics;
  */
 public class ImageProxy {
 
+   @Override
+   public int hashCode() {
+      return 0x99 + Arrays.deepHashCode(mBuffer);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      return (obj instanceof ImageProxy other) && Arrays.deepEquals(mBuffer, other.mBuffer);
+   }
+
    /**
     * <p>
     * Simple interface to test a single pixel against a threshold.
@@ -38,23 +55,22 @@ public class ImageProxy {
    public interface Threshold {
       public boolean meets(int i);
    }
-   
-   
+
    private static class SimpleThreshold implements Threshold {
-      
+
       private final int min;
       private final int max;
 
       private SimpleThreshold(int min, int max) {
-         this.min=min;
-         this.max=max;
+         this.min = min;
+         this.max = max;
       }
-      
+
       @Override
       public boolean meets(int i) {
-         return (i>=this.min) && (i<=this.max);
+         return (i >= this.min) && (i <= this.max);
       }
-      
+
    }
 
    final private int[][] mBuffer; // [HEIGHT][WIDTH]
@@ -134,7 +150,7 @@ public class ImageProxy {
    public void threshold(final int min, final int max, final int iOut) {
       remap((i) -> (i >= min) && (i < max) ? iOut : 0);
    }
-   
+
    public static Threshold buildThreshold(int min, int max) {
       return new SimpleThreshold(min, max);
    }
@@ -276,6 +292,10 @@ public class ImageProxy {
             bi.setRGB(x, y, toRGB(get(x, y) % 0x100));
       return bi;
    }
+   
+   public void writePNG(File fn) throws IOException {
+      ImageIO.write(asGrayImage(), "png", fn);
+   }
 
    /**
     * Count the pixels meeting the threshold
@@ -375,8 +395,7 @@ public class ImageProxy {
     * @param threshs
     * @return ImageProxy
     */
-
-   public static ImageProxy multi_treshold(ImageProxy[] imgs, Threshold[] threshs, boolean asMask) {
+   public static ImageProxy multi_threshold(ImageProxy[] imgs, Threshold[] threshs, boolean asMask) {
       int w = imgs[0].getWidth(), h = imgs[0].getHeight();
       assert imgs.length == threshs.length : "Image and threshold lengths need to be the same.";
       final ImageProxy res = new ImageProxy(imgs[0]);
@@ -397,13 +416,24 @@ public class ImageProxy {
                   res.set(x, y, 255);
       return res;
    }
+   /**
+    * Creates a mask representing the area meeting the threshold and extended by
+    * dilating n-times.
+    * 
+    * @param n
+    *           Number of dilations to perform (n>=1)
+    * @param thresh
+    *           The Threshold to apply to the initial image
+    * @return A new ImageProxy with the result (unless n<1 then `this` is
+    *         returned)
+    */
 
-   public ImageProxy dilate(int n) {
+   public ImageProxy dilate(int n, Threshold thresh) {
       if (n >= 1) {
          final ImageProxy res = new ImageProxy(this);
          for (int x = 0; x < getWidth(); ++x)
             for (int y = 0; y < getHeight(); ++y)
-               if (get(x, y) != 0) {
+               if (thresh.meets(get(x, y))) {
                   res.set(x, y, 255);
                   if (x > 0)
                      res.set(x - 1, y, 255);
@@ -414,7 +444,7 @@ public class ImageProxy {
                   if (y + 1 < getHeight())
                      res.set(x, y + 1, 255);
                }
-         return res.dilate(n - 1);
+         return res.dilate(n - 1, buildThreshold(255, 255));
       } else
          return this;
    }

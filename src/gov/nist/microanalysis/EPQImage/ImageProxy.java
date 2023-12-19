@@ -379,7 +379,7 @@ public class ImageProxy {
    public static ImageProxy multi_treshold(ImageProxy[] imgs, Threshold[] threshs, boolean asMask) {
       int w = imgs[0].getWidth(), h = imgs[0].getHeight();
       assert imgs.length == threshs.length : "Image and threshold lengths need to be the same.";
-      final ImageProxy res = new ImageProxy(w, h);
+      final ImageProxy res = new ImageProxy(imgs[0]);
       for (int i = 0; i < imgs.length; ++i) {
          final ImageProxy ip = imgs[i];
          assert ip.getWidth() == w;

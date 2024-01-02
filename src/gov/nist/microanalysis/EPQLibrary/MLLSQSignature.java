@@ -48,8 +48,9 @@ public class MLLSQSignature implements Cloneable {
 
    private boolean mStripUnlikely;
    private FilterFit mFilterFit;
-   
-   static private final boolean VARIABLE_FF = false; // Don't upset the Graf applecart!
+
+   static private final boolean VARIABLE_FF = false; // Don't upset the Graf
+                                                     // applecart!
 
    /**
     * Constructs a MLLSQSignature object to process spectra from the specified
@@ -156,40 +157,44 @@ public class MLLSQSignature implements Cloneable {
       }
       // assert mBeamEnergy == ToSI.eV(SpectrumUtils.getBeamEnergy(spec));
       if (mFilterFit == null) {
-         mFilterFit = new FilterFit(mDetector, mBeamEnergy, VARIABLE_FF);
-         mFilterFit.setStripUnlikely(mStripUnlikely);
-         mFilterFit.setResidualModelThreshold(0.0);
-         for (Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())
-            mFilterFit.addReference(me.getKey(), me.getValue());
-         // Special rules for one element masquerading as another
-         final FilterFit.CompoundCullingStrategy cs = new FilterFit.CompoundCullingStrategy();
-         // Special rules for one element masquerading as another
-         final FilterFit.SpecialCulling sc = new FilterFit.SpecialCulling();
-         if (mStrip.get(Element.Fe) != StripMode.Strip)
-            sc.add(Element.F, Element.Fe);
-         if (mStrip.get(Element.Th) != StripMode.Strip)
-            sc.add(Element.Ag, Element.Th);
-         if (mStrip.get(Element.Sr) != StripMode.Strip)
-            sc.add(Element.Si, Element.Sr);
-         if (mStrip.get(Element.Si) != StripMode.Strip) {
-            sc.add(Element.Sr, Element.Si);
-            sc.add(Element.W, Element.Si);
+         synchronized (this) {
+            if (mFilterFit == null) {
+               mFilterFit = new FilterFit(mDetector, mBeamEnergy, VARIABLE_FF);
+               mFilterFit.setStripUnlikely(mStripUnlikely);
+               mFilterFit.setResidualModelThreshold(0.0);
+               for (Map.Entry<Element, ISpectrumData> me : mStandards.entrySet())
+                  mFilterFit.addReference(me.getKey(), me.getValue());
+               // Special rules for one element masquerading as another
+               final FilterFit.CompoundCullingStrategy cs = new FilterFit.CompoundCullingStrategy();
+               // Special rules for one element masquerading as another
+               final FilterFit.SpecialCulling sc = new FilterFit.SpecialCulling();
+               if (mStrip.get(Element.Fe) != StripMode.Strip)
+                  sc.add(Element.F, Element.Fe);
+               if (mStrip.get(Element.Th) != StripMode.Strip)
+                  sc.add(Element.Ag, Element.Th);
+               if (mStrip.get(Element.Sr) != StripMode.Strip)
+                  sc.add(Element.Si, Element.Sr);
+               if (mStrip.get(Element.Si) != StripMode.Strip) {
+                  sc.add(Element.Sr, Element.Si);
+                  sc.add(Element.W, Element.Si);
+               }
+               if (mStrip.get(Element.Ca) != StripMode.Strip)
+                  sc.add(Element.Sb, Element.Ca);
+               if (mStrip.get(Element.S) != StripMode.Strip) {
+                  sc.add(Element.S, Element.Pb);
+                  sc.add(Element.S, Element.Mo);
+               }
+               if (mStrip.get(Element.Pb) != StripMode.Strip) {
+                  sc.add(Element.Pb, Element.S);
+                  sc.add(Element.Pb, Element.Mo);
+               }
+               cs.append(sc);
+               assert mOptimal == null;
+               mOptimal = computeOptimal(mFilterFit, mBeamEnergy);
+               cs.append(new FilterFit.CullByOptimal(mThreshold, mOptimal.keySet()));
+               mFilterFit.setCullingStrategy(cs);
+            }
          }
-         if (mStrip.get(Element.Ca) != StripMode.Strip)
-            sc.add(Element.Sb, Element.Ca);
-         if (mStrip.get(Element.S) != StripMode.Strip) {
-            sc.add(Element.S, Element.Pb);
-            sc.add(Element.S, Element.Mo);
-         }
-         if (mStrip.get(Element.Pb) != StripMode.Strip) {
-            sc.add(Element.Pb, Element.S);
-            sc.add(Element.Pb, Element.Mo);
-         }
-         cs.append(sc);
-         assert mOptimal == null;
-         mOptimal = computeOptimal(mFilterFit, mBeamEnergy);
-         cs.append(new FilterFit.CullByOptimal(mThreshold, mOptimal.keySet()));
-         mFilterFit.setCullingStrategy(cs);
       }
       mFilterFit.forceZero(mDontFit);
       final KRatioSet res = mFilterFit.getKRatios(spec);

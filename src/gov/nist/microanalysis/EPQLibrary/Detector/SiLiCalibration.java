@@ -118,10 +118,12 @@ public class SiLiCalibration extends EDSCalibration {
          final double oo4pi = 1.0 / (4.0 * Math.PI);
          for (int i = 0; i < mEfficiency.length; ++i) {
             final double e = ToSI.eV((scale * (i + 0.5)) + offset);
-            mEfficiency[i] = e > 20.0 ? (wind != null ? wind.transmission(e) : 1.0) * (mContamination != null ? mContamination.transmission(e) : 1.0) * area
-                  * Math.exp(-mac.compute(ni, e) * niMassThickness) * Math.exp(-mac.compute(gold, e) * goldMassThickness)
-                  * Math.exp(-mac.compute(al, e) * alMassThickness) * Math.exp(-mac.compute(si, e) * deadMassThickness)
-                  * (1.0 - Math.exp(-mac.compute(si, e) * detMassThickness)) * oo4pi : 0.0;
+            if (e > ToSI.eV(20.0)) {
+               mEfficiency[i] = (wind != null ? wind.transmission(e) : 1.0) * (mContamination != null ? mContamination.transmission(e) : 1.0) * area
+                     * Math.exp(-mac.compute(ni, e) * niMassThickness) * Math.exp(-mac.compute(gold, e) * goldMassThickness)
+                     * Math.exp(-mac.compute(al, e) * alMassThickness) * Math.exp(-mac.compute(si, e) * deadMassThickness)
+                     * (1.0 - Math.exp(-mac.compute(si, e) * detMassThickness)) * oo4pi;
+            }
          }
       }
       return mEfficiency;

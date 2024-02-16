@@ -2166,7 +2166,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
          for (MassAbsorptionCoefficient mac : mAlgorithms)
             if (mac.isAvailable(el, energy))
                return mac.compute(el, energy);
-         assert false;
+         assert false : el.toAbbrev() + " @ " + Double.toString(FromSI.eV(energy)) + " eV";
          return 0.0;
       }
 

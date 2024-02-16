@@ -175,12 +175,13 @@ public class JWizardDialog extends JDialog {
          public void actionPerformed(ActionEvent e) {
             assert (jWizardPanel_Active != null);
             assert (mPreviousPanels.size() > 0);
-            assert (mPreviousPanels.size() == mPreviousBanners.size());
+            // assert (mPreviousPanels.size() == mPreviousBanners.size());
             if (jWizardPanel_Active != null) {
                jPanel_Contents.remove(jWizardPanel_Active);
                setNextPanel(jWizardPanel_Active);
             }
-            setActivePanel(mPreviousPanels.remove(mPreviousPanels.size() - 1));
+            JWizardPanel prev = mPreviousPanels.remove(mPreviousPanels.size() - 1);
+            setActivePanel(prev);
             jButton_Back.setEnabled(mPreviousPanels.size() > 0);
          }
       });

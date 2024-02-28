@@ -17,7 +17,10 @@ abstract public class LinearSpectrumFit extends LinearLeastSquares {
    protected final double mBeamEnergy;
 
    protected static double SCALE_TOLERANCE = 0.01;
-   protected static final double MIN_INTENSITY = 0.9999e-3;// 1.0e-2;
+   protected static final double MIN_INTENSITY =  0.9999e-3;
+   protected static final double EXTRA_LOW =  0.6;
+   protected static final double EXTRA_HIGH =  0.6;
+   
 
    public LinearSpectrumFit(EDSDetector det, double beamEnergy) {
       mDetector = det;
@@ -75,7 +78,7 @@ abstract public class LinearSpectrumFit extends LinearLeastSquares {
    public static RegionOfInterestSet createEmptyROI(EDSDetector det) {
       final DetectorLineshapeModel dlm = det.getDetectorLineshapeModel();
       final double xtra = ToSI.eV(dlm.getFWHMatMnKa());
-      return new RegionOfInterestSet(dlm, LinearSpectrumFit.MIN_INTENSITY, 0.6 * xtra, 0.6 * xtra);
+      return new RegionOfInterestSet(dlm, LinearSpectrumFit.MIN_INTENSITY, EXTRA_LOW * xtra, EXTRA_HIGH * xtra);
    }
 
    /**

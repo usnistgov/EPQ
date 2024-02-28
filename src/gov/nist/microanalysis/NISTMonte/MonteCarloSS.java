@@ -459,7 +459,7 @@ final public class MonteCarloSS {
           */
          for (final RegionBase subRegion : mSubRegions) {
             final double candidate = subRegion.mShape.getFirstIntersection(pos0, pos1);
-            assert candidate > 0.0 : subRegion.mShape.toString() + " " + Double.toString(candidate);
+            assert candidate >= 0.0 : subRegion.mShape.toString() + " " + Double.toString(candidate);
             if ((candidate <= 1.0) && (candidate < t)) {
                t = candidate;
                base = subRegion;

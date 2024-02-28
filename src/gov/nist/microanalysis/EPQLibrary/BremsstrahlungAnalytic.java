@@ -31,6 +31,8 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * @version 1.0
  */
 abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
+   
+   static private final double DEF_MIN_I = 0.001;
 
    protected MassAbsorptionCoefficient mMac;
    protected Composition mComposition;
@@ -50,7 +52,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
          "E. Lifshin, Proc. Ninth Annual Conference on the Microbeam Analysis Society, Ottowa, Canada, paper 53 (1974)");
 
    static private LitReference.CrudeReference castellano2004a = new LitReference.CrudeReference(
-         "Castellano, G., Osan, J., & Trincavelli, J. (2004). Analytical model for the bremsstrahlung spectrum in the 0.25–20 keV photon energy range. Spectrochimica Acta Part B: Atomic Spectroscopy, 59(3), 313-319.");
+         "Castellano, G., Osan, J., & Trincavelli, J. (2004). Analytical model for the bremsstrahlung spectrum in the 0.25ï¿½20 keV photon energy range. Spectrochimica Acta Part B: Atomic Spectroscopy, 59(3), 313-319.");
 
    /**
     * Initialize the algorithm.
@@ -632,7 +634,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
    public ISpectrumData fitBackground(EDSDetector det, ISpectrumData spec, Composition comp, XRayTransitionSet xrts) throws EPQException {
       final DetectorLineshapeModel dlm = det.getDetectorLineshapeModel();
       final double xtra = ToSI.eV(dlm.getFWHMatMnKa());
-      final RegionOfInterestSet rois = new RegionOfInterestSet(dlm, 0.001, 1.5 * xtra, xtra);
+      final RegionOfInterestSet rois = new RegionOfInterestSet(dlm, DEF_MIN_I, 1.5 * xtra, xtra);
       rois.add(xrts);
       final ISpectrumData result = fitBackground(det, spec, comp, rois);
       SpectrumUtils.rename(result, "Background[" + spec.toString() + "," + this.getName() + "," + xrts.toString() + "]");
@@ -665,7 +667,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
       final double xtra = ToSI.eV(dlm.getFWHMatMnKa());
       final double e0 = ToSI.eV(SpectrumUtils.getBeamEnergy(spec));
       final double eMin = ToSI.eV(SpectrumUtils.minEnergyForChannel(spec, SpectrumUtils.smallestNonZeroChannel(spec)));
-      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, 0.001, 1.5 * xtra, xtra);
+      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, DEF_MIN_I, 1.5 * xtra, xtra);
       for (final Element elm : comp.getElementSet())
          roi.add(new XRayTransitionSet(elm, eMin, e0));
       final ArrayList<int[]> tmp = new ArrayList<int[]>();
@@ -761,7 +763,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
       final DetectorLineshapeModel dlm = det.getDetectorLineshapeModel();
       final double e0 = ToSI.keV(mE0keV);
       final double eMin = ToSI.eV(Math.min(100.0, SpectrumUtils.minEnergyForChannel(spec, SpectrumUtils.smallestNonZeroChannel(spec))));
-      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, 0.001, 0.0, 0.0);
+      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, DEF_MIN_I, 0.0, 0.0);
       for (final Element elm : comp.getElementSet())
          roi.add(new XRayTransitionSet(elm, eMin, e0));
 
@@ -861,7 +863,7 @@ abstract public class BremsstrahlungAnalytic extends AlgorithmClass {
       final DetectorLineshapeModel dlm = det.getDetectorLineshapeModel();
       final double e0 = ToSI.keV(mE0keV);
       final double eMin = ToSI.eV(Math.min(100.0, SpectrumUtils.minEnergyForChannel(spec, SpectrumUtils.smallestNonZeroChannel(spec))));
-      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, 0.001, 0.0, 0.0);
+      final RegionOfInterestSet roi = new RegionOfInterestSet(dlm, DEF_MIN_I, 0.0, 0.0);
       for (final Element elm : comp.getElementSet())
          roi.add(new XRayTransitionSet(elm, eMin, e0));
 

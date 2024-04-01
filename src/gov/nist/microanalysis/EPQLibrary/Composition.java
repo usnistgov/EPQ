@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -38,7 +39,7 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * <p>
  * Institution: National Institute of Standards and Technology
  * </p>
- * 
+ *
  * @author Nicholas
  * @version 1.0
  */
@@ -50,14 +51,15 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
       UNDETERMINED, WEIGHT_PCT, STOICIOMETRY
    }
 
-   private Map<Element, UncertainValue2> mConstituents = new TreeMap<Element, UncertainValue2>();
-   private Map<Element, UncertainValue2> mConstituentsAtomic = new TreeMap<Element, UncertainValue2>();
+   private Map<Element, UncertainValue2> mConstituents = new TreeMap<>();
+   private Map<Element, UncertainValue2> mConstituentsAtomic = new TreeMap<>();
    // Normalize constituent fractions to a sum of 1.0
    private double mNormalization = 1.0;
    private String mName;
    private Representation mOptimalRepresentation = Representation.UNDETERMINED;
 
    transient protected int mHashCode = Integer.MAX_VALUE;
+   transient protected Map<Element, UncertainValue2> mNormalized = new TreeMap<>();
 
    protected void renormalize() {
       if (mConstituents.size() > 0) {
@@ -67,6 +69,23 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
                mNormalization += uv.doubleValue();
       } else {
          mNormalization = 1.0;
+      }
+      mNormalized.clear();
+      if (mConstituents.size() > 0) {
+         Element[] elms = new Element[mConstituents.size()];
+         UncertainValue2[] uvs = new UncertainValue2[mConstituents.size()];
+         {
+            int i = 0;
+            for (final Entry<Element, UncertainValue2> me : mConstituents.entrySet()) {
+               elms[i] = me.getKey();
+               uvs[i] = me.getValue();
+               ++i;
+            }
+         }
+         UncertainValue2[] norm = UncertainValue2.normalize(uvs);
+         for (int i = 0; i < elms.length; ++i) {
+            mNormalized.put(elms[i], norm[i]);
+         }
       }
    }
 
@@ -93,7 +112,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * To ensure that serialization happens correctly.
-    * 
+    *
     * @return this
     */
    protected Object readResolve() {
@@ -105,7 +124,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Constructs a Composition with the specified elements in the specified mass
     * fractions.
-    * 
+    *
     * @param elms
     *           Element[] - The elements
     * @param massFracs
@@ -121,7 +140,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * Constructs a Composition object for a pure element.
-    * 
+    *
     * @param elm
     *           Element
     */
@@ -135,7 +154,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * Constructs a Composition with the specified mass fractions. If the length
     * of weighFracs is one less than the mass of elms then the last mass
     * fraction is calculated from the others assuming that the sum is 1.0.
-    * 
+    *
     * @param elms
     *           Element[] - The elements
     * @param massFracs
@@ -170,7 +189,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * getElementSet - Returns a Set containing the Element objects that make up
     * this Material. Some of the elements in the set may have mass fractions
     * equal to zero if the uncertainty is non-zero.
-    * 
+    *
     * @return Set&lt;Element&gt; - A set containing Element objects
     */
    public Set<Element> getElementSet() {
@@ -188,7 +207,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * @return Set&lt;Element&gt;
     */
    public Set<Element> getElementSet(double min, double max) {
-      TreeSet<Element> res = new TreeSet<Element>();
+      TreeSet<Element> res = new TreeSet<>();
       for (final Element elm : mConstituents.keySet()) {
          final double wf = weightFraction(elm, false);
          if ((wf > min) && (wf < max))
@@ -200,11 +219,11 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Returns a list of the elements in the material sorted by relative amount
     * (weight fraction).
-    * 
+    *
     * @return A sorted list of Element objects
     */
    public List<Element> getSortedElements() {
-      final ArrayList<Element> res = new ArrayList<Element>(mConstituents.keySet());
+      final ArrayList<Element> res = new ArrayList<>(mConstituents.keySet());
       Collections.sort(res, new Comparator<Element>() {
          @Override
          public int compare(Element o1, Element o2) {
@@ -216,7 +235,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * getElementCount - Returns the number of elements in this material.
-    * 
+    *
     * @return int
     */
    public int getElementCount() {
@@ -226,7 +245,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * addElement - Add a specified mass fraction of the specified element to the
     * Material.
-    * 
+    *
     * @param atomicNo
     *           int
     * @param massFrac
@@ -239,7 +258,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * addElement - Add a specified mass fraction of the specified element to the
     * Material.
-    * 
+    *
     * @param atomicNo
     *           int
     * @param massFrac
@@ -251,7 +270,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * Add a specified mass fraction of the specified element to the Material.
-    * 
+    *
     * @param elm
     *           Element
     * @param massFrac
@@ -264,7 +283,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * addElement - Add a specified mass fraction of the specified element to the
     * Material.
-    * 
+    *
     * @param elm
     *           Element
     * @param massFrac
@@ -279,7 +298,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * addElementUsingMoleFractions - Add a specified mole fraction of the
     * specified element to the material
-    * 
+    *
     * @param elm
     *           Element
     * @param moleFrac
@@ -294,7 +313,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * addElementUsingMoleFractions - Add a specified mole fraction of the
     * specified element to the material
-    * 
+    *
     * @param elm
     *           Element
     * @param moleFrac
@@ -307,7 +326,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * defineByWeightFraction - Define the material composition by weigh fraction
     * from the array of atomic numbers and mass fractions.
-    * 
+    *
     * @param elms
     *           Element[]
     * @param wgtFracs
@@ -325,7 +344,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * defineByWeightFraction - Define the material composition by weigh fraction
     * from the array of atomic numbers and mass fractions.
-    * 
+    *
     * @param elms
     *           Element[]
     * @param wgtFracs
@@ -346,7 +365,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * containing the atomic number, a String containing the abbreviation or full
     * name of the element or an Element object. The value is the mass fraction
     * as a Double.
-    * 
+    *
     * @param map
     *           Map - keys are either Integer, String or Element types, values
     *           are Double
@@ -376,7 +395,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * constituent elements. If a Material has N atoms in a volume V and the mole
     * fraction of element i is m_i then there are N*m_i atoms of element i in
     * the volume V.
-    * 
+    *
     * @param elms
     *           Element[]
     * @param moleFracs
@@ -389,7 +408,6 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
       for (int i = 0; i < moleFracs.length; ++i)
          mConstituentsAtomic.put(elms[i], new UncertainValue2(moleFracs[i]));
       recomputeWeightFractions();
-      renormalize();
    }
 
    private void recomputeWeightFractions() {
@@ -401,27 +419,33 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
          final UncertainValue2 wgtFrac = UncertainValue2.multiply(elm.getAtomicWeight(), UncertainValue2.divide(atomicPercentU(elm), totalWgt));
          mConstituents.put(elm, wgtFrac);
       }
+      renormalize();
       mOptimalRepresentation = Representation.STOICIOMETRY;
    }
 
    private void recomputeStoiciometry() {
-      double norm = 0.0;
       mConstituentsAtomic.clear();
-      for (final Map.Entry<Element, UncertainValue2> me : mConstituents.entrySet()) {
-         final Element elm = me.getKey();
-         final UncertainValue2 mf = me.getValue().reduced(elm.toAbbrev());
-         final UncertainValue2 moleFrac = UncertainValue2.multiply(1.0 / elm.getAtomicWeight(), mf);
-         norm += moleFrac.doubleValue();
-         mConstituentsAtomic.put(elm, moleFrac);
+      if (mConstituents.size() > 0) {
+         final Element[] elms = new Element[mConstituents.size()];
+         final UncertainValue2[] mfs = new UncertainValue2[mConstituents.size()];
+         {
+            int i = 0;
+            for (final Map.Entry<Element, UncertainValue2> me : mConstituents.entrySet()) {
+               elms[i] = me.getKey();
+               mfs[i] = UncertainValue2.multiply(1.0 / me.getKey().getAtomicWeight(), me.getValue());
+               ++i;
+            }
+         }
+         final UncertainValue2[] molefracs = UncertainValue2.normalize(mfs);
+         for (int i = 0; i < elms.length; ++i)
+            mConstituentsAtomic.put(elms[i], molefracs[i]);
       }
-      for (Element elm : mConstituentsAtomic.keySet())
-         mConstituentsAtomic.put(elm, UncertainValue2.multiply(1.0 / norm, mConstituentsAtomic.get(elm)));
       mOptimalRepresentation = Representation.WEIGHT_PCT;
    }
 
    /**
     * Force the optimal representation into the specified style.
-    * 
+    *
     * @param opt
     */
    public void setOptimalRepresentation(Representation opt) {
@@ -439,13 +463,13 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * elementSet - Get the set of all elements in specified array of Materials.
-    * 
+    *
     * @param compositions
     *           Composition[]
     * @return Set
     */
    static public Set<Element> elementSet(Composition[] compositions) {
-      final Set<Element> res = new TreeSet<Element>();
+      final Set<Element> res = new TreeSet<>();
       for (final Composition composition : compositions)
          if (composition != null)
             res.addAll(composition.getElementSet());
@@ -455,7 +479,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * massAbsorptionCoefficient - Calculates the mass absorption coefficient for
     * this material at the specified energy.
-    * 
+    *
     * @param energy
     *           double - In Joules
     * @return double - Absorption per unit length (meter)
@@ -470,7 +494,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * (by weight) of other materials. For example, you may construct Material to
     * represent K3189 as 40% of SiO2, 14% of Al2O3, 14% of CaO, 10% of MgO, 2%
     * of TiO2 and 20% of Fe2O3.
-    * 
+    *
     * @param compositions
     *           Material[] - The base materials (ie SiO2, MgO,...)
     * @param matFracs
@@ -497,7 +521,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * removeElement - Entirely remove the specified element from the Material.
-    * 
+    *
     * @param el
     *           Element
     */
@@ -513,7 +537,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * containsElement - Determines whether the Material contains a greater than
     * zero proportion of the specified Element.
-    * 
+    *
     * @param el
     *           Element
     * @return boolean
@@ -524,7 +548,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * Does this Composition contain all these elements.
-    * 
+    *
     * @param elms
     * @return boolean
     */
@@ -541,6 +565,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    protected void clear() {
       mConstituents.clear();
       mConstituentsAtomic.clear();
+      mNormalized.clear();
       mNormalization = 1.0;
    }
 
@@ -548,7 +573,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * Returns the atomic percent of the specified element. This is the number of
     * atoms of the specified atom as a fraction of the total number of atoms (in
     * an arbitrary volume).
-    * 
+    *
     * @param elm
     *           Element
     * @return double
@@ -570,7 +595,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * moleFraction - Returns the moleFraction of the specified element. This is
     * the number of atoms of the specified atom as a fraction of the total
     * number of atoms (in an arbitrary volume).
-    * 
+    *
     * @param elm
     *           Element
     * @return double
@@ -583,7 +608,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * moleFraction - Returns the moleFraction of the specified element. This is
     * the number of atoms of the specified atom as a fraction of the total
     * number of atoms (in an arbitrary volume).
-    * 
+    *
     * @param elm
     *           Element
     * @param positiveOnly
@@ -602,7 +627,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * Computes the mass percent of the specified element in this Material. If
     * normalized=true then the sum of the weightPercent for all elements in the
     * Material will equal 1.0.
-    * 
+    *
     * @param elm
     *           Element
     * @param normalized
@@ -617,7 +642,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * Computes the mass percent of the specified element in this Material. If
     * normalized=true then the sum of the weightPercent for all elements in the
     * Material will equal 1.0.
-    * 
+    *
     * @param elm
     *           Element
     * @param normalized
@@ -627,14 +652,14 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * @return UncertainValue
     */
    public UncertainValue2 weightFractionU(Element elm, boolean normalized, boolean positiveOnly) {
-      final UncertainValue2 d = mConstituents.get(elm);
-      return d != null ? (normalized ? normalize(d, mNormalization, positiveOnly) : d) : UncertainValue2.ZERO;
+      final UncertainValue2 d = normalized ? mNormalized.get(elm) : mConstituents.get(elm);
+      return d != null ? d : UncertainValue2.ZERO;
    }
 
    /**
     * Returns the amount of the specified element as stoichiometry when
     * available or atomic percent otherwise.
-    * 
+    *
     * @param elm
     * @return UncertainValue
     */
@@ -646,7 +671,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Returns the amount of the specified element as stoichiometry when
     * available or atomic percent otherwise.
-    * 
+    *
     * @param elm
     * @return double
     */
@@ -658,7 +683,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * Computes the mass fraction of the specified element in this Material. If
     * normalized=true then the sum of the weightFraction for all elements in the
     * Material will equal 1.0.
-    * 
+    *
     * @param elm
     *           Element
     * @param normalized
@@ -666,13 +691,13 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * @return double
     */
    public double weightFraction(Element elm, boolean normalized) {
-      final UncertainValue2 d = mConstituents.get(elm);
-      return d != null ? (normalized ? normalize(d, mNormalization, true).doubleValue() : d.doubleValue()) : 0.0;
+      final UncertainValue2 d = normalized ? mNormalized.get(elm) : mConstituents.get(elm);
+      return d != null ? d.doubleValue() : 0.0;
    }
 
    /**
     * Same as weightFraction.
-    * 
+    *
     * @param elm
     * @param normalized
     * @return double - range 0.0 to 1.0 (assuming normalization)
@@ -686,7 +711,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Number of atoms of the specified element in one kilogram of material with
     * this composition.
-    * 
+    *
     * @param elm
     * @param normalized
     *           - Normalize the mass fraction or not...
@@ -699,7 +724,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Number of atoms of the specified element in one kilogram of material with
     * this composition.
-    * 
+    *
     * @param elm
     * @param normalized
     *           - Normalize the mass fraction or not...
@@ -712,7 +737,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Computes the mean atomic number for the elemental constituents comprising
     * this Material based on their mass fraction.
-    * 
+    *
     * @return UncertainValue
     */
    public UncertainValue2 weightAvgAtomicNumberU() {
@@ -727,7 +752,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Computes the mean atomic number for the elemental constituents comprising
     * this Material based on their mass fraction.
-    * 
+    *
     * @return double
     */
    public double weightAvgAtomicNumber() {
@@ -736,7 +761,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * The un-normalized sum of the mass fraction of each element.
-    * 
+    *
     * @return A number that is typically ~1.0
     */
    public double sumWeightFraction() {
@@ -749,7 +774,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * The un-normalized sum of the mass percents of each element.
-    * 
+    *
     * @return A number that is typically ~1.0
     */
    @Deprecated
@@ -763,7 +788,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * The un-normalized sum of the mass fractions of each element.
-    * 
+    *
     * @return A number that is typically ~1.0
     */
    public UncertainValue2 sumWeightFractionU() {
@@ -824,7 +849,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * descriptiveId - A string describing this material terms of the constituent
     * element's (normalized) mass percent and the material density.
-    * 
+    *
     * @param normalize
     *           Normalize mass fraction to 1.0
     * @return String
@@ -845,13 +870,13 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * getNthElementByWeight - Returns the n-th largest constituent by mass
     * fraction.
-    * 
+    *
     * @param n
     *           - 0 to getElementCount()
     * @return Element
     */
    public Element getNthElementByWeight(int n) {
-      final Map<UncertainValue2, Element> tm = new TreeMap<UncertainValue2, Element>();
+      final Map<UncertainValue2, Element> tm = new TreeMap<>();
       for (final Element el : mConstituents.keySet()) {
          UncertainValue2 wf = weightFractionU(el, true);
          // Add hoc mechanism to handle the case in which multiple elements are
@@ -872,13 +897,13 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * getNthElementByAtomicFraction - Returns the n-th largest constituent by
     * atomic fractionm
-    * 
+    *
     * @param n
     *           - 1 to getElementCount()
     * @return Element
     */
    public Element getNthElementByAtomicFraction(int n) {
-      final Map<UncertainValue2, Element> tm = new TreeMap<UncertainValue2, Element>();
+      final Map<UncertainValue2, Element> tm = new TreeMap<>();
       for (final Element el : mConstituents.keySet()) {
          UncertainValue2 mf = atomicPercentU(el);
          // Add hoc mechanism to handle the case in which multiple elements are
@@ -898,7 +923,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    /**
     * setName - Provide a name for this material.
-    * 
+    *
     * @param name
     *           String
     */
@@ -909,7 +934,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * getName - Gets either the name provided by the user (setName()) or the
     * default name for this material if no name was specified.
-    * 
+    *
     * @return String
     */
    public String getName() {
@@ -960,8 +985,10 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    protected void replicate(Composition comp) {
       mConstituents.clear();
       mConstituentsAtomic.clear();
+      mNormalized.clear();
       mConstituents.putAll(comp.mConstituents);
       mConstituentsAtomic.putAll(comp.mConstituentsAtomic);
+      mNormalized.putAll(comp.mNormalized);
       mHashCode = comp.mHashCode;
       mIndexHashL = comp.mIndexHashL;
       mIndexHashS = comp.mIndexHashS;
@@ -970,6 +997,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
       mOptimalRepresentation = comp.mOptimalRepresentation;
    }
 
+   @Override
    public Composition clone() {
       final Composition comp = new Composition();
       comp.replicate(this);
@@ -979,7 +1007,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * difference - Returns a measure (not necessarily the 'optimal' measure) of
     * the difference between this Material and the argument Material.
-    * 
+    *
     * @param comp
     *           Composition
     * @return UncertainValue
@@ -987,7 +1015,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    public UncertainValue2 differenceU(Composition comp) {
       // assert (comp.getElementCount() == this.getElementCount());
       UncertainValue2 delta = UncertainValue2.ZERO;
-      final Set<Element> allElms = new TreeSet<Element>();
+      final Set<Element> allElms = new TreeSet<>();
       allElms.addAll(getElementSet());
       allElms.addAll(comp.getElementSet());
       for (final Element el : allElms)
@@ -999,7 +1027,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * difference - Returns a measure (not necessarily the 'optimal' measure) of
     * the difference between this Material and the argument Material.
-    * 
+    *
     * @param comp
     *           Composition
     * @return UncertainValue
@@ -1011,7 +1039,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * getOptimalRepresentation - Returns one of STOICIOMETRY, WEIGHT_PCT or
     * UNDETERMINED
-    * 
+    *
     * @return STOICIOMETRY, WEIGHT_PCT or UNDETERMINED
     */
    public Representation getOptimalRepresentation() {
@@ -1031,6 +1059,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
       mConstituents = (Map<Element, UncertainValue2>) in.readObject();
       mConstituentsAtomic = (Map<Element, UncertainValue2>) in.readObject();
+      mNormalized = new TreeMap<Element, UncertainValue2>();
       final double v = in.readDouble();
       @SuppressWarnings("unused")
       final double u = in.readDouble();
@@ -1072,9 +1101,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
+      if ((obj == null) || (getClass() != obj.getClass()))
          return false;
       final Composition other = (Composition) obj;
       return Objects.equals(mConstituents, other.mConstituents) && //
@@ -1089,7 +1116,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * may differ by a small amount (tol~1.0e-4), the names may differ and the
     * optimal representations may differ. Otherwise the compositions should be
     * essentially equal.
-    * 
+    *
     * @param other
     *           Composition
     * @param tol
@@ -1099,28 +1126,24 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    public boolean almostEquals(Composition other, double tol) {
       if (this == other)
          return true;
-      if (other == null)
+      if ((other == null) || (Math.abs(mNormalization - other.mNormalization) > tol))
          return false;
-      if (Math.abs(mNormalization - other.mNormalization) > tol)
-         return false;
-      final Set<Element> allElms = new TreeSet<Element>();
+      final Set<Element> allElms = new TreeSet<>();
       allElms.addAll(other.getElementSet());
       allElms.addAll(getElementSet());
       for (final Element elm : allElms) {
          {
             final UncertainValue2 uv1 = weightFractionU(elm, false);
             final UncertainValue2 uv2 = other.weightFractionU(elm, false);
-            if ((uv1 == null) || (uv2 == null))
-               return false;
-            if ((Math.abs(uv1.doubleValue() - uv2.doubleValue()) > tol) || (Math.abs(uv1.uncertainty() - uv2.uncertainty()) > tol))
+            if ((uv1 == null) || (uv2 == null) || (Math.abs(uv1.doubleValue() - uv2.doubleValue()) > tol)
+                  || (Math.abs(uv1.uncertainty() - uv2.uncertainty()) > tol))
                return false;
          }
          {
             final UncertainValue2 uv1 = this.atomicPercentU(elm);
             final UncertainValue2 uv2 = other.atomicPercentU(elm);
-            if ((uv1 == null) || (uv2 == null))
-               return false;
-            if ((Math.abs(uv1.doubleValue() - uv2.doubleValue()) > tol) || (Math.abs(uv1.uncertainty() - uv2.uncertainty()) > tol))
+            if ((uv1 == null) || (uv2 == null) || (Math.abs(uv1.doubleValue() - uv2.doubleValue()) > tol)
+                  || (Math.abs(uv1.uncertainty() - uv2.uncertainty()) > tol))
                return false;
          }
       }
@@ -1130,16 +1153,16 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Computes the absolute error between the specified standard composition and
     * this composition.
-    * 
+    *
     * @param std
     * @param normalize
     * @return Map&lt;Element,Double&gt;
     */
    public Map<Element, Double> absoluteError(Composition std, boolean normalize) {
-      final Set<Element> elms = new TreeSet<Element>();
+      final Set<Element> elms = new TreeSet<>();
       elms.addAll(std.getElementSet());
       elms.addAll(getElementSet());
-      final Map<Element, Double> res = new TreeMap<Element, Double>();
+      final Map<Element, Double> res = new TreeMap<>();
       for (final Element elm : elms) {
          final double u = weightFractionU(elm, normalize).doubleValue();
          final double s = std.weightFractionU(elm, normalize).doubleValue();
@@ -1151,16 +1174,16 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Computes the difference between the specified standard composition and
     * this composition.
-    * 
+    *
     * @param std
     * @param normalize
     * @return Map&lt;Element,Double&gt;
     */
    public Map<Element, Double> relativeError(Composition std, boolean normalize) {
-      final Set<Element> elms = new TreeSet<Element>();
+      final Set<Element> elms = new TreeSet<>();
       elms.addAll(std.getElementSet());
       elms.addAll(getElementSet());
-      final Map<Element, Double> res = new TreeMap<Element, Double>();
+      final Map<Element, Double> res = new TreeMap<>();
       for (final Element elm : elms) {
          final double u = weightFractionU(elm, normalize).doubleValue();
          final double s = std.weightFractionU(elm, normalize).doubleValue();
@@ -1189,7 +1212,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Returns the mean atomic number by considering the number of atoms of each
     * element and the atomic number of each one.
-    * 
+    *
     * @return UncertainValue
     */
    public UncertainValue2 meanAtomicNumberU() {
@@ -1202,7 +1225,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * Returns the mean atomic number by considering the number of atoms of each
     * element and the atomic number of each one.
-    * 
+    *
     * @return double
     */
    public double meanAtomicNumber() {
@@ -1214,7 +1237,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
 
    public void forceNormalization() {
       final UncertainValue2 norm = sumWeightFractionU();
-      final Map<Element, UncertainValue2> newConst = new TreeMap<Element, UncertainValue2>();
+      final Map<Element, UncertainValue2> newConst = new TreeMap<>();
       for (final Map.Entry<Element, UncertainValue2> me : mConstituents.entrySet())
          newConst.put(me.getKey(), norm.doubleValue() > 0.0 ? UncertainValue2.divide(me.getValue(), norm) : UncertainValue2.ZERO);
       mConstituents = newConst;
@@ -1225,7 +1248,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    /**
     * A very specialized method for parsing the strings that Danny's glass
     * database copies to the clipboard.
-    * 
+    *
     * @param str
     * @return Composition
     */
@@ -1363,7 +1386,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
     * Takes a map of constituent Compositions and returns the Composition which
     * represents the constituents taken according to the fractional mass
     * fractions in the constituents map.
-    * 
+    *
     * @param name
     * @param constituents
     * @return Composition
@@ -1389,7 +1412,7 @@ public class Composition implements Comparable<Composition>, Cloneable, Serializ
    final static private long[] createProjectors(long seed) {
       final long[] proj = new long[100];
       final Random r = new Random(seed);
-      final TreeSet<Long> eval = new TreeSet<Long>();
+      final TreeSet<Long> eval = new TreeSet<>();
       for (int j = 0; j < proj.length; ++j) {
          long tmp;
          do {

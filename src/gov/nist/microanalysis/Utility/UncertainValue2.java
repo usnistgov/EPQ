@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import Jama.Matrix;
 import gov.nist.microanalysis.EPQLibrary.EPQException;
 
 /**
@@ -1041,13 +1042,28 @@ final public class UncertainValue2 extends Number implements Comparable<Uncertai
       return new UncertainValue2(doubleValue(), name, uncertainty());
    }
 
-   public UncertainValue2[] normalize(UncertainValue2[] vals) {
-      UncertainValue2[] res = new UncertainValue2[vals.length];
-      double norm = 0.0;
-      for (UncertainValue2 val : vals)
-         norm += val.doubleValue();
-      for (int i = 0; i < vals.length; ++i)
-         res[i] = UncertainValue2.multiply(1.0 / norm, vals[i]);
+   public static UncertainValue2[] normalize(UncertainValue2[] vals) {
+      double s=0.0;
+      for(int i=0;i<vals.length;++i)
+         s+=vals[i].doubleValue();
+      final double[][] j = new double[vals.length][vals.length];
+      for(int r=0;r<vals.length;++r) {
+         j[r][r] = (s-vals[r].doubleValue())/(s*s);
+         final double other = -vals[r].doubleValue()/(s*s);
+         for(int c=0;c<vals.length;++c) {
+            if(c!=r)
+               j[r][c]=other;
+         }
+      }
+      final double[][] cov = new double[vals.length][vals.length];
+      for(int c=0;c<vals.length;c++)
+         cov[c][c]=vals[c].variance();
+      final Matrix J = new Matrix(j);
+      final Matrix C = new Matrix(cov);
+      final Matrix r=J.times(C).times(J.transpose());
+      final UncertainValue2[] res = new UncertainValue2[vals.length];
+      for(int i=0;i<vals.length;++i)
+         res[i]=new UncertainValue2(vals[i].doubleValue()/s, Math.sqrt(r.get(i, i)));
       return res;
    }
 }

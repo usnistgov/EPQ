@@ -140,7 +140,7 @@ public class NISTMottScatteringAngle extends RandomizedScatter {
          final double scale = PhysicalConstants.BohrRadius * PhysicalConstants.BohrRadius;
          final double logE = Math.log(FromSI.eV(energy));
          final int j = 1 + (int) ((logE - DL50) / PARAM);
-         if (j == 1)
+         if (j <= 1 )
             return value(DL50, DL50 + PARAM, DL50 + (2.0 * PARAM), mSpwem[0], mSpwem[1], mSpwem[2], logE) * scale;
          else if (j == SPWEM_LEN)
             return value(DL50 + (58.0 * PARAM), DL50 + (59.0 * PARAM), DL50 + (60.0 * PARAM), mSpwem[SPWEM_LEN - 3], mSpwem[SPWEM_LEN - 2],

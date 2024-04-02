@@ -798,7 +798,7 @@ final public class VoxelatedDetector implements ActionListener {
       final double zacc[][] = new double[maxIdx][2]; // outer distance, events
                                                      // inside
       assert zacc.length == maxIdx;
-      assert zacc[1].length == 1;
+      assert zacc[1].length == 2;
       {
          for (int i = 0; i < maxIdx; ++i)
             zacc[i][0] = i * eps;
@@ -810,7 +810,7 @@ final public class VoxelatedDetector implements ActionListener {
                final double d = Math.sqrt(Math2.sqr(pp[0] - center[0]) + Math2.sqr(pp[1] - center[1]));;
                final int idx = (int) Math.round(Math.floor(d / eps));
                assert idx >= 0 && idx < maxIdx;
-               assert d < zacc[idx][0];
+              //  assert d < zacc[idx][0];
                assert (idx == 0) || (d >= zacc[idx - 1][0]);
                final double zsum = Math2.sum(acc[xi][yi]); // Sum over all
                                                            // depths

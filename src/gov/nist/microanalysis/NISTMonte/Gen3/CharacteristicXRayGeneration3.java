@@ -177,9 +177,10 @@ final public class CharacteristicXRayGeneration3 extends BaseXRayGeneration3 imp
              * to a randomized point somewhere between the start of this
              * particular step and the end.
              */
-            final double pos[] = Math2.pointBetween(e.getPrevPosition(), e.getPosition(), mRandom.nextDouble());
+            final double frac = mRandom.nextDouble();
+            final double pos[] = Math2.pointBetween(e.getPrevPosition(), e.getPosition(), frac);
             final double stepLen = e.stepLength();
-            final double energy = e.getEnergy();
+            final double energy = e.getPreviousEnergy() + frac * (e.getEnergy() - e.getPreviousEnergy());
             if (mData.size() > 0) {
                for (final Map.Entry<AtomicShell, TreeSet<XRayData>> me : mData.entrySet()) {
                   final AtomicShell shell = me.getKey();

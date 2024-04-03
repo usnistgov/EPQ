@@ -1038,14 +1038,14 @@ public class SpecDisplay extends JComponent {
                      dup.drawLine(l0, a, l0 + w0, a);
                   if (j == 1) {
                      if (showVAxis) {
-                        dup.setColor(mAxisColor);
+                        dup.setColor(alc);
                         final String str = formatAxisLabel(v);
                         dup.drawString(str, l0 - fm.stringWidth(str) - 4, a + (fm.getHeight() / 3));
                      }
                      dup.setColor(mMinorGridColor);
                   }
                }
-            dup.setColor(mAxisColor);
+            dup.setColor(alc);
             if (showVAxis) {
                String vText = "Log(" + mScaleText + ")";
                final int x = fm.getHeight(), y = (int) (mPlotRect.y + (0.5 * (mPlotRect.height + fm.stringWidth(vText))));
@@ -1067,7 +1067,7 @@ public class SpecDisplay extends JComponent {
                   if ((a > t0) && (a < (t0 + h0)))
                      dup.drawLine(l0, a, l0 + w0, a);
                   if (showVAxis && (v > (vMax / 8.0))) {
-                     dup.setColor(mAxisColor);
+                     dup.setColor(alc);
                      final String str = formatAxisLabel(v * v);
                      dup.drawString(str, l0 - fm.stringWidth(str) - 4, a + (fm.getHeight() / 3));
                      dup.setColor(mMinorGridColor);
@@ -1075,7 +1075,7 @@ public class SpecDisplay extends JComponent {
                }
                v *= Math.sqrt(2.0);
             }
-            dup.setColor(mAxisColor);
+            dup.setColor(alc);
             if (showVAxis) {
                String vText = "Sqrt(" + mScaleText + ")";
                final int x = fm.getHeight(), y = (int) (mPlotRect.y + (0.5 * (mPlotRect.height + fm.stringWidth(vText))));

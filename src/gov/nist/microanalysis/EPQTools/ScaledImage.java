@@ -164,16 +164,15 @@ public class ScaledImage extends BufferedImage implements Cloneable {
       if (fovProp instanceof Double) {
          final double fov = ((Double) fovProp).doubleValue() * 1.0e6; // microns
          final double exp = Math.ceil(Math.log10(fov / 2.0)) - 1;
-         final double sc = fov / (2.0 * Math.pow(10.0, exp));
-         final double unit = (int) sc;
-         final int pix = (int) Math.round((getWidth() * unit) / (2.0 * sc));
+         final double unit = Math.floor(fov / (2.0 * Math.pow(10.0, exp)) + 1.0e-6);
+         final double len = unit*Math.pow(10.0, exp);
+         final int pix = (int) Math.round((getWidth() * len) / fov);
          final int right = (19 * getWidth()) / 20;
          final int left = right - pix;
          final Graphics2D g = createGraphics();
          final int h1 = getHeight() / 20;
          final int h0 = h1 - Math.max(2, getHeight() / 170);
-         final NumberFormat nf = (unit * Math.pow(10.0, exp)) >= 10 ? new HalfUpFormat("#,###,##0") : new HalfUpFormat("0.0#");
-         final String text = nf.format(unit * Math.pow(10.0, exp)) + " \u00B5m";
+         final String text = (new HalfUpFormat(len >= 50 ? "#,###,##0" : "0.0#")).format(len) + " \u00B5m";
          final Font font = g.getFont();
          final float fontSize = getWidth() / 24;
          g.setFont(font.deriveFont(fontSize));
@@ -188,6 +187,40 @@ public class ScaledImage extends BufferedImage implements Cloneable {
       }
 
    }
+   
+
+   /**
+    * Draw a buffered image onto a graphics context. If the BufferedImage is an
+    * instance of ScaledImage then draw a micron scale bar over the image.
+    *
+    * @param gr
+    * @param x
+    * @param y
+    * @param width
+    * @param height
+    */
+   static public void draw(final BufferedImage img, final Graphics gr, final int x, final int y, final int width, final int height) {
+      gr.drawImage(img, x, y, width, height, null);
+      if (img instanceof ScaledImage) {
+         final Object fovProp = img.getProperty(HOR_FIELD_OF_VIEW);
+         if (fovProp instanceof Double) {
+            final double fov = ((Double) fovProp).doubleValue() * 1.0e6; // microns
+            final double exp = Math.ceil(Math.log10(fov / 2.0)) - 1;
+            final double unit = Math.floor(fov / (2.0 * Math.pow(10.0, exp)) + 1.0e-6);
+            final double len = unit*Math.pow(10.0, exp);
+            final int pix = (int) Math.round((width * len) / fov);
+            final int right = x + ((19 * width) / 20);
+            final int left = right - pix;
+            gr.setColor(Color.yellow);
+            final int h = y + (height / 20);
+            gr.drawLine(left, h, right, h);
+            final String text = (new HalfUpFormat(len >= 50 ? "#,###,##0" : "0.0#")).format(len) + " \u00B5m";
+            final Rectangle2D r = gr.getFontMetrics().getStringBounds(text, gr);
+            gr.drawString(text, (int) Math.round(((right + left) - r.getWidth()) / 2.0), (int) Math.round(h + r.getHeight()));
+         }
+      }
+   }
+
 
    public void applyCrossHair(final int x, final int y) {
       final Graphics2D g = createGraphics();
@@ -295,39 +328,6 @@ public class ScaledImage extends BufferedImage implements Cloneable {
          }
       }
       return res;
-   }
-
-   /**
-    * Draw a buffered image onto a graphics context. If the BufferedImage is an
-    * instance of ScaledImage then draw a micron scale bar over the image.
-    *
-    * @param gr
-    * @param x
-    * @param y
-    * @param width
-    * @param height
-    */
-   static public void draw(final BufferedImage img, final Graphics gr, final int x, final int y, final int width, final int height) {
-      gr.drawImage(img, x, y, width, height, null);
-      if (img instanceof ScaledImage) {
-         final Object fovProp = img.getProperty(HOR_FIELD_OF_VIEW);
-         if (fovProp instanceof Double) {
-            final double fov = ((Double) fovProp).doubleValue() * 1.0e6; // microns
-            final double exp = Math.ceil(Math.log10(fov / 2.0)) - 1;
-            final double sc = fov / (2.0 * Math.pow(10.0, exp));
-            final double unit = (int) sc;
-            final int pix = (int) Math.round((width * unit) / (2.0 * sc));
-            final int right = x + ((19 * width) / 20);
-            final int left = right - pix;
-            gr.setColor(Color.yellow);
-            final int h = y + (height / 20);
-            gr.drawLine(left, h, right, h);
-            final NumberFormat nf = new HalfUpFormat("#,###,##0");
-            final String text = nf.format(unit * Math.pow(10.0, exp)) + " \u00B5m";
-            final Rectangle2D r = gr.getFontMetrics().getStringBounds(text, gr);
-            gr.drawString(text, (int) Math.round(((right + left) - r.getWidth()) / 2.0), (int) Math.round(h + r.getHeight()));
-         }
-      }
    }
 
    /**

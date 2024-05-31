@@ -188,7 +188,7 @@ public class FilterFit extends LinearSpectrumFit {
       super(det, beamEnergy);
       mOFudge = oFudge;
       if (variableWidth) {
-         mVarFF = new VariableWidthFittingFilter.G2VariableWidthFittingFilter(det.getCalibration(), det.getChannelCount(), 1.0, 4.0);
+         mVarFF = new VariableWidthFittingFilter.G2VariableWidthFittingFilter(det.getCalibration(), det.getChannelCount(), 1.0, 6.0);
          mConstFF = null;
       } else {
          double filterWidth = det.getDetectorLineshapeModel().getFWHMatMnKa();

@@ -17,9 +17,9 @@ abstract public class LinearSpectrumFit extends LinearLeastSquares {
    protected final double mBeamEnergy;
 
    protected static double SCALE_TOLERANCE = 0.01;
-   protected static final double MIN_INTENSITY =  0.9999e-3;
-   protected static final double EXTRA_LOW =  0.6;
-   protected static final double EXTRA_HIGH =  0.6;
+   protected static final double MIN_INTENSITY =  1.0e-5;
+   protected static final double EXTRA_LOW =  0.0;
+   protected static final double EXTRA_HIGH = 0.0;
    
 
    public LinearSpectrumFit(EDSDetector det, double beamEnergy) {

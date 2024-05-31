@@ -77,8 +77,8 @@ public class VariableWidthFittingFilter {
     */
    public static class G2VariableWidthFittingFilter extends VariableWidthFittingFilter {
 
-      private final double a;  // Nominal 1
-      private final double b;  // Nominal 4
+      private final double a; // Nominal 1
+      private final double b; // Nominal 6
 
       /**
        * Second derivative of a Gaussian (negative is just to make the filtered
@@ -98,22 +98,21 @@ public class VariableWidthFittingFilter {
          this.a = a;
          this.b = b;
          for (int ch = 0; ch < nch; ++ch) {
-            final double e = calib.getZeroOffset() + ch * calib.getChannelWidth();
-            if (e > 0.0) {
-               final double w = a * calib.getLineshape().leftWidth(e, Math.exp(-0.5));
-               final int chw = (int) Math.ceil(b * w / calib.getChannelWidth());
-               // Range of channels over which to compute the filter
-               final int chmin = ch - chw, chmax = ch + chw;
+            final double e_ch = calib.getZeroOffset() + ch * calib.getChannelWidth();
+            if (e_ch > 0.0) {
+               final double gw = calib.getLineshape().leftWidth(e_ch, 0.606530659);
+               final int chw = (int) Math.ceil(0.5 * b * gw / calib.getChannelWidth());
                // Range of channels over which to save the filter
-               final int smin = Math.max(0, chmin), smax = Math.min(chmax + 1, nch);
+               final int smin = Math.max(0, ch - chw), smax = Math.min(ch + chw + 1, nch);
                final double[] filt = new double[smax - smin];
-               for (int i = chmin; i <= chmax; ++i) {
-                  final double ei = calib.getZeroOffset() + i * calib.getChannelWidth();
-                  final double f = func(ei, e, w);
-                  filt[Math2.bound(i, smin, smax) - smin] += f;
+               for (int i = 0; i <= chw; ++i) {
+                  final double f = func(calib.getZeroOffset() + (ch + i) * calib.getChannelWidth(), e_ch, a * gw);
+                  filt[Math2.bound(ch + i, smin, smax) - smin] += f;
+                  if (i != 0)
+                     filt[Math2.bound(ch - i, smin, smax) - smin] += f;
                }
-               final double off = Arrays.stream(filt).sum() / (chmax - chmin + 1);
-               for (int i = chmin; i <= chmax; ++i)
+               final double off = Arrays.stream(filt).sum() / (2 * chw + 1);
+               for (int i = ch - chw; i <= ch + chw; ++i)
                   filt[Math2.bound(i, smin, smax) - smin] -= off;
                assert Math.abs(Arrays.stream(filt).sum()) <= 1.0e-8 : "At " + ch;
                mFilters[ch] = filt;
@@ -125,7 +124,7 @@ public class VariableWidthFittingFilter {
          }
          final double w_mn = a * calib.getLineshape().leftWidth(SpectrumUtils.E_MnKa, Math.exp(-0.5));
          final int chw_mn = (int) Math.ceil(w_mn / calib.getChannelWidth());
-         mVarianceCorrection = defaultVarianceCorrectionFactor((int) (0.7 * (b-a) * chw_mn), (int) (1.5 * a * chw_mn));
+         mVarianceCorrection = defaultVarianceCorrectionFactor((int) (0.7 * (b - a) * chw_mn), (int) (1.5 * a * chw_mn));
       }
 
       public String toString() {

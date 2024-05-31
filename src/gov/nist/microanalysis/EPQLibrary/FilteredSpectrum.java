@@ -91,6 +91,13 @@ public class FilteredSpectrum extends DerivedSpectrum {
          assert mVarFilter != null;
          final double[] chdata = new double[chCount];
          System.arraycopy(roiData, 0, chdata, lowCh, roiData.length);
+         double lowV=0.0, highV=0.0;
+         for(int i=0;i<3;++i) {
+            lowV+=roiData[i];
+            highV+=roiData[roiData.length-(i+1)];
+         }
+         Arrays.fill(chdata,  0, lowCh, lowV/3.0);
+         Arrays.fill(chdata,  lowCh+roiData.length, chdata.length, highV/3.0);
          final double[][] filtvar = mVarFilter.compute(chdata);
          for (int ch = 0; ch < chCount; ++ch) {
             filtvar[0][ch] *= mNormalization;

@@ -179,13 +179,17 @@ public class PAP1991 extends CorrectionAlgorithm.PhiRhoZAlgorithm {
             assert mPhi0 >= 1.0 : "Phi0 should be larger than 1.0";
             assert mPhi0 < 5.0 : "Phi0 should be less than 5.0";
             {
-               final double tt = mF - ((mPhi0 * mRx) / 3.0);
-               final double dr = mRx - mRm;
-               final double d = dr * tt * ((dr * mF) - (mPhi0 * mRx * (mRm + (mRx / 3.0))));
-               if (d > 0.0)
-                  // Location of the joint between parabola one and two
-                  mRc = 1.5 * ((tt / mPhi0) - (Math.sqrt(d) / (mPhi0 * dr)));
-               else {
+               final double dd = ((mRx * mPhi0 - 3.0 * mF) * (3.0 * mF * (mRm - mRx) + mRx * (3.0 * mRm + mRx) * mPhi0)) / (mRx - mRm);
+               if (dd > 0.0) {
+                  mRc = -0.5 * (mRx * mPhi0 - 3.0 * mF + Math.sqrt(dd)) / mPhi0;
+                  // mRc = (tmp[0]>mRc) && (tmp[0]<mRx) ? -tmp[0] : -tmp[1];
+                  assert mRc > mRm;
+                  assert mRc < mRx;
+                  // Check the integral is correct...
+                  assert Math
+                        .abs(mPhi0 * (mRc * mRc * (mRm - mRx) + mRc * (mRm - mRx) * mRx + mRm * mRx * mRx) / (3.0 * (mRc * (mRm - mRx) + mRm * mRx))
+                              - mF) < 1.0e-6 * mF;
+               } else {
                   mRm = (mRx * (mF - ((mPhi0 * mRx) / 3.0))) / (mF + (mPhi0 * mRx));
                   mRc = (3.0 * mRm * (mF + (mPhi0 * mRx))) / (2.0 * mPhi0 * mRx);
                   if ((mRm < 0.0) || (mRm > mRx))
@@ -198,6 +202,22 @@ public class PAP1991 extends CorrectionAlgorithm.PhiRhoZAlgorithm {
          mA2 = (mA1 * (mRc - mRm)) / (mRc - mRx);
       }
       return res;
+   }
+
+   private static double[] quadratic(double a, double b, double c) {
+      if (a == 0.0) {
+         return new double[]{-c / b};
+      } else if (c == 0.0) {
+         return new double[]{-b / a};
+      } else {
+         double dd = b * b - 4.0 * a * c;
+         if (dd > 0.0) {
+            final double x1 = (-b + Math.signum(b) * Math.sqrt(dd)) / (2.0 * a);
+            return new double[]{x1, c / (a * x1)};
+         } else {
+            return new double[]{};
+         }
+      }
    }
 
    @Override

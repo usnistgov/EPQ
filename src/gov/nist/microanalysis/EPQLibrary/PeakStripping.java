@@ -117,15 +117,10 @@ abstract public class PeakStripping extends AlgorithmClass {
 
       @Override
       protected void initializeDefaultStrategy() {
-         // addDefaultAlgorithm(SpectrumSmoothing.class,
-         // SpectrumSmoothing.SavitzkyGolay4);
       }
 
       @Override
       public ISpectrumData computeBackground(ISpectrumData src) {
-         // final SpectrumSmoothing ss = (SpectrumSmoothing)
-         // getAlgorithm(SpectrumSmoothing.class);
-         // final double[] ch = SpectrumUtils.toDoubleArray(ss.compute(src));
          final double[] ch = SpectrumUtils.toDoubleArray(src);
          double delta = 0.0, delta0 = -Double.MAX_VALUE;
          for (int iter = 0; (iter < MAX_ITERATIONS) && (delta > (1.0e-6 * delta0)); ++iter) {

@@ -128,6 +128,29 @@ public class GnuplotFile {
    private double transformX(double xx, double dx, int i) {
       return mStagger ? xx + (i * dx) : xx;
    }
+   
+   private final String remap(String label) {
+      String res = label.replace("α","{/Symbol a}");
+      res = res.replace("β","{/Symbol b}");
+      res = res.replace("γ","{/Symbol g}");
+      res = res.replace("ζ","{/Symbol z}");
+      res = res.replace("η","{/Symbol h}");
+      res = res.replace("ν","{/Symbol n}");
+      res = res.replace("\u2113","l");
+      return res;
+   }
+   
+   private final String remap_latex(String label) {
+      String res = label.replace("α","$\\alpha$");
+      res = res.replace("β","$\\alpha$");
+      res = res.replace("γ","$\\gamma$");
+      res = res.replace("ζ","$\\zeta$");
+      res = res.replace("η","$\\eta$");
+      res = res.replace("ν","$\\nu$");
+      res = res.replace("\\u2113","$\\ell$");
+      return res;
+   }
+   
 
    public void write(PrintWriter pw) throws IOException {
       final boolean isLatex = mTerminal.startsWith("latex");
@@ -242,16 +265,21 @@ public class GnuplotFile {
       pw.println("unset label");
       for (final Map.Entry<double[], String> klm : displayed.entrySet()) {
          // Add a label
-         pw.println("# " + klm.getValue());
-         pw.print("set label ");
-         pw.print(i);
          if (mTerminal.startsWith("latex")) {
+            final String label = remap_latex(klm.getValue()); 
+            pw.println("# " + label);
+            pw.print("set label ");
+            pw.print(i);
             pw.print(" \"{\\\\tiny ");
-            pw.print(klm.getValue());
+            pw.print(label);
             pw.print("}\" at first ");
          } else {
+            final String label = remap(klm.getValue());
+            pw.println("# " + label);
+            pw.print("set label ");
+            pw.print(i);
             pw.print(" \"");
-            pw.print(klm.getValue());
+            pw.print(label);
             pw.print("\" at first ");
          }
          final double[] value = klm.getKey();

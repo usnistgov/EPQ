@@ -61,6 +61,7 @@ public class PHAMLMeshFEARunner implements IAdaptiveMesh, IFEArunner {
 
    interface PHAML extends com.sun.jna.Library {
 
+      @SuppressWarnings("deprecation")
       PHAML lib = (PHAML) Native.loadLibrary("PHAML_lib.dll", PHAML.class);
 
       void decrementChargeNumber(int handle, int elementIndex, IntByReference errcode);

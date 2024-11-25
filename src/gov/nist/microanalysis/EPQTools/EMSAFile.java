@@ -373,11 +373,15 @@ public class EMSAFile extends BaseSpectrum {
             mProperties.setNumericProperty(SpectrumProperties.Azimuth, parseDouble(value));
          else if (prefix.startsWith("#SOLIDANGL"))
             mProperties.setNumericProperty(SpectrumProperties.SolidAngle, parseDouble(value));
-         else if (prefix.startsWith("#LIVETIME"))
-            mProperties.setNumericProperty(SpectrumProperties.LiveTime, parseDouble(value));
-         else if (prefix.startsWith("#REALTIME"))
-            mProperties.setNumericProperty(SpectrumProperties.RealTime, parseDouble(value));
-         else if (prefix.startsWith("#TBEWIND"))
+         else if (prefix.startsWith("#LIVETIME")) {
+            final double lt = parseDouble(value);
+            if((!Double.isNaN(lt)) && (lt>0.0))
+               mProperties.setNumericProperty(SpectrumProperties.LiveTime, lt);
+         } else if (prefix.startsWith("#REALTIME")) {
+            final double rt = parseDouble(value);
+            if((!Double.isNaN(rt)) && (rt>0.0))
+               mProperties.setNumericProperty(SpectrumProperties.RealTime, rt);
+         } else if (prefix.startsWith("#TBEWIND"))
             mProperties.setNumericProperty(SpectrumProperties.BerylliumWindow, parseDouble(value) * 1.0e4);
          else if (prefix.startsWith("#TAUWIND"))
             mProperties.setNumericProperty(SpectrumProperties.GoldLayer, parseDouble(value) * 1.0e7);

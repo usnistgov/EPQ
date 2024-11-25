@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
     <jar path="DTSA2/Installer/DTSA-II Build/epq.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/EPQ/EPQ Jar Description.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
@@ -11,28 +11,32 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="false" exportJavaFiles="false" exportOutputFolder="true">
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.Utility"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.Henke93"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.SalvatXion"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.Detector"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools.ClipArt"/>
-        <file path="/EPQ/epq.ico"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;flanagan.math"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQDatabase"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTests.TestData"/>
-        <file path="/EPQ/src/RelocationUtilitySplash.png"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.NISTMonte.Gen3"/>
         <file path="/EPQ/EPQ.html"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;flanagan.interpolation"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTests"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTools"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.NistXSec"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQImage"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.NISTMonte"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQTests.TestData.STEM"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.CzyzewskiXSec"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.BergerSeltzerBrem"/>
-        <javaElement handleIdentifier="=EPQ/src&lt;gov.nist.microanalysis.EPQLibrary.CitMAC"/>
+        <file path="/EPQ/epq.ico"/>
+        <file path="/EPQ/src/RelocationUtilitySplash.png"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;flanagan.interpolation"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;flanagan.math"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQDatabase"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQImage"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary.BergerSeltzerBrem"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary.CitMAC"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary.CzyzewskiXSec"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary.Detector"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary.Henke93"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary.NistXSec"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQLibrary.SalvatXion"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTests"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTests.TestData"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTests.TestData.STEM"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTools.ClipArt"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.JythonGUI"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.NISTMonte"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.NISTMonte.Gen3"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.Utility"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSEL"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.JMONSELutils"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.nanoscalemetrology.MONSELtests"/>
     </selectedElements>
 </jardesc>

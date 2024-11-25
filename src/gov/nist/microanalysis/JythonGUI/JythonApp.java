@@ -1,10 +1,12 @@
 package gov.nist.microanalysis.JythonGUI;
 
 import java.io.File;
-import java.util.Random;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+
+import org.python.util.InteractiveConsole;
 
 import gov.nist.microanalysis.JythonGUI.JythonApp;
 
@@ -26,7 +28,7 @@ import gov.nist.microanalysis.JythonGUI.JythonApp;
 public class JythonApp {
    boolean packFrame = false;
    JythonFrame mFrame;
-   String[] mFiles;
+   ArrayList<String> mFiles;
 
    // Construct the application
    public JythonApp() {
@@ -41,6 +43,7 @@ public class JythonApp {
       }
       // Center the window
       mFrame.setVisible(true);
+
    }
 
    protected void executeFile(File file) {
@@ -81,16 +84,7 @@ public class JythonApp {
          String os = System.getProperty("os.name").toLowerCase();
          String laf = UIManager.getSystemLookAndFeelClassName();
          if (os.equals("windows")) {
-            String name = System.getProperty("user.name");
-            if (name.equals("Nicholas") || name.equals("nritchie")) {
-               // Switch look-and-feels to expose bugs related to assumptions
-               // about L&F
-               String[] lafs = {"net.java.plaf.windows.WindowsLookAndFeel", "com.jgoodies.looks.plastic.PlasticLookAndFeel",
-                     "com.jgoodies.looks.plastic.PlasticXPLookAndFeel", "com.jgoodies.looks.plastic.Plastic3DLookAndFeel",};
-               int idx = (new Random()).nextInt(lafs.length);
-               laf = lafs[idx];
-            } else
-               laf = "net.java.plaf.windows.WindowsLookAndFeel";
+            laf = "net.java.plaf.windows.WindowsLookAndFeel";
          } else if (os.equals("linux")) {
             laf = "com.jgoodies.looks.plastic.Plastic3DLookAndFeel";
          }
@@ -105,8 +99,22 @@ public class JythonApp {
       }
       JFrame.setDefaultLookAndFeelDecorated(false);
       loadStuff();
-      JythonApp ja = new JythonApp();
-      for (int i = 0; i < args.length; ++i)
-         ja.executeFile(new File(args[i]));
+      if (args.length > 0) {
+         try (InteractiveConsole con = new InteractiveConsole()) {
+            con.setErr(System.err);
+            con.setOut(System.out);
+            for (int i = 0; i < args.length; i++) {
+               System.out.println("Executing: " + args[i]);
+               try {
+                  con.execfile(args[i]);
+               } catch (Exception e) {
+                  e.printStackTrace(System.err);
+               }
+            }
+         }
+         System.exit(0);
+      } else {
+         new JythonApp();
+      }
    }
 }

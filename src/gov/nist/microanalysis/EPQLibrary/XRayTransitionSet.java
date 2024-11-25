@@ -79,6 +79,18 @@ public class XRayTransitionSet implements Comparable<XRayTransitionSet>, Cloneab
     */
    static final public String L_GAMMA = "L\u03B3";
    /**
+    * The transitions often referred to as L eta
+    */
+   static final public String L_ETA ="L\u03B7";
+   /**
+    * The transitions often referred to as L nu
+    */
+   static final public String L_NU ="L\u03BD";
+   /**
+    * The transitions often referred to as Ll (script l)
+    */
+   static final public String L_L = "L\u2113";
+   /**
     * The transitions in the L family that are not La, Lb or Lg
     */
    static final public String L_OTHER = "L*";
@@ -185,11 +197,15 @@ public class XRayTransitionSet implements Comparable<XRayTransitionSet>, Cloneab
 
    private static final int[] LGammaTransitions = {XRayTransition.LG1, XRayTransition.LG5, XRayTransition.LG6, XRayTransition.LG8, XRayTransition.LG2,
          XRayTransition.LG11, XRayTransition.LG3, XRayTransition.LG4, XRayTransition.LG4p};
-
+   private static final int[] LEtaTransitions = { XRayTransition.L2N5, XRayTransition.Ln };
+   private static final int[] LNuTransitions = { XRayTransition.Lv };
+   private static final int[] LlTransitions = { XRayTransition.Ll };
+   
+   
    private static final int[] LOtherTransitions = {XRayTransition.L3N2, XRayTransition.L3N3, XRayTransition.L3O2, XRayTransition.L3O3,
-         XRayTransition.L3P1, XRayTransition.Ll, XRayTransition.Ls, XRayTransition.Lt, XRayTransition.Lu, XRayTransition.L2M2, XRayTransition.L2M5,
-         XRayTransition.L2N2, XRayTransition.L2N3, XRayTransition.L2N5, XRayTransition.L2O2, XRayTransition.L2O3, XRayTransition.L2P2,
-         XRayTransition.Ln, XRayTransition.Lv, XRayTransition.L1M1, XRayTransition.L1N1, XRayTransition.L1N4, XRayTransition.L1O1,
+         XRayTransition.L3P1, XRayTransition.Ls, XRayTransition.Lt, XRayTransition.Lu, XRayTransition.L2M2, XRayTransition.L2M5,
+         XRayTransition.L2N2, XRayTransition.L2N3, XRayTransition.L2O2, XRayTransition.L2O3, XRayTransition.L2P2,
+         XRayTransition.L1M1, XRayTransition.L1N1, XRayTransition.L1N4, XRayTransition.L1O1,
          XRayTransition.L1O4};
    private static final int[] MAlphaTransitions = {XRayTransition.MA1, XRayTransition.MA2};
    private static final int[] MBetaTransitions = {XRayTransition.MB};
@@ -239,6 +255,9 @@ public class XRayTransitionSet implements Comparable<XRayTransitionSet>, Cloneab
       res.put(L_BETA, LBetaTransitions);
       res.put(L_GAMMA, LGammaTransitions);
       res.put(L_OTHER, LOtherTransitions);
+      res.put(L_ETA, LEtaTransitions);
+      res.put(L_NU, LNuTransitions);
+      res.put(L_L, LlTransitions);
       res.put(M_ALPHA, MAlphaTransitions);
       res.put(M_BETA, MBetaTransitions);
       res.put(M_GAMMA, MGammaTransitions);
@@ -347,6 +366,12 @@ public class XRayTransitionSet implements Comparable<XRayTransitionSet>, Cloneab
          return L_BETA;
       if (Arrays.binarySearch(LGammaTransitions, tr) >= 0)
          return L_GAMMA;
+      if (Arrays.binarySearch(LEtaTransitions, tr) >= 0)
+         return L_ETA;
+      if (Arrays.binarySearch(LNuTransitions, tr) >= 0)
+         return L_NU;
+      if (Arrays.binarySearch(LlTransitions, tr) >= 0)
+         return L_L;
       if (Arrays.binarySearch(LOtherTransitions, tr) >= 0)
          return L_OTHER;
       if (Arrays.binarySearch(MAlphaTransitions, tr) >= 0)

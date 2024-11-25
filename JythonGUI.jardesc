@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="DTSA2/Installer/DTSA-II Build/JythonGUI.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/EPQ/JythonGUI.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" mainClassHandleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.JythonGUI{JythonApp.java[JythonApp" manifestLocation="/EPQ/MANIFEST_JythonGUI.txt" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="false" exportJavaFiles="false" exportOutputFolder="true">
+        <file path="/EPQ/EPQ.html"/>
+        <file path="/EPQ/epq.ico"/>
+        <file path="/EPQ/src/RelocationUtilitySplash.png"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.EPQTests.TestData"/>
+        <javaElement handleIdentifier="=EPQ/src=/optional=/true=/=/maven.pomderived=/true=/&lt;gov.nist.microanalysis.JythonGUI"/>
+    </selectedElements>
+</jardesc>

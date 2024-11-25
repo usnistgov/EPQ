@@ -338,6 +338,7 @@ public class GetDPspec {
     * @param command
     * @throws InterruptedException
     */
+   @SuppressWarnings("deprecation")
    public void runGetDP(String command)
          throws InterruptedException {
       // Execute it and check for errors

@@ -182,7 +182,6 @@ public class PAP1991 extends CorrectionAlgorithm.PhiRhoZAlgorithm {
                final double dd = ((mRx * mPhi0 - 3.0 * mF) * (3.0 * mF * (mRm - mRx) + mRx * (3.0 * mRm + mRx) * mPhi0)) / (mRx - mRm);
                if (dd > 0.0) {
                   mRc = -0.5 * (mRx * mPhi0 - 3.0 * mF + Math.sqrt(dd)) / mPhi0;
-                  // mRc = (tmp[0]>mRc) && (tmp[0]<mRx) ? -tmp[0] : -tmp[1];
                   assert mRc > mRm;
                   assert mRc < mRx;
                   // Check the integral is correct...
@@ -204,7 +203,7 @@ public class PAP1991 extends CorrectionAlgorithm.PhiRhoZAlgorithm {
       return res;
    }
 
-   private static double[] quadratic(double a, double b, double c) {
+   /* private static double[] quadratic(double a, double b, double c) {
       if (a == 0.0) {
          return new double[]{-c / b};
       } else if (c == 0.0) {
@@ -218,7 +217,7 @@ public class PAP1991 extends CorrectionAlgorithm.PhiRhoZAlgorithm {
             return new double[]{};
          }
       }
-   }
+   } */
 
    @Override
    public double generated(XRayTransition xrt) {

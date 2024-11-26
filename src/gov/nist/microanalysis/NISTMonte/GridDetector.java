@@ -120,7 +120,7 @@ public class GridDetector implements ActionListener {
       }
       wr.append("\n");
       // Row of X offsets
-      wr.append("Offset (µm)\t");
+      wr.append("Offset (Âµm)\t");
       for (int dx = 0; dx < mBins.length; ++dx) {
          wr.append("\t");
          wr.append(df.format(((mSize * ((dx - (mBins.length / 2)) + 0.5)) / mBins.length) * 1.0e6));

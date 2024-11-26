@@ -66,24 +66,24 @@ public class UncertainValue2Test extends TestCase {
       assertEquals(mA, mA2a, 1.0e-10);
       assertEquals(mA.uncertainty(), mA2a.uncertainty(), 1.0e-8);
       assertEquals(mA, mA2a, 1.0e-8);
-      assertEquals(mA2a.format(new DecimalFormat("0.000")), "1.240±0.300");
-      assertEquals(mA2a.formatLong(new DecimalFormat("0.000")), "1.240±0.224(V1)±0.200(V2)");
+      assertEquals(mA2a.format(new DecimalFormat("0.000")), "1.240Â±0.300");
+      assertEquals(mA2a.formatLong(new DecimalFormat("0.000")), "1.240Â±0.224(V1)Â±0.200(V2)");
    }
 
    public void testB() {
       assertEquals(mB, mB2a, 1.0e-10);
       assertEquals(mB.uncertainty(), mB2a.uncertainty(), 1.0e-8);
       assertEquals(mB, mB2a, 1.0e-8);
-      assertEquals(mB2a.format(new DecimalFormat("0.000")), "8.820±1.200");
-      assertEquals(mB2a.formatLong(new DecimalFormat("0.000")), "8.820±0.917(V1)±0.775(V2)");
+      assertEquals(mB2a.format(new DecimalFormat("0.000")), "8.820Â±1.200");
+      assertEquals(mB2a.formatLong(new DecimalFormat("0.000")), "8.820Â±0.917(V1)Â±0.775(V2)");
    }
 
    public void testC() {
       assertEquals(mC, mC2a, 1.0e-10);
       assertEquals(mC.uncertainty(), mC2a.uncertainty(), 1.0e-8);
       assertEquals(mC, mC2a, 1.0e-8);
-      assertEquals(mC2a.format(new DecimalFormat("0.000")), "-9.300±2.100");
-      assertEquals(mC2a.formatLong(new DecimalFormat("0.000")), "-9.300±1.732(V1)±1.187(V3)");
+      assertEquals(mC2a.format(new DecimalFormat("0.000")), "-9.300Â±2.100");
+      assertEquals(mC2a.formatLong(new DecimalFormat("0.000")), "-9.300Â±1.732(V1)Â±1.187(V3)");
    }
 
    public void testAB() {
@@ -167,7 +167,7 @@ public class UncertainValue2Test extends TestCase {
       final UncertainValue2 c = new UncertainValue2(3.0, "A", 0.15);
       final UncertainValue2[] uvs = new UncertainValue2[]{a, b, c};
       assertEquals(UncertainValue2.add(uvs), new UncertainValue2(6.0, Math.sqrt(0.0625 + 0.04)), 1e-6);
-      assertEquals(UncertainValue2.add(uvs).formatLong(new DecimalFormat("0.000")), "6.000±0.250(A)±0.200(B)");
+      assertEquals(UncertainValue2.add(uvs).formatLong(new DecimalFormat("0.000")), "6.000Â±0.250(A)Â±0.200(B)");
    }
 
    public void testMultiply() {
@@ -177,8 +177,8 @@ public class UncertainValue2Test extends TestCase {
       assertEquals(UncertainValue2.multiply(a, b), new UncertainValue2(2.53, 0.3182766093), 1.0e-6);
       assertEquals(UncertainValue2.multiply(a, c), new UncertainValue2(3.96, 0.525), 1.0e-6);
       assertEquals(UncertainValue2.multiply(b, UncertainValue2.multiply(a, c)), new UncertainValue2(9.108, 1.444063797), 1.0e-6);
-      assertEquals(UncertainValue2.multiply(b, UncertainValue2.multiply(a, c)).formatLong(new DecimalFormat("0.0000")), "9.1080±1.2075(A)±0.7920(B)");
-      assertEquals(UncertainValue2.multiply(b, UncertainValue2.multiply(a, c)).format(new DecimalFormat("0.0000")), "9.1080±1.4441");
+      assertEquals(UncertainValue2.multiply(b, UncertainValue2.multiply(a, c)).formatLong(new DecimalFormat("0.0000")), "9.1080Â±1.2075(A)Â±0.7920(B)");
+      assertEquals(UncertainValue2.multiply(b, UncertainValue2.multiply(a, c)).format(new DecimalFormat("0.0000")), "9.1080Â±1.4441");
    }
 
    public void testDivide() {

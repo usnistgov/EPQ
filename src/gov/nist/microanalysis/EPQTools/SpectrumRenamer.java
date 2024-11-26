@@ -36,7 +36,7 @@ public class SpectrumRenamer {
       ProbeArea("$PA$", SpectrumProperties.ProbeArea, "Probe area (nm\u00B2)"), //
       Project("$PROJ$", SpectrumProperties.ProjectName, "Project name"), //
       PPS("$PPS$", SpectrumProperties.PulseProcessorSetting, "Pulse processor setting"), //
-      PPT("$PPT$", SpectrumProperties.PulseProcessTime, "Pulse processor time (µs)"), //
+      PPT("$PPT$", SpectrumProperties.PulseProcessTime, "Pulse processor time (Âµs)"), //
       RealTime("$RT$", SpectrumProperties.RealTime, "Real time (s)"), //
       Resolution("$RES$", SpectrumProperties.Resolution, "Resolution at Mn K\u03B1 (eV)"), //
       SampleShape("$SHAPE$", SpectrumProperties.SampleShape, "Sample shape"), //

@@ -225,8 +225,7 @@ final public class XRayTransition implements Comparable<XRayTransition>, Cloneab
                   final double[] ew = wgt[el], dNorm = destNorm[el], kNorm = klmNorm[el], fNorm = famNorm[el];
                   if (ew != null) {
                      // Normalize the K, L and M families to all have the same
-                     // maximum
-                     // intensity
+                     // maximum intensity
                      assert (ew.length <= ((XRayTransition.N5N6 - XRayTransition.KA1) + 1));
                      for (int xrt = XRayTransition.KA1; xrt < (XRayTransition.KA1 + ew.length); ++xrt) {
                         final int f = XRayTransition.getFamily(xrt);
@@ -262,12 +261,11 @@ final public class XRayTransition implements Comparable<XRayTransition>, Cloneab
       }
    }
 
-   private int getSourceShell(Element elm, int trans) {
+   private static int getSourceShell(Element elm, int trans) {
       int res = mSourceShell[trans];
       // Some transitions are not consisent with the standard naming schemes.
-      // For
-      // example, C Ka is K-L2 and not K-L3 because L3 doesn't exist in C and
-      // Ka refers to the brightest K line.
+      // For example, C Ka is K-L2 and not K-L3 because L3 doesn't exist in C
+      // and Ka refers to the brightest K line.
       switch (elm.getAtomicNumber()) {
          // LIII and LII don't exist
          case Element.elmLi :
@@ -1168,7 +1166,7 @@ final public class XRayTransition implements Comparable<XRayTransition>, Cloneab
       // The static table mWeight is loaded on demand from LineWeights.csv
       if (mWeight == null)
          readLineWeights();
-      if (!(AtomicShell.exists(el, mSourceShell[xrt]) && AtomicShell.exists(el, mDestinationShell[xrt])))
+      if (!(AtomicShell.exists(el, XRayTransition.getSourceShell(el, xrt)) && AtomicShell.exists(el, mDestinationShell[xrt])))
          return false;
       final int ani = el.getAtomicNumber() - 1;
       return (ani >= 0) && (ani < mWeight.length) && (mWeight[ani] != null) && (xrt < mWeight[ani].length) && (mWeight[ani][xrt] > 0.0);

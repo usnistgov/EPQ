@@ -122,8 +122,8 @@ public class XRayWindow implements IXRayWindowProperties {
        * @return
        */
       @SuppressWarnings("unused")
-      private double ensure_outer_class() {
-         return XRayWindow.this.mOpenFraction;
+      public XRayWindow ensure_outer_class() {
+         return XRayWindow.this;
       }
 
    }
@@ -229,8 +229,10 @@ public class XRayWindow implements IXRayWindowProperties {
     */
    private double massAbsorptionCoefficient(double energy) {
       double mac = 0.0;
-      for (final Layer l : mLayers)
+      for (final Layer l : mLayers) {
+         assert l.ensure_outer_class()==this;
          mac += l.massAbsorptionCoefficient(energy);
+      }
       return mac;
    }
 

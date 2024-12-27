@@ -117,6 +117,20 @@ public class MicrocalCalibration extends EDSCalibration {
          mMaterial = mat;
          mThickness = thickness;
       }
+      
+      /**
+       * It seems that when a inner class is not declared as static but probably
+       * ought to be the compiler will drop the reference to the outer class.
+       * This can be a problem for XStream which might have previously written
+       * the object with an outer-class reference. This resolves this bug.
+       * 
+       * @return
+       */
+      @SuppressWarnings("unused")
+      public MicrocalCalibration ensure_outer_class() {
+         return MicrocalCalibration.this;
+      }
+
    };
 
    private final List<Layer> mLayers = new ArrayList<Layer>();

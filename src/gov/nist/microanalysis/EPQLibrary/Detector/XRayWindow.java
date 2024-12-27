@@ -52,7 +52,7 @@ public class XRayWindow implements IXRayWindowProperties {
    final static Material AL = createMaterial("Al", ToSI.gPerCC(2.7));
    final static Material SI = createMaterial("Si", ToSI.gPerCC(2.33));
 
-   private class Layer {
+   public class Layer {
       transient int mHash = Integer.MAX_VALUE;
       private final double mThickness; // in meters
       private final Material mMaterial;
@@ -112,9 +112,23 @@ public class XRayWindow implements IXRayWindowProperties {
             return false;
          return true;
       }
+
+      /**
+       * It seems that when a inner class is not declared as static but probably
+       * ought to be the compiler will drop the reference to the outer class.
+       * This can be a problem for XStream which might have previously written
+       * the object with an outer-class reference. This resolves this bug.
+       * 
+       * @return
+       */
+      @SuppressWarnings("unused")
+      private double ensure_outer_class() {
+         return XRayWindow.this.mOpenFraction;
+      }
+
    }
 
-   List<Layer> mLayers = new ArrayList<Layer>(); // A list of Layer objects
+   protected List<Layer> mLayers = new ArrayList<>(); // A list of Layer objects
    /**
     * What fraction of the window is not blocked?
     */

@@ -29,6 +29,8 @@ import gov.nist.microanalysis.EPQLibrary.XRayTransition;
 import gov.nist.microanalysis.EPQLibrary.XRayTransitionSet;
 import gov.nist.microanalysis.EPQLibrary.Detector.BasicSiLiLineshape;
 import gov.nist.microanalysis.EPQLibrary.Detector.DetectorProperties;
+import gov.nist.microanalysis.EPQLibrary.Detector.EDSDetector;
+import gov.nist.microanalysis.EPQLibrary.Detector.GridMountedWindow;
 import gov.nist.microanalysis.EPQLibrary.Detector.SiLiCalibration;
 import gov.nist.microanalysis.EPQLibrary.Detector.XRayWindow;
 import gov.nist.microanalysis.EPQLibrary.Detector.XRayWindow2;
@@ -96,6 +98,7 @@ public class EPQXStream extends XStream {
       alias("AtomicShell", AtomicShell.class);
       alias("BasicSiLiLineshape", BasicSiLiLineshape.class);
       alias("Composition", Composition.class);
+      alias("EDSDetector", EDSDetector.class);
       alias("DetectorProperties", DetectorProperties.class);
       alias("Element", Element.class);
       alias("Material", Material.class);
@@ -111,7 +114,9 @@ public class EPQXStream extends XStream {
       alias("XRayTransition", XRayTransition.class);
       alias("XRayTransitionSet", XRayTransitionSet.class);
       alias("XRayWindow", XRayWindow.class);
+      alias("XRayWindow-Layer", XRayWindow.Layer.class);
       alias("XRayWindow2", XRayWindow2.class);
+      alias("GridMountedWindow", GridMountedWindow.class);
       alias("ThinFilmSample", SampleShape.ThinFilm.class);
       alias("BulkSample", SampleShape.Bulk.class);
    }
@@ -139,7 +144,7 @@ public class EPQXStream extends XStream {
 
    /**
     * @param reflectionProvider
-    *           @param hierarchicalStreamDriver
+    * @param hierarchicalStreamDriver
     */
    public EPQXStream(ReflectionProvider reflectionProvider, HierarchicalStreamDriver hierarchicalStreamDriver) {
       super(reflectionProvider, hierarchicalStreamDriver);
@@ -148,7 +153,8 @@ public class EPQXStream extends XStream {
 
    /**
     * @param reflectionProvider
-    *           @param driver @param classLoader
+    * @param driver
+    *           @param classLoader
     */
    public EPQXStream(ReflectionProvider reflectionProvider, HierarchicalStreamDriver driver, ClassLoader classLoader) {
       super(reflectionProvider, driver, classLoader);
@@ -157,7 +163,8 @@ public class EPQXStream extends XStream {
 
    /**
     * @param reflectionProvider
-    *           @param driver @param classLoader @param mapper
+    * @param driver
+    *           @param classLoader @param mapper
     */
    public EPQXStream(ReflectionProvider reflectionProvider, HierarchicalStreamDriver driver, ClassLoader classLoader, Mapper mapper) {
       super(reflectionProvider, driver, classLoader, mapper);
@@ -166,8 +173,9 @@ public class EPQXStream extends XStream {
 
    /**
     * @param reflectionProvider
-    *           @param driver @param classLoader @param mapper @param
-    *           converterLookup @param converterRegistry
+    * @param driver
+    *           @param classLoader @param mapper @param converterLookup @param
+    *           converterRegistry
     */
    public EPQXStream(ReflectionProvider reflectionProvider, HierarchicalStreamDriver driver, ClassLoader classLoader, Mapper mapper,
          ConverterLookup converterLookup, ConverterRegistry converterRegistry) {

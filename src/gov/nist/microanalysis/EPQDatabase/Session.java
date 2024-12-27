@@ -1571,14 +1571,12 @@ public class Session {
             {
                final Statement st = mConnection.createStatement();
                try (final ResultSet rs = st.executeQuery("SELECT * FROM DETECTOR")) {
-                  while (rs.next())
+                  while (rs.next()) {
+                     final Integer id = rs.getInt("ID");
+                     final String xml = rs.getString("XML_OBJ");
+                     final Timestamp retired = rs.getTimestamp("RETIRED");
                      try {
-                        final Integer id = rs.getInt("ID");
-                        final String xml = rs.getString("XML_OBJ");
-                        final Timestamp retired = rs.getTimestamp("RETIRED");
-                        // System.out.println(xml);
                         final DetectorProperties det = (DetectorProperties) xs.fromXML(xml);
-                        // System.out.println("Read "+det.toString());
                         mDetectors.put(det, id);
                         if (retired == null)
                            mActiveDetectors.put(det, id);
@@ -1587,7 +1585,11 @@ public class Session {
                            det.setOwner(ep);
                      } catch (final ConversionException e) {
                         e.printStackTrace();
+                        System.out.println("----------------------- XML ------------------------------");
+                        System.out.println(xml);
+                        System.out.println("----------------------- XML ------------------------------");
                      }
+                  }
                }
             }
          } catch (final SQLException e) {

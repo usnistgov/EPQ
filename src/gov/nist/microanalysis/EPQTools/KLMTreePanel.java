@@ -378,17 +378,18 @@ public class KLMTreePanel extends JPanel implements ActionListener {
          @Override
          public void keyReleased(KeyEvent arg0) {
 
-            if (arg0.getKeyCode() == KeyEvent.VK_ENTER)
-               if (arg0.isControlDown()) {
+            if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+               // if (arg0.isControlDown()) {
                   final Set<Element> elms = parseElementField(jTextField_Element.getText());
                   if (elms.size() > 0)
                      try {
                         setElement(elms.iterator().next());
                      } catch (final EPQException e) {
-                        // ignore
+                        System.err.println(e);
                      }
-               } else
-                  updateElementField();
+            } else {
+                  // updateElementField();
+            }
 
          }
 

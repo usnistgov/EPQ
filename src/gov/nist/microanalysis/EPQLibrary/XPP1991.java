@@ -111,7 +111,7 @@ public class XPP1991 extends CorrectionAlgorithm.PhiRhoZAlgorithm implements Cor
             final double g = 0.22 * Math.log(4.0 * meanZb) * (1.0 - (2.0 * Math.exp((meanZb * (1.0 - u0)) / 15.0)));
             // h1 = 1.0 - 10.0 * (1.0 - 1.0 / (u0 / 10.0 + 1.0)) / ( Zb * Zb );
             final double h = 1.0 - ((10.0 * (1.0 - (1.0 / (1.0 + (u0 / 10.0))))) / (meanZb * meanZb));
-            double gh4 = g * Math2.sqr(h * h);
+            double gh4 = g * (h * h) * (h * h);
             // b = sqrt(2.0) * ( 1.0 + sqrt(1.0 - Rbar * phi0 / F) ) / Rbar;
             mLittleB = (SQRT_TWO * (1.0 + Math.sqrt(1.0 - ((rBar * mPhi0) / mF)))) / rBar;
             if (true) {
@@ -127,7 +127,7 @@ public class XPP1991 extends CorrectionAlgorithm.PhiRhoZAlgorithm implements Cor
          mLittleA = (p + (mLittleB * ((2.0 * mPhi0) - (mLittleB * mF)))) / ((mLittleB * mF * (2.0 - (mLittleB * rBar))) - mPhi0);
          mEps = (mLittleA - mLittleB) / mLittleB;
          if (Math.abs(mEps) < TINY) {
-            mEps = TINY;
+            mEps = Math.signum(mEps)*TINY;
             mLittleA = mLittleB * (1.0 + mEps);
          }
          // B = (b * b * F * (atemp + 1.0) - pp - phi0 * b * (atemp + 2.0)) /

@@ -26,6 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
@@ -217,6 +218,7 @@ public class KLMPanel extends JPanel {
    private final JCheckBoxMenuItem jCheckBoxMenuItem_SelSatellites = new JCheckBoxMenuItem();
    private final JCheckBoxMenuItem jCheckBoxMenuItem_SelEdges = new JCheckBoxMenuItem();
    private final JCheckBoxMenuItem jCheckBoxMenuItem_SelSum = new JCheckBoxMenuItem();
+   private final JTextField jTextField_Elements = new JTextField();
 
    /**
     * getTransitionLines - Returns a SortedSet containing KLMLine objects for
@@ -271,7 +273,7 @@ public class KLMPanel extends JPanel {
    }
 
    public KLMPanel() {
-      super(new FormLayout("pref, 3dlu, 50dlu, 3dlu, pref", "pref"));
+      super(new FormLayout("pref, 3dlu, 50dlu, 3dlu, pref", "pref, 8dlu, pref"));
       try {
          mElementsArray = new KLMProperties[XRayTransition.lastWeights().getAtomicNumber() + 1];
          for (int z = Element.elmH; z < mElementsArray.length; z++)
@@ -325,6 +327,17 @@ public class KLMPanel extends JPanel {
       return elms;
    }
 
+   private void updateElementsField() {
+      StringBuffer sb = new StringBuffer();
+      for (int i = 0; i < mElementsArray.length; ++i) {
+         final KLMProperties kp = mElementsArray[i];
+         if ((kp != null) && (kp.mAllLinesSelected || kp.mKLineSelected || kp.mLLineSelected || kp.mMLineSelected))
+            sb.append(kp.mElement.toAbbrev());
+      }
+      jTextField_Elements.setText(sb.toString());
+
+   }
+
    private void initialize() throws Exception {
       // Define jPanel_LineChecks
       jCheckBox_KLine.setAlignmentY((float) 0.0);
@@ -340,6 +353,7 @@ public class KLMPanel extends JPanel {
             final KLMActionEvent.KLMAction action = (selected ? KLMAction.ADD_LINES : KLMAction.REMOVE_LINES);
             final KLMActionEvent kae = new KLMActionEvent(KLMPanel.this, mElementsArray[mCurrentZ].getVisibleLines(AtomicShell.KFamily), action);
             fireVisibleLinesActionPerformed(kae);
+            updateElementsField();
             jTextField_Element.selectAll();
             jTextField_Element.requestFocus();
          }
@@ -357,6 +371,7 @@ public class KLMPanel extends JPanel {
             final KLMActionEvent.KLMAction action = (selected ? KLMAction.ADD_LINES : KLMAction.REMOVE_LINES);
             final KLMActionEvent kae = new KLMActionEvent(KLMPanel.this, mElementsArray[mCurrentZ].getVisibleLines(AtomicShell.LFamily), action);
             fireVisibleLinesActionPerformed(kae);
+            updateElementsField();
             jTextField_Element.selectAll();
             jTextField_Element.requestFocus();
          }
@@ -374,6 +389,7 @@ public class KLMPanel extends JPanel {
             final KLMActionEvent.KLMAction action = (selected ? KLMAction.ADD_LINES : KLMAction.REMOVE_LINES);
             final KLMActionEvent kae = new KLMActionEvent(KLMPanel.this, mElementsArray[mCurrentZ].getVisibleLines(AtomicShell.MFamily), action);
             fireVisibleLinesActionPerformed(kae);
+            updateElementsField();
             jTextField_Element.selectAll();
             jTextField_Element.requestFocus();
          }
@@ -406,6 +422,7 @@ public class KLMPanel extends JPanel {
             final KLMActionEvent.KLMAction action = (selected ? KLMAction.ADD_LINES : KLMAction.REMOVE_LINES);
             final KLMActionEvent kae = new KLMActionEvent(KLMPanel.this, ss, action);
             fireVisibleLinesActionPerformed(kae);
+            updateElementsField();
             jTextField_Element.selectAll();
             jTextField_Element.requestFocus();
          }
@@ -545,6 +562,7 @@ public class KLMPanel extends JPanel {
             redraw();
             fireTemporaryLinesActionPerformed(e);
             fireVisibleLinesActionPerformed(KLMActionEvent.clearAllEvent(KLMPanel.this));
+            updateElementsField();
          }
       });
 
@@ -554,10 +572,26 @@ public class KLMPanel extends JPanel {
       jPanel_Button.add(jButton_SelectedLines, null);
       jPanel_Button.add(jButton_ClearAll, null);
 
+      jTextField_Elements.setEditable(false);
+      {
+         JMenuItem copyItem = new JMenuItem("Copy");
+         copyItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+               jTextField_Elements.selectAll();
+               jTextField_Elements.copy();
+            }
+         });
+         JPopupMenu popupMenu = new JPopupMenu();
+         popupMenu.add(copyItem);
+         jTextField_Elements.setComponentPopupMenu(popupMenu);
+      }
+
       final CellConstraints cc = new CellConstraints();
       add(jPanel_LineChecks, cc.xy(1, 1));
       add(jPanel_Element, cc.xy(3, 1));
       add(jPanel_Button, cc.xy(5, 1));
+      add(new JLabel("Selected"), cc.xy(1, 3));
+      add(jTextField_Elements, cc.xywh(3, 3, 3, 1));
 
       jCheckBoxMenuItem_Escapes.setSelected(false);
       jCheckBoxMenuItem_Escapes.setText(EscapesMenuItem);

@@ -185,6 +185,12 @@ public class QuantifyUsingStandards extends QuantificationOutline {
       mVariableFF = variableFF;
    }
 
+   public QuantifyUsingStandards(final EDSDetector det, final double beamEnergy) {
+      super(det, beamEnergy);
+      mKRatiosOnly = false;
+      mVariableFF = true;
+   }
+
    /**
     * Updates the reference list by first discovering which standards can be
     * used as references then updating this list using the list of user supplied

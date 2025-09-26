@@ -2165,7 +2165,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
       public double compute(Element el, double energy) {
          for (MassAbsorptionCoefficient mac : mAlgorithms)
             if (mac.isAvailable(el, energy))
-               return ((el == Element.Ca) && (Math.abs(FromSI.eV(energy) - 524.9) < 1.0) ? 0.76 : 1.0) * mac.compute(el, energy);
+               return ((el == Element.Ca) && (Math.abs(FromSI.eV(energy) - 524.9) < 1.0) ? 0.80 : 1.0) * mac.compute(el, energy);
          // NWMR's Obsidian note "Why is O high when quantifying K412"
             // return mac.compute(el, energy);
          assert false : el.toAbbrev() + " @ " + Double.toString(FromSI.eV(energy)) + " eV";

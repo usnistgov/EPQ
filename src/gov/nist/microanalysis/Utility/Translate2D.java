@@ -255,13 +255,16 @@ public class Translate2D {
     * Given a coordinate in the original coordinate system compute the
     * equivalent coordinate in the new coordinate system.
     * 
-    * @param oldCoord
-    * @return double[2]
+    * @param oldCoord double[2] (x,y) or double[3] (x,y,theta)
+    * @return double[2] or double[3]
     */
    public double[] compute(double[] oldCoord) {
-      final double[] res = new double[2];
+      final double[] res = oldCoord.clone();
       res[0] = (((oldCoord[0] + mOffset[0]) * Math.cos(mRotation)) - ((oldCoord[1] + mOffset[1]) * Math.sin(mRotation))) * mScale[0];
       res[1] = (((oldCoord[1] + mOffset[1]) * Math.cos(mRotation)) + ((oldCoord[0] + mOffset[0]) * Math.sin(mRotation))) * mScale[1];
+      if(res.length>2) {
+         res[2] += mRotation;
+      }
       return res;
    }
 

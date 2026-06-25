@@ -78,7 +78,7 @@ public class ComputeZAF extends AlgorithmClass {
             final AtomicShell shell = xrt.getDestination();
             ca.initialize(stdComp, shell, stdProps);
             try {
-               stdRes.put(xrt, new Double(ca.computeZAFCorrection(xrt) * stdComp.weightFraction(xrt.getElement(), false)));
+               stdRes.put(xrt, Double.valueOf(ca.computeZAFCorrection(xrt) * stdComp.weightFraction(xrt.getElement(), false)));
             } catch (final EPQException e) {
                e.printStackTrace();
             }

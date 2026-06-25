@@ -95,6 +95,7 @@ public class SpecDisplay extends JComponent {
 
    private static final String ENERGY_AXIS_LABEL_KEV = "Energy (keV)";
    private static final long serialVersionUID = 4388450008895887951L;
+   public static final double DEFAULT_VZOOM = 101.0;
 
    public class Region implements Comparable<Region> {
       public double mLowEnergy;
@@ -250,7 +251,6 @@ public class SpecDisplay extends JComponent {
     */
    private double mEMin = 0.0, mEMax = 2.0e4;
    private double mVMin = 0.0, mVMax = 16.0;
-   private static final double DEFAULT_VZOOM = 101.0;
    private double mZoom = DEFAULT_VZOOM;
    private final boolean mShowVAxisLabels = true;
    private final boolean mShowHAxisLabels = true;

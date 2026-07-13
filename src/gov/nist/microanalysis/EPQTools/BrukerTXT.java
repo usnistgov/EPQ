@@ -79,8 +79,12 @@ public class BrukerTXT extends BaseSpectrum {
          } else if (str.startsWith("Pulse density:")) {
             // Ignore
          } else if (str.startsWith("Primary energy:")) {
-            double val = Double.parseDouble(str.substring("Primary Energy:".length()).trim());
+            double val = Double.parseDouble(str.substring("Primary energy:".length()).trim());
             mProperties.setNumericProperty(SpectrumProperties.BeamEnergy, val);
+         } else if (str.startsWith("Beam current:")) {
+            double val = Double.parseDouble(str.substring("Beam current:".length()).trim());
+            if (val > 0.0) // Set to -1 when no value is available.
+               mProperties.setNumericProperty(SpectrumProperties.ProbeCurrent, val);
          } else if (str.startsWith("Take off angle:")) {
             double val = Double.parseDouble(str.substring("Take off angle:".length()).trim());
             mProperties.setNumericProperty(SpectrumProperties.TakeOffAngle, val);

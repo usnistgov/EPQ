@@ -34,7 +34,7 @@ import gov.nist.microanalysis.Utility.UncertainValue2;
  * <p>
  * Company: National Institute of Standards and Technology
  * </p>
- * 
+ *
  * @author Nicholas W. M. Ritchie
  * @version 1.0
  */
@@ -54,13 +54,13 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * <p>
     * Institution: National Institute of Standards and Technology
     * </p>
-    * 
+    *
     * @author nritchie
     * @version 1.0
     */
    public enum UncertaintyReason {
       BaseLevel, Below200eV, Below500eV, Below1000eV, ExceedinglyCloseToEdge, VeryCloseToEdge, CloseToEdge,
-   };
+   }
 
    public class UncertaintySource {
       private final UncertaintyReason mReason;
@@ -75,7 +75,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
       /**
        * Gets the current value assigned to reason
-       * 
+       *
        * @return Returns the reason.
        */
       public UncertaintyReason getReason() {
@@ -84,7 +84,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
       /**
        * Gets the current value assigned to shell
-       * 
+       *
        * @return Returns the shell.
        */
       public int getShell() {
@@ -93,7 +93,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
       /**
        * Gets the current value assigned to value
-       * 
+       *
        * @return Returns the value.
        */
       public double getValue() {
@@ -126,8 +126,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                res.append("Close to ");
                break;
          }
-         if (mShell != AtomicShell.NoShell)
+         if (mShell != AtomicShell.NoShell) {
             res.append(AtomicShell.getIUPACName(mShell));
+         }
          res.append(".");
          return res.toString();
       }
@@ -135,7 +136,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
    /**
     * Converts MACs from cm^2/g
-    * 
+    *
     * @param x
     * @return double
     */
@@ -146,7 +147,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
    /**
     * Converts MACs from SI to cm^2/g
-    * 
+    *
     * @param x
     * @return double
     */
@@ -157,7 +158,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
    /**
     * Converts MACs from SI to cm^2/g
-    * 
+    *
     * @param x
     * @return UncertainValue
     */
@@ -169,7 +170,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Mean distance that the specified x-ray will travel in the specified
     * material.
-    * 
+    *
     * @param mat
     * @param xrt
     * @return double Meters
@@ -182,7 +183,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Mean distance that an x-ray of the specified energy will travel in the
     * specified material.
-    * 
+    *
     * @param mat
     * @param energy
     * @return double Meters
@@ -238,7 +239,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * MassAbsorptionCoefficient - Create an instance of the abstract
     * MassAbsorptionCoefficient class with the specified name and literature
     * reference.
-    * 
+    *
     * @param name
     *           String
     * @param reference
@@ -252,7 +253,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * MassAbsorptionCoefficient - Create an instance of the abstract
     * MassAbsorptionCoefficient class with the specified name and literature
     * reference.
-    * 
+    *
     * @param name
     *           String
     * @param reference
@@ -270,7 +271,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * getAllImplementations - Returns a full list of all available algorithms.
     * Each item is an implements the MassAbsorptionCoefficient.
-    * 
+    *
     * @return List
     */
    @Override
@@ -281,7 +282,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * compute - Each different version of the algorithm should implement this
     * method.
-    * 
+    *
     * @param el
     *           Element - The absorber element
     * @param energy
@@ -294,7 +295,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Compute the specified mass absorption coefficient along with an error
     * estimate.
-    * 
+    *
     * @param el
     * @param energy
     * @return An UncertainValue
@@ -307,7 +308,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Compute the specified mass absorption coefficient along with an error
     * estimate.
-    * 
+    *
     * @param comp
     * @param energy
     * @return An UncertainValue
@@ -320,7 +321,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Compute the specified mass absorption coefficient along with an error
     * estimate.
-    * 
+    *
     * @param el
     * @param xrt
     * @return An UncertainValue
@@ -334,7 +335,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Compute the specified mass absorption coefficient along with an error
     * estimate.
-    * 
+    *
     * @param comp
     * @param xrt
     * @return An UncertainValue
@@ -348,7 +349,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Estimates the error in the MAC for the specified absorbing material and
     * the specified x-ray energy.
-    * 
+    *
     * @param comp
     * @param energy
     * @return Fractional error estimate 0.0 to &gt;1.0
@@ -366,7 +367,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Estimates the error in the MAC for the specified absorbing material and
     * the specified x-ray transition.
-    * 
+    *
     * @param comp
     * @param xrt
     * @return Fractional error estimate 0.0 to &gt;1.0
@@ -378,7 +379,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Estimates the error in the MAC for the specified absorbing element and the
     * specified x-ray transition.
-    * 
+    *
     * @param el
     * @param xrt
     * @return Fractional error estimate 0.0 to &gt;1.0
@@ -411,7 +412,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * absorbing element and the specified x-ray energy. The default
     * implementation is based on the table from Chantler et al.
     * (http://physics.nist.gov/PhysRefData/FFast/Text2000/sec06.html#tab2)
-    * 
+    *
     * @param el
     * @param energy
     * @return Fractional error estimate 0.0 to &gt;1.0
@@ -419,38 +420,41 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    public double fractionalUncertainty(Element el, double energy) {
       final double eV = FromSI.eV(energy);
       double err = 0.0;
-      if (eV < 200.0)
+      if (eV < 200.0) {
          // 100-200% reduced to 100% to 60% on 12-June-2018
          err = decay(eV, 0.0, 1.0, 200.0, 0.6);
-      else if (eV < 500)
+      } else if (eV < 500) {
          // 50-100% reduced to 20-60% on 12-June-2018
          err = decay(eV, 200.0, 0.6, 500.0, 0.2);
-      else if (eV < 1000)
+      } else if (eV < 1000) {
          // 5% to 20%
          err = decay(eV, 500.0, 0.2, 1000.0, 0.05);
-      for (int sh = AtomicShell.K; sh <= AtomicShell.NVII; ++sh)
+      }
+      for (int sh = AtomicShell.K; sh <= AtomicShell.NVII; ++sh) {
          if (AtomicShell.exists(el, sh)) {
             final double ee = AtomicShell.getEdgeEnergy(el, sh);
             final double delta = Math.abs((energy - ee) / energy);
             final int family = AtomicShell.getFamily(sh);
             final int[] lmshells = {AtomicShell.LFamily, AtomicShell.MFamily};
             if ((delta < 0.001) || //
-                  ((Math.abs(energy - ee) < ToSI.eV(5.0)) && (Arrays.binarySearch(lmshells, family) >= 0)))
+                  ((Math.abs(energy - ee) < ToSI.eV(5.0)) && (Arrays.binarySearch(lmshells, family) >= 0))) {
                err = Math.max(err, 0.8);
-            else {
-               if (ee > energy)
+            } else {
+               if (ee > energy) {
                   continue;
+               }
                assert delta >= 0.0;
                switch (sh) {
                   case AtomicShell.K :
-                     if (delta < 0.1)
+                     if (delta < 0.1) {
                         // 10-20% reduced to 6% on 10-Feb-2015
                         err = Math.max(err, 0.06);
-                     else if (energy < 1.1 * ee)
+                     } else if (energy < 1.1 * ee) {
                         // 3% reduced to 2% on 10-Feb-2015
                         err = Math.max(err, 0.02);
-                     else
+                     } else {
                         err = Math.max(err, 0.01); // 1%
+                     }
                      break;
                   case AtomicShell.LI :
                   case AtomicShell.MI :
@@ -460,10 +464,11 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                   case AtomicShell.NIII :
                   case AtomicShell.NIV :
                   case AtomicShell.NV :
-                     if (delta < 0.15)
+                     if (delta < 0.15) {
                         err = Math.max(err, 0.225);
-                     else
+                     } else {
                         err = Math.max(err, 0.04); // 4%
+                     }
                      break;
                   case AtomicShell.LII :
                   case AtomicShell.LIII :
@@ -471,14 +476,16 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                   case AtomicShell.MV :
                   case AtomicShell.NVI : // Special case for N shells
                   case AtomicShell.NVII :
-                     if (delta < 0.15)
+                     if (delta < 0.15) {
                         err = Math.max(err, 0.30);
-                     else
+                     } else {
                         err = Math.max(err, 0.10);
+                     }
                      break;
                }
             }
          }
+      }
       return err;
    }
 
@@ -487,7 +494,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * absorbing element and the specified x-ray energy. The default
     * implementation is based on the table from Chantler et al.
     * (http://physics.nist.gov/PhysRefData/FFast/Text2000/sec06.html#tab2)
-    * 
+    *
     * @param el
     * @param energy
     * @return Fractional error estimate 0.0 to &gt;1.0
@@ -506,11 +513,12 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
          err = 0.05 + (((0.20 - 0.05) * (eV - 500)) / (1000.0 - 500.0));
          res = new UncertaintySource(UncertaintyReason.Below1000eV, AtomicShell.NoShell, 0.05 + (((0.20 - 0.05) * (eV - 500)) / (1000.0 - 500.0)));
       }
-      for (int sh = AtomicShell.K; sh <= AtomicShell.NVII; ++sh)
+      for (int sh = AtomicShell.K; sh <= AtomicShell.NVII; ++sh) {
          if (AtomicShell.exists(el, sh)) {
             final double ee = AtomicShell.getEdgeEnergy(el, sh);
-            if (ee > energy)
+            if (ee > energy) {
                continue;
+            }
             final double delta = (energy - ee) / energy;
             assert delta > 0.0;
             if (delta < 0.001) {
@@ -518,7 +526,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                   err = 0.5;
                   res = new UncertaintySource(UncertaintyReason.ExceedinglyCloseToEdge, sh, 0.5);
                }
-            } else
+            } else {
                switch (sh) {
                   case AtomicShell.K :
                      if (delta < 0.1) {
@@ -526,11 +534,12 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                            err = 0.15; // 10-20%
                            res = new UncertaintySource(UncertaintyReason.VeryCloseToEdge, sh, 0.15);
                         }
-                     } else if (energy < (1.1 * ee))
+                     } else if (energy < (1.1 * ee)) {
                         if (err < 0.03) {
                            err = 0.03;
                            res = new UncertaintySource(UncertaintyReason.CloseToEdge, sh, 0.03);
                         }
+                     }
                      break;
                   case AtomicShell.LI :
                   case AtomicShell.MI :
@@ -546,11 +555,12 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                            err = 0.225;
                            res = new UncertaintySource(UncertaintyReason.VeryCloseToEdge, sh, 0.255);
                         }
-                     } else if (delta < 0.4)
+                     } else if (delta < 0.4) {
                         if (err < 0.04) {
                            err = 0.04;
                            res = new UncertaintySource(UncertaintyReason.CloseToEdge, sh, 0.04);
                         }
+                     }
                      break;
                   case AtomicShell.LII :
                   case AtomicShell.LIII :
@@ -564,14 +574,17 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                            err = 0.3;
                            res = new UncertaintySource(UncertaintyReason.VeryCloseToEdge, sh, 0.3);
                         }
-                     } else if (delta < 0.40)
+                     } else if (delta < 0.40) {
                         if (err < 0.04) {
                            err = 0.04;
                            res = new UncertaintySource(UncertaintyReason.CloseToEdge, sh, 0.04);
                         }
+                     }
                      break;
                }
+            }
          }
+      }
       return res;
    }
 
@@ -579,7 +592,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * isAvailable - Is this algorithm implemented for the specified element and
     * energy. If the MAC algorithm only implements compute(Element
     * el,XRayTransition), this method will always return false.
-    * 
+    *
     * @param el
     *           Element
     * @param energy
@@ -594,7 +607,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Determines whether the specified a MAC is available for this algorithm for
     * the specified XRayTransition in the specified Element.
-    * 
+    *
     * @param el
     * @param xrt
     * @return true if the MAC is available, false otherwise.
@@ -616,7 +629,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * available for both tabulated and computed algorithms. The default
     * implementation of this algorithm just defers to compute(Element
     * el,xrt.getEnergy()).
-    * 
+    *
     * @param el
     *           Element
     * @param xrt
@@ -634,7 +647,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * energy in the specified material. Note the value returned is the
     * absorption for a material of a nominal density of 1 kg/m^3. Multiply this
     * by the density to get the true MAC.
-    * 
+    *
     * @param comp
     *           Composition - The absorbing material
     * @param energy
@@ -643,8 +656,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     */
    final public double compute(Composition comp, double energy) {
       double mac = 0.0;
-      for (final Element elm : comp.getElementSet())
+      for (final Element elm : comp.getElementSet()) {
          mac += compute(comp, elm, energy);
+      }
       return mac;
    }
 
@@ -653,7 +667,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * the element elm for an x-ray of the specified energy. Note the value
     * returned is the absorption for a material of a nominal density of 1
     * kg/m^3. Multiply this by the density to get the true MAC.
-    * 
+    *
     * @param comp
     * @param elm
     * @param energy
@@ -666,7 +680,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    /**
     * Select at random (weighted by the effective per element macs) an element
     * with which to associate a photoabsorption event.
-    * 
+    *
     * @param comp
     * @param energy
     * @return Element An element in comp
@@ -675,8 +689,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
       double random = Math.random() * compute(comp, energy);
       for (final Element elm : comp.getElementSet()) {
          random -= compute(comp, elm, energy);
-         if (random <= 0.0)
+         if (random <= 0.0) {
             return elm;
+         }
       }
       assert false : "Should never get here!!!!";
       return comp.getElementSet().iterator().next();
@@ -688,7 +703,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * compute(comp,energy) whenever the XRayTransition is known. This
     * implementation can use tabulated MACs whereas the energy specific
     * implementation can not.
-    * 
+    *
     * @param comp
     *           Composition - The absorbing material
     * @param xrt
@@ -697,14 +712,15 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     */
    final public double compute(Composition comp, XRayTransition xrt) throws EPQException {
       double mac = 0.0;
-      for (final Element el : comp.getElementSet())
+      for (final Element el : comp.getElementSet()) {
          mac += compute(el, xrt) * comp.weightFraction(el, false);
+      }
       return mac;
    }
 
    /**
     * caveat - Specifies the caveats for the specific elemant and x-ray energy.
-    * 
+    *
     * @param el
     *           Element
     * @param energy
@@ -713,20 +729,22 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     */
    public String caveat(Element el, double energy) {
       String res = CaveatBase.None;
-      for (int sh = AtomicShell.K; sh < AtomicShell.NVII; ++sh)
+      for (int sh = AtomicShell.K; sh < AtomicShell.NVII; ++sh) {
          if (AtomicShell.exists(el, sh)) {
             final AtomicShell shell = new AtomicShell(el, sh);
-            if (Math.abs(shell.getEdgeEnergy() - energy) < ToSI.keV(0.2))
+            if (Math.abs(shell.getEdgeEnergy() - energy) < ToSI.keV(0.2)) {
                res = CaveatBase.append(res, "The transition at " + FromSI.keV(energy) + " is close to the " + shell.toString() + " at "
                      + FromSI.keV(shell.getEdgeEnergy()) + " keV.");
+            }
          }
+      }
       return res;
    }
 
    /**
     * caveat - Determines any relevant caveats based on the caveats for the
     * constituent elements.
-    * 
+    *
     * @param comp
     *           Composition
     * @param energy
@@ -735,16 +753,17 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     */
    public String caveat(Composition comp, double energy) {
       String res = CaveatBase.None;
-      for (final Element el : comp.getElementSet())
+      for (final Element el : comp.getElementSet()) {
          res = CaveatBase.append(res, caveat(el, energy));
+      }
       return res;
    }
 
    public String caveat(Composition comp) {
       String res = CaveatBase.None;
       final int[] lines = {XRayTransition.KA1, XRayTransition.LA1, XRayTransition.MA1};
-      for (final Element el : comp.getElementSet())
-         for (final int line : lines)
+      for (final Element el : comp.getElementSet()) {
+         for (final int line : lines) {
             if (XRayTransition.exists(el, line)) {
                final XRayTransition xrt = new XRayTransition(el, line);
                try {
@@ -753,6 +772,8 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                   res = CaveatBase.append(res, ex.toString());
                }
             }
+         }
+      }
       return res;
    }
 
@@ -760,7 +781,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * evaluateAllImplementations - Produces a map containing the algorithm and
     * the resulting mass absorption coefficient for the specified Element and
     * x-ray energy.
-    * 
+    *
     * @param el
     *           Element
     * @param energy
@@ -768,7 +789,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * @return Map
     */
    public Map<MassAbsorptionCoefficient, Double> evaluateAllImplementations(Element el, double energy) {
-      final Map<MassAbsorptionCoefficient, Double> res = new TreeMap<MassAbsorptionCoefficient, Double>();
+      final Map<MassAbsorptionCoefficient, Double> res = new TreeMap<>();
       for (final AlgorithmClass alg : getAllImplementations()) {
          final MassAbsorptionCoefficient mac = (MassAbsorptionCoefficient) alg;
          try {
@@ -781,7 +802,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
    }
 
    public Map<MassAbsorptionCoefficient, Double> evaluateAllImplementations(Element el, XRayTransition xrt) {
-      final Map<MassAbsorptionCoefficient, Double> res = new TreeMap<MassAbsorptionCoefficient, Double>();
+      final Map<MassAbsorptionCoefficient, Double> res = new TreeMap<>();
       for (final AlgorithmClass alg : getAllImplementations()) {
          final MassAbsorptionCoefficient mac = (MassAbsorptionCoefficient) alg;
          try {
@@ -815,10 +836,12 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
       @Override
       final public double compute(Element el, XRayTransition xrt) throws EPQException {
          double res = Double.NaN;
-         if ((xrt.getFamily() == AtomicShell.KFamily) && (xrt.getElement().equals(Element.C)))
+         if ((xrt.getFamily() == AtomicShell.KFamily) && (xrt.getElement().equals(Element.C))) {
             res = mCarbon.compute(el, xrt);
-         if (Double.isNaN(res))
+         }
+         if (Double.isNaN(res)) {
             throw new EPQException("MAC unavailable in " + toString() + " implementation.");
+         }
          return fromCmSqrPerGram(res);
       }
    }
@@ -862,7 +885,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
       @Override
       final public double compute(Element el, XRayTransition xrt) throws EPQException {
          double res = Double.NaN;
-         if (xrt.getFamily() == AtomicShell.KFamily)
+         if (xrt.getFamily() == AtomicShell.KFamily) {
             switch (xrt.getElement().getAtomicNumber()) {
                case Element.elmB :
                   res = mBoron.compute(el, xrt);
@@ -874,85 +897,106 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                   res = mNitrogen.compute(el, xrt);
                   break;
             }
+         }
          switch (xrt.getElement().getAtomicNumber()) {
             case Element.elmSi :
-               if ((el.getAtomicNumber() == Element.elmTa) && (Arrays.binarySearch(mKas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmTa) && (Arrays.binarySearch(mKas, xrt.getTransitionIndex()) >= 0)) {
                   res = 1490.0;
+               }
                break;
             case Element.elmS :
-               if ((el.getAtomicNumber() == Element.elmAu) && (Arrays.binarySearch(mKas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmAu) && (Arrays.binarySearch(mKas, xrt.getTransitionIndex()) >= 0)) {
                   res = 2200.0;
+               }
                break;
             case Element.elmCu :
-               if (el.getAtomicNumber() == Element.elmCu)
-                  if (Arrays.binarySearch(mLbs, xrt.getTransitionIndex()) >= 0)
+               if (el.getAtomicNumber() == Element.elmCu) {
+                  if (Arrays.binarySearch(mLbs, xrt.getTransitionIndex()) >= 0) {
                      res = 6750.0;
-                  else if (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)
+                  } else if (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0) {
                      res = 1755.0;
+                  }
+               }
                break;
             case Element.elmAs :
-               if ((el.getAtomicNumber() == Element.elmGa) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmGa) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 7000.0;
+               }
                break;
             case Element.elmMo :
-               if ((el.getAtomicNumber() == Element.elmAu) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmAu) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 2200.0;
+               }
                break;
             case Element.elmGd :
-               if ((el.getAtomicNumber() == Element.elmGd) && (xrt.getTransitionIndex() == XRayTransition.MB))
+               if ((el.getAtomicNumber() == Element.elmGd) && (xrt.getTransitionIndex() == XRayTransition.MB)) {
                   res = 4700.0;
+               }
                break;
             case Element.elmHf :
-               if ((el.getAtomicNumber() == Element.elmHf) && (xrt.getTransitionIndex() == XRayTransition.MB))
+               if ((el.getAtomicNumber() == Element.elmHf) && (xrt.getTransitionIndex() == XRayTransition.MB)) {
                   res = 3000.0;
+               }
                break;
             case Element.elmTa :
-               if ((el.getAtomicNumber() == Element.elmTa) && (xrt.getTransitionIndex() == XRayTransition.MB))
+               if ((el.getAtomicNumber() == Element.elmTa) && (xrt.getTransitionIndex() == XRayTransition.MB)) {
                   res = 2500.0;
+               }
                break;
             case Element.elmW :
-               if ((el.getAtomicNumber() == Element.elmW) && (xrt.getTransitionIndex() == XRayTransition.MB))
+               if ((el.getAtomicNumber() == Element.elmW) && (xrt.getTransitionIndex() == XRayTransition.MB)) {
                   res = 2080.0;
+               }
                break;
             case Element.elmAu :
-               if ((el.getAtomicNumber() == Element.elmPt) && (xrt.getTransitionIndex() == XRayTransition.MB))
+               if ((el.getAtomicNumber() == Element.elmPt) && (xrt.getTransitionIndex() == XRayTransition.MB)) {
                   res = 2250.0;
+               }
                break;
             case Element.elmHg :
-               if ((el.getAtomicNumber() == Element.elmAu) && (xrt.getTransitionIndex() == XRayTransition.MB))
+               if ((el.getAtomicNumber() == Element.elmAu) && (xrt.getTransitionIndex() == XRayTransition.MB)) {
                   res = 2170.0;
+               }
                break;
             case Element.elmSc :
-               if ((el.getAtomicNumber() == Element.elmSc) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmSc) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 4750.0;
+               }
                break;
             case Element.elmTi :
-               if ((el.getAtomicNumber() == Element.elmTi) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmTi) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 4550.0;
+               }
                break;
             case Element.elmV :
-               if ((el.getAtomicNumber() == Element.elmV) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmV) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 4370.0;
+               }
                break;
             case Element.elmCr :
-               if ((el.getAtomicNumber() == Element.elmCr) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmCr) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 3850.0;
+               }
                break;
             case Element.elmMn :
-               if ((el.getAtomicNumber() == Element.elmMn) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmMn) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 3340.0;
+               }
                break;
             case Element.elmFe :
-               if ((el.getAtomicNumber() == Element.elmFe) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmFe) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 3350.0;
+               }
                break;
             case Element.elmCo :
-               if ((el.getAtomicNumber() == Element.elmCo) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmCo) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 3260.0;
+               }
                break;
             case Element.elmNi :
-               if ((el.getAtomicNumber() == Element.elmNi) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0))
+               if ((el.getAtomicNumber() == Element.elmNi) && (Arrays.binarySearch(mLas, xrt.getTransitionIndex()) >= 0)) {
                   res = 3560.0;
+               }
                break;
          }
          // If the transition and absorber are not one of the special cases
@@ -1042,70 +1086,86 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                      res = mCopper.compute(el, xrt);
                      break;
                   case Element.elmSc :
-                     if (el.getAtomicNumber() == Element.elmSc)
+                     if (el.getAtomicNumber() == Element.elmSc) {
                         res = 4750;
+                     }
                      break;
                   case Element.elmTi :
-                     if (el.getAtomicNumber() == Element.elmTi)
+                     if (el.getAtomicNumber() == Element.elmTi) {
                         res = 4550;
+                     }
                      break;
                   case Element.elmV :
-                     if (el.getAtomicNumber() == Element.elmV)
+                     if (el.getAtomicNumber() == Element.elmV) {
                         res = 4370;
+                     }
                      break;
                   case Element.elmCr :
-                     if (el.getAtomicNumber() == Element.elmCr)
+                     if (el.getAtomicNumber() == Element.elmCr) {
                         res = 3850;
+                     }
                      break;
                   case Element.elmMn :
-                     if (el.getAtomicNumber() == Element.elmMn)
+                     if (el.getAtomicNumber() == Element.elmMn) {
                         res = 3340;
+                     }
                      break;
                   case Element.elmFe :
-                     if (el.getAtomicNumber() == Element.elmFe)
+                     if (el.getAtomicNumber() == Element.elmFe) {
                         res = 3350;
+                     }
                      break;
                   case Element.elmCo :
-                     if (el.getAtomicNumber() == Element.elmCo)
+                     if (el.getAtomicNumber() == Element.elmCo) {
                         res = 3260;
+                     }
                      break;
                   case Element.elmNi :
-                     if (el.getAtomicNumber() == Element.elmNi)
+                     if (el.getAtomicNumber() == Element.elmNi) {
                         res = 3560;
+                     }
                      break;
                   case Element.elmZn :
-                     if (el.getAtomicNumber() == Element.elmZn)
+                     if (el.getAtomicNumber() == Element.elmZn) {
                         res = 1500;
+                     }
                      break;
                   case Element.elmGe :
-                     if (el.getAtomicNumber() == Element.elmGe)
+                     if (el.getAtomicNumber() == Element.elmGe) {
                         res = 1240;
+                     }
                      break;
                   case Element.elmAs :
-                     if (el.getAtomicNumber() == Element.elmGa)
+                     if (el.getAtomicNumber() == Element.elmGa) {
                         res = 7000;
+                     }
                      break;
                   case Element.elmNb :
-                     if (el.getAtomicNumber() == Element.elmNb)
+                     if (el.getAtomicNumber() == Element.elmNb) {
                         res = 779;
+                     }
                      break;
                   case Element.elmMo :
-                     if (el.getAtomicNumber() == Element.elmAu)
+                     if (el.getAtomicNumber() == Element.elmAu) {
                         res = 2200;
+                     }
                      break;
                   case Element.elmW :
-                     if (el.getAtomicNumber() == Element.elmW)
+                     if (el.getAtomicNumber() == Element.elmW) {
                         res = 1258;
+                     }
                      break;
                }
                break;
             case AtomicShell.MFamily :
-               if (el.getAtomicNumber() == Element.elmAu)
+               if (el.getAtomicNumber() == Element.elmAu) {
                   res = 1103;
+               }
                break;
          }
-         if (Double.isNaN(res))
+         if (Double.isNaN(res)) {
             throw new EPQException("MAC unavailable in " + toString() + " implementation.");
+         }
          return fromCmSqrPerGram(res);
       }
    }
@@ -1211,8 +1271,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                }
                break;
          }
-         if (Double.isNaN(res))
+         if (Double.isNaN(res)) {
             throw new EPQException("MAC unavailable in " + toString() + " implementation.");
+         }
          return fromCmSqrPerGram(res);
       }
    }
@@ -1263,7 +1324,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
       @Override
       final public double compute(Element el, XRayTransition xrt) throws EPQException {
          double res = Double.NaN;
-         if (xrt.getFamily() == AtomicShell.KFamily)
+         if (xrt.getFamily() == AtomicShell.KFamily) {
             switch (xrt.getElement().getAtomicNumber()) {
                case Element.elmB :
                   res = mBoron.compute(el, xrt);
@@ -1278,8 +1339,10 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                   res = mOxygen.compute(el, xrt);
                   break;
             }
-         if (Double.isNaN(res))
+         }
+         if (Double.isNaN(res)) {
             throw new EPQException("MAC unavailable in " + toString() + " implementation.");
+         }
          return fromCmSqrPerGram(res);
       }
    }
@@ -1316,10 +1379,12 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
           * Z > 49 are completely nuts.
           */
          double nm = 0.0, cc = 0.0, az = 0.0;
-         if (energy <= 10.0)
+         if (energy <= 10.0) {
             return 1e6;
-         if ((z < 3) || (z > 95))
+         }
+         if ((z < 3) || (z > 95)) {
             return 0.001;
+         }
          double bias = 0;
          // Z1 = z - 1;
          final double eeK = FromSI.eV(AtomicShell.getEdgeEnergy(el, AtomicShell.K));
@@ -1340,10 +1405,12 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                    * article but are implemented in DTSA
                    */
                   assert (energy > eeK);
-                  if (z >= 50)
+                  if (z >= 50) {
                      az = ((((-0.015 * z) + 3.52) * z) + 47) * z;
-                  if (z >= 57)
+                  }
+                  if (z >= 57) {
                      cc = 2.0e-4 + ((1.0e-4 - z) * z);
+                  }
                }
             }
          } else {
@@ -1354,23 +1421,27 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                az = ((((((-1.16286e-4 * z) + 0.01253775) * z) + 0.067429) * z) + 17.8096) * z;
                nm = (((-4.982E-5 * z) + 1.889e-3) * z) + 2.7575;
                final double eeLII = FromSI.eV(AtomicShell.getEdgeEnergy(el, AtomicShell.LII));
-               if ((energy < FromSI.eV(AtomicShell.getEdgeEnergy(el, AtomicShell.LI))) && (energy >= eeLII))
+               if ((energy < FromSI.eV(AtomicShell.getEdgeEnergy(el, AtomicShell.LI))) && (energy >= eeLII)) {
                   cc *= 0.858;
-               if (energy < eeLII)
+               }
+               if (energy < eeLII) {
                   cc *= (0.8933 + (z * (-8.29e-3 + (6.38E-5 * z))));
+               }
             } else {
                final double eeMI = FromSI.eV(AtomicShell.getEdgeEnergy(el, AtomicShell.MI));
                if ((energy <= eeLIII) && (energy > eeMI)) {
                   nm = (((((4.4509E-6 * z) - 1.08246e-3) * z) + 0.084597) * z) + 0.5385;
-                  if (z < 30)
+                  if (z < 30) {
                      cc = (((((((7.2773258e-9 * z) - 1.1641145e-6) * z) + 6.9602789e-5) * z) - 1.8517159e-3) * z) + 1.889757e-2;
-                  else
+                  } else {
                      cc = (((((((1.497763e-10 * z) - 4.0585911e-8) * z) + 4.0424792e-6) * z) - 1.73663566e-4) * z) + 3.0039e-3;
+                  }
                   az = ((((((-1.8641019e-4 * z) + 2.63199611e-2) * z) - 0.822863477) * z) + 10.2575657) * z;
-                  if (z < 61)
+                  if (z < 61) {
                      bias = ((((((-1.683474e-4 * z) + 0.018972278) * z) - 0.536839169) * z) + 5.654) * z;
-                  else
+                  } else {
                      bias = ((((((3.1779619e-3 * z) - 0.699473097) * z) + 51.114164) * z) - 1232.4022) * z;
+                  }
                } else {
                   final double eeMV = FromSI.eV(AtomicShell.getEdgeEnergy(el, AtomicShell.MV));
                   if (energy >= eeMV) {
@@ -1411,8 +1482,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
          } else {
             mu = ((cc * Math.pow(12397 / energy, nm) * z * z * z * z) / el.getAtomicWeight()) * (1 - Math.exp((bias - eeNI) / az));
             final double cutoff = getCutOff(z);
-            if (energy > cutoff) // Added NWMR 18-Feb-2008
-               mu = (1.02 * mu * (energy - cutoff)) / (eeNI - cutoff);
+            if (energy > cutoff) { // Added NWMR 18-Feb-2008
+            	mu = (1.02 * mu * (energy - cutoff)) / (eeNI - cutoff);
+            }
          }
          return fromCmSqrPerGram(mu);
          // transmission fraction per meter of path length per unit density
@@ -1428,23 +1500,28 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
          final NumberFormat nf = new HalfUpFormat("0.0");
          for (int sh = AtomicShell.K; sh < AtomicShell.NVII; ++sh) {
             final double ee = AtomicShell.getEdgeEnergy(el, sh);
-            if ((energy > (ee - ToSI.eV(5.0))) && (energy < (ee + ToSI.eV(20))))
+            if ((energy > (ee - ToSI.eV(5.0))) && (energy < (ee + ToSI.eV(20)))) {
                res = CaveatBase.append(res, "The transition at " + nf.format(FromSI.eV(energy)) + " eV is close to the " + el.toAbbrev() + " "
                      + AtomicShell.getIUPACName(sh) + " edge at " + nf.format(FromSI.eV(ee)) + " eV.");
+            }
          }
-         if (energy < ToSI.eV(180.0))
+         if (energy < ToSI.eV(180.0)) {
             res = CaveatBase.append(res, "The x-ray photon energy is too low (" + nf.format(FromSI.eV(energy)) + " < 180.0 eV)");
-         if (energy < (1.1 * ToSI.eV(getCutOff(el.getAtomicNumber()))))
+         }
+         if (energy < (1.1 * ToSI.eV(getCutOff(el.getAtomicNumber())))) {
             res = CaveatBase.append(res, "The x-ray photon energy is too low (" + nf.format(FromSI.eV(energy)) + " < 1.1 x "
                   + nf.format(getCutOff(el.getAtomicNumber())) + " eV)");
+         }
          if ((el.getAtomicNumber() < 70) && (energy > AtomicShell.getEdgeEnergy(el, AtomicShell.MV))
-               && (energy < AtomicShell.getEdgeEnergy(el, AtomicShell.MIV)))
+               && (energy < AtomicShell.getEdgeEnergy(el, AtomicShell.MIV))) {
             res = CaveatBase.append(res, "The x-ray photon energy is between the MIV and MV edges.");
-         if (energy < AtomicShell.getEdgeEnergy(el, AtomicShell.MV))
+         }
+         if (energy < AtomicShell.getEdgeEnergy(el, AtomicShell.MV)) {
             res = CaveatBase.append(res, "The x-ray photon energy is below the MV edge.");
+         }
          return res;
       }
-   };
+   }
 
    /**
     * Heinrich86 - Uses the algorithm for calculating the
@@ -1497,13 +1574,16 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
           * Z > 49 are completely nuts.
           */
          double nm = 0.0, cc = 0.0, az = 0.0, c;
-         if (energy <= 10.0)
+         if (energy <= 10.0) {
             return 1e6;
-         if ((z < 3) || (z > 95))
+         }
+         if ((z < 3) || (z > 95)) {
             return 0.001;
+         }
          final double[] EnDat = new double[10];
-         for (int i = AtomicShell.K; i <= AtomicShell.NI; ++i)
+         for (int i = AtomicShell.K; i <= AtomicShell.NI; ++i) {
             EnDat[i] = FromSI.eV(AtomicShell.getEdgeEnergy(el, i));
+         }
          // formula derived in eV units
          double bias = 0;
          // Z1 = z - 1;
@@ -1517,10 +1597,12 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                cc = 1.0E-5 * ((((525.3 + (133.257 * z)) - (7.5937 * z * z)) + (0.169357 * z * z * z)) - (0.0013975 * z * z * z * z));
                az = ((((-0.152624 * z) + 6.52) * z) + 47) * z;
                nm = 3.112 - (0.0121 * z);
-               if ((energy > EnDat[0]) && (z >= 50))
+               if ((energy > EnDat[0]) && (z >= 50)) {
                   az = ((((-0.015 * z) + 3.52) * z) + 47) * z;
-               if ((energy > EnDat[0]) && (z >= 57))
+               }
+               if ((energy > EnDat[0]) && (z >= 57)) {
                   cc = 1.0E-6 * ((200.0 + (100.0 * z)) - (z * z));
+               }
             }
          } else if (energy > EnDat[3]) {
             /* energy is below K-edge & above L3-edge */
@@ -1529,22 +1611,26 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
             cc = c;
             az = ((((((-0.000116286 * z) + 0.01253775) * z) + 0.067429) * z) + 17.8096) * z;
             nm = (((-4.982E-5 * z) + 0.001889) * z) + 2.7575;
-            if ((energy < EnDat[1]) && (energy > EnDat[2]))
+            if ((energy < EnDat[1]) && (energy > EnDat[2])) {
                cc = c * 0.858;
-            if (energy < EnDat[2])
+            }
+            if (energy < EnDat[2]) {
                cc = c * ((0.8933 - (0.00829 * z)) + (6.38E-5 * z * z));
+            }
          } else if ((energy < EnDat[3]) && (energy > EnDat[4])) {
             nm = (((((4.4509E-6 * z) - 0.00108246) * z) + 0.084597) * z) + 0.5385;
-            if (z < 30)
+            if (z < 30) {
                c = (((((((0.072773258 * z) - 11.641145) * z) + 696.02789) * z) - 18517.159) * z) + 188975.7;
-            else
+            } else {
                c = (((((((0.001497763 * z) - 0.40585911) * z) + 40.424792) * z) - 1736.63566) * z) + 30039;
+            }
             cc = 1.0E-7 * c;
             az = ((((((-0.00018641019 * z) + 0.0263199611) * z) - 0.822863477) * z) + 10.2575657) * z;
-            if (z < 61)
+            if (z < 61) {
                bias = ((((((-0.0001683474 * z) + 0.018972278) * z) - 0.536839169) * z) + 5.654) * z;
-            else
+            } else {
                bias = ((((((0.0031779619 * z) - 0.699473097) * z) + 51.114164) * z) - 1232.4022) * z;
+            }
          } else if (energy >= EnDat[8]) {
             az = (4.62 - (0.04 * z)) * z;
             c = 1.0E-8 * ((((((-0.129086 * z) + 22.09365) * z) - 783.544) * z) + 7770.8);
@@ -1552,12 +1638,15 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
             cc = c * ((((-0.0001285 * z) + 0.01955) * z) + 0.584);
             bias = ((((0.000378 * z) - 0.052) * z) + 2.51) * EnDat[7];
             nm = 3 - (0.004 * z);
-            if ((energy < EnDat[5]) && (energy >= EnDat[6]))
+            if ((energy < EnDat[5]) && (energy >= EnDat[6])) {
                cc = c * ((0.001366 * z) + 1.082);
-            if ((energy < EnDat[6]) && (energy >= EnDat[7]))
+            }
+            if ((energy < EnDat[6]) && (energy >= EnDat[7])) {
                cc = 0.95 * c;
-            if ((energy < EnDat[7]) && (energy >= EnDat[8]))
+            }
+            if ((energy < EnDat[7]) && (energy >= EnDat[8])) {
                cc = 0.8 * c * ((((0.0005083 * z) - 0.06) * z) + 2.0553);
+            }
          } else if (energy < EnDat[8]) {
             cc = 1.08E-7 * ((((((-0.0669827 * z) + 17.07073) * z) - 1465.3) * z) + 43156);
             az = ((((0.00539309 * z) - 0.61239) * z) + 19.64) * z;
@@ -1574,8 +1663,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
          }
          /* if(energy > EnDat[0] && z >= 50) mu = 10.0; */
          // transmission fraction per meter of path length per unit density
-         if (Double.isNaN(mu))
+         if (Double.isNaN(mu)) {
             throw new EPQFatalException("DTSA MACs are NAN for " + el.toAbbrev() + " at " + FromSI.eV(energy) + " eV");
+         }
          return fromCmSqrPerGram(mu);
       }
    }
@@ -1603,49 +1693,51 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
          super("NIST-Chantler 2005", "See http://physics.nist.gov/ffast");
       }
 
-      private volatile double[][] mData = null;
+      private volatile LazyConstant<double[][]> mData = LazyConstant.of(ChantlerMassAbsorptionCoefficient::load);
 
+      private static double[][] load() {
+         final CSVReader cr = new CSVReader.ResourceReader("FFastMAC.csv", false);
+         final double[][] tmp = cr.getResource(MassAbsorptionCoefficient.class);
+         final double[][] dataTmp = new double[((Element.elmU - Element.elmH) + 1) * 2][];
+         for (int e = 0; e < dataTmp.length; ++e) {
+            for (int r = tmp.length - 1; r >= 0; --r) {
+               final double x = tmp[r][e];
+               if (dataTmp[e] == null) {
+                  if (!(Double.isNaN(x) || (x == 0.0))) {
+                     dataTmp[e] = new double[r + 1];
+                     assert (((e % 2) == 0) || (dataTmp[e - 1].length == dataTmp[e].length));
+                  }
+               }
+               if (dataTmp[e] != null) {
+                  assert (!Double.isNaN(x));
+                  dataTmp[e][r] = ((e % 2) == 0 ? ToSI.keV(x) : fromCmSqrPerGram(x));
+               }
+            }
+         }
+         return dataTmp;
+      }
+
+            
       @Override
       public boolean isAvailable(Element el, double energy) {
          energy = FromSI.eV(energy);
          final int z = el.getAtomicNumber();
          return (z >= Element.elmH) && (z <= Element.elmU) && (energy > 0.0) && (energy <= 1.0e6);
       }
+      
+      
 
       @Override
       public double compute(Element el, double energy) {
-         if (mData == null) {
-            synchronized (this) {
-               if (mData == null) {
-                  final CSVReader cr = new CSVReader.ResourceReader("FFastMAC.csv", false);
-                  final double[][] tmp = cr.getResource(MassAbsorptionCoefficient.class);
-                  final double[][] dataTmp = new double[((Element.elmU - Element.elmH) + 1) * 2][];
-                  for (int e = 0; e < dataTmp.length; ++e)
-                     for (int r = tmp.length - 1; r >= 0; --r) {
-                        final double x = tmp[r][e];
-                        if (dataTmp[e] == null)
-                           if (!(Double.isNaN(x) || (x == 0.0))) {
-                              dataTmp[e] = new double[r + 1];
-                              assert (((e % 2) == 0) || (dataTmp[e - 1].length == dataTmp[e].length));
-                           }
-                        if (dataTmp[e] != null) {
-                           assert (!Double.isNaN(x));
-                           dataTmp[e][r] = ((e % 2) == 0 ? ToSI.keV(x) : fromCmSqrPerGram(x));
-                        }
-                     }
-                  mData = dataTmp;
-               }
-            }
-            assert mData != null;
-         }
+         var data = mData.get();
          {
             assert mData != null;
             final int z = el.getAtomicNumber();
             assert (z >= Element.elmH);
             assert (z <= Element.elmU);
             final int r = 2 * (z - 1);
-            final double[] rE = mData[r];
-            final double[] rM = mData[r + 1];
+            final double[] rE = data[r];
+            final double[] rM = data[r + 1];
             final int c = Arrays.binarySearch(rE, energy);
             if (c < -1) {
                final int c1 = -(c + 1); // Between c1 and c1-1
@@ -1656,8 +1748,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                return Math
                      .exp(Math.log(rM[c1 - 1]) + (Math.log(rM[c1] / rM[c1 - 1]) * (Math.log(energy / rE[c1 - 1]) / Math.log(rE[c1] / rE[c1 - 1]))));
 
-            } else
+            } else {
                return c == -1 ? 0.0 : rM[c];
+            }
          }
       }
 
@@ -1666,11 +1759,12 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
             try (final OutputStreamWriter osw = new OutputStreamWriter(out, "ASCII")) {
                compute(Element.H, ToSI.keV(1.0));
                int i = 0;
-               for (final double[] data : mData) {
+               for (final double[] data : mData.get()) {
                   final StringBuffer sb = new StringBuffer();
                   for (final double datum : data) {
-                     if (sb.length() > 0)
+                     if (sb.length() > 0) {
                         sb.append(",");
+                     }
                      sb.append(Double.toString((i % 2) == 0 ? FromSI.keV(datum) : toCmSqrPerGram(datum)));
                   }
                   sb.append("\n");
@@ -1743,26 +1837,32 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
          final int z = xrt.getElement().getAtomicNumber();
          switch (f) {
             case AtomicShell.KFamily :
-               if (mKMac == null)
+               if (mKMac == null) {
                   load(AtomicShell.KFamily);
-               if ((z >= mMinK) && (z <= mMaxK))
+               }
+               if ((z >= mMinK) && (z <= mMaxK)) {
                   return fromCmSqrPerGram(mKMac[el.getAtomicNumber()][z - mMinK]);
-               else
+               } else {
                   throw new EPQException("MAC unavailable in " + toString() + " implementation.");
+               }
             case AtomicShell.LFamily :
-               if (mLMac == null)
+               if (mLMac == null) {
                   load(AtomicShell.LFamily);
-               if ((z >= mMinL) && (z <= mMaxL))
+               }
+               if ((z >= mMinL) && (z <= mMaxL)) {
                   return fromCmSqrPerGram(mLMac[el.getAtomicNumber()][z - mMinL]);
-               else
+               } else {
                   throw new EPQException("MAC unavailable in " + toString() + " implementation.");
+               }
             case AtomicShell.MFamily :
-               if (mMMac == null)
+               if (mMMac == null) {
                   load(AtomicShell.MFamily);
-               if ((z >= mMinM) && (z <= mMaxM))
+               }
+               if ((z >= mMinM) && (z <= mMaxM)) {
                   return fromCmSqrPerGram(mMMac[el.getAtomicNumber()][z - mMinM]);
-               else
+               } else {
                   throw new EPQException("MAC unavailable in " + toString() + " implementation.");
+               }
             default :
                throw new EPQException("MAC unavailable in " + toString() + " implementation.");
          }
@@ -1820,13 +1920,14 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
          if (o instanceof MACDatum) {
             final MACDatum md = (MACDatum) o;
             return (md.mElement == mElement) && (md.mEnergy == mEnergy);
-         } else
+         } else {
             return false;
+         }
       }
 
       /*
        * (non-Javadoc)
-       * 
+       *
        * @see java.lang.Object#hashCode()
        */
       @Override
@@ -1850,19 +1951,19 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * <p>
     * Institution: National Institute of Standards and Technology
     * </p>
-    * 
+    *
     * @author nritchie
     * @version 1.0
     */
    static public class UserSpecifiedCoefficient extends MassAbsorptionCoefficient {
 
       final private MassAbsorptionCoefficient mBaseModel;
-      private final TreeMap<MACDatum, Double> mCache = new TreeMap<MACDatum, Double>();
+      private final TreeMap<MACDatum, Double> mCache = new TreeMap<>();
 
       /**
        * Constructs a UserSpecifiedCoefficient which overrides the specified
        * base MAC model with the values specified by put(...)
-       * 
+       *
        * @param base
        */
       public UserSpecifiedCoefficient(MassAbsorptionCoefficient base) {
@@ -1872,7 +1973,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
       /**
        * Specify the mac for the specified absorber element and x-ray energy.
-       * 
+       *
        * @param elm
        * @param energy
        * @param mac
@@ -1884,7 +1985,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
       /**
        * Specify the mac for the specified absorber element and x-ray
        * transition.
-       * 
+       *
        * @param elm
        * @param xrt
        * @param mac
@@ -1936,7 +2037,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * <p>
     * Institution: National Institute of Standards and Technology
     * </p>
-    * 
+    *
     * @author nritchie
     * @version 1.0
     */
@@ -1963,8 +2064,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                      // Energy (eV), F1, F2
                      final int p1 = line.indexOf("\t");
                      final int p2 = line.indexOf("\t", p1 + 1);
-                     if ((p1 < 0) || (p2 < 0))
+                     if ((p1 < 0) || (p2 < 0)) {
                         throw new EPQFatalException("Error reading the Henke 1993" + elm.toAbbrev() + " data file.");
+                     }
                      e[nLines] = Double.parseDouble(line.substring(0, p1).trim());
                      assert (e[nLines] >= 10.0) && (e[nLines] <= 30000.0);
                      f2[nLines] = Double.parseDouble(line.substring(p2 + 1).trim());
@@ -1997,20 +2099,23 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
       @Override
       public double compute(Element el, double energy) {
          final int zp = el.getAtomicNumber() - 1;
-         if (mEnergy[zp] == null)
+         if (mEnergy[zp] == null) {
             loadElement(el);
+         }
          final double[] e = mEnergy[zp];
          final double[] muA = mMuA[zp];
          final int c = Arrays.binarySearch(e, energy);
          if (c <= -1) {
             final int c1 = -(c + 1); // Between c1 and c1-1
-            if (c1 < muA.length)
+            if (c1 < muA.length) {
                return Math
                      .exp(Math.log(muA[c1 - 1]) + (Math.log(muA[c1] / muA[c1 - 1]) * (Math.log(energy / e[c1 - 1]) / Math.log(e[c1] / e[c1 - 1]))));
-            else
+            } else {
                return 0.0;
-         } else
+            }
+         } else {
             return c == -1 ? 0.0 : muA[c];
+         }
       }
    }
 
@@ -2028,7 +2133,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
     * <p>
     * Institution: National Institute of Standards and Technology
     * </p>
-    * 
+    *
     * @author nritchie
     * @version 1.0
     */
@@ -2067,9 +2172,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
          private double compute(double e) {
             final int i = Arrays.binarySearch(mEnergies, e);
-            if (i >= 0)
+            if (i >= 0) {
                return mMACs[i];
-            else {
+            } else {
                final int ip = Math.max(1, -(i + 1));
                assert ip == 1 || e > mEnergies[ip - 1];
                assert ip == 1 || e < mEnergies[ip];
@@ -2079,7 +2184,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
          }
       }
 
-      private final AnElement[] mData = new AnElement[99];
+      private final Map<Element, AnElement> mData = Map.ofLazy(new java.util.HashSet<>(Element.allElements()), elm -> this.loadElement(elm));
 
       public SabbatucciMACs() {
          super("Sabbatucci & Salvat MACs", new LitReference.JournalArticle("Theory and calculation of the atomic photoeffect", LitReference.RadPhys,
@@ -2115,8 +2220,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
                         energies.add(ToSI.eV(s));
                         macs.add(fromCmSqrPerGram(x * 6.02214076e23 / elm.getAtomicWeight()));
                      }
-                  } else if (i > nsh + 12 + npts)
+                  } else if (i > nsh + 12 + npts) {
                      break;
+                  }
                }
                return new AnElement(energies, macs);
             }
@@ -2127,14 +2233,7 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
       @Override
       public double compute(Element el, double energy) {
-         final int zi = el.getAtomicNumber() - 1;
-         if (mData[zi] == null) {
-            synchronized (this) {
-               if (mData[zi] == null)
-                  mData[zi] = loadElement(el);
-            }
-         }
-         return mData[zi].compute(energy);
+         return mData.get(el).compute(energy);
       }
 
       @Override
@@ -2151,8 +2250,9 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
       private static final String buildName(MassAbsorptionCoefficient[] algs) {
          StringBuffer sb = new StringBuffer();
-         for (MassAbsorptionCoefficient mac : algs)
+         for (MassAbsorptionCoefficient mac : algs) {
             sb.append(", " + mac.getName());
+         }
          return "SuperSet[" + sb.toString().substring(2) + "]";
       }
 
@@ -2163,9 +2263,11 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
       @Override
       public double compute(Element el, double energy) {
-         for (MassAbsorptionCoefficient mac : mAlgorithms)
-            if (mac.isAvailable(el, energy))
+         for (MassAbsorptionCoefficient mac : mAlgorithms) {
+            if (mac.isAvailable(el, energy)) {
                return ((el == Element.Ca) && (Math.abs(FromSI.eV(energy) - 524.9) < 1.0) ? 0.80 : 1.0) * mac.compute(el, energy);
+            }
+         }
          // NWMR's Obsidian note "Why is O high when quantifying K412"
             // return mac.compute(el, energy);
          assert false : el.toAbbrev() + " @ " + Double.toString(FromSI.eV(energy)) + " eV";
@@ -2174,9 +2276,11 @@ abstract public class MassAbsorptionCoefficient extends AlgorithmClass {
 
       @Override
       public boolean isAvailable(Element el, double energy) {
-         for (MassAbsorptionCoefficient mac : mAlgorithms)
-            if (mac.isAvailable(el, energy))
+         for (MassAbsorptionCoefficient mac : mAlgorithms) {
+            if (mac.isAvailable(el, energy)) {
                return true;
+            }
+         }
          return false;
       }
 

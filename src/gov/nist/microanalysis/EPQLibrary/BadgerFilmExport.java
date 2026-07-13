@@ -73,8 +73,8 @@ public class BadgerFilmExport {
 
    public void addMeasurement(XRayTransition xrt, double beamEnergy, double kratio) {
       Map<XRayTransition, List<Measurement>> mxlm = mMeasuredKRatios.computeIfAbsent(xrt.getElement(),
-            el -> new HashMap<XRayTransition, List<Measurement>>());
-      List<Measurement> lm = mxlm.computeIfAbsent(xrt, x -> new ArrayList<Measurement>());
+            _ -> new HashMap<XRayTransition, List<Measurement>>());
+      List<Measurement> lm = mxlm.computeIfAbsent(xrt, _ -> new ArrayList<Measurement>());
       lm.add(new Measurement(beamEnergy, kratio));
    }
 

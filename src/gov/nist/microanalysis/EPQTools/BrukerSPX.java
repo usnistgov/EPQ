@@ -21,6 +21,8 @@ import gov.nist.microanalysis.EPQLibrary.BaseSpectrum;
 import gov.nist.microanalysis.EPQLibrary.EPQException;
 import gov.nist.microanalysis.EPQLibrary.Element;
 import gov.nist.microanalysis.EPQLibrary.SpectrumProperties;
+import gov.nist.microanalysis.EPQLibrary.Detector.IXRayWindowProperties;
+import gov.nist.microanalysis.EPQLibrary.Detector.XRayWindowFactory;
 
 public class BrukerSPX extends BaseSpectrum {
 
@@ -82,6 +84,23 @@ public class BrukerSPX extends BaseSpectrum {
       }
    }
 
+   static private class WindowParser extends BaseParser<IXRayWindowProperties> {
+
+      WindowParser(SpectrumProperties.PropertyId pid) {
+         super(pid);
+      }
+
+      @Override
+      public IXRayWindowProperties parse(String str) {
+         if (str.contains("AP3.3"))
+            return XRayWindowFactory.createWindow(XRayWindowFactory.Moxtek_AP3_3);
+         // else if(str.contains("AP5"))
+         // return XRayWindowFactory.createWindow(XRayWindowFactory.Moxtek_AP5);
+         else
+            return null;
+      }
+   }
+
    static private class DateParser extends BaseParser<Date> {
       DateParser(SpectrumProperties.PropertyId pid) {
          super(pid);
@@ -139,12 +158,13 @@ public class BrukerSPX extends BaseSpectrum {
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/Type", new StringParser(SpectrumProperties.DetectorDescription));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/DetectorThickness", new Parser(SpectrumProperties.DetectorThickness, 1.0));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/SiDeadLayerThickness", new Parser(SpectrumProperties.DeadLayer, 1.0));
-      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/WindowType", new StringParser(SpectrumProperties.WindowType));
+      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/WindowType", new WindowParser(SpectrumProperties.WindowType));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/Atmosphere", new StringParser(SpectrumProperties.XRFAtmosphere));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/Filter", new StringParser(SpectrumProperties.XRFFilter));
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/Result/Atom", new ZParser(SpectrumProperties.ElementList));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/HighVoltage", new Parser(SpectrumProperties.XRFSourceVoltage, 1.0));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/TubeCurrent", new Parser(SpectrumProperties.XRFTubeCurrent, 1.0));
+      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/CoatCorrection/CoatElement", new ZParser(SpectrumProperties.CoatingElements));
       return res;
    }
 
@@ -264,30 +284,35 @@ public class BrukerSPX extends BaseSpectrum {
       final String path = getXMPPath();
       final BaseParser<?> bp = mParsers.get(path);
       if (bp != null) {
-         final Object res = bp.parse(str);
-         if (res instanceof Double)
-            mProperties.setNumericProperty(bp.getPID(), ((Double) res).doubleValue());
-         else if (res instanceof Date) {
-            final Date rd = (Date) res;
-            final Calendar c = Calendar.getInstance();
-            if (mProperties.isDefined(SpectrumProperties.AcquisitionTime)) {
-               final Date dt = mProperties.getTimestampWithDefault(SpectrumProperties.AcquisitionTime, null);
-               long date = dt.getTime() + rd.getTime();
-               date += TimeZone.getDefault().getOffset(date);
-               c.setTimeInMillis(date);
-            } else
-               c.setTimeInMillis(rd.getTime());
-            mProperties.setTimestampProperty(bp.getPID(), c.getTime());
-         } else if (res instanceof String) {
-            mProperties.setTextProperty(bp.getPID(), res.toString());
-         } else if (res instanceof Element) {
-            String prev = mProperties.getTextWithDefault(SpectrumProperties.ElementList, null);
-            if (prev == null)
-               mProperties.setTextProperty(SpectrumProperties.ElementList, ((Element) res).toAbbrev());
-            else
-               mProperties.setTextProperty(SpectrumProperties.ElementList, prev + "," + ((Element) res).toAbbrev());
+         try {
+            final Object res = bp.parse(str);
+            if (res instanceof Double val)
+               mProperties.setNumericProperty(bp.getPID(), val.doubleValue());
+            else if (res instanceof Date rd) {
+               final Calendar c = Calendar.getInstance();
+               if (mProperties.isDefined(SpectrumProperties.AcquisitionTime)) {
+                  final Date dt = mProperties.getTimestampWithDefault(SpectrumProperties.AcquisitionTime, null);
+                  long date = dt.getTime() + rd.getTime();
+                  date += TimeZone.getDefault().getOffset(date);
+                  c.setTimeInMillis(date);
+               } else
+                  c.setTimeInMillis(rd.getTime());
+               mProperties.setTimestampProperty(bp.getPID(), c.getTime());
+            } else if (res instanceof String tp) {
+               mProperties.setTextProperty(bp.getPID(), tp);
+            } else if (res instanceof Element elm) {
+               var prev = mProperties.getTextWithDefault(bp.getPID(), null);
+               if (prev == null)
+                  mProperties.setTextProperty(bp.getPID(), elm.toAbbrev());
+               else
+                  mProperties.setTextProperty(bp.getPID(), prev + "," + elm.toAbbrev());
+            } else if (res instanceof IXRayWindowProperties xrwp) {
+               mProperties.setWindow(xrwp);
+            }
+         } catch (Exception e) {
+            // Catch and continue
+            e.printStackTrace();
          }
-
       } else if (path.equals("/TRTSpectrum/ClassInstance/Channels")) {
          int begin, end = -1;
          for (int i = 0; i < mData.length; ++i) {

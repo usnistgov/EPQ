@@ -610,6 +610,11 @@ public class SpectrumProperties implements Cloneable, Serializable {
     * BackgroundCorrected - Has this spectral data been background corrected?
     */
    public static final PropertyId BackgroundCorrected = new PropertyId("Is background corrected", Boolean.class);
+   
+   /**
+    * List of elements in the coating
+    */
+   public static final PropertyId CoatingElements = new PropertyId("Coating elements", String.class);
 
    /**
     * LiveTime - The amount of time during which the detector was available to
@@ -1043,7 +1048,7 @@ public class SpectrumProperties implements Cloneable, Serializable {
             ChiSquare, ReducedChiSquare, MacroImage, MicroImage, MicroImage2, AFA_DAvg, BeamSpotX, BeamSpotY, DuaneHunt, SourceFileId, Instrument,
             Detector, FanoFactor, DetectorDescription, ParticleSignature, SampleShape, SpectrumDB, WindowOpenArea, SupportGridThickness,
             CalibrationGUID, DetectorGUID, OutputCountRate, XRFAtmosphere, XRFFilter, XRFSourceVoltage, XRFTubeCurrent, DetectorMode, ImageRef,
-            MultiSpectrumMetric
+            MultiSpectrumMetric, CoatingElements
 
       };
       for (final PropertyId pid : contents)

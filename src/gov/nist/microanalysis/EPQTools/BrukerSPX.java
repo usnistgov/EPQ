@@ -164,6 +164,7 @@ public class BrukerSPX extends BaseSpectrum {
       res.put("/TRTSpectrum/ClassInstance/ClassInstance/Result/Atom", new ZParser(SpectrumProperties.ElementList));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/HighVoltage", new Parser(SpectrumProperties.XRFSourceVoltage, 1.0));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/TubeCurrent", new Parser(SpectrumProperties.XRFTubeCurrent, 1.0));
+      res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/WorkingDistance", new Parser(SpectrumProperties.WorkingDistance, 1.0));
       res.put("/TRTSpectrum/ClassInstance/TRTHeaderedClass/ClassInstance/CoatCorrection/CoatElement", new ZParser(SpectrumProperties.CoatingElements));
       return res;
    }

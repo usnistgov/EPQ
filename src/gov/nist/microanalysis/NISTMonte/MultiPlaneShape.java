@@ -291,7 +291,7 @@ public class MultiPlaneShape extends Intersection implements MonteCarloSS.Shape,
          final double[] nn = Transform3D.rotate(Math2.X_AXIS, 0.0, -theta, ((double) i / (double) n) * (2.0 * Math.PI));
          mp.addPlane(nn, Math2.multiply(base / 2.0, perp));
       }
-      mp.translate(Math2.multiply(-height, Math2.Z_AXIS));
+      mp.translate(Math2.multiply(height, Math2.Z_AXIS));
       mp.translate(center);
       return mp;
    }

@@ -172,7 +172,8 @@ public class ScaledImage extends BufferedImage implements Cloneable {
          final Graphics2D g = createGraphics();
          final int h1 = getHeight() / 20;
          final int h0 = h1 - Math.max(2, getHeight() / 170);
-         final String text = (new HalfUpFormat(len >= 50 ? "#,###,##0" : "0.0#")).format(len) + " \u00B5m";
+         final var fmt = new HalfUpFormat(len >= 100 ? "#,###,##0" : (len >= 10 ? "00.0" : "0.00"));
+         final String text = fmt.format(len) + " \u00B5m";
          final Font font = g.getFont();
          final float fontSize = getWidth() / 24;
          g.setFont(font.deriveFont(fontSize));

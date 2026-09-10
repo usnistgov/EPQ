@@ -56,7 +56,7 @@ final public class TrajectoryImage extends BufferedImage implements ActionListen
 
    private static final Color[] mColors = {Color.green, Color.blue, Color.red, Color.orange, Color.yellow, Color.pink, Color.magenta, Color.cyan,
          Color.black, Color.gray};
-   private static final Color BACKSCATTER_COLOR = Color.darkGray;
+   private static final Color BACKSCATTER_COLOR = Color.lightGray;
    private static final Color TEXT_COLOR = Color.gray;
 
    transient Graphics2D mGraphics;

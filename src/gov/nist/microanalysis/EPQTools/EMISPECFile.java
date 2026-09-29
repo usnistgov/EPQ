@@ -361,11 +361,11 @@ public class EMISPECFile extends BaseSpectrum {
          throw new IOException("This EMISPEC file is not the correct version.");
 
       mDataTypeID = ledis.readInt();
-      if (!((mDataTypeID != OneDimensional) || (mDataTypeID != TwoDimensional)))
+      if (!((mDataTypeID == OneDimensional) || (mDataTypeID == TwoDimensional)))
          throw new IOException("The Data Type ID for this EMISPEC file is not valid.");
 
       mTagTypeID = ledis.readInt();
-      if (!((mTagTypeID != TagIsTimeOnly) || (mTagTypeID != TagIs2DwithTime)))
+      if (!((mTagTypeID == TagIsTimeOnly) || (mTagTypeID == TagIs2DwithTime)))
          throw new IOException("The Tag Type ID for this EMISPEC file is not valid");
 
       mTotalNumberElements = ledis.readInt();
